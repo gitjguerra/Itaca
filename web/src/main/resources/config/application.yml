@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: PRODUCCION-SERVER
+  profiles:
+    active: dev
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  main:
+    banner-mode: "off"
+
+logging:
+  level.: ERROR
+  level:
+    com.csi.itaca: DEBUG
+    org.apache.catalina.startup.Catalina: INFO
+    org.dozer.DozerBeanMapper: ERROR
+    org.apache.catalina.core.StandardEngine: DEBUG
+    org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer: DEBUG
+  
+server:
+  port: 8080
+  contextPath: /itaca
