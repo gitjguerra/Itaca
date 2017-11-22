@@ -47,7 +47,7 @@ public class UserManagementRestController extends ItacaRestController implements
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @RequestMapping(value = GET_PROFILE, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = GET_USER, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<UserDTO> getProfile(@RequestParam(UserManagementServiceProxy.USER_NAME_PARAM) String username)
             throws UserNotFoundException {
         UserDTO user = userManagementService.getUser(username);

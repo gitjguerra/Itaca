@@ -24,13 +24,12 @@ public interface UserManagementServiceProxy {
     String ENTITY                   = "/user";
     String AUTH                     = ENTITY + "/auth";
     String LIST                     = ENTITY + "/list";
-    String GET_PROFILE              = ENTITY + "/getProfile";
+    String GET_USER                 = ENTITY + "/get";
     String SAVE_USER                = ENTITY + "/save";
     String DELETE_USER              = ENTITY + "/delete";
 
 
-
-  /*  String GET_IDIOMAS              = ENTITY + "/getIdiomas";
+  /*  String GET_IDIOMAS            = ENTITY + "/getIdiomas";
     String UPDATE_CONFIG_PERSONAL   = ENTITY + "/updateConfigPersonal";
     String SAVE_CONFIG_USUARIO      = ENTITY + "/saveConfig";
     String GET_CONFIG_USUARIO       = ENTITY + "/getConfig";

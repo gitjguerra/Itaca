@@ -185,7 +185,7 @@ public class UserManagementRestControllerTest {
     public void getProfileTest() throws Exception {
 
         // get User 0
-        mockMvc.perform(get(UserManagementServiceProxy.GET_PROFILE)
+        mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
                 .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_ADMIN_USERNAME))
                 .andDo(print())
                 .andExpect(jsonPath(JSON_USER_ID_FIELD,is(0)))
@@ -193,7 +193,7 @@ public class UserManagementRestControllerTest {
                 .andExpect(status().isOk());
 
         // get User 1
-        mockMvc.perform(get(UserManagementServiceProxy.GET_PROFILE)
+        mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
                 .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_USER1_USERNAME))
                 .andDo(print())
                 .andExpect(jsonPath(JSON_USER_ID_FIELD,is(1)))
@@ -210,7 +210,7 @@ public class UserManagementRestControllerTest {
     public void getProfileFailTest() throws Exception {
 
         // get User 100
-        mockMvc.perform(get(UserManagementServiceProxy.GET_PROFILE)
+        mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
                 .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_FAIL_USER100_USERNAME))
                 .andDo(print())
                 .andExpect(jsonPath(JSON_ERROR_KEY_FIELD,is(UserNotFoundException.I18N_ERROR_KEY)))
