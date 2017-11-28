@@ -1,10 +1,18 @@
 package com.csi.itaca.users.service;
 
+import com.csi.itaca.common.utils.jpa.Order;
+import com.csi.itaca.common.utils.jpa.Pagination;
 import com.csi.itaca.users.exception.UserNotFoundException;
+import com.csi.itaca.users.model.UserConfig;
+import com.csi.itaca.users.model.dto.ChangePasswordDTO;
 import com.csi.itaca.users.model.User;
 import com.csi.itaca.users.exception.InvalidCredentialsException;
 import com.csi.itaca.users.exception.UserNotAuthorisedException;
+import com.csi.itaca.users.model.dto.PersonalPreferencesDTO;
+import com.csi.itaca.users.model.dto.UserConfigDTO;
 import com.csi.itaca.users.model.dto.UserDTO;
+import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
+import org.springframework.validation.Errors;
 
 import java.util.List;
 
@@ -44,36 +52,55 @@ public interface UserManagementService {
     void deleteUser(String username) throws UserNotFoundException;
 
     /**
-     * All returns a list with all users.
-     * @return a list with all users. if there are no users the list will be empty.
+     * Updates the users password.
+     * @param passwordChange credentials and new password.
+     * @return true if password change was successful.
      */
-    List<UserDTO> getAllUsers();
+    Boolean updatePassword(ChangePasswordDTO passwordChange, Errors result);
 
     /**
-     * All returns a list with all users.
-     * @param pageSize the size of a single page.
-     * @param pageNo the page number to return.
-     * @return a page with the all users list.
+     * Updates the user preferences.
+     * @param preferences preferences to update.
+     * @param result holds any potential errors.
+     * @return true if update was successful.
      */
-    List<UserDTO> getAllUsers(int pageSize, int pageNo);
+    Boolean updatePersonalPreferences(PersonalPreferencesDTO preferences, Errors result);
 
     /**
-     * Finds users where the <code>searchText</code> matches all or part of the first name, last name and/or email
-     * address.
-     * @param searchText text to match against all or part of the first name, last name and/or email address.
-     * @return a list of users
+     * Saves the users configuration.
+     * @param userConfigToSave the new configuration.
      */
-    List<UserDTO> findByNameEmail(String searchText);
+    void saveUserConfig(UserConfig userConfigToSave);
 
     /**
-     * Finds users where the <code>searchText</code> matches all or part of the first name, last name and/or email
-     * address.
-     * @param searchText text to match against all or part of the first name, last name and/or email address.
-     * @param pageSize the size of a single page.
-     * @param pageNo the page number to return.
-     * @return a list of users
+     * Gets all the user configuration associated to a user.
+     * @param userId the user's id.
+     * @return a list user configs.
      */
-    List<UserDTO> findByNameEmail(String searchText, int pageSize, int pageNo);
+    List<UserConfigDTO> getUserConfig(Long userId);
 
+    /**
+     * Gets all the user configuration associated to a user.
+     * @param userId the user's id.
+     * @param pagination pagination config.
+     * @return a list user configs.
+     */
+    List<UserConfigDTO> getUserConfig(Long userId, Pagination pagination);
+
+    /**
+     * Counts number of users based on the supplied filter.
+     * @param userFilter the filer to be applied.
+     * @return number of users found.
+     */
+    Long countUsers(UserSearchFilterDTO userFilter);
+
+    /**
+     * Gets a list of users.
+     * @param userFilter filter
+     * @param pagination pagination
+     * @param order the order to apply
+     * @return the specified page of users.
+     */
+    List<UserDTO> getUsers(UserSearchFilterDTO userFilter, Pagination pagination, Order order) ;
 
 }

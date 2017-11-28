@@ -1,22 +1,30 @@
 package com.csi.itaca.users.endPoint.rest;
 
 import com.csi.itaca.common.utils.beaner.BeanerImpl;
+import com.csi.itaca.common.utils.jpa.Order;
+import com.csi.itaca.common.utils.jpa.Pagination;
+import com.csi.itaca.common.utils.json.JsonUtils;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.exception.InvalidCredentialsException;
 import com.csi.itaca.users.exception.UserNotAuthorisedException;
 import com.csi.itaca.users.exception.UserNotFoundException;
+import com.csi.itaca.users.model.dto.ChangePasswordDTO;
 import com.csi.itaca.users.model.dto.UserDTO;
+import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
 import com.csi.itaca.users.service.UserManagementService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 
@@ -42,6 +50,7 @@ public class UserManagementRestControllerTest {
 
     @InjectMocks
     private UserManagementServiceProxy controller = new UserManagementRestController();
+
 
     // Users details
     private static final long TEST_ADMIN_USER_ID            = 0;
@@ -105,13 +114,20 @@ public class UserManagementRestControllerTest {
         userDTOList.add(user1);
         userDTOList.add(user2);
 
-        Mockito.when(service.getAllUsers()).thenReturn(userDTOList);
+        Mockito.when(service.getUsers(Matchers.any(UserSearchFilterDTO.class),Matchers.any(Pagination.class),Matchers.any(Order.class))).thenReturn(userDTOList);
 
         // get profile
         Mockito.when(service.getUser(TEST_ADMIN_USERNAME)).thenReturn(user);
         Mockito.when(service.getUser(TEST_USER1_USERNAME)).thenReturn(user1);
         Mockito.when(service.getUser(TEST_USER2_USERNAME)).thenReturn(user2);
         Mockito.when(service.getUser(TEST_FAIL_USER100_USERNAME)).thenThrow(new UserNotFoundException());
+
+
+        // Change password
+        ChangePasswordDTO updatePasswordDTO = new ChangePasswordDTO();
+        updatePasswordDTO.setUserId(TEST_ADMIN_USER_ID);
+        updatePasswordDTO.setCurrentPassword(TEST_ADMIN_USERNAME);
+
     }
 
     /**
@@ -150,7 +166,7 @@ public class UserManagementRestControllerTest {
                         .param(UserManagementServiceProxy.AUTH_USERNAME_PARAM, TEST_ADMIN_USERNAME)
                         .param(UserManagementServiceProxy.AUTH_PASSWORD_PARAM, TEST_ADMIN_CREDENTIAL_FAIL))
                 .andExpect(jsonPath(JSON_ERROR_KEY_FIELD,is(InvalidCredentialsException.I18N_ERROR_KEY)))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 
     /**
@@ -179,10 +195,10 @@ public class UserManagementRestControllerTest {
     }
 
     /**
-     * Get profile test.
+     * Get user test.
      */
     @Test
-    public void getProfileTest() throws Exception {
+    public void getUserTest() throws Exception {
 
         // get User 0
         mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
@@ -204,19 +220,43 @@ public class UserManagementRestControllerTest {
     }
 
     /**
-     * Get profile fail test.
+     * Get user fail test.
      */
     @Test
-    public void getProfileFailTest() throws Exception {
+    public void getUserFailTest() throws Exception {
 
         // get User 100
         mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
                 .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_FAIL_USER100_USERNAME))
                 .andDo(print())
                 .andExpect(jsonPath(JSON_ERROR_KEY_FIELD,is(UserNotFoundException.I18N_ERROR_KEY)))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
 
     }
+
+    /**
+     * Get update password.
+     */
+    @Test
+    public void updatePassword() throws Exception {
+
+        Mockito.when(service.updatePassword(Matchers.any(ChangePasswordDTO.class),Matchers.any(BindingResult.class))).thenReturn(true);
+
+        ChangePasswordDTO updatePasswordDTO = new ChangePasswordDTO();
+        updatePasswordDTO.setUserId(TEST_ADMIN_USER_ID);
+        updatePasswordDTO.setCurrentPassword(TEST_ADMIN_USERNAME);
+        updatePasswordDTO.setNewPassword("test");
+       // updatePasswordDTO.setConfirmationPassword("test");
+
+        mockMvc.perform(post(UserManagementServiceProxy.CHANGE_PASSWORD)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(updatePasswordDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+
 
 
 }

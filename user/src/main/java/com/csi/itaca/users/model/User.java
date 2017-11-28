@@ -1,18 +1,14 @@
 package com.csi.itaca.users.model;
 
+import com.csi.itaca.common.model.BaseModel;
+
 import java.time.LocalDate;
 
 /**
- * Represents a company user than can that can log in to the system.
+ * Represents a user than can that can log in to the system.
  * @author bboothe
  */
-public interface User {
-
-	/**
-	 * Gets the user id.
-	 * @return the user id
-	 */
-	Long getId();
+public interface User extends BaseModel {
 
 	/**
 	 * Gets the username.

@@ -1,15 +1,11 @@
 package com.csi.itaca.users.model;
 
+import com.csi.itaca.common.model.BaseModel;
+
 /**
  * Represent a language the user speaks.
  */
-public interface UserLanguage {
-
-	/**
-	 * Gets the user id.
-	 * @return the user id.
-	 */
-	Long getId();
+public interface UserLanguage extends BaseModel {
 
 	/**
 	 * Gets language code.

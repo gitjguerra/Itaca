@@ -24,8 +24,13 @@ import javax.persistence.JoinColumn;
 @Table(name = "usr_user")
 public class UserEntity implements User {
 
-	//@Transient
-	//private Agente0 agente;
+	// Fields used by the service implementations.
+	public static final String ID 				= "id";
+	public static final String USERNAME 		= "username";
+	public static final String PASSWORD 		= "password";
+	public static final String USER_LANGUAGE 	= "language_id";
+	public static final String DESCRIPTION 		= "description";
+	public static final String BLOCKED 			= "blocked";
 
 	@Id
 	@Column(name = "user_id")
@@ -53,7 +58,7 @@ public class UserEntity implements User {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "language_id")
-	private UserLanguageEntity userLanguages;
+	private UserLanguageEntity userLanguage;
 
 	@Column(name = "company_start_date")
 	private LocalDate companyStartDate;

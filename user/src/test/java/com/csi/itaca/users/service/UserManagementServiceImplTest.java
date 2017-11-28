@@ -125,7 +125,7 @@ public class UserManagementServiceImplTest {
      */
     @Test
     public void getAllUsersTest() {
-        List<UserDTO> userList = impl.getAllUsers();
+        List<UserDTO> userList = impl.getUsers(null,null,null);
         Assert.assertNotNull(userList);
         Assert.assertEquals(2,userList.size());
         Assert.assertEquals(TEST_ADMIN_USERNAME,userList.get(0).getUsername());

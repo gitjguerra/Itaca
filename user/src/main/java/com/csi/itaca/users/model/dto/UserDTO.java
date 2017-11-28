@@ -1,14 +1,13 @@
 package com.csi.itaca.users.model.dto;
 
+import com.csi.itaca.common.model.BaseModelImpl;
 import com.csi.itaca.users.model.User;
-import com.csi.itaca.users.model.UserLanguage;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Transient;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * User DTO
@@ -18,9 +17,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO implements User {
-
-    private Long id;
+public class UserDTO extends BaseModelImpl implements User {
 
     private String username;
 
