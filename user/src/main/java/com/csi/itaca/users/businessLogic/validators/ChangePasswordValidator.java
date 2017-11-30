@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * Validate for password chang functionality.
+ * Validate for password change functionality.
  * @author bboothe
  */
 @Component
@@ -23,8 +23,8 @@ public class ChangePasswordValidator implements Validator {
 		ChangePasswordDTO updatePasswordDTO = (ChangePasswordDTO) target;
 
 		// user id is required.
-		if (!isUserIdValid(updatePasswordDTO)) {
-			errors.rejectValue(ChangePasswordDTO.USER_ID, ErrorConstants.VALIDATION_USER_ID_REQUIRED);
+		if (!isUsernameValid(updatePasswordDTO)) {
+			errors.rejectValue(ChangePasswordDTO.USER_NAME, ErrorConstants.VALIDATION_USER_NAME_REQUIRED);
 		}
 
 		// current password required.
@@ -46,10 +46,20 @@ public class ChangePasswordValidator implements Validator {
         if(isNewPasswordValid(updatePasswordDTO) && !isNewConfirmPasswordMatch(updatePasswordDTO)) {
             errors.reject(ErrorConstants.VALIDATION_NEW_CONFIRM_PASSWORDS_MUST_MATCH);
         }
+
+		// New and old password words must not match.
+		if(isNewAndOldPasswordsMatch(updatePasswordDTO)) {
+			errors.reject(ErrorConstants.VALIDATION_NEW_OLD_PASSWORDS_MUST_NOT_MATCH);
+		}
+
 	}
 
-	public static boolean isUserIdValid(ChangePasswordDTO value) {
-		return value.getUserId() != null;
+	public static boolean isNewAndOldPasswordsMatch(ChangePasswordDTO value) {
+		return value.getCurrentPassword() != null && value.getCurrentPassword().equals(value.getNewPassword());
+	}
+
+	public static boolean isUsernameValid(ChangePasswordDTO value) {
+		return value.getUsername() != null;
 	}
 
 	public static boolean isCurrentPasswordValid(ChangePasswordDTO value) {

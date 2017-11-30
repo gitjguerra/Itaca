@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserConfigDTO extends BaseModelImpl implements UserConfig {
 
-	private Profile profile;
+	private ProfileDTO profile;
 
-	private User user;
+	private UserDTO user;
 
 }

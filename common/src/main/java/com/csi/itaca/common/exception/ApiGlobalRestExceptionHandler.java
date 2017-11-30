@@ -63,7 +63,7 @@ public class ApiGlobalRestExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorsView> exceptionHandler(Exception ex) {
 
-        logger.debug(ex);
+        logger.error(ex);
 
         ApiGlobalError apiGlobalError = new ApiGlobalError();
 

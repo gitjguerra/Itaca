@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "USR_PROFILE_TYPE")
+@Table(name = "usr_profile_type")
 public class ProfileTypeEntity implements ProfileType {
 
 	@Id

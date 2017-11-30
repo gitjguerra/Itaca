@@ -4,8 +4,8 @@ import com.csi.itaca.common.utils.jpa.JpaUtils;
 import com.csi.itaca.common.utils.jpa.Order;
 import com.csi.itaca.common.utils.jpa.Pagination;
 import com.csi.itaca.common.utils.beaner.Beaner;
+import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.businessLogic.UserManagementBusinessLogic;
-import com.csi.itaca.users.exception.UserNotFoundException;
 import com.csi.itaca.users.model.UserConfig;
 import com.csi.itaca.users.model.dao.UserConfigEntity;
 import com.csi.itaca.users.model.dao.UserLanguageEntity;
@@ -18,8 +18,6 @@ import com.csi.itaca.users.model.dto.UserDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
 import com.csi.itaca.users.repository.UserConfigRepository;
 import com.csi.itaca.users.repository.UserRepository;
-import com.csi.itaca.users.exception.InvalidCredentialsException;
-import com.csi.itaca.users.exception.UserNotAuthorisedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +36,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -53,73 +50,93 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Autowired
     private UserConfigRepository userConfigRepository;
 
-    @PersistenceContext
-    private EntityManager em;
-
     @Autowired
     private UserManagementBusinessLogic userManBusiness;
 
     @Autowired
     private Beaner beaner;
 
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO auth(String username, String password) throws InvalidCredentialsException, UserNotAuthorisedException {
+    public UserDTO auth(String username, String password, Errors errTracking) {
         UserEntity user = repository.findByUsernameAndPassword(username, password);
 
         if (user == null) {
-            logger.info("User ("+username+"). Login attempt failed - Bad credentials.");
-            throw new InvalidCredentialsException();
+            logger.info("User ("+username+"). Login attempt failed - Invalid credentials.");
+            errTracking.reject(ErrorConstants.VALIDATION_INVALID_CREDENTIALS);
         }
         else if (!userManBusiness.isUserAuthorisedToLogOn(user)) {
             logger.info("User ("+username+"). Login attempt failed - Not authorised.");
-            throw new UserNotAuthorisedException();
+            errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_AUTHORISED);
         }
 
-        logger.info("User ("+username+"). Login successful.");
-        return beaner.transform(user, UserDTO.class);
-    }
-
-    @Override
-    public UserDTO getUser(String username) throws UserNotFoundException {
-        User user = repository.findByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException();
+        if (!errTracking.hasErrors()) {
+            logger.info("User ("+username+"). Login successful.");
         }
         return beaner.transform(user, UserDTO.class);
     }
 
     @Override
-    public void saveUser(User user) {
-        UserEntity userToSave = beaner.transform(user, UserEntity.class);
-        repository.save(userToSave);
+    public UserDTO getUser(String username, Errors errTracking) {
+        User user = getUserEntity(username, errTracking);
+        return beaner.transform(user, UserDTO.class);
     }
 
-    @Override
-    public void deleteUser(String username) throws UserNotFoundException {
-        User user = repository.findByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException();
+    @Transactional(readOnly = true)
+    public UserEntity getUserEntity(String username, Errors errTracking) {
+        UserEntity user = repository.findByUsername(username);
+        if (user == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_FOUND);
         }
-        repository.findOne(user.getId());
+        return user;
     }
 
     @Override
     @Transactional
-    public Boolean updatePassword(ChangePasswordDTO passwordChange, Errors result) {
+    public void saveUser(UserDTO userToSave, Errors errTracking) {
 
-        UserEntity user = repository.findOne(passwordChange.getUserId());
-        if (!userManBusiness.canChangeUserPassword(user, passwordChange, result)) {
+        // TODO: better to implement a create user & update user methods.
+        UserEntity userToSaveEntity = beaner.transform(userToSave, UserEntity.class);
+        UserLanguageEntity userLanguageEntity = beaner.transform(userToSave.getUserLanguages(), UserLanguageEntity.class);
+        userToSaveEntity.setUserLanguage(userLanguageEntity);
 
-            CriteriaBuilder cb = this.em.getCriteriaBuilder();
+        if (userLanguageEntity.getId() == null) {
+            // create
+            entityManager.persist(userToSaveEntity);
+        }
+        else {
+            // update
+            repository.save(userToSaveEntity);
+        }
+    }
+
+    @Override
+    public void deleteUser(String username, Errors errTracking) {
+        User user = getUserEntity(username, errTracking);
+        if (user == null) {
+            errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_FOUND);
+        }
+        else {
+            repository.delete(user.getId());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Boolean changePassword(ChangePasswordDTO passwordChange, Errors errTracking) {
+
+        UserEntity user = getUserEntity(passwordChange.getUsername(), errTracking);
+        if (!userManBusiness.canChangeUserPassword(user, passwordChange, errTracking)) {
+
+            CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
             CriteriaUpdate<UserEntity> update = cb.createCriteriaUpdate(UserEntity.class);
             Root root = update.from(UserEntity.class);
             update.set(UserEntity.PASSWORD, passwordChange.getNewPassword());
-            update.where(cb.equal(root.get(UserEntity.ID), passwordChange.getUserId()));
-            this.em.createQuery(update).executeUpdate();
+            update.where(cb.equal(root.get(UserEntity.USERNAME), passwordChange.getUsername()));
+            this.entityManager.createQuery(update).executeUpdate();
 
             return true;
         }
@@ -130,17 +147,17 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     @Transactional
-    public Boolean updatePersonalPreferences(PersonalPreferencesDTO preferences, Errors result) {
+    public Boolean updatePersonalPreferences(PersonalPreferencesDTO preferences, Errors errTracking) {
 
         UserEntity user = repository.findOne(preferences.getUserId());
-        if (!userManBusiness.canChangeUserPreferences(user, preferences, result)) {
+        if (!userManBusiness.canChangeUserPreferences(user, preferences, errTracking)) {
 
-            CriteriaBuilder cb = this.em.getCriteriaBuilder();
+            CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
             CriteriaUpdate<UserEntity> update = cb.createCriteriaUpdate(UserEntity.class);
             Root root = update.from(UserEntity.class);
             update.set(UserEntity.USER_LANGUAGE, beaner.transform(preferences.getUserLanguage(), UserLanguageEntity.class));
             update.where(cb.equal(root.get(UserEntity.ID), preferences.getUserId()));
-            this.em.createQuery(update).executeUpdate();
+            this.entityManager.createQuery(update).executeUpdate();
 
             return true;
         }
@@ -151,34 +168,39 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     @Transactional
-    public void saveUserConfig(UserConfig userConfigToSave) {
+    public void saveUserConfig(UserConfig userConfigToSave, Errors errTracking) {
         userConfigRepository.save(beaner.transform(userConfigToSave, UserConfigEntity.class));
     }
 
     @Override
-    public List<UserConfigDTO> getUserConfig(Long userId) {
-        return getUserConfig(userId, null);
+    public List<UserConfigDTO> getUserConfig(String username, Errors errTracking) {
+        return getUserConfig(username, null, errTracking);
     }
 
     @Override
-    public List<UserConfigDTO> getUserConfig(Long userId, Pagination pagination) {
+    public List<UserConfigDTO> getUserConfig(String username, Pagination pagination, Errors errTracking) {
 
-        // where config.user_id = userId
-        Specification<UserConfigEntity> spec = (root, query, cb) -> {
-            return cb.equal(root.get(UserConfigEntity.USER).get(UserEntity.ID), userId);
-        };
+        UserEntity user = getUserEntity(username, errTracking);
 
-        // run query with pagination if we have it...
-        List<? extends UserConfigEntity> usersResultList;
-        if (pagination != null) {
-            PageRequest pageRequest = new PageRequest(pagination.getPageNo() - 1, pagination.getItemsPerPage());
-            usersResultList = userConfigRepository.findAll(spec, pageRequest).getContent();
+        if (user!= null) {
+            // where config.user_id = userId
+            Specification<UserConfigEntity> spec = (root, query, cb) -> {
+                return cb.equal(root.get(UserConfigEntity.USER_TABLE).get(UserEntity.ID), user.getId());
+            };
+
+            // run query with pagination if we have it...
+            List<? extends UserConfigEntity> usersResultList;
+            if (pagination != null) {
+                PageRequest pageRequest = new PageRequest(pagination.getPageNo() - 1, pagination.getItemsPerPage());
+                usersResultList = userConfigRepository.findAll(spec, pageRequest).getContent();
+            } else {
+                usersResultList = userConfigRepository.findAll(spec);
+            }
+
+            return beaner.transform(usersResultList, UserConfigDTO.class);
         }
-        else {
-            usersResultList = userConfigRepository.findAll(spec);
-        }
 
-        return beaner.transform((List<UserConfigEntity>) usersResultList, UserConfigDTO.class);
+        return Collections.emptyList();
     }
 
     @Override
@@ -187,12 +209,17 @@ public class UserManagementServiceImpl implements UserManagementService {
         return repository.count(buildUserFilterSpec(userFilter));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDTO> getUsers() {
+        return getUsers(null,null,null);
+    }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserDTO> getUsers(UserSearchFilterDTO userFilter, Pagination pagination, Order order) {
 
-        // configure filtering and ordering.
+        // Configure filtering and ordering...
         Specification<UserEntity> spec = buildUserFilterSpec(userFilter);
         spec = JpaUtils.applyOrder(UserEntity.class, order, spec);
 
@@ -210,15 +237,17 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     /**
      * Constructs a filter specification based on the supplied filter.
-     * @param userFilter
-     * @return
+     * @param userFilter filter to apply.
+     * @return Specification of the user filter.
      */
     private static Specification<UserEntity> buildUserFilterSpec(UserSearchFilterDTO userFilter) {
         Specification<UserEntity> spec = (root, query, cb) -> {
             Predicate p = null;
-            p = cb.like(cb.lower(root.get(UserEntity.USERNAME)), "%" + userFilter.getUsername().toLowerCase() + "%");
-            p = cb.and(p, cb.like(cb.lower(root.get(UserEntity.DESCRIPTION)), "%" + userFilter.getDescription().toLowerCase() + "%"));
-            p = cb.and(p, cb.equal(root.get(UserEntity.BLOCKED), userFilter.getBlocked()));
+            if (userFilter!=null) {
+                p = cb.like(cb.lower(root.get(UserEntity.USERNAME)), "%" + userFilter.getUsername().toLowerCase() + "%");
+                p = cb.and(p, cb.like(cb.lower(root.get(UserEntity.DESCRIPTION)), "%" + userFilter.getDescription().toLowerCase() + "%"));
+                p = cb.and(p, cb.equal(root.get(UserEntity.BLOCKED), userFilter.getBlocked()));
+            }
             return p;
         };
         return spec;

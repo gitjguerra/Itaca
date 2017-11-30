@@ -16,5 +16,5 @@ public class ProfileDTO extends BaseModelImpl implements Profile {
 
 	private String value;
 
-	private ProfileType profileType;
+	private ProfileTypeDTO profileType;
 }

@@ -2,12 +2,9 @@ package com.csi.itaca.users.service;
 
 import com.csi.itaca.common.utils.jpa.Order;
 import com.csi.itaca.common.utils.jpa.Pagination;
-import com.csi.itaca.users.exception.UserNotFoundException;
 import com.csi.itaca.users.model.UserConfig;
 import com.csi.itaca.users.model.dto.ChangePasswordDTO;
 import com.csi.itaca.users.model.User;
-import com.csi.itaca.users.exception.InvalidCredentialsException;
-import com.csi.itaca.users.exception.UserNotAuthorisedException;
 import com.csi.itaca.users.model.dto.PersonalPreferencesDTO;
 import com.csi.itaca.users.model.dto.UserConfigDTO;
 import com.csi.itaca.users.model.dto.UserDTO;
@@ -26,66 +23,70 @@ public interface UserManagementService {
      * Authenticates the user
      * @param username the username.
      * @param password new password.
+     * @param errTracking error tracking.
      * @return the user object if the user was correctly authenticated.
-     * @throws InvalidCredentialsException if the user crediencial are incorrect
-     * @throws UserNotAuthorisedException if the user is blocked.
      */
-    UserDTO auth(String username, String password) throws InvalidCredentialsException, UserNotAuthorisedException;
-
-    /**
-     * Save user. Creates or updates user.
-     * @param user users to save.
-     */
-    void saveUser(User user);
+    UserDTO auth(String username, String password, Errors errTracking);
 
     /**
      * Gets user with the given user Id.
      * @param username the username of the user to retrieve.
+     * @param errTracking error tracking.
      * @return the user if found otherwise null.
      */
-    UserDTO getUser(String username) throws UserNotFoundException;
+    UserDTO getUser(String username, Errors errTracking);
+
+    /**
+     * Save user. Creates or updates user.
+     * @param userToSave users to save.
+     * @param errTracking error tracking.
+     */
+    void saveUser(UserDTO userToSave, Errors errTracking);
 
     /**
      * Deletes the user with the specified user id
      * @param username the username of user to delete.
+     * @param errTracking error tracking.
      */
-    void deleteUser(String username) throws UserNotFoundException;
+    void deleteUser(String username, Errors errTracking);;
 
     /**
      * Updates the users password.
      * @param passwordChange credentials and new password.
+     * @param errTracking error tracking.
      * @return true if password change was successful.
      */
-    Boolean updatePassword(ChangePasswordDTO passwordChange, Errors result);
+    Boolean changePassword(ChangePasswordDTO passwordChange, Errors errTracking);
 
     /**
      * Updates the user preferences.
      * @param preferences preferences to update.
-     * @param result holds any potential errors.
+     * @param errTracking error tracking.
      * @return true if update was successful.
      */
-    Boolean updatePersonalPreferences(PersonalPreferencesDTO preferences, Errors result);
+    Boolean updatePersonalPreferences(PersonalPreferencesDTO preferences, Errors errTracking);
 
     /**
      * Saves the users configuration.
      * @param userConfigToSave the new configuration.
+     * @param errTracking error tracking.
      */
-    void saveUserConfig(UserConfig userConfigToSave);
+    void saveUserConfig(UserConfig userConfigToSave, Errors errTracking);
 
     /**
      * Gets all the user configuration associated to a user.
-     * @param userId the user's id.
+     * @param username the user's username.
      * @return a list user configs.
      */
-    List<UserConfigDTO> getUserConfig(Long userId);
+    List<UserConfigDTO> getUserConfig(String username, Errors errTracking) ;
 
     /**
      * Gets all the user configuration associated to a user.
-     * @param userId the user's id.
+     * @param username the user's username.
      * @param pagination pagination config.
      * @return a list user configs.
      */
-    List<UserConfigDTO> getUserConfig(Long userId, Pagination pagination);
+    List<UserConfigDTO> getUserConfig(String username, Pagination pagination, Errors errTracking);
 
     /**
      * Counts number of users based on the supplied filter.
@@ -101,6 +102,13 @@ public interface UserManagementService {
      * @param order the order to apply
      * @return the specified page of users.
      */
-    List<UserDTO> getUsers(UserSearchFilterDTO userFilter, Pagination pagination, Order order) ;
+    List<UserDTO> getUsers(UserSearchFilterDTO userFilter, Pagination pagination, Order order);
+
+
+    /**
+     * Gets a list of users.
+     * @return the specified page of users.
+     */
+    List<UserDTO> getUsers();
 
 }

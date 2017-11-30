@@ -16,6 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserLanguageDTO extends BaseModelImpl implements UserLanguage {
 
+    private Long id;
+
     private String code;
 
     private String value;

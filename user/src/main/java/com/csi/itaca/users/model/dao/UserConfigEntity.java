@@ -11,11 +11,10 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "USR_USER_CONFIG")
+@Table(name = "usr_user_config")
 public class UserConfigEntity implements UserConfig {
 
-	// Fields used by the service implementations.
-	public static final String USER 		= "user_id";
+	public static final String USER_TABLE 		= "user";
 
 	@Id
 	@Column(name = "user_config_id")
