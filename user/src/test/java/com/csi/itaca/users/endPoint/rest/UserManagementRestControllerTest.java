@@ -6,6 +6,7 @@ import com.csi.itaca.common.utils.jpa.Pagination;
 import com.csi.itaca.common.utils.json.JsonUtils;
 import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
+import com.csi.itaca.users.businessLogic.validators.ChangePasswordValidator;
 import com.csi.itaca.users.model.dto.ChangePasswordDTO;
 import com.csi.itaca.users.model.dto.CountDTO;
 import com.csi.itaca.users.model.dto.UserDTO;
@@ -15,29 +16,21 @@ import com.csi.itaca.users.service.UserManagementService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.mockito.*;
 
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-
-
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -57,6 +50,9 @@ public class UserManagementRestControllerTest {
 
     @Mock
     private UserManagementService service;
+
+    @Mock
+    private ChangePasswordValidator changePasswordValidator = new ChangePasswordValidator();
 
     @InjectMocks
     private UserManagementServiceProxy controller = new UserManagementRestController();
