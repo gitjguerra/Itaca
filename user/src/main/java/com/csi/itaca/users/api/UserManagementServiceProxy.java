@@ -31,7 +31,7 @@ public interface UserManagementServiceProxy {
     String GET_USER_CONFIG          = ENTITY + "/getConfig";
     String SAVE_USER_CONFIG         = ENTITY + "/saveConfig";
     String COUNT                    = ENTITY + "/count";
-
+    String GET_LANGUAGES            = ENTITY + "/getLanguages";
 
     /**
      * Authenticates the users against the application.
@@ -100,4 +100,9 @@ public interface UserManagementServiceProxy {
      */
     ResponseEntity getUserConfig(String username);
 
+    /**
+     * Gets all user languages.
+     * @return a list of user languages.
+     */
+    ResponseEntity getLanguages();
 }

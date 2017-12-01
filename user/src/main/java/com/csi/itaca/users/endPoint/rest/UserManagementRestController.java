@@ -153,4 +153,11 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         counts.setUserCount(userManagementService.countUsers(userFilter));
         return new ResponseEntity(counts, HttpStatus.OK);
     }
+
+    @RequestMapping(value = GET_LANGUAGES, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity getLanguages() {
+        List<UserLanguageDTO> languages = userManagementService.getUserLanguages();
+        return new ResponseEntity<>(languages, HttpStatus.OK);
+    }
+
 }

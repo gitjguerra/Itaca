@@ -9,14 +9,12 @@ import com.csi.itaca.users.businessLogic.UserManagementBusinessLogic;
 import com.csi.itaca.users.model.UserConfig;
 import com.csi.itaca.users.model.dao.UserConfigEntity;
 import com.csi.itaca.users.model.dao.UserLanguageEntity;
-import com.csi.itaca.users.model.dto.ChangePasswordDTO;
+import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.dao.UserEntity;
 import com.csi.itaca.users.model.User;
-import com.csi.itaca.users.model.dto.PersonalPreferencesDTO;
-import com.csi.itaca.users.model.dto.UserConfigDTO;
-import com.csi.itaca.users.model.dto.UserDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
 import com.csi.itaca.users.repository.UserConfigRepository;
+import com.csi.itaca.users.repository.UserLanguageRepository;
 import com.csi.itaca.users.repository.UserRepository;
 
 import org.slf4j.Logger;
@@ -49,6 +47,9 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Autowired
     private UserConfigRepository userConfigRepository;
+
+    @Autowired
+    private UserLanguageRepository userLanguageRepository;
 
     @Autowired
     private UserManagementBusinessLogic userManBusiness;
@@ -233,6 +234,13 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
 
         return beaner.transform((List<UserEntity>) usersResultList, UserDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserLanguageDTO> getUserLanguages() {
+        Iterable<UserLanguageEntity> userLanguages = userLanguageRepository.findAll();
+        return beaner.transform((List<UserLanguageEntity>) userLanguages, UserLanguageDTO.class);
     }
 
     /**

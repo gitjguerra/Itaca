@@ -3,12 +3,10 @@ package com.csi.itaca.users.service;
 import com.csi.itaca.common.utils.jpa.Order;
 import com.csi.itaca.common.utils.jpa.Pagination;
 import com.csi.itaca.users.model.UserConfig;
-import com.csi.itaca.users.model.dto.ChangePasswordDTO;
+import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.User;
-import com.csi.itaca.users.model.dto.PersonalPreferencesDTO;
-import com.csi.itaca.users.model.dto.UserConfigDTO;
-import com.csi.itaca.users.model.dto.UserDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
 import java.util.List;
@@ -110,5 +108,11 @@ public interface UserManagementService {
      * @return the specified page of users.
      */
     List<UserDTO> getUsers();
+
+    /**
+     * Gets the user languages.
+     * @return a list of user languages.
+     */
+    List<UserLanguageDTO> getUserLanguages();
 
 }
