@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +42,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     public ResponseEntity auth(@RequestParam(UserManagementServiceProxy.AUTH_USERNAME_PARAM) String username,
                                @RequestParam(UserManagementServiceProxy.AUTH_PASSWORD_PARAM) String password) {
 
-        BeanPropertyBindingResult errTracking = new BeanPropertyBindingResult("","");
+        BindingResult errTracking = createErrorTracker();
         UserDTO user = userManagementService.auth(username, password, errTracking);
         return buildResponseEnity(user, errTracking);
     }
@@ -51,7 +50,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     @RequestMapping(value = GET_USER, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getUser(@RequestParam(UserManagementServiceProxy.USER_NAME_PARAM) String username) {
 
-        BeanPropertyBindingResult errTracking = new BeanPropertyBindingResult("","");
+        BindingResult errTracking = createErrorTracker();
         UserDTO user = userManagementService.getUser(username, errTracking);
         return buildResponseEnity(user, errTracking);
     }
@@ -69,7 +68,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getDelete(@RequestParam(UserManagementServiceProxy.USER_NAME_PARAM) String username) {
 
-        BeanPropertyBindingResult errTracking = new BeanPropertyBindingResult("","");
+        BindingResult errTracking = createErrorTracker();
         userManagementService.deleteUser(username, errTracking);
         return buildResponseEnity(errTracking);
     }
@@ -139,7 +138,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
 
     @RequestMapping(value = GET_USER_CONFIG, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getUserConfig(@RequestParam(UserManagementServiceProxy.USER_NAME_PARAM) String username) {
-        BeanPropertyBindingResult errTracking = new BeanPropertyBindingResult("genericobject","genericobjectname");
+        BindingResult errTracking = createErrorTracker();
         List<UserConfigDTO> userConfigurations = userManagementService.getUserConfig(username, errTracking);
         return buildResponseEnity(userConfigurations, errTracking);
     }

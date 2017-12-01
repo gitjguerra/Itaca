@@ -3,11 +3,28 @@ package com.csi.itaca.common.rest;
 import com.csi.itaca.common.exception.ApiGlobalRestExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * Itaca RESTful client base controller.
+ * @author bboothe
+ */
 @RestController
 public abstract class ItacaBaseRestController {
+
+    private static final String EMPTY_STRING = "";
+
+    /**
+     * Create a new error tracking object
+     * @return new error tracker.
+     */
+    public BindingResult createErrorTracker() {
+        return new BeanPropertyBindingResult(EMPTY_STRING,EMPTY_STRING);
+    }
 
     /**
      * Build a response entity with the <code>responseBodyContent</code>.
