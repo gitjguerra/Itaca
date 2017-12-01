@@ -15,6 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CountDTO {
 
+    // Fields
+    public static final String USER_COUNT = "userCount";
+
     /**
      * Number of users based on a filter that was previously applied.
      */

@@ -7,6 +7,7 @@ import com.csi.itaca.common.utils.json.JsonUtils;
 import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.model.dto.ChangePasswordDTO;
+import com.csi.itaca.users.model.dto.CountDTO;
 import com.csi.itaca.users.model.dto.UserDTO;
 import com.csi.itaca.users.model.filters.UserFilterPaginationOrderDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
@@ -311,7 +312,7 @@ public class UserManagementRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.asJsonString(criteria)))
                 .andDo(print())
-                .andExpect(jsonPath("totalNoOfUsers",is(88)))
+                .andExpect(jsonPath(CountDTO.USER_COUNT,is(88)))
                 .andExpect(status().isOk());
     }
 
