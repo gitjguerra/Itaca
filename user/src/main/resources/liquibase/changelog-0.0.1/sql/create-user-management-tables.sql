@@ -16,13 +16,25 @@ COMMENT ON COLUMN usr_profile_type.value IS 'Value of the literal description';
 CREATE INDEX profile_type_id_idx ON usr_profile_type(profile_type_id ASC)
     TABLESPACE LOGIN;
 
+CREATE SEQUENCE usr_profile_type_id_seq START WITH 1 NOCACHE ORDER;
+
 ALTER TABLE usr_profile_type ADD CONSTRAINT usr_profile_type_pk PRIMARY KEY ( profile_type_id )
     USING INDEX TABLESPACE LOGIN;
 
 ALTER TABLE usr_profile_type ADD CONSTRAINT usr_profile_type_uk1 UNIQUE ( value )
     USING INDEX TABLESPACE LOGIN;
 
-CREATE SEQUENCE usr_profile_type_id_seq START WITH 1 NOCACHE ORDER;
+-- Trigger
+CREATE OR REPLACE TRIGGER usr_profile_type_bi BEFORE
+    INSERT ON usr_profile_type
+    FOR EACH ROW
+    WHEN (
+        new.profile_type_id IS NULL
+    )
+BEGIN
+    :new.profile_type_id := usr_profile_type_id_seq.nextval;
+END;
+
 ----------------- user profile table end -----------------
 
 ----------------- user profile table -----------------
@@ -59,6 +71,17 @@ CREATE INDEX usr_profile_id2 ON usr_profile ( profile_id ASC, profile_type_id AS
 ALTER TABLE usr_profile ADD CONSTRAINT profile_type_id_fk1 FOREIGN KEY ( profile_type_id )
     REFERENCES usr_profile_type ( profile_type_id )
 NOT DEFERRABLE;
+
+-- Trigger
+CREATE OR REPLACE TRIGGER usr_profile_bi BEFORE
+    INSERT ON usr_profile
+    FOR EACH ROW
+    WHEN (
+        new.profile_id IS NULL
+    )
+BEGIN
+    :new.profile_id := usr_profile_id_seq.nextval;
+END;
 ----------------- user profile table end -----------------
 
 ----------------- language table -----------------
@@ -85,6 +108,16 @@ CREATE SEQUENCE usr_language_id_seq START WITH 1 NOCACHE ORDER;
 ALTER TABLE usr_language ADD CONSTRAINT usr_language_uni UNIQUE ( value )
     USING INDEX TABLESPACE LOGIN;
 
+-- Trigger
+CREATE OR REPLACE TRIGGER usr_language_bi BEFORE
+    INSERT ON usr_language
+    FOR EACH ROW
+    WHEN (
+        new.language_id IS NULL
+    )
+BEGIN
+    :new.language_id := usr_language_id_seq.nextval;
+END;
 ----------------- language table end -----------------
 
 ----------------- User table -----------------
@@ -140,6 +173,17 @@ ALTER TABLE usr_user ADD CONSTRAINT usr_username_uk1 UNIQUE ( username )
 ALTER TABLE usr_user ADD CONSTRAINT usr_language_id_fk FOREIGN KEY ( language_id )
     REFERENCES usr_language ( language_id )
 NOT DEFERRABLE;
+
+-- Trigger
+CREATE OR REPLACE TRIGGER usr_user_bi BEFORE
+    INSERT ON usr_user
+    FOR EACH ROW
+    WHEN (
+        new.user_id IS NULL
+    )
+BEGIN
+    :new.user_id := usr_user_id_seq.nextval;
+END;
 ----------------- User table END -----------------
 
 ----------------- user config table -----------------
@@ -181,14 +225,15 @@ ALTER TABLE usr_user_config ADD CONSTRAINT usr_user_config_fk2 FOREIGN KEY ( use
     REFERENCES usr_user ( user_id )
 NOT DEFERRABLE;
 
+-- Trigger
+CREATE OR REPLACE TRIGGER usr_user_config_bi BEFORE
+    INSERT ON usr_user_config
+    FOR EACH ROW
+    WHEN (
+        new.user_config_id IS NULL
+    )
+BEGIN
+    :new.user_config_id := usr_user_config_id_seq.nextval;
+END;
+
 ----------------- user config end -----------------
-
-
-
-
-
-
-
-
-
-
