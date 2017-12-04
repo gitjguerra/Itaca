@@ -87,7 +87,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Transactional(readOnly = true)
-    public UserEntity getUserEntity(String username, Errors errTracking) {
+    private UserEntity getUserEntity(String username, Errors errTracking) {
         UserEntity user = repository.findByUsername(username);
         if (user == null && errTracking != null) {
             errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_FOUND);
@@ -117,10 +117,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public void deleteUser(String username, Errors errTracking) {
         User user = getUserEntity(username, errTracking);
-        if (user == null) {
-            errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_FOUND);
-        }
-        else {
+        if (user != null) {
             repository.delete(user.getId());
         }
     }
@@ -153,12 +150,12 @@ public class UserManagementServiceImpl implements UserManagementService {
         UserEntity user = repository.findOne(preferences.getUserId());
         if (!userManBusiness.canChangeUserPreferences(user, preferences, errTracking)) {
 
-            CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaUpdate<UserEntity> update = cb.createCriteriaUpdate(UserEntity.class);
             Root root = update.from(UserEntity.class);
             update.set(UserEntity.USER_LANGUAGE, beaner.transform(preferences.getUserLanguage(), UserLanguageEntity.class));
             update.where(cb.equal(root.get(UserEntity.ID), preferences.getUserId()));
-            this.entityManager.createQuery(update).executeUpdate();
+            entityManager.createQuery(update).executeUpdate();
 
             return true;
         }
