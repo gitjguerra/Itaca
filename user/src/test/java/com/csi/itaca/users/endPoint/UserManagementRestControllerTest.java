@@ -1,4 +1,4 @@
-package com.csi.itaca.users.endPoint.rest;
+package com.csi.itaca.users.endPoint;
 
 import com.csi.itaca.common.utils.beaner.BeanerImpl;
 import com.csi.itaca.common.utils.jpa.Order;
