@@ -9,28 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>web</artifactId>
-    <packaging>war</packaging>
+    <artifactId>config</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>com.csi.itaca</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.csi.itaca</groupId>
-            <artifactId>user</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.csi.itaca</groupId>
-            <artifactId>people</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>2.4.13</version>
         </dependency>
 
     </dependencies>
-
 </project>
