@@ -1,7 +1,6 @@
 package com.csi.itaca.people.model.dao;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
-import com.csi.itaca.people.model.Language;
 import com.csi.itaca.people.model.PersonDetail;
 
 import lombok.Getter;
@@ -37,14 +36,13 @@ public class PersonDetailEntity implements PersonDetail {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "language_id")
-	private Language language;
+	private LanguageEntity language;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "country_id")
 	private CountryEntity country;
 
-	@Column
-	@JoinColumn(name = "name")
+	@Column(name = "name")
 	private String name;
 
 	/*

@@ -3,12 +3,13 @@ package com.csi.itaca.config.model;
 import java.util.Map;
 
 /**
- * 
- * @author cmartin
- * @since 20-10-2015 Gestor de configuraciones de Itaca. Las configuraciones se
+ * Gestor de configuraciones de Itaca. Las configuraciones se
  *        cargan desde scripts groovy en una caché al inicio. Los metodos
  *        descritos recuperan las configuraciones en base a los parametros
  *        indicados en el groovy.
+ *
+ * @author cmartin
+ * @since 20-10-2015
  */
 public interface Configurator {
 

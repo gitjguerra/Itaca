@@ -29,7 +29,7 @@ public class IndividualEntity extends PersonEntity implements Individual {
 	private LocalDate dateOfBirth;
 	
 	@MapKey(name = "id")
-	@OneToMany(fetch=FetchType.LAZY, mappedBy="person")
+	@OneToMany(fetch=FetchType.LAZY)
 	@BeanerConfig(contentAs = IndividualDetailEntity.class)
 	private List<IndividualDetailEntity> details;
 

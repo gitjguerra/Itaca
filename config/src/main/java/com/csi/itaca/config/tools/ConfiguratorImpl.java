@@ -1,6 +1,7 @@
 package com.csi.itaca.config.tools;
 
 import com.csi.itaca.config.model.ConfigurationBase;
+import com.csi.itaca.config.model.Configurator;
 import com.csi.itaca.config.model.ConfiguratorConfig;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -50,14 +51,22 @@ public class ConfiguratorImpl implements Configurator, Serializable {
 
 	private static final long serialVersionUID = 3908364243665373843L;
 
+	/**
+	 * Specifies where to find configuration files "classpath" or "filesystem".
+	 */
 	@Value("${configurator.mode}")
 	private String mode;
 
+	/**
+	 * The location of the configuration files on the file system. "configurator.mode" needs be et to "filesystem".
+	 */
+	@Value("${configurator.filesystem.basedir:}")
+	private String filesystemBaseDir;
+
+	/** Specifies whether to automatically reload configuration. */
 	@Value("${configurator.autoreload}")
 	private boolean autoreload;
 
-	@Value("${configurator.filesystem.basedir:}")
-	private String filesystemBaseDir;
 
 	private List<String> registeredModules;
 
@@ -83,7 +92,7 @@ public class ConfiguratorImpl implements Configurator, Serializable {
 	private void init() {
 
 		if (autoreload) {
-			throw new ConfiguratorFeatureNotAvailableException("La recarga automatica no esta disponible");
+			throw new ConfiguratorFeatureNotAvailableException("Automatic recharge is not available");
 		}
 	}
 

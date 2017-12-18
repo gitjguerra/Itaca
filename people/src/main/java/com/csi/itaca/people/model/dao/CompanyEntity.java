@@ -28,7 +28,7 @@ public class CompanyEntity extends PersonEntity implements Company {
 	private LocalDate startDate;
 	
 	@MapKey(name = "id")
-	@OneToMany(fetch=FetchType.LAZY, mappedBy="person")
+	@OneToMany(fetch=FetchType.LAZY)
 	@BeanerConfig(contentAs = CompanyDetailEntity.class)
 	private List<CompanyDetailEntity> details;
 }
