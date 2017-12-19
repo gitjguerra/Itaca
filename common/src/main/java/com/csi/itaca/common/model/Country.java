@@ -1,10 +1,10 @@
-package com.csi.itaca.common.model.dao;
+package com.csi.itaca.common.model;
 
 public interface Country {
 
     Long getId();
 
-    Long getIsoCode();
+    String getIsoCode();
 
     String getName();
 }

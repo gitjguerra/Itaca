@@ -1,7 +1,6 @@
 package com.csi.itaca.people.model;
 
-import com.csi.itaca.common.model.dao.Country;
-import com.csi.itaca.people.model.dao.PersonEntity;
+import com.csi.itaca.common.model.Country;
 
 public interface PersonDetail {
 

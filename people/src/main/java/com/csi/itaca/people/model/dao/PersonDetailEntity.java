@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Table(name = "per_person_detail")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "detail_type", discriminatorType = DiscriminatorType.STRING)
-public class PersonDetailEntity implements PersonDetail {
+public abstract class PersonDetailEntity implements PersonDetail {
 
 	public static final String ID 		= "id";
 	public static final String PERSON 	= "person";
@@ -30,8 +30,8 @@ public class PersonDetailEntity implements PersonDetail {
 	@SequenceGenerator(name = "per_person_detail_seq", sequenceName = "per_person_detail_seq", allocationSize = 1)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "person_id")
+    @ManyToOne
+    @JoinColumn(name="person_id", nullable=false)
 	private PersonEntity person;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -1,7 +1,5 @@
 package com.csi.itaca.people.model;
 
-import com.csi.itaca.people.model.dao.CivilStatusEntity;
-import com.csi.itaca.people.model.dao.PersonStatusEntity;
 
 public interface IndividualDetail {
 
@@ -13,8 +11,8 @@ public interface IndividualDetail {
 
     String getSurname2();
 
-    CivilStatusEntity getCivilStatus();
+    CivilStatus getCivilStatus();
 
-    PersonStatusEntity getPersonStatus();
+    PersonStatus getPersonStatus();
 
 }

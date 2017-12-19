@@ -1,5 +1,6 @@
 package com.csi.itaca.common.model.dao;
 
+import com.csi.itaca.common.model.Country;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,7 @@ public class CountryEntity implements Country {
 	private Long id;
 	
 	@Column(name="iso_code", nullable=false)
-	private Long isoCode;
+	private String isoCode;
 
 	@Column(name="name", nullable=false)
 	private String name;

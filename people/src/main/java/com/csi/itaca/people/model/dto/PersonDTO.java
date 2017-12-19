@@ -2,9 +2,9 @@ package com.csi.itaca.people.model.dto;
 
 import com.csi.itaca.common.model.BaseModelImpl;
 import com.csi.itaca.people.model.Person;
-import com.csi.itaca.people.model.IDType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Represents a single person.
@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 @Getter
-public class PersonDTO extends BaseModelImpl implements Person {
+@Setter
+public abstract class PersonDTO extends BaseModelImpl implements Person {
 
-    private IDType idType;
+    private IDTypeDTO idType;
 
     private String identificationCode;
 

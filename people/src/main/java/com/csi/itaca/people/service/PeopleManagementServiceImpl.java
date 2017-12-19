@@ -6,7 +6,7 @@ import com.csi.itaca.people.api.ConfiguracionModuloPersonas;
 import com.csi.itaca.people.api.ErrorConstants;
 
 import com.csi.itaca.people.model.dao.*;
-import com.csi.itaca.people.model.Person;
+import com.csi.itaca.people.model.dto.IndividualDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.dto.PersonType;
 import com.csi.itaca.people.model.filters.IndividualPeopleSearchFilter;
@@ -47,8 +47,15 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Override
     public PersonDTO getPerson(Long id, Errors errTracking) {
-        Person person = getPersonEntity(id, errTracking);
-        return beaner.transform(person, PersonDTO.class);
+        PersonEntity person = getPersonEntity(id, errTracking);
+
+        if (person instanceof IndividualEntity) {
+            return beaner.transform(person, IndividualDTO.class);
+        }
+        if (person instanceof CompanyEntity) {
+            return null;
+        }
+        return null;
     }
 
     /**
