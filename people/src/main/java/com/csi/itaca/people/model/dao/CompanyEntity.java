@@ -27,8 +27,7 @@ public class CompanyEntity extends PersonEntity implements Company {
 	@Column(name="start_date")
 	private LocalDate startDate;
 	
-	@MapKey(name = "id")
-	@OneToMany(fetch=FetchType.LAZY)
-	@BeanerConfig(contentAs = CompanyDetailEntity.class)
-	private List<CompanyDetailEntity> details;
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = PersonDetailEntity.PERSON, targetEntity = PersonDetailEntity.class)
+    @BeanerConfig(contentAs = CompanyDetailEntity.class)
+    private List<CompanyDetailEntity> details;
 }

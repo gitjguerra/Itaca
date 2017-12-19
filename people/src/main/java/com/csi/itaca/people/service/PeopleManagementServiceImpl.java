@@ -6,6 +6,7 @@ import com.csi.itaca.people.api.ConfiguracionModuloPersonas;
 import com.csi.itaca.people.api.ErrorConstants;
 
 import com.csi.itaca.people.model.dao.*;
+import com.csi.itaca.people.model.dto.CompanyDTO;
 import com.csi.itaca.people.model.dto.IndividualDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.dto.PersonType;
@@ -53,7 +54,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             return beaner.transform(person, IndividualDTO.class);
         }
         if (person instanceof CompanyEntity) {
-            return null;
+            return beaner.transform(person, CompanyDTO.class);
         }
         return null;
     }
