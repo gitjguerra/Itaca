@@ -3,6 +3,8 @@ package com.csi.itaca.people.businesslogic;
 import com.csi.itaca.common.utils.beaner.Beaner;
 import com.csi.itaca.config.model.Configurator;
 import com.csi.itaca.people.api.PeopleModuleConfiguration;
+import com.csi.itaca.people.api.PeopleModuleConfiguration.IndividualLogicalPrimaryKey;
+import com.csi.itaca.people.api.PeopleModuleConfiguration.CompanyLogicalPrimaryKey;
 import com.csi.itaca.people.api.ErrorConstants;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.model.dto.PersonTypeDTO;
@@ -38,23 +40,23 @@ public class PeopleManagementBusinessLogicImpl implements PeopleManagementBusine
 
         // Individual person type.
         else if (filter.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
-            PeopleModuleConfiguration.IndividualLogicalPrimaryKey configuracionIndividualLogicalPrimaryKey = configurator
+            IndividualLogicalPrimaryKey individualLogicalPrimaryKeyConfig = configurator
                     .getConfig(PeopleModuleConfiguration.class).getIndividualLogicalPrimaryKey();
 
-            if (configuracionIndividualLogicalPrimaryKey.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
+            if (individualLogicalPrimaryKeyConfig.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
                 errTracking.rejectValue(PeopleSearchFilter.ID_CODE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
             }
 
-            if (configuracionIndividualLogicalPrimaryKey.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
+            if (individualLogicalPrimaryKeyConfig.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
                 errTracking.rejectValue(PeopleSearchFilter.ID_TYPE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
             }
 
-            if  (configuracionIndividualLogicalPrimaryKey.getExternalReferenceCodeInLogicalKey()
+            if  (individualLogicalPrimaryKeyConfig.getExternalReferenceCodeInLogicalKey()
                  && (filter.getExternalReference() == null || filter.getExternalReference().isEmpty())) {
                 errTracking.rejectValue(PeopleSearchFilter.EXTERNAL_REFERENCE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
             }
 
-            if (configuracionIndividualLogicalPrimaryKey.getDateOfBirthInLogicalKey()
+            if (individualLogicalPrimaryKeyConfig.getDateOfBirthInLogicalKey()
                     && ( !(filter instanceof IndividualSearchFilter)
                     || ((IndividualSearchFilter) filter).getDateOfBirth() == null)) {
                 errTracking.reject(ErrorConstants.VALIDATION_DATE_OF_BIRTH_REQUIRED);
@@ -63,15 +65,15 @@ public class PeopleManagementBusinessLogicImpl implements PeopleManagementBusine
 
         // Company person type.
         else if (filter.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
-            PeopleModuleConfiguration.CompanyLogicalPrimaryKey configuracionCompanyLogicalPrimaryKey = configurator
+            CompanyLogicalPrimaryKey companyLogicalPrimaryKeyConfig = configurator
                     .getConfig(PeopleModuleConfiguration.class).getCompanyLogicalPrimaryKey();
 
-            if (configuracionCompanyLogicalPrimaryKey.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
+            if (companyLogicalPrimaryKeyConfig.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
                 errTracking.rejectValue(PeopleSearchFilter.ID_CODE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
 
             }
 
-            if (configuracionCompanyLogicalPrimaryKey.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
+            if (companyLogicalPrimaryKeyConfig.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
                 errTracking.rejectValue(PeopleSearchFilter.ID_TYPE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
             }
         }
