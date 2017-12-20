@@ -33,8 +33,8 @@ public abstract class ItacaBaseRestController {
      * @return new response entity containing <code>responseBodyContent</code> if no error was found in
      *         <code>errTracking</code>.
      */
-    public ResponseEntity buildResponseEnity(BindingResult errTracking) {
-        return buildResponseEnity(null,errTracking);
+    public ResponseEntity buildResponseEntity(BindingResult errTracking) {
+        return buildResponseEntity(null,errTracking);
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class ItacaBaseRestController {
      * @return new response entity containing <code>responseBodyContent</code> if no error was found in
      *         <code>errTracking</code>
      */
-    public ResponseEntity buildResponseEnity(Object responseBodyContent, BindingResult errTracking) {
+    public ResponseEntity buildResponseEntity(Object responseBodyContent, BindingResult errTracking) {
         if (!errTracking.hasErrors()) {
             if (responseBodyContent!=null) {
                 return new ResponseEntity(responseBodyContent, HttpStatus.OK);

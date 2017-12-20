@@ -18,7 +18,7 @@ public abstract class PersonEntity implements PersonWithDetails {
 
 	public static final String ID 						= "id";
 	public static final String ID_TYPE 					= "idType";
-	public static final String ID_CODE 					= "idCode";
+	public static final String ID_CODE 					= "identificationCode";
 	public static final String EXTERNAL_REFERENCE_CODE 	= "externalReferenceCode";
 	public static final String DETAILS 					= "details";
 

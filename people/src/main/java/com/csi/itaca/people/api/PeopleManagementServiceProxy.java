@@ -1,32 +1,36 @@
 package com.csi.itaca.people.api;
 
-import com.csi.itaca.people.model.dto.PersonDTO;
+import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
+import org.springframework.validation.BindingResult;
 
 public interface PeopleManagementServiceProxy {
 
-    String ID_PARAM      = "id";
+    // Parameters...
+    String ID_PARAM                 = "id";
 
-
-    // end point URLs
-    String RESOURCE                 = "/person";
-    String GET_PERSON                 = RESOURCE + "/get";
-
-
-    // people
+    // End point URLs...
+    String RESOURCE                 = "/people";
+    String GET_PERSON               = RESOURCE + "/get";
+    String SEARCH_PEOPLE            = RESOURCE + "/search";
 
     /**
-     * Gets a person
-     * @param id the person id
+     * Gets a person.
+     * @param id the person id.
      * @return a response body containing the requested person json object.
      */
     ResponseEntity getPerson(Long id);
 
-    /*
-    ItacaAPIResponse<List<? extends Persona1DTO>> buscarPersona(FiltroBuscadorAltaPersonaDTO filtro);
+    /**
+     * Find a person based on the suppled key.
+     * @param filter the filter to apply.
+     * @param errTracking error tracking.
+     * @return a list containing 1 more people depend upon the configuration. Will return an empty list if
+     * no people were found.
+     */
+    ResponseEntity findPeople(PeopleSearchFilter filter, BindingResult errTracking);
 
+    /*
     ItacaAPIResponse<List<? extends DetallePersona1DTO>> buscarDetallesPersonasDuplicadas(FiltroPersonasPaginaOrden peticion);
 
     ItacaAPIResponse<Long> countDetallesPersonasDuplicadas(FiltroBuscadorAltaPersonaDTO parametros);
@@ -35,7 +39,7 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIResponse<Long> countDetallePersonas(FiltroBuscadorPersonaDTO filtro);
 
-    ItacaAPIResponse<Persona1DTO> saveOrUpdatePersona1(Persona1DTO dto, Boolean personasDuplicadasPermitidas);
+    ItacaAPIResponse<Persona1DTO> saveOrUpdatePersona1(Persona1DTO dto, Boolean duplicatePeopleAllowed);
 
     ItacaAPIResponse<DetallePersona1DTO> getDetallePersona(Long idDetalle);
 

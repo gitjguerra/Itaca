@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @NoArgsConstructor
-public class CompanyPeopleSearchFilter extends PeopleSearchFilter {
+public class CompanySearchFilter extends PeopleSearchFilter {
 
 	private LocalDate startDate;
 }

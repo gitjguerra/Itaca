@@ -8,6 +8,10 @@ import com.csi.itaca.common.model.BaseModel;
  */
 public interface IDType extends BaseModel {
 
+    String NAME_FIELD 					= "name";
+    String INDIVDUAL_FIELD 				= "individual";
+    String COMPANY_FIELD 				= "company";
+
     /** The name of the ID Type */
     String getName();
 

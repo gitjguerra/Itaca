@@ -44,7 +44,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
 
         BindingResult errTracking = createErrorTracker();
         UserDTO user = userManagementService.auth(username, password, errTracking);
-        return buildResponseEnity(user, errTracking);
+        return buildResponseEntity(user, errTracking);
     }
 
     @RequestMapping(value = GET_USER, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -52,7 +52,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
 
         BindingResult errTracking = createErrorTracker();
         UserDTO user = userManagementService.getUser(username, errTracking);
-        return buildResponseEnity(user, errTracking);
+        return buildResponseEntity(user, errTracking);
     }
 
     @RequestMapping(value = SAVE_USER, method = RequestMethod.POST,
@@ -60,7 +60,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getSave(@RequestBody UserDTO user, BindingResult errTracking) {
         userManagementService.saveUser(user, errTracking);
-        return buildResponseEnity(errTracking);
+        return buildResponseEntity(errTracking);
     }
 
     @RequestMapping(value = DELETE_USER, method = RequestMethod.POST,
@@ -70,7 +70,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
 
         BindingResult errTracking = createErrorTracker();
         userManagementService.deleteUser(username, errTracking);
-        return buildResponseEnity(errTracking);
+        return buildResponseEntity(errTracking);
     }
 
     @RequestMapping(value = LIST, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -133,14 +133,14 @@ public class UserManagementRestController extends ItacaBaseRestController implem
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity saveUserConfig(@Valid @RequestBody UserConfigDTO userConfig, BindingResult errTracking) {
         userManagementService.saveUserConfig(userConfig, errTracking);
-        return buildResponseEnity(errTracking);
+        return buildResponseEntity(errTracking);
     }
 
     @RequestMapping(value = GET_USER_CONFIG, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getUserConfig(@RequestParam(UserManagementServiceProxy.USER_NAME_PARAM) String username) {
         BindingResult errTracking = createErrorTracker();
         List<UserConfigDTO> userConfigurations = userManagementService.getUserConfig(username, errTracking);
-        return buildResponseEnity(userConfigurations, errTracking);
+        return buildResponseEntity(userConfigurations, errTracking);
     }
 
     @Override

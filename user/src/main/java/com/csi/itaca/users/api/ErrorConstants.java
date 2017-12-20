@@ -1,7 +1,8 @@
 package com.csi.itaca.users.api;
 
+import com.csi.itaca.common.utils.GlobalErrorConstants;
 
-public class ErrorConstants {
+public class ErrorConstants extends GlobalErrorConstants {
 
     // Authentication errors
     public static final String VALIDATION_INVALID_CREDENTIALS               = "validation.invalidCredentialsException";
@@ -16,7 +17,5 @@ public class ErrorConstants {
     public static final String VALIDATION_NEW_CONFIRM_PASSWORDS_MUST_MATCH  = "validation.newAndConfirmPasswordsMustMatch";
     public static final String VALIDATION_CURRENT_PASSWORD_INCORRECT        = "validation.currentPasswordIncorrect";
     public static final String VALIDATION_NEW_OLD_PASSWORDS_MUST_NOT_MATCH  = "validation.newAndOldPassowordsMustNotMatch";
-
-
 
 }
