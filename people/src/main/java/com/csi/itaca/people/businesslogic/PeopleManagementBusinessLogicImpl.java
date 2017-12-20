@@ -1,6 +1,6 @@
 package com.csi.itaca.people.businesslogic;
 
-import com.csi.itaca.common.utils.beaner.Beaner;
+import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.config.model.Configurator;
 import com.csi.itaca.people.api.PeopleModuleConfiguration;
 import com.csi.itaca.people.api.PeopleModuleConfiguration.IndividualLogicalPrimaryKey;

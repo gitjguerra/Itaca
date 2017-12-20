@@ -1,19 +1,16 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.common.utils.beaner.Beaner;
+import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.people.api.ErrorConstants;
 
 import com.csi.itaca.people.businesslogic.PeopleManagementBusinessLogic;
 import com.csi.itaca.people.model.dao.*;
-import com.csi.itaca.people.model.dto.CompanyDTO;
-import com.csi.itaca.people.model.dto.IndividualDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
-import com.csi.itaca.people.model.dto.PersonTypeDTO;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.model.filters.CompanySearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
-import com.csi.itaca.people.repository.IndividualPeopleRepository;
-import com.csi.itaca.people.repository.LegalPeopleRepository;
+import com.csi.itaca.people.repository.IndividualRepository;
+import com.csi.itaca.people.repository.CompanyRepository;
 import com.csi.itaca.people.repository.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,17 +32,16 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private PeopleRepository repository;
 
     @Autowired
-    private IndividualPeopleRepository individualPeopleRepository;
+    private IndividualRepository individualRepository;
 
     @Autowired
-    private LegalPeopleRepository legalPeopleRepository;
+    private CompanyRepository companyRepository;
 
     @Autowired
     private Beaner beaner;
 
     @Autowired
     private PeopleManagementBusinessLogic peopleBusinessLogic;
-
 
     @Override
     public PersonDTO getPerson(Long id, Errors errTracking) {
@@ -122,7 +118,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
                 return applyCommonFilters(root, p, cb, parameters, "");
             };
 
-            return individualPeopleRepository.findAll(spec);
+            return individualRepository.findAll(spec);
 
         } else if (parameters.getPersonType().getId().equals(PersonTypeDTO.COMPANY_PERSON_CODE)) {
 
@@ -131,7 +127,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
                 return applyCommonFilters(root, p, cb, parameters, "");
             };
 
-            return legalPeopleRepository.findAll(spec);
+            return companyRepository.findAll(spec);
         }
         return new ArrayList<>();
     }

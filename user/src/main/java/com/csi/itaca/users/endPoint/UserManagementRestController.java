@@ -1,7 +1,7 @@
 package com.csi.itaca.users.endPoint;
 
 import com.csi.itaca.common.exception.ApiGlobalRestExceptionHandler;
-import com.csi.itaca.common.rest.ItacaBaseRestController;
+import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.businessLogic.validators.ChangePasswordValidator;
 import com.csi.itaca.users.model.dto.*;

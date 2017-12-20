@@ -1,5 +1,6 @@
 package com.csi.itaca.people.service;
 
+import com.csi.itaca.people.model.dto.GenderDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;

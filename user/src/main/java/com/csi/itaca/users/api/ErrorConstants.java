@@ -1,6 +1,6 @@
 package com.csi.itaca.users.api;
 
-import com.csi.itaca.common.utils.GlobalErrorConstants;
+import com.csi.itaca.common.GlobalErrorConstants;
 
 public class ErrorConstants extends GlobalErrorConstants {
 

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 
 /**
- * Represents the DTO that will be used for change password functionality.
+ * Represents the dto that will be used for change password functionality.
  * @author bboothe
  */
 @Setter

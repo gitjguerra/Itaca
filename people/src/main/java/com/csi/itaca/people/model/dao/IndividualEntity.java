@@ -1,6 +1,6 @@
 package com.csi.itaca.people.model.dao;
 
-import com.csi.itaca.common.utils.beaner.BeanerConfig;
+import com.csi.itaca.tools.utils.beaner.BeanerConfig;
 
 import com.csi.itaca.people.model.Individual;
 import lombok.Getter;

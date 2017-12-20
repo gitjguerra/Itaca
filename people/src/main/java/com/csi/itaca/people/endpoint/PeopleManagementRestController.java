@@ -1,12 +1,15 @@
 package com.csi.itaca.people.endpoint;
 
-import com.csi.itaca.common.rest.ItacaBaseRestController;
+import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
+import com.csi.itaca.people.model.dto.GenderDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.service.PeopleLookupService;
 import com.csi.itaca.people.service.PeopleManagementService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,6 +32,10 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     @Autowired
     private PeopleManagementService peopleManagementService;
 
+    /** All lookups provided by this service. */
+    @Autowired
+    private PeopleLookupService peopleLookupService;
+
 
     @Override
     @RequestMapping(value = GET_PERSON, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,5 +53,41 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
         List<? extends PersonDTO> people = peopleManagementService.findPeople(filter, errTracking);
         return buildResponseEntity(people, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_CIVIL_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GenderDTO>> lookupCivilStatus() {
+        return new ResponseEntity(peopleLookupService.lookupCivilStatus(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_PERSON_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GenderDTO>> lookupPersonStatus() {
+        return new ResponseEntity(peopleLookupService.lookupPersonStatus(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_GENDER, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GenderDTO>> lookupGender() {
+        return new ResponseEntity(peopleLookupService.lookupGender(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_LANGUAGES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GenderDTO>> lookupLanguages() {
+        return new ResponseEntity(peopleLookupService.lookupLanguages(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_ID_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GenderDTO>> lookupIdTypes() {
+        return new ResponseEntity(peopleLookupService.lookupIdTypes(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_COMPANY_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<GenderDTO>> lookupCompanyTypes() {
+        return new ResponseEntity(peopleLookupService.lookupCompanyTypes(), HttpStatus.OK);
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * User Language DTO
+ * User Language dto
  * @see UserLanguage
  * @author bboothe
  */

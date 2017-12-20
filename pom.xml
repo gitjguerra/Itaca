@@ -17,6 +17,7 @@
         <module>web</module>
         <module>people</module>
         <module>config</module>
+        <module>tools</module>
     </modules>
 
     <properties>

@@ -1,7 +1,7 @@
 package com.csi.itaca.people.model.dto;
 
 import com.csi.itaca.common.model.BaseModelImpl;
-import com.csi.itaca.common.utils.beaner.Extension;
+import com.csi.itaca.tools.utils.beaner.Extension;
 import com.csi.itaca.people.model.IDType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

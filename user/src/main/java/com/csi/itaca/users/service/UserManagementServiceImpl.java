@@ -1,9 +1,9 @@
 package com.csi.itaca.users.service;
 
-import com.csi.itaca.common.utils.jpa.JpaUtils;
-import com.csi.itaca.common.utils.jpa.Order;
-import com.csi.itaca.common.utils.jpa.Pagination;
-import com.csi.itaca.common.utils.beaner.Beaner;
+import com.csi.itaca.tools.utils.jpa.JpaUtils;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
+import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.businessLogic.UserManagementBusinessLogic;
 import com.csi.itaca.users.model.UserConfig;

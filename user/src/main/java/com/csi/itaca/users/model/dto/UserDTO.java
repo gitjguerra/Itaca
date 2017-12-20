@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 /**
- * User DTO
+ * User dto
  * @see User
  * @author bboothe
  */

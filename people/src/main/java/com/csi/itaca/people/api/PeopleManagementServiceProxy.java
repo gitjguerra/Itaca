@@ -1,8 +1,11 @@
 package com.csi.itaca.people.api;
 
+import com.csi.itaca.people.model.dto.GenderDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+
+import java.util.List;
 
 public interface PeopleManagementServiceProxy {
 
@@ -13,6 +16,15 @@ public interface PeopleManagementServiceProxy {
     String RESOURCE                 = "/people";
     String GET_PERSON               = RESOURCE + "/get";
     String SEARCH_PEOPLE            = RESOURCE + "/search";
+
+
+    String LOOKUP                   = "/lookup";
+    String LOOKUP_CIVIL_STATUS      = RESOURCE + LOOKUP +"/civilStatus";
+    String LOOKUP_PERSON_STATUS     = RESOURCE + LOOKUP +"/personStatus";
+    String LOOKUP_GENDER            = RESOURCE + LOOKUP +"/gender";
+    String LOOKUP_LANGUAGES         = RESOURCE + LOOKUP +"/languages";
+    String LOOKUP_ID_TYPES          = RESOURCE + LOOKUP +"/idTypes";
+    String LOOKUP_COMPANY_TYPES     = RESOURCE + LOOKUP +"/companyTypes";
 
     /**
      * Gets a person.
@@ -29,6 +41,29 @@ public interface PeopleManagementServiceProxy {
      * no people were found.
      */
     ResponseEntity findPeople(PeopleSearchFilter filter, BindingResult errTracking);
+
+
+    //////////////////////// Lookups ...
+
+    /** @return a list of civil statuses*/
+    ResponseEntity<List<GenderDTO>> lookupCivilStatus();
+
+    /** @return a list of person statuses*/
+    ResponseEntity<List<GenderDTO>> lookupPersonStatus();
+
+    /** @return a list of genders.*/
+    ResponseEntity<List<GenderDTO>> lookupGender();
+
+    /** @return a list of languages.*/
+    ResponseEntity<List<GenderDTO>> lookupLanguages();
+
+    /** @return a list of idTypes.*/
+    ResponseEntity<List<GenderDTO>> lookupIdTypes();
+
+    /** @return a list of company types.*/
+    ResponseEntity<List<GenderDTO>> lookupCompanyTypes();
+
+
 
     /*
     ItacaAPIResponse<List<? extends DetallePersona1DTO>> buscarDetallesPersonasDuplicadas(FiltroPersonasPaginaOrden peticion);
@@ -162,18 +197,6 @@ public interface PeopleManagementServiceProxy {
 
 
     // lookups
-
-    ItacaAPIResponse<List<EstadoPersona0DTO>> getEstadosPersona();
-
-    ItacaAPIResponse<List<EstadoCivil0DTO>> getEstadosCiviles();
-
-    ItacaAPIResponse<List<Genero0DTO>> getGeneros();
-
-    ItacaAPIResponse<List<Idioma0DTO>> getIdiomas();
-
-    ItacaAPIResponse<List<TipoIdentificacion0DTO>> getTiposIdentificacion();
-
-    ItacaAPIResponse<List<TipoPersonaJuridica0DTO>> getTiposPersonaJuridica();
 
     ItacaAPIResponse<List<TipoContacto0DTO>> getTiposContacto();
 
