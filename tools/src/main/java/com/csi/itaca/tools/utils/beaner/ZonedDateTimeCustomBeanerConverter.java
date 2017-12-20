@@ -1,4 +1,4 @@
-package com.csi.itaca.common.utils.beaner;
+package com.csi.itaca.tools.utils.beaner;
 
 import org.dozer.DozerConverter;
 

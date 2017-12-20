@@ -1,4 +1,4 @@
-package com.csi.itaca.common.utils.jpa.converter;
+package com.csi.itaca.tools.utils.jpa.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
