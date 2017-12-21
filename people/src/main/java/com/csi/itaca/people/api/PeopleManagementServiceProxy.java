@@ -1,6 +1,7 @@
 package com.csi.itaca.people.api;
 
 import com.csi.itaca.people.model.dto.GenderDTO;
+import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,13 +12,18 @@ public interface PeopleManagementServiceProxy {
 
     // Parameters...
     String ID_PARAM                 = "id";
+    String EXT_REF_PARAM            = "extRefCode";
 
     // End point URLs...
     String RESOURCE                 = "/people";
     String GET_PERSON               = RESOURCE + "/get";
     String SEARCH_PEOPLE            = RESOURCE + "/search";
+    String SAVE_PERSON              = RESOURCE + "/save";
+    String DELETE_PERSON            = RESOURCE + "/delete";
+    String EXT_REF_EXISTS           = RESOURCE + "/extRefExists";
 
 
+    // Lookup end point URLs...
     String LOOKUP                   = "/lookup";
     String LOOKUP_CIVIL_STATUS      = RESOURCE + LOOKUP +"/civilStatus";
     String LOOKUP_PERSON_STATUS     = RESOURCE + LOOKUP +"/personStatus";
@@ -41,6 +47,28 @@ public interface PeopleManagementServiceProxy {
      * no people were found.
      */
     ResponseEntity findPeople(PeopleSearchFilter filter, BindingResult errTracking);
+
+    /**
+     * Saves or updates person.
+     * @param personToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate,
+                                      BindingResult errTracking);
+
+    /**
+     * Deletes a person.
+     * @param id the id of the person to delete.
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deletePerson(Long id);
+
+    /**
+     * Checks if provided external reference code is in use
+     * @param externalReferenceCode external reference code to check.
+     * @return true if provided external reference code exists, otherwise false.
+     */
+    ResponseEntity<Boolean> checkExternalReferenceExists(String externalReferenceCode);
 
 
     //////////////////////// Lookups ...
@@ -73,8 +101,6 @@ public interface PeopleManagementServiceProxy {
     ItacaAPIResponse<List<? extends DetallePersona1DTO>> listDetallePersonas(FiltroDetallePersonaPaginaOrden peticion);
 
     ItacaAPIResponse<Long> countDetallePersonas(FiltroBuscadorPersonaDTO filtro);
-
-    ItacaAPIResponse<Persona1DTO> saveOrUpdatePersona1(Persona1DTO dto, Boolean duplicatePeopleAllowed);
 
     ItacaAPIResponse<DetallePersona1DTO> getDetallePersona(Long idDetalle);
 

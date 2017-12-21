@@ -1,6 +1,5 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.people.model.dto.GenderDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;
@@ -30,4 +29,26 @@ public interface PeopleManagementService {
      * no people were found.
      */
     List<? extends PersonDTO> findPeople(PeopleSearchFilter filter, Errors errTracking);
+
+    /**
+     * Saves or updates the provided person.
+     * @param personToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    PersonDTO saveOrUpdatePerson(PersonDTO personToSaveOrUpdate, Errors errTracking);
+
+    /**
+     * Delete the person associated to the provided ID
+     * @param personId the id of the person to delete.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+     void deletePerson(Long personId, Errors errTracking);
+
+    /**
+     * Checks if the provided external reference code already exists in the database.
+     * @param externalReferenceCode the external reference code to check.
+     * @return true if already exists otherwise false.
+     */
+    Boolean doseExternalReferenceAlreadyExist(String externalReferenceCode);
 }

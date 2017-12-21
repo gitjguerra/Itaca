@@ -56,6 +56,33 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
 
     @Override
+    @RequestMapping(value = SAVE_PERSON, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
+                                                                      produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdatePerson(@Valid @RequestBody PersonDTO personToSaveOrUpdate,
+                                             BindingResult errTracking) {
+
+        PersonDTO personaDTO = peopleManagementService.saveOrUpdatePerson(personToSaveOrUpdate, errTracking);
+        return buildResponseEntity(personaDTO, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = DELETE_PERSON, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deletePerson(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        peopleManagementService.deletePerson(id,errTracking);
+        return buildResponseEntity(errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = EXT_REF_EXISTS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> checkExternalReferenceExists
+                                (@RequestParam(PeopleManagementServiceProxy.EXT_REF_PARAM) String externalReferenceCode) {
+        boolean refExists = peopleManagementService.doseExternalReferenceAlreadyExist(externalReferenceCode);
+        return new ResponseEntity<>(refExists, HttpStatus.OK);
+    }
+
+    @Override
     @RequestMapping(value = LOOKUP_CIVIL_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<GenderDTO>> lookupCivilStatus() {
         return new ResponseEntity(peopleLookupService.lookupCivilStatus(), HttpStatus.OK);

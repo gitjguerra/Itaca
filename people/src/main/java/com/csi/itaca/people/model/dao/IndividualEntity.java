@@ -28,7 +28,8 @@ public class IndividualEntity extends PersonEntity implements Individual {
 	@Column(name="date_of_birth")
 	private LocalDate dateOfBirth;
 	
-	@OneToMany(fetch=FetchType.LAZY, mappedBy = PersonDetailEntity.PERSON, targetEntity = PersonDetailEntity.class)
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = PersonDetailEntity.PERSON,
+			   targetEntity = PersonDetailEntity.class, cascade=CascadeType.REMOVE)
 	@BeanerConfig(contentAs = IndividualDetailEntity.class)
 	private List<IndividualDetailEntity> details;
 

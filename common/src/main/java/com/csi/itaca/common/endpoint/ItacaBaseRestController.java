@@ -8,7 +8,6 @@ import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.RestController;
 
-
 /**
  * Itaca RESTful client base controller.
  * @author bboothe
