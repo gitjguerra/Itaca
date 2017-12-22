@@ -285,7 +285,7 @@ public class UserManagementRestControllerTest {
         updatePasswordDTO.setNewPassword("test");
         updatePasswordDTO.setConfirmationPassword("test");
 
-        mockMvc.perform(post(UserManagementServiceProxy.CHANGE_PASSWORD)
+        mockMvc.perform(put(UserManagementServiceProxy.CHANGE_PASSWORD)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.asJsonString(updatePasswordDTO)))
                 .andDo(print())

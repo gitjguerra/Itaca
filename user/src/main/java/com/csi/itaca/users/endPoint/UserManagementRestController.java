@@ -55,7 +55,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return buildResponseEntity(user, errTracking);
     }
 
-    @RequestMapping(value = SAVE_USER, method = RequestMethod.POST,
+    @RequestMapping(value = SAVE_USER, method = RequestMethod.PUT,
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getSave(@RequestBody UserDTO user, BindingResult errTracking) {
@@ -63,7 +63,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return buildResponseEntity(errTracking);
     }
 
-    @RequestMapping(value = DELETE_USER, method = RequestMethod.POST,
+    @RequestMapping(value = DELETE_USER, method = RequestMethod.DELETE,
                     consumes = { MediaType.APPLICATION_JSON_VALUE },
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getDelete(@RequestParam(UserManagementServiceProxy.USER_NAME_PARAM) String username) {
@@ -89,7 +89,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
-    @RequestMapping(value = CHANGE_PASSWORD, method = RequestMethod.POST,
+    @RequestMapping(value = CHANGE_PASSWORD, method = RequestMethod.PUT,
                     consumes = { MediaType.APPLICATION_JSON_VALUE },
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordDTO changePassword,
@@ -110,7 +110,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
-    @RequestMapping(value = UPDATE_PREFERENCES, method = RequestMethod.POST,
+    @RequestMapping(value = UPDATE_PREFERENCES, method = RequestMethod.PUT,
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity updateUserPreferences(@Valid @RequestBody PersonalPreferencesDTO preferences,
@@ -128,7 +128,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return ApiGlobalRestExceptionHandler.buildApiErrorsView(errTracking);
     }
 
-    @RequestMapping(value = SAVE_USER_CONFIG, method = RequestMethod.POST,
+    @RequestMapping(value = SAVE_USER_CONFIG, method = RequestMethod.PUT,
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity saveUserConfig(@Valid @RequestBody UserConfigDTO userConfig, BindingResult errTracking) {

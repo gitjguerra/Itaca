@@ -1,8 +1,9 @@
 package com.csi.itaca.people.api;
 
-import com.csi.itaca.people.model.dto.GenderDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
+import com.csi.itaca.people.model.PersonStatus;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -37,15 +38,17 @@ public interface PeopleManagementServiceProxy {
      * @param id the person id.
      * @return a response body containing the requested person json object.
      */
+    @ApiOperation(value = "Retrieves a person associated with the supplied ID.")
     ResponseEntity getPerson(Long id);
 
     /**
-     * Find a person based on the suppled key.
+     * Find a person based on the supplied key.
      * @param filter the filter to apply.
      * @param errTracking error tracking.
      * @return a list containing 1 more people depend upon the configuration. Will return an empty list if
      * no people were found.
      */
+    @ApiOperation(value = "Find a person based on the supplied logical key.")
     ResponseEntity findPeople(PeopleSearchFilter filter, BindingResult errTracking);
 
     /**
@@ -53,43 +56,52 @@ public interface PeopleManagementServiceProxy {
      * @param personToSaveOrUpdate the person to save/update.
      * @param errTracking error tracking.
      */
+    @ApiOperation(value = "Saves or updates person.")
     ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate,
                                       BindingResult errTracking);
 
     /**
-     * Deletes a person.
+     * Deletes a person together with associated details
      * @param id the id of the person to delete.
      * @return status ok response if the delete was successful.
      */
+    @ApiOperation(value = "Deletes a person together with associated details.")
     ResponseEntity deletePerson(Long id);
 
     /**
-     * Checks if provided external reference code is in use
+     * Checks if provided external reference code is in use.
      * @param externalReferenceCode external reference code to check.
      * @return true if provided external reference code exists, otherwise false.
      */
+    @ApiOperation(value = "Checks if provided external reference code is in use.")
     ResponseEntity<Boolean> checkExternalReferenceExists(String externalReferenceCode);
 
 
     //////////////////////// Lookups ...
 
-    /** @return a list of civil statuses*/
-    ResponseEntity<List<GenderDTO>> lookupCivilStatus();
+    /** @return a list of civil statuses.*/
+    @ApiOperation(value = "Civil statuses lookup.")
+    ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus();
 
     /** @return a list of person statuses*/
-    ResponseEntity<List<GenderDTO>> lookupPersonStatus();
+    @ApiOperation(value = "Person status lookup.")
+    ResponseEntity<List<PersonStatusDTO>> lookupPersonStatus();
 
     /** @return a list of genders.*/
+    @ApiOperation(value = "Gender lookup.")
     ResponseEntity<List<GenderDTO>> lookupGender();
 
     /** @return a list of languages.*/
-    ResponseEntity<List<GenderDTO>> lookupLanguages();
+    @ApiOperation(value = "Languages lookup.")
+    ResponseEntity<List<LanguageDTO>> lookupLanguages();
 
     /** @return a list of idTypes.*/
-    ResponseEntity<List<GenderDTO>> lookupIdTypes();
+    @ApiOperation(value = "Identification types lookup.")
+    ResponseEntity<List<IDTypeDTO>> lookupIdTypes();
 
     /** @return a list of company types.*/
-    ResponseEntity<List<GenderDTO>> lookupCompanyTypes();
+    @ApiOperation(value = "Company types lookup.")
+    ResponseEntity<List<CompanyTypeDTO>> lookupCompanyTypes();
 
 
 

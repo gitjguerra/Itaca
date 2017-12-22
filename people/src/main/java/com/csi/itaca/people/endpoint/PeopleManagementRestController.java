@@ -2,8 +2,7 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
-import com.csi.itaca.people.model.dto.GenderDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleLookupService;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -84,13 +83,13 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     @Override
     @RequestMapping(value = LOOKUP_CIVIL_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenderDTO>> lookupCivilStatus() {
+    public ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus() {
         return new ResponseEntity(peopleLookupService.lookupCivilStatus(), HttpStatus.OK);
     }
 
     @Override
     @RequestMapping(value = LOOKUP_PERSON_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenderDTO>> lookupPersonStatus() {
+    public ResponseEntity<List<PersonStatusDTO>> lookupPersonStatus() {
         return new ResponseEntity(peopleLookupService.lookupPersonStatus(), HttpStatus.OK);
     }
 
@@ -102,19 +101,19 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     @Override
     @RequestMapping(value = LOOKUP_LANGUAGES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenderDTO>> lookupLanguages() {
+    public ResponseEntity<List<LanguageDTO>> lookupLanguages() {
         return new ResponseEntity(peopleLookupService.lookupLanguages(), HttpStatus.OK);
     }
 
     @Override
     @RequestMapping(value = LOOKUP_ID_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenderDTO>> lookupIdTypes() {
+    public ResponseEntity<List<IDTypeDTO>> lookupIdTypes() {
         return new ResponseEntity(peopleLookupService.lookupIdTypes(), HttpStatus.OK);
     }
 
     @Override
     @RequestMapping(value = LOOKUP_COMPANY_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenderDTO>> lookupCompanyTypes() {
+    public ResponseEntity<List<CompanyTypeDTO>> lookupCompanyTypes() {
         return new ResponseEntity(peopleLookupService.lookupCompanyTypes(), HttpStatus.OK);
     }
 }

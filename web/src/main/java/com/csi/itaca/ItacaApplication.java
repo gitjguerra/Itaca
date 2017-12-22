@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 @SpringBootApplication
 public class ItacaApplication {
@@ -28,4 +31,5 @@ public class ItacaApplication {
     private void registerModules() {
         configurator.registerModule("config.modules");
     }
+
 }
