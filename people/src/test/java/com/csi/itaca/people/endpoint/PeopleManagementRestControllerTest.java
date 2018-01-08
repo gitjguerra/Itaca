@@ -4,14 +4,9 @@ import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
-import com.csi.itaca.people.service.PeopleLookupService;
 import com.csi.itaca.people.service.PeopleManagementService;
-import com.csi.itaca.tools.utils.beaner.BeanerImpl;
-import com.csi.itaca.tools.utils.jpa.Order;
 import com.csi.itaca.tools.utils.jpa.Pagination;
 import com.csi.itaca.tools.utils.json.JsonUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.groovy.util.StringUtil;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,9 +32,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -198,6 +191,47 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    @Test
+    public void saveOrUpdatePerson() throws Exception {
+        Mockito.when(service.saveOrUpdatePerson(any(), any(Errors.class) )).thenReturn(testIndividualDTO);
+
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_PERSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(testIndividualDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                // verify individual
+               .andExpect(jsonPath("id",is(testIndividualDTO.getId().intValue())))
+               .andExpect(jsonPath("idType.id",is(testIndividualDTO.getIdType().getId().intValue())))
+               .andExpect(jsonPath("identificationCode",is(testIndividualDTO.getIdentificationCode())))
+               .andExpect(jsonPath("externalReferenceCode",is(testIndividualDTO.getExternalReferenceCode())))
+               .andExpect(jsonPath("gender.id",is(testIndividualDTO.getGender().getId().intValue())))
+
+                .andDo(document(
+                        "save-update-person",
+                        requestFields(individualFieldsDoc("",true,true)),
+                        responseFields(individualFieldsDoc("",true,true))
+                ));
+    }
+
+
+    @Test
+    public void getCheckExtRefExists() throws Exception {
+        Mockito.when(service.doseExternalReferenceAlreadyExist(any())).thenReturn(true);
+        mockMvc.perform(get(PeopleManagementServiceProxy.EXT_REF_EXISTS)
+                .param(PeopleManagementServiceProxy.EXT_REF_PARAM, "EXTREF123"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"))
+                .andDo(document(
+                        "check-ext-ref-exists",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.EXT_REF_PARAM).description("The external reference to check for."))
+                ));
+    }
+
+
+
     /** Get person detail test. */
     @Test
     public void getPersonDetail() throws Exception {
@@ -219,6 +253,25 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    @Test
+    public void findPersonDetail() throws Exception {
+        List details = new ArrayList<>();
+        details.add(testIndividualDetailDTO);
+        Mockito.when(service.findPersonDetails(any(), any(Errors.class))).thenReturn(details);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_PERSON_DETAIL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "find-person-detail",
+                        requestFields(peopleSearchFilterFieldsDoc()),
+                        responseFields(individualDetailsFieldsDoc("[]",true))
+
+                ));
+
+    }
 
     /** Count person detail test. */
     @Test
@@ -238,6 +291,43 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+
+    @Test
+    public void findDuplicatePersonDetail() throws Exception {
+        List details = new ArrayList<>();
+        details.add(testIndividualDetailDTO);
+        Mockito.when(service.findDuplicatePersonDetails(any(), any(Errors.class))).thenReturn(details);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_DUPLICATE_PERSON_DETAIL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "find-duplicate-person-detail",
+                        requestFields(peopleSearchFilterFieldsDoc()),
+                        responseFields(individualDetailsFieldsDoc("[]",true))
+
+                ));
+
+    }
+
+    @Test
+    public void countDuplicatePersonDetail() throws Exception {
+
+        Mockito.when(service.countDuplicatePersonDetails(any())).thenReturn(1L);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_DUPLICATE_PERSON_DETAIL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-duplicate-person-detail",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
 
     private String buildPeopleSearchFilter() {
 
