@@ -6,7 +6,6 @@ import com.csi.itaca.users.model.dto.PersonalPreferencesDTO;
 import com.csi.itaca.users.model.dto.UserDTO;
 import com.csi.itaca.users.model.filters.UserFilterPaginationOrderDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -40,7 +39,6 @@ public interface UserManagementServiceProxy {
      * @param password the users's password.
      * @return a user object if found.
      */
-    @ApiOperation(value = "User authentication.")
     ResponseEntity<UserDTO> auth(String username, String password);
 
     /**
@@ -48,7 +46,6 @@ public interface UserManagementServiceProxy {
      * @param username the user to retrieve.
      * @return the user
      */
-    @ApiOperation(value = "Retrieves user.")
     ResponseEntity<UserDTO> getUser(String username);
 
     /**
@@ -56,7 +53,6 @@ public interface UserManagementServiceProxy {
      * @param username the username of the user to delete.
      * @return ok response if successful.
      */
-    @ApiOperation(value = "Delete user.")
     ResponseEntity getDelete(String username);
 
     /**
@@ -65,7 +61,6 @@ public interface UserManagementServiceProxy {
      * @param errTracking error tracking.
      * @return ok response if successful.
      */
-    @ApiOperation(value = "Save user.")
     ResponseEntity<UserDTO> getSave(UserDTO user, BindingResult errTracking);
 
     /**
@@ -74,7 +69,6 @@ public interface UserManagementServiceProxy {
      * @param errTracking error tracking
      * @return ok response if successful.
      */
-    @ApiOperation(value = "Change user password.")
     ResponseEntity changePassword(ChangePasswordDTO changePassword, BindingResult errTracking);
 
     /**
@@ -83,7 +77,6 @@ public interface UserManagementServiceProxy {
      * @param result error tracking
      * @return ok response if successful.
      */
-    @ApiOperation(value = "Update the preferences for a given user.")
     ResponseEntity updateUserPreferences(PersonalPreferencesDTO preferences, BindingResult result);
 
     /**
@@ -91,7 +84,6 @@ public interface UserManagementServiceProxy {
      * @param criteria search criteria.
      * @return
      */
-    @ApiOperation(value = "Returns a list of user based on the specified criteria")
     ResponseEntity getUsers(UserFilterPaginationOrderDTO criteria);
 
     /**
@@ -99,7 +91,6 @@ public interface UserManagementServiceProxy {
      * @param userFilter the user filter to be applied.
      * @return the number of user found based on the the search criteria.
      */
-    @ApiOperation(value = "Returns a total count of users in the database.")
     ResponseEntity countUsers(UserSearchFilterDTO userFilter);
 
     /**
@@ -107,13 +98,11 @@ public interface UserManagementServiceProxy {
      * @param username the user's configuration to retrieve.
      * @return the user's configuration
      */
-    @ApiOperation(value = "Gets user configuration.")
     ResponseEntity getUserConfig(String username);
 
     /**
      * Gets all user languages.
      * @return a list of user languages.
      */
-    @ApiOperation(value = "Gets a list of languages.")
     ResponseEntity getLanguages();
 }

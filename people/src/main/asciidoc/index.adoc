@@ -14,6 +14,8 @@ Provides a series of endpoints that enables management people within the Itaca a
 
 === Get person
 
+Retrieves a person associated with the supplied ID.
+
 ==== Request structure
 
 include::{snippets}/get-person/http-request.adoc[]
@@ -34,7 +36,10 @@ include::{snippets}/get-person/http-response.adoc[]
 
 include::{snippets}/get-person/curl-request.adoc[]
 
-=== Save or update person
+
+
+=== Save person
+Saves or updates person.
 
 ==== Request structure
 
@@ -59,6 +64,8 @@ include::{snippets}/save-update-person/curl-request.adoc[]
 
 
 === Delete person
+Deletes a person together with associated details.
+
 
 ==== Request structure
 
@@ -78,6 +85,8 @@ include::{snippets}/delete-person/curl-request.adoc[]
 
 
 === Find person
+
+Find a person based on the supplied logical key.
 
 ==== Request structure
 
@@ -101,6 +110,7 @@ include::{snippets}/find-person/curl-request.adoc[]
 
 
 === Check if external reference exists
+Checks if provided external reference code is in use.
 
 ==== Request structure
 
@@ -120,6 +130,7 @@ include::{snippets}/check-ext-ref-exists/curl-request.adoc[]
 
 
 === Get person detail item
+Gets a person detail item.
 
 ==== Request structure
 
@@ -143,6 +154,7 @@ include::{snippets}/get-person-detail/curl-request.adoc[]
 
 
 === Count person detail items
+Returns a count the number of person detail items based on the supplied search criteria.
 
 ==== Request structure
 
@@ -162,6 +174,7 @@ include::{snippets}/count-person-detail/curl-request.adoc[]
 
 
 === Find person detail items
+Retrieves a list person detail items based on the supplied search criteria.
 
 ==== Request structure
 
@@ -185,6 +198,8 @@ include::{snippets}/find-person-detail/curl-request.adoc[]
 
 
 === Count duplicate person detail items
+Returns the count the number of person detail items based on the supplied search criteria.
+
 
 ==== Request structure
 
@@ -204,6 +219,7 @@ include::{snippets}/count-duplicate-person-detail/curl-request.adoc[]
 
 
 === Find duplicate person detail items
+Retrieves a list duplicate person detail items based on the supplied search criteria.
 
 ==== Request structure
 

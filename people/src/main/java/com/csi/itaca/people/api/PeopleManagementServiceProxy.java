@@ -2,7 +2,6 @@ package com.csi.itaca.people.api;
 
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -47,7 +46,6 @@ public interface PeopleManagementServiceProxy {
      * @param id the person id.
      * @return a response body containing the requested person json object.
      */
-    @ApiOperation(value = "Retrieves a person associated with the supplied ID.")
     ResponseEntity getPerson(Long id);
 
     /**
@@ -57,7 +55,6 @@ public interface PeopleManagementServiceProxy {
      * @return a list containing 1 more people depend upon the configuration. Will return an empty list if
      * no people were found.
      */
-    @ApiOperation(value = "Find a person based on the supplied logical key.")
     ResponseEntity findPeople(PeopleSearchFilter filter, BindingResult errTracking);
 
     /**
@@ -65,7 +62,6 @@ public interface PeopleManagementServiceProxy {
      * @param personToSaveOrUpdate the person to save/update.
      * @param errTracking error tracking.
      */
-    @ApiOperation(value = "Saves or updates person.")
     ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate,
                                       BindingResult errTracking);
     /**
@@ -73,7 +69,6 @@ public interface PeopleManagementServiceProxy {
      * @param id the id of the person to delete.
      * @return status ok response if the delete was successful.
      */
-    @ApiOperation(value = "Deletes a person together with associated details.")
     ResponseEntity deletePerson(Long id);
 
     /**
@@ -81,7 +76,6 @@ public interface PeopleManagementServiceProxy {
      * @param externalReferenceCode external reference code to check.
      * @return true if provided external reference code exists, otherwise false.
      */
-    @ApiOperation(value = "Checks if provided external reference code is in use.")
     ResponseEntity<Boolean> checkExternalReferenceExists(String externalReferenceCode);
 
 
@@ -92,7 +86,6 @@ public interface PeopleManagementServiceProxy {
      * @param criteria search criteria.
      * @return a list of people.
      */
-    @ApiOperation(value = "Retrieves a list person detail items based on the supplied search criteria.")
     ResponseEntity<List<? extends PersonDetailDTO>> findPersonDetails(PeopleSearchFilter criteria);
 
     /**
@@ -100,7 +93,6 @@ public interface PeopleManagementServiceProxy {
      * @param filter search filter.
      * @return counts person details.
      */
-    @ApiOperation(value = "Returns a count the number of person detail items based on the supplied search criteria.")
     ResponseEntity<Long> countPersonDetails(PeopleSearchFilter filter);
 
     /**
@@ -108,7 +100,6 @@ public interface PeopleManagementServiceProxy {
      * @param criteria search criteria.
      * @return a list of duplicate people.
      */
-    @ApiOperation(value = "Retrieves a list duplicate person detail items based on the supplied search criteria.")
     ResponseEntity<List<? extends PersonDetailDTO>> findDuplicatePersonDetails(PeopleSearchFilter criteria);
 
     /**
@@ -116,7 +107,6 @@ public interface PeopleManagementServiceProxy {
      * @param filter search filter.
      * @return number of duplicated people.
      */
-    @ApiOperation(value = "Returns a counts duplicate person detail items based on the supplied search criteria.")
     ResponseEntity<Long> countDuplicatePersonDetails(PeopleSearchFilter filter);
 
     /**
@@ -124,34 +114,27 @@ public interface PeopleManagementServiceProxy {
      * @param detailId the ID of the person detail to retrieve.
      * @return the person.
      */
-    @ApiOperation(value = "Gets a person detail item.")
     ResponseEntity<? extends PersonDetailDTO> getPersonDetail(Long detailId);
 
 
     //////////////////////// Lookups ...
 
     /** @return a list of civil statuses.*/
-    @ApiOperation(value = "Civil statuses lookup.")
     ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus();
 
     /** @return a list of person statuses*/
-    @ApiOperation(value = "Person status lookup.")
     ResponseEntity<List<PersonStatusDTO>> lookupPersonStatus();
 
     /** @return a list of genders.*/
-    @ApiOperation(value = "Gender lookup.")
     ResponseEntity<List<GenderDTO>> lookupGender();
 
     /** @return a list of languages.*/
-    @ApiOperation(value = "Languages lookup.")
     ResponseEntity<List<LanguageDTO>> lookupLanguages();
 
     /** @return a list of idTypes.*/
-    @ApiOperation(value = "Identification types lookup.")
     ResponseEntity<List<IDTypeDTO>> lookupIdTypes();
 
     /** @return a list of company types.*/
-    @ApiOperation(value = "Company types lookup.")
     ResponseEntity<List<CompanyTypeDTO>> lookupCompanyTypes();
 
 
