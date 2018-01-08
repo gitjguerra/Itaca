@@ -2,6 +2,7 @@ package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
 import com.csi.itaca.people.model.PersonDetail;
+import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.repository.*;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.people.api.ErrorConstants;
@@ -12,8 +13,12 @@ import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.model.filters.CompanySearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.tools.utils.jpa.JpaUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -48,6 +53,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private CompanyDetailRepository companyDetailRepository;
 
     @Autowired
+    private PersonDetailRepository personDetailRepository;
+
+    @Autowired
     private Beaner beaner;
 
     @Autowired
@@ -70,7 +78,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public List<? extends PersonDTO> findPeople(PeopleSearchFilter filter, Errors errTracking) {
 
-        // We require a person type to continue.
         if (!peopleBusinessLogic.isLogicalPrimaryKeyCorrect(filter, errTracking)) {
 
             List<? extends PersonEntity> peopleFound = listPeople(filter);
@@ -255,6 +262,144 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return result != null && !result.isEmpty();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends PersonDetailDTO> findPersonDetails(PeopleSearchFilter criteria, Errors errTracking) {
+
+        List<? extends PersonDetailDTO> personDetails = Collections.EMPTY_LIST;
+
+        if (criteria!=null) {
+            PageRequest pr = null;
+            if (criteria.getPagination() != null) {
+                pr = new PageRequest(criteria.getPagination().getPageNo() - 1, criteria.getPagination().getItemsPerPage());
+            }
+
+            if (criteria.getPersonType() == null || criteria.getPersonType().getId().isEmpty()) {
+                Specification<PersonDetailEntity> spec = (root, query, cb) -> applyCommonDetailFilter(null, cb, root, criteria);
+
+                spec = JpaUtils.applyOrder(PersonDetailEntity.class, criteria.getOrder(), spec);
+                personDetails = beaner.transform(personDetailRepository.findAll(spec, pr).getContent(), PersonDetailDTO.class);
+
+            } else if (PersonType.INDIVIDUAL_PERSON_CODE.equals(criteria.getPersonType().getId())) {
+                Specification<IndividualDetailEntity> spec = (root, query, cb) -> applyIndividualDetailFilter(cb, root, criteria);
+
+                spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
+                personDetails = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
+
+            } else {
+                Specification<CompanyDetailEntity> spec = (root, query, cb) -> applyCompanyDetailFilter(cb, root, criteria);
+
+                spec = JpaUtils.applyOrder(CompanyDetailEntity.class, criteria.getOrder(), spec);
+                personDetails = beaner.transform(companyDetailRepository.findAll(spec, pr).getContent(), CompanyDetailDTO.class);
+            }
+        }
+        else {
+            errTracking.reject(ErrorConstants.VALIDATION_NO_FILTER_PROVIDED);
+        }
+        return personDetails;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countPersonDetails(PeopleSearchFilter filter) {
+
+        if (filter.getPersonType() == null || filter.getPersonType().getId().isEmpty()) {
+            Specification<PersonDetailEntity> spec = (root, query, cb) -> {
+                return applyCommonDetailFilter(null, cb, root, filter);
+            };
+            return personDetailRepository.count(spec);
+
+        } else if (PersonType.INDIVIDUAL_PERSON_CODE.equals(filter.getPersonType().getId())) {
+            Specification<IndividualDetailEntity> spec = (root, query, cb) -> {
+                return applyIndividualDetailFilter(cb, root, filter);
+            };
+            return individualDetailRepository.count(spec);
+
+        } else {
+            Specification<CompanyDetailEntity> spec = (root, query, cb) -> {
+                return applyCompanyDetailFilter(cb, root, filter);
+            };
+            return companyDetailRepository.count(spec);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends PersonDetailDTO> findDuplicatePersonDetails(PeopleSearchFilter criteria, Errors errTracking) {
+
+        List<? extends PersonDetailDTO> personDetails = Collections.EMPTY_LIST;
+
+        if (!peopleBusinessLogic.isLogicalPrimaryKeyCorrect(criteria, errTracking)) {
+
+            PageRequest pr = null;
+            if (criteria.getPagination() != null) {
+                pr = new PageRequest(criteria.getPagination().getPageNo() - 1, criteria.getPagination().getItemsPerPage());
+            }
+
+            if (criteria.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
+
+                Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
+                spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
+
+                if (pr != null) {
+                    personDetails = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
+                } else {
+                    personDetails = beaner.transform(individualDetailRepository.findAll(spec), IndividualDetailDTO.class);
+                }
+
+            } else if (criteria.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
+
+                Specification<CompanyDetailEntity> spec = buildDuplicateDetailsSpecForCompany(criteria);
+                spec = JpaUtils.applyOrder(CompanyDetailEntity.class, criteria.getOrder(), spec);
+
+                if (pr != null) {
+                    personDetails = beaner.transform(companyDetailRepository.findAll(spec, pr).getContent(), CompanyDetailDTO.class);
+                } else {
+                    personDetails = beaner.transform(companyDetailRepository.findAll(spec), CompanyDetailDTO.class);
+                }
+
+            }
+
+        }
+
+        return personDetails;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countDuplicatePersonDetails(PeopleSearchFilter filter) {
+
+        if (filter.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
+            Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(filter);
+            return individualDetailRepository.count(spec);
+
+        } else if (filter.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
+            Specification<CompanyDetailEntity> spec = buildDuplicateDetailsSpecForCompany(filter);
+            return companyDetailRepository.count(spec);
+        }
+
+        return 0L;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
+        PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
+
+        PersonDetailDTO retPersonDetail = null;
+        if (personDetailEntity!=null) {
+            if (personDetailEntity instanceof IndividualDetailEntity) {
+                retPersonDetail = beaner.transform(personDetailEntity, IndividualDetailDTO.class);
+            } else {
+                retPersonDetail = beaner.transform(personDetailEntity, CompanyDetailDTO.class);
+            }
+        }
+        else {
+            errTracking.reject(ErrorConstants.DB_PERSON_DETAIL_NOT_FOUND);
+        }
+
+        return retPersonDetail;
+    }
 
     /**
      * Gets a person entity.
@@ -295,50 +440,195 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return new ArrayList<>();
     }
 
+    /**
+     * Builds a specification that will produce a list of individual detail items.
+     * @param filter the filter in which the specification will be based on.
+     * @return the constructed specification.
+     */
+    private Specification<IndividualDetailEntity> buildDuplicateDetailsSpecForIndividual(PeopleSearchFilter filter) {
+
+        Specification<IndividualDetailEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.and(cb.equal(root.type(), IndividualDetailEntity.class));
+            return applyCommonFilters(root, p, cb, filter, IndividualDetailEntity.PERSON);
+        };
+
+        IndividualSearchFilter individualSearchFilter = (IndividualSearchFilter) filter;
+        if (individualSearchFilter.getDateOfBirth() != null) {
+            spec = Specifications.where(spec).and((root, query, cb) -> {
+                return cb.equal(
+                        cb.treat(root.join(IndividualDetailEntity.PERSON), IndividualEntity.class)
+                                .get(IndividualEntity.DATE_OF_BIRTH),
+                        individualSearchFilter.getDateOfBirth());
+            });
+        }
+        return spec;
+    }
+
+    /**
+     * Builds a specification that will produce a list of company detail items.
+     * @param filter the filter in which the specification will be based on.
+     * @return the constructed specification.
+     */
+    private Specification<CompanyDetailEntity> buildDuplicateDetailsSpecForCompany(PeopleSearchFilter filter) {
+        Specification<CompanyDetailEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.and(cb.equal(root.type(), CompanyDetailEntity.class));
+            return applyCommonFilters(root, p, cb, filter, CompanyDetailEntity.PERSON);
+        };
+
+        CompanySearchFilter companySearchFilter = (CompanySearchFilter) filter;
+        if (companySearchFilter.getStartDate() != null) {
+            spec = Specifications.where(spec).and((root, query, cb) -> {
+                return cb.equal(
+                        cb.treat(root.join(CompanyDetailEntity.PERSON), CountryEntity.class)
+                                .get(CompanyEntity.START_DATE),
+                        companySearchFilter.getStartDate());
+            });
+        }
+
+        return spec;
+    }
+
+    private Predicate applyIndividualDetailFilter(CriteriaBuilder cb, Root<? extends PersonDetailEntity> r,
+                                                  PeopleSearchFilter parameters) {
+
+        Predicate p = cb.and(cb.equal(r.type(), IndividualDetailEntity.class));
+        p = applyCommonDetailFilter(p, cb, r, parameters);
+
+        IndividualSearchFilter individualSearchFilter = (IndividualSearchFilter) parameters;
+
+        if (StringUtils.isNotEmpty(individualSearchFilter.getName1())) {
+            p = applyLikeLowerFilter(cb, r, IndividualDetailEntity.NAME1, individualSearchFilter.getName1(), p);
+        }
+
+        if (StringUtils.isNotEmpty(individualSearchFilter.getName2())) {
+            p = applyLikeLowerFilter(cb, r, IndividualDetailEntity.NAME2, individualSearchFilter.getName2(), p);
+        }
+
+        if (StringUtils.isNotEmpty(individualSearchFilter.getSurname1())) {
+            p = applyLikeLowerFilter(cb, r, IndividualDetailEntity.SURNAME1, individualSearchFilter.getSurname1(), p);
+        }
+
+        if (StringUtils.isNotEmpty(individualSearchFilter.getSurname2())) {
+            p = applyLikeLowerFilter(cb, r, IndividualDetailEntity.SURNAME2, individualSearchFilter.getSurname2(), p);
+        }
+        return p;
+    }
+
+    private Predicate applyCompanyDetailFilter(CriteriaBuilder cb, Root<? extends PersonDetailEntity> r,
+                                               PeopleSearchFilter filter) {
+        Predicate p = cb.and(cb.equal(r.type(), CompanyDetailEntity.class));
+        p = applyCommonDetailFilter(p, cb, r, filter);
+
+        return p;
+    }
+
+    private Predicate applyCommonDetailFilter(Predicate p, CriteriaBuilder cb,
+                                              Root<? extends PersonDetailEntity> r,
+                                              PeopleSearchFilter filter) {
+        if (filter.getIdType() != null) {
+            p = applyLikeLowerFilter(cb, r,PersonDetailEntity.PERSON+ "." + PersonEntity.ID_TYPE + "."
+                            + IDTypeEntity.ID, String.valueOf(filter.getIdType().getId()), p, 3);
+        }
+        if (StringUtils.isNotEmpty(filter.getIdCode())) {
+            p = applyLikeLowerFilter(cb, r, PersonDetailEntity.PERSON + "." + PersonEntity.ID_CODE,
+                                    filter.getIdCode(), p, 2);
+        }
+        if (StringUtils.isNotEmpty(filter.getExternalReference())) {
+            p = applyLikeLowerFilter(cb, r, PersonDetailEntity.PERSON + "." + PersonEntity.EXTERNAL_REFERENCE_CODE,
+                    filter.getExternalReference(), p, 2);
+        }
+
+        if (StringUtils.isNotEmpty(filter.getName())) {
+            p = applyLikeLowerFilter(cb, r, PersonDetailEntity.NAME, filter.getName(), p);
+        }
+        return p;
+    }
+
+    private Predicate applyLikeLowerFilter(CriteriaBuilder cb, Root<? extends PersonDetailEntity> r, String field,
+                                           String value, Predicate p) {
+
+        return applyLikeLowerFilter(cb, r, field, value, p,1);
+    }
+
+    private Predicate applyLikeLowerFilter(CriteriaBuilder cb, Root<? extends PersonDetailEntity> r, String field,
+                                           String value, Predicate p, int fieldDepth) {
+
+        value = value.trim().toLowerCase();
+
+        if (fieldDepth == 1) {
+            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
+                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
+        } else if (fieldDepth > 1 && fieldDepth < 7) {
+            String fields[] = field.split("[.]", -1);
+            if (fieldDepth == 2) {
+                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
+                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
+            } else if (fieldDepth == 3) {
+                p = p == null
+                        ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2])),"%" + value + "%")
+                        : cb.and(p, cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2])),"%" + value + "%"));
+            } else if (fieldDepth == 4) {
+                p = p == null
+                        ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2]).get(fields[3])),"%" + value + "%")
+                        : cb.and(p, cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2]).get(fields[3])),"%" + value + "%"));
+            } else if (fieldDepth == 5) {
+                p = p == null
+                        ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2]).get(fields[3]).get(fields[4])),"%" + value + "%")
+                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2]).get(fields[3]).get(fields[4])),"%" + value + "%"));
+            } else if (fieldDepth == 6) {
+                p = p == null
+                        ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2]).get(fields[3]).get(fields[4]).get(fields[5])), "%" + value + "%")
+                        : cb.and(p, cb.like(cb.lower(r.get(fields[0]).get(fields[1]).get(fields[2]).get(fields[3]).get(fields[4]).get(fields[5])), "%" + value + "%"));
+            }
+        }
+        return p;
+    }
+
     private Predicate applyCommonFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
-                                         PeopleSearchFilter parameters, String path) {
-        if (parameters.getIdCode() != null && !parameters.getIdCode().isEmpty()) {
+                                         PeopleSearchFilter filter, String path) {
+
+        if (filter.getIdCode() != null && !filter.getIdCode().isEmpty()) {
             if (path.isEmpty())
                 p = cb.and(p,
-                        cb.equal(root.get(PersonEntity.ID_CODE), parameters.getIdCode()));
+                        cb.equal(root.get(PersonEntity.ID_CODE), filter.getIdCode()));
             else
                 p = cb.and(p, cb.equal(root.get(path).get(PersonEntity.ID_CODE),
-                        parameters.getIdCode()));
+                        filter.getIdCode()));
         }
-        if (parameters.getIdType() != null) {
+
+        if (filter.getIdType() != null) {
             if (path.isEmpty())
                 p = cb.and(p, cb.equal(root.get(PersonEntity.ID_TYPE).get(IDTypeEntity.ID),
-                        parameters.getIdType().getId()));
+                        filter.getIdType().getId()));
             else
                 p = cb.and(p,
                         cb.equal(root.get(path).get(PersonEntity.ID_TYPE).get(IDTypeEntity.ID),
-                                parameters.getIdType().getId()));
+                                filter.getIdType().getId()));
         }
-        if (parameters.getPersonType().getId().equals(PersonTypeDTO.INDIVIDUAL_PERSON_CODE)) {
 
+        if (filter.getPersonType().getId().equals(PersonTypeDTO.INDIVIDUAL_PERSON_CODE)) {
 
-
-            if (parameters.getExternalReference() != null
-                    && !parameters.getExternalReference().isEmpty()) {
+            if (filter.getExternalReference() != null
+                    && !filter.getExternalReference().isEmpty()) {
                 if (path.isEmpty())
                     p = cb.and(p, cb.equal(root.get(PersonEntity.EXTERNAL_REFERENCE_CODE),
-                            parameters.getExternalReference()));
+                            filter.getExternalReference()));
                 else
                     p = cb.and(p, cb.equal(root.get(path).get(PersonEntity.EXTERNAL_REFERENCE_CODE),
-                            parameters.getExternalReference()));
+                            filter.getExternalReference()));
             }
 
-            if (parameters instanceof IndividualSearchFilter) {
-                IndividualSearchFilter individualSearchFilter = (IndividualSearchFilter) parameters;
+            if (filter instanceof IndividualSearchFilter) {
+                IndividualSearchFilter individualSearchFilter = (IndividualSearchFilter) filter;
 
                 if (individualSearchFilter.getDateOfBirth() != null &&path.isEmpty()) {
                     p = cb.and(p, cb.equal(root.get(IndividualEntity.DATE_OF_BIRTH),
                             individualSearchFilter.getDateOfBirth()));
                 }
             }
-        } else if (parameters.getPersonType().getId().equals(PersonTypeDTO.COMPANY_PERSON_CODE)) {
-            if (parameters instanceof CompanySearchFilter) {
-                CompanySearchFilter companySearchFilter = (CompanySearchFilter) parameters;
+        } else if (filter.getPersonType().getId().equals(PersonTypeDTO.COMPANY_PERSON_CODE)) {
+            if (filter instanceof CompanySearchFilter) {
+                CompanySearchFilter companySearchFilter = (CompanySearchFilter) filter;
                 if (companySearchFilter.getStartDate() != null) {
                     if (path.isEmpty()) {
                         p = cb.and(p, cb.equal(root.get(CompanyEntity.START_DATE),

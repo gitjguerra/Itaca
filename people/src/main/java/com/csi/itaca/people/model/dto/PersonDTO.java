@@ -1,6 +1,5 @@
 package com.csi.itaca.people.model.dto;
 
-import com.csi.itaca.common.model.BaseModelImpl;
 import com.csi.itaca.people.model.Person;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.tools.utils.beaner.Extension;
@@ -9,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Represents a single person.

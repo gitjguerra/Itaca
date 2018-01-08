@@ -26,6 +26,15 @@ public abstract class ItacaBaseRestController {
     }
 
     /**
+     * Create a new error tracking object.
+     * @param target the object to be associated to the error tracker.
+     * @return new error tracker.
+     */
+    public BindingResult createErrorTracker(Object target) {
+        return new BeanPropertyBindingResult(target, EMPTY_STRING);
+    }
+
+    /**
      * Build a response entity with the <code>responseBodyContent</code>.
      * @param errTracking will be used to construct the response entity if errors were detected otherwise response
      *                    body will be empty.

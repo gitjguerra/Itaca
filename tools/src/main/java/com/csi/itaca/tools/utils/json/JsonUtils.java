@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonUtils {
 
     /**
-     * Converts object to JSON string
-     * @param obj the object to convert
-     * @return the JSON string
+     * Converts object to JSON string.
+     * @param obj the object to convert.
+     * @return the JSON string.
      */
     public static String asJsonString(final Object obj) {
         try {

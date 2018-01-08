@@ -13,11 +13,11 @@ public interface PersonStatus {
 	/**
 	 * @return Indicates if this type is an individual.
 	 */
-	boolean isIndividual();
+	Boolean getIndividual();
 
 	/**
 	 * @return Indicates if this type is a company.
 	 */
-	boolean isCompany();
+	Boolean getCompany();
 
 }

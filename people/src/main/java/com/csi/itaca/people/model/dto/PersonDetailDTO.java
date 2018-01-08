@@ -15,10 +15,6 @@ public abstract class PersonDetailDTO implements PersonDetail {
 
 	private Long id;
 
-	// We add this ignore to prevent recursion when generating the JSON.
-	@JsonIgnore
-	private PersonDTO person;
-
 	private LanguageDTO language;
 
 	private CountryDTO country;

@@ -56,16 +56,16 @@ public class JpaUtils {
 
 
     public static <T> String getField(Class<T> entityType, Order order) {
-        Field[] campos = entityType.getFields();
-        String[] campoBuscar = order.getField().split("\\.");
-        String campoOrdenar;
-        String valor = "";
-        if (campoBuscar.length > 0) {
-            campoOrdenar = campoBuscar[0];
-            for (Field campo : campos) {
-                if (campo.getName().replace("_", "").toUpperCase().contains(campoOrdenar.toUpperCase())) {
+        Field[] fields = entityType.getFields();
+        String[] searchFields = order.getField().split("\\.");
+        String orderField;
+        String value = "";
+        if (searchFields.length > 0) {
+            orderField = searchFields[0];
+            for (Field field : fields) {
+                if (field.getName().replace("_", "").toUpperCase().contains(orderField.toUpperCase())) {
                     try {
-                        valor = (String) campo.get(campo.getName());
+                        value = (String) field.get(field.getName());
                     } catch (IllegalArgumentException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -75,6 +75,6 @@ public class JpaUtils {
             }
         }
 
-        return valor;
+        return value;
     }
 }

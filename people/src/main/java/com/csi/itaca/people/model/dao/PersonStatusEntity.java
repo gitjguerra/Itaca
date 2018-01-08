@@ -29,9 +29,9 @@ public class PersonStatusEntity implements PersonStatus {
 	private String name;
 	
 	@Column(name="is_individual")
-	private boolean individual;
+	private Boolean individual;
 	
 	@Column(name="is_company")
-	private boolean company;
+	private Boolean company;
 
 }

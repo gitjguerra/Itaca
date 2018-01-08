@@ -1,6 +1,7 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.people.model.dto.PersonDTO;
+import com.csi.itaca.people.model.dto.PersonDetailDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;
 
@@ -51,4 +52,46 @@ public interface PeopleManagementService {
      * @return true if already exists otherwise false.
      */
     Boolean doseExternalReferenceAlreadyExist(String externalReferenceCode);
+
+    /**
+     * Finds a list of person detail based on the supplied search criteria.
+     * @param criteria search criteria contains the  filter to apply pagination and order properties.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return a list of person details.
+     */
+    List<? extends PersonDetailDTO> findPersonDetails(PeopleSearchFilter criteria, Errors errTracking);
+
+    /**
+     * Counts the list of person detail based on the supplied search criteria.
+     * @param filter filter to apply
+     * @return the number of person details.
+     */
+    Long countPersonDetails(PeopleSearchFilter filter);
+
+    /**
+     * Get a person detail.
+     * @param personDetailId the ID of the person detail to retrieve.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return The person detail DTO, null if not found.
+     */
+    PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking);
+
+    /**
+     * Finds a list of  duplicate person details based on the supplied search criteria.
+     * @param criteria search criteria contains the  filter to apply pagination and order properties.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return a list of duplicate person details.
+     */
+    List<? extends PersonDetailDTO> findDuplicatePersonDetails(PeopleSearchFilter criteria, Errors errTracking);
+
+    /**
+     * Counts the list of duplicate person details based on the supplied search criteria.
+     * @param filter filter to apply
+     * @return the number of person details.
+     */
+    Long countDuplicatePersonDetails(PeopleSearchFilter filter);
+
 }

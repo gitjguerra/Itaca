@@ -10,6 +10,7 @@ import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.model.dto.PersonTypeDTO;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -33,54 +34,59 @@ public class PeopleManagementBusinessLogicImpl implements PeopleManagementBusine
 
         int initialErrorCount = errTracking.getErrorCount();
 
-        // We require a person type to continue.
-        if (filter.getPersonType() == null || filter.getPersonType().getId() == null || filter.getPersonType().getId().isEmpty()) {
-            errTracking.rejectValue(PeopleSearchFilter.PERSON_TYPE_FIELD+"."+PersonType.ID_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+        if (filter!=null) {
+            // We require a person type to continue.
+            if (filter.getPersonType() == null || StringUtils.isEmpty(filter.getPersonType().getId())) {
+                errTracking.rejectValue(PeopleSearchFilter.PERSON_TYPE_FIELD + "." + PersonType.ID_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+            }
+
+            // Individual person type.
+            else if (filter.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
+                IndividualLogicalPrimaryKey individualLogicalPrimaryKeyConfig = configurator
+                        .getConfig(PeopleModuleConfiguration.class).getIndividualLogicalPrimaryKey();
+
+                if (individualLogicalPrimaryKeyConfig.getIdentificationCodeInLogicalKey() &&  StringUtils.isEmpty(filter.getIdCode())) {
+                    errTracking.rejectValue(PeopleSearchFilter.ID_CODE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+                }
+
+                if (individualLogicalPrimaryKeyConfig.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
+                    errTracking.rejectValue(PeopleSearchFilter.ID_TYPE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+                }
+
+                if (individualLogicalPrimaryKeyConfig.getExternalReferenceCodeInLogicalKey()
+                        && StringUtils.isEmpty(filter.getExternalReference())) {
+                    errTracking.rejectValue(PeopleSearchFilter.EXTERNAL_REFERENCE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+                }
+
+                if (individualLogicalPrimaryKeyConfig.getDateOfBirthInLogicalKey()
+                        && (!(filter instanceof IndividualSearchFilter)
+                        || ((IndividualSearchFilter) filter).getDateOfBirth() == null)) {
+                    errTracking.reject(ErrorConstants.VALIDATION_DATE_OF_BIRTH_REQUIRED);
+                }
+            }
+
+            // Company person type.
+            else if (filter.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
+                CompanyLogicalPrimaryKey companyLogicalPrimaryKeyConfig = configurator
+                        .getConfig(PeopleModuleConfiguration.class).getCompanyLogicalPrimaryKey();
+
+                if (companyLogicalPrimaryKeyConfig.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
+                    errTracking.rejectValue(PeopleSearchFilter.ID_CODE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+
+                }
+
+                if (companyLogicalPrimaryKeyConfig.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
+                    errTracking.rejectValue(PeopleSearchFilter.ID_TYPE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
+                }
+            }
+
+            // Person type not valid.
+            else {
+                errTracking.rejectValue(PersonTypeDTO.ID_FIELD, ErrorConstants.VALIDATION_PERSON_TYPE_INVALID);
+            }
         }
-
-        // Individual person type.
-        else if (filter.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
-            IndividualLogicalPrimaryKey individualLogicalPrimaryKeyConfig = configurator
-                    .getConfig(PeopleModuleConfiguration.class).getIndividualLogicalPrimaryKey();
-
-            if (individualLogicalPrimaryKeyConfig.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
-                errTracking.rejectValue(PeopleSearchFilter.ID_CODE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
-            }
-
-            if (individualLogicalPrimaryKeyConfig.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
-                errTracking.rejectValue(PeopleSearchFilter.ID_TYPE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
-            }
-
-            if  (individualLogicalPrimaryKeyConfig.getExternalReferenceCodeInLogicalKey()
-                 && (filter.getExternalReference() == null || filter.getExternalReference().isEmpty())) {
-                errTracking.rejectValue(PeopleSearchFilter.EXTERNAL_REFERENCE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
-            }
-
-            if (individualLogicalPrimaryKeyConfig.getDateOfBirthInLogicalKey()
-                    && ( !(filter instanceof IndividualSearchFilter)
-                    || ((IndividualSearchFilter) filter).getDateOfBirth() == null)) {
-                errTracking.reject(ErrorConstants.VALIDATION_DATE_OF_BIRTH_REQUIRED);
-            }
-        }
-
-        // Company person type.
-        else if (filter.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
-            CompanyLogicalPrimaryKey companyLogicalPrimaryKeyConfig = configurator
-                    .getConfig(PeopleModuleConfiguration.class).getCompanyLogicalPrimaryKey();
-
-            if (companyLogicalPrimaryKeyConfig.getIdentificationCodeInLogicalKey() && (filter.getIdCode() == null || filter.getIdCode().isEmpty())) {
-                errTracking.rejectValue(PeopleSearchFilter.ID_CODE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
-
-            }
-
-            if (companyLogicalPrimaryKeyConfig.getIdentificationTypeInLogicalKey() && filter.getIdType() == null) {
-                errTracking.rejectValue(PeopleSearchFilter.ID_TYPE_FIELD, ErrorConstants.VALIDATION_REQUIRED_FIELD);
-            }
-        }
-
-        // Person type not valid.
         else {
-            errTracking.rejectValue(PersonTypeDTO.ID_FIELD, ErrorConstants.VALIDATION_PERSON_TYPE_INVALID);
+            errTracking.reject(ErrorConstants.VALIDATION_NO_FILTER_PROVIDED);
         }
 
         return initialErrorCount != errTracking.getErrorCount();

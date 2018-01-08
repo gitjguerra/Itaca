@@ -81,6 +81,50 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return new ResponseEntity<>(refExists, HttpStatus.OK);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////// Person detail ...
+    @Override
+    @RequestMapping(value = SEARCH_PERSON_DETAIL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
+                                                                              produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends PersonDetailDTO>> findPersonDetails(@RequestBody PeopleSearchFilter criteria) {
+
+        BindingResult errTracking = createErrorTracker(criteria);
+        List<? extends PersonDetailDTO> personDetailsDTOs = peopleManagementService.findPersonDetails(criteria, errTracking);
+        return buildResponseEntity(personDetailsDTOs, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = COUNT_PERSON_DETAIL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countPersonDetails(@RequestBody PeopleSearchFilter filter) {
+        return new ResponseEntity<>(peopleManagementService.countPersonDetails(filter), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = SEARCH_DUPLICATE_PERSON_DETAIL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
+                                                                                        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends PersonDetailDTO>> findDuplicatePersonDetails(@RequestBody PeopleSearchFilter criteria) {
+
+        BindingResult errTracking = createErrorTracker(criteria);
+        List<? extends PersonDetailDTO> personDetailsDTOs = peopleManagementService.findDuplicatePersonDetails(criteria, errTracking);
+        return buildResponseEntity(personDetailsDTOs, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = COUNT_DUPLICATE_PERSON_DETAIL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countDuplicatePersonDetails(@RequestBody PeopleSearchFilter filter) {
+        return new ResponseEntity<>(peopleManagementService.countDuplicatePersonDetails(filter), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = GET_PERSON_DETAIL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends PersonDetailDTO> getPersonDetail(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long detailId) {
+        BindingResult errTracking = createErrorTracker();
+        PersonDetailDTO personDetailDTO = peopleManagementService.getPersonDetail(detailId,errTracking);
+        return buildResponseEntity(personDetailDTO, errTracking);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////// Person detail end ...
+
+
+    //////////////////////// Lookups ...
     @Override
     @RequestMapping(value = LOOKUP_CIVIL_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus() {
