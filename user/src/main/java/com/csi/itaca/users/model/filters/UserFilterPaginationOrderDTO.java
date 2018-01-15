@@ -1,7 +1,7 @@
 package com.csi.itaca.users.model.filters;
 
-import com.csi.itaca.common.utils.jpa.Order;
-import com.csi.itaca.common.utils.jpa.Pagination;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

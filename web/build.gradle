@@ -1,0 +1,10 @@
+
+apply plugin: 'war'
+
+description = ''
+dependencies {
+  compile project(':config')
+  compile project(':common')
+  compile project(':user')
+  compile project(':people')
+}

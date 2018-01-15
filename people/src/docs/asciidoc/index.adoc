@@ -1,0 +1,355 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:docinfo: shared
+:toclevels: 4
+:sectlinks:
+
+= People Management REST API Guide.
+
+== People Management endpoints
+
+Provides a series of endpoints that enables management people within the Itaca application.
+
+=== Get person
+
+Retrieves a person associated with the supplied ID.
+
+==== Request structure
+
+include::{snippets}/get-person/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/get-person/request-parameters.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-person/curl-request.adoc[]
+
+
+
+=== Save person
+Saves or updates person.
+
+==== Request structure
+
+include::{snippets}/save-update-person/http-request.adoc[]
+
+==== Request body fields
+
+include::{snippets}/save-update-person/request-fields.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-update-person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-update-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-update-person/curl-request.adoc[]
+
+
+
+=== Delete person
+Deletes a person together with associated details.
+
+
+==== Request structure
+
+include::{snippets}/delete-person/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/delete-person/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-person/curl-request.adoc[]
+
+
+=== Find person
+
+Find a person based on the supplied logical key.
+
+==== Request structure
+
+include::{snippets}/find-person/http-request.adoc[]
+
+==== Request body fields
+
+include::{snippets}/find-person/request-fields.adoc[]
+
+==== Response fields
+
+include::{snippets}/find-person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/find-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/find-person/curl-request.adoc[]
+
+
+=== Check if external reference exists
+Checks if provided external reference code is in use.
+
+==== Request structure
+
+include::{snippets}/check-ext-ref-exists/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/check-ext-ref-exists/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/check-ext-ref-exists/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/check-ext-ref-exists/curl-request.adoc[]
+
+
+=== Get person detail item
+Gets a person detail item.
+
+==== Request structure
+
+include::{snippets}/get-person-detail/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/get-person-detail/request-parameters.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-person-detail/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-person-detail/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-person-detail/curl-request.adoc[]
+
+
+=== Count person detail items
+Returns a count the number of person detail items based on the supplied search criteria.
+
+==== Request structure
+
+include::{snippets}/count-person-detail/http-request.adoc[]
+
+==== Request body fields
+
+include::{snippets}/count-person-detail/request-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-person-detail/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-person-detail/curl-request.adoc[]
+
+
+=== Find person detail items
+Retrieves a list person detail items based on the supplied search criteria.
+
+==== Request structure
+
+include::{snippets}/find-person-detail/http-request.adoc[]
+
+==== Request body fields
+
+include::{snippets}/find-person-detail/request-fields.adoc[]
+
+==== Response fields
+
+include::{snippets}/find-person-detail/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/find-person-detail/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/find-person-detail/curl-request.adoc[]
+
+
+=== Count duplicate person detail items
+Returns the count the number of person detail items based on the supplied search criteria.
+
+
+==== Request structure
+
+include::{snippets}/count-duplicate-person-detail/http-request.adoc[]
+
+==== Request body fields
+
+include::{snippets}/count-duplicate-person-detail/request-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-duplicate-person-detail/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-duplicate-person-detail/curl-request.adoc[]
+
+
+=== Find duplicate person detail items
+Retrieves a list duplicate person detail items based on the supplied search criteria.
+
+==== Request structure
+
+include::{snippets}/find-duplicate-person-detail/http-request.adoc[]
+
+==== Request body fields
+
+include::{snippets}/find-duplicate-person-detail/request-fields.adoc[]
+
+==== Response fields
+
+include::{snippets}/find-duplicate-person-detail/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/find-duplicate-person-detail/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/find-duplicate-person-detail/curl-request.adoc[]
+
+
+=== Lookup languages
+
+==== Request structure
+
+include::{snippets}/lookup-languages/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-languages/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-languages/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-languages/curl-request.adoc[]
+
+
+=== Lookup person statuses
+
+==== Request structure
+
+include::{snippets}/lookup-person-status/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-person-status/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-person-status/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-person-status/curl-request.adoc[]
+
+
+=== Lookup id types
+
+==== Request structure
+
+include::{snippets}/lookup-id-types/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-id-types/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-id-types/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-id-types/curl-request.adoc[]
+
+=== Lookup company types
+
+==== Request structure
+
+include::{snippets}/lookup-company-types/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-company-types/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-company-types/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-company-types/curl-request.adoc[]
+
+
+=== Lookup civil statuses
+
+==== Request structure
+
+include::{snippets}/lookup-civil-status/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-civil-status/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-civil-status/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-civil-status/curl-request.adoc[]
+
+
+=== Lookup gender
+
+==== Request structure
+
+include::{snippets}/lookup-gender/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-gender/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-gender/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-gender/curl-request.adoc[]

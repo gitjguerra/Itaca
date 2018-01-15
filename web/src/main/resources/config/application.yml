@@ -26,3 +26,7 @@ logging:
 server:
   port: 8080
   contextPath: /itaca
+
+configurator:
+  mode: classpath
+  autoreload: false

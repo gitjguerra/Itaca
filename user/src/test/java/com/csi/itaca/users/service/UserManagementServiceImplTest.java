@@ -1,6 +1,6 @@
 package com.csi.itaca.users.service;
 
-import com.csi.itaca.common.utils.beaner.BeanerImpl;
+import com.csi.itaca.tools.utils.beaner.BeanerImpl;
 import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.businessLogic.UserManagementBusinessLogic;
 

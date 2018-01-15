@@ -1,9 +1,9 @@
 package com.csi.itaca.users.endPoint;
 
-import com.csi.itaca.common.utils.beaner.BeanerImpl;
-import com.csi.itaca.common.utils.jpa.Order;
-import com.csi.itaca.common.utils.jpa.Pagination;
-import com.csi.itaca.common.utils.json.JsonUtils;
+import com.csi.itaca.tools.utils.beaner.BeanerImpl;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
+import com.csi.itaca.tools.utils.json.JsonUtils;
 import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.businessLogic.validators.ChangePasswordValidator;
@@ -285,7 +285,7 @@ public class UserManagementRestControllerTest {
         updatePasswordDTO.setNewPassword("test");
         updatePasswordDTO.setConfirmationPassword("test");
 
-        mockMvc.perform(post(UserManagementServiceProxy.CHANGE_PASSWORD)
+        mockMvc.perform(put(UserManagementServiceProxy.CHANGE_PASSWORD)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.asJsonString(updatePasswordDTO)))
                 .andDo(print())

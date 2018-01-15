@@ -1,8 +1,8 @@
 package com.csi.itaca.common.exception;
 
-import com.csi.itaca.common.exception.DTO.ApiErrorsView;
-import com.csi.itaca.common.exception.DTO.ApiFieldError;
-import com.csi.itaca.common.exception.DTO.ApiGlobalError;
+import com.csi.itaca.common.exception.dto.ApiErrorsView;
+import com.csi.itaca.common.exception.dto.ApiFieldError;
+import com.csi.itaca.common.exception.dto.ApiGlobalError;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class ApiGlobalRestExceptionHandler {
     /**
      * Builds Errors View from binding result.
      * @param bindingResult the bind result
-     * @return Api Error DTO
+     * @return Api Error dto
      */
     public static ResponseEntity<ApiErrorsView> buildApiErrorsView(BindingResult bindingResult) {
 

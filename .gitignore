@@ -8,6 +8,10 @@ target/
 .project
 .settings
 .springBeans
+.gradle
+**/build/**
+**/out/**
+
 
 ### IntelliJ IDEA ###
 .idea
