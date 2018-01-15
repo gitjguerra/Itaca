@@ -1,0 +1,56 @@
+
+plugins {
+    id 'org.asciidoctor.convert' version '1.5.6'
+}
+
+allprojects  {
+  apply plugin: 'org.asciidoctor.convert'
+  group = 'com.csi.itaca'
+  version = '0.0.1-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+  tasks.withType(JavaCompile) {
+  	options.encoding = 'UTF-8'
+  }
+
+  ext {
+     snippetsDir = file('build/generated-snippets')
+  }
+
+  test {
+      outputs.dir snippetsDir
+  }
+
+  asciidoctor {
+      attributes 'snippets' : snippetsDir
+      dependsOn test
+  }
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://192.168.10.252:8080/artifactory/libs-release" }
+    maven { url "http://192.168.10.39:8081/artifactory/libs-release" }
+  }
+  
+  dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version:'1.5.9.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.9.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version:'1.5.9.RELEASE'
+    compile group: 'org.projectlombok', name: 'lombok', version:'1.16.16'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.25'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.25'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version:'2.9.3'
+    compile group: 'oracle', name: 'ojdbc', version:'7'
+
+    testCompile 'org.powermock:powermock-api-mockito:1.6.6'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.6'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.5.9.RELEASE'
+    testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version:'2.0.0.RELEASE'
+
+  }
+}
