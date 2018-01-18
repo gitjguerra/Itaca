@@ -6,16 +6,16 @@ import java.util.List;
 
 public interface PeopleLookupService {
 
-    public List<CivilStatusDTO> lookupCivilStatus();
+    List<CivilStatusDTO> lookupCivilStatus();
 
-    public List<PersonStatusDTO> lookupPersonStatus();
+    List<PersonStatusDTO> lookupPersonStatus();
 
-    public List<GenderDTO> lookupGender();
+    List<GenderDTO> lookupGender();
 
-    public List<LanguageDTO> lookupLanguages();
+    List<LanguageDTO> lookupLanguages();
 
-    public List<IDTypeDTO> lookupIdTypes();
+    List<IDTypeDTO> lookupIdTypes();
 
-    public List<CompanyTypeDTO> lookupCompanyTypes();
+    List<CompanyTypeDTO> lookupCompanyTypes();
 
 }

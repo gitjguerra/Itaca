@@ -2,7 +2,6 @@ package com.csi.itaca.people.model.dto;
 
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.model.PersonDetail;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

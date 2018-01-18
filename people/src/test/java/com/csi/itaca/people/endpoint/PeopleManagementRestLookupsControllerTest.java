@@ -1,6 +1,6 @@
 package com.csi.itaca.people.endpoint;
 
-
+import com.csi.itaca.people.api.PeopleLookupServiceProxy;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.service.PeopleLookupService;
@@ -45,7 +45,7 @@ public class PeopleManagementRestLookupsControllerTest {
     private PeopleLookupService lookupService;
 
     @InjectMocks
-    private PeopleManagementServiceProxy controller = new PeopleManagementRestController();
+    private PeopleLookupServiceProxy controller = new PeopleLookupRestController();
 
     @Before
     public void setup() {

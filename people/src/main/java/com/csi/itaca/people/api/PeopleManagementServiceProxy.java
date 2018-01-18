@@ -7,6 +7,10 @@ import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
+/**
+ * People core management service proxy interface.
+ * @author bboothe
+ */
 public interface PeopleManagementServiceProxy {
 
     // Parameters...
@@ -30,7 +34,6 @@ public interface PeopleManagementServiceProxy {
     String SEARCH_DUPLICATE_PERSON_DETAIL   = PERSON_DETAIL_RESOURCE + "/findDuplicates";
     String COUNT_DUPLICATE_PERSON_DETAIL    = PERSON_DETAIL_RESOURCE + "/countDuplicates";
     String GET_PERSON_DETAIL                = PERSON_DETAIL_RESOURCE + "/get";
-
 
     // Lookup end point URLs...
     String LOOKUP                   = "/lookup";
@@ -117,50 +120,7 @@ public interface PeopleManagementServiceProxy {
     ResponseEntity<? extends PersonDetailDTO> getPersonDetail(Long detailId);
 
 
-    //////////////////////// Lookups ...
-
-    /** @return a list of civil statuses.*/
-    ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus();
-
-    /** @return a list of person statuses*/
-    ResponseEntity<List<PersonStatusDTO>> lookupPersonStatus();
-
-    /** @return a list of genders.*/
-    ResponseEntity<List<GenderDTO>> lookupGender();
-
-    /** @return a list of languages.*/
-    ResponseEntity<List<LanguageDTO>> lookupLanguages();
-
-    /** @return a list of idTypes.*/
-    ResponseEntity<List<IDTypeDTO>> lookupIdTypes();
-
-    /** @return a list of company types.*/
-    ResponseEntity<List<CompanyTypeDTO>> lookupCompanyTypes();
-
-
-
-    /*
-
-
-
-
-    //identifications
-
-    ItacaAPIResponse<Boolean> buscarRefExterna(String refExterna);
-
-    ItacaAPIResponse<List<? extends Identificador0DTO>> listIdentificadores(Long idDetallePersona);
-
-    public ItacaAPIResponse<List<? extends Identificador0DTO>> getidentificadoresPersona(FiltroDetallePersonaIdentificadorPaginaOrden filtro);
-
-    ItacaAPIResponse<Long> countIdentificadores(Long idDetallePersona);
-
-    ItacaAPIVoidResponse deleteIdentificador(Long id) throws IdentificadorNoExisteException;
-
-    ItacaAPIResponse<Identificador0DTO> saveOrUpdateIdentificador(Identificador0DTO identificador);
-
-    ItacaAPIResponse<Identificador0DTO> getIdentificador(Long idIdentificador);
-
-
+/*
     //addresses
 
     ItacaAPIResponse<List<? extends RelDetPersonaDireccion1DTO>> listDireccionesPersonas(Long idDetallePersona);

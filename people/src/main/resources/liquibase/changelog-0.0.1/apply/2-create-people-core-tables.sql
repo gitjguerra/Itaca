@@ -89,7 +89,7 @@ ALTER TABLE per_person_detail ADD CONSTRAINT per_person_detail_pk PRIMARY KEY ( 
 -- Sequence
 CREATE SEQUENCE per_person_detail_seq START WITH 1 INCREMENT BY 1 MAXVALUE 9999999999 MINVALUE 1 NOCACHE ;
 
---  foriegn keys
+--  foreign keys
 CREATE INDEX per_person_detail_fk01 ON per_person_detail ( person_id ASC) TABLESPACE PEOPLE;
 CREATE INDEX per_person_detail_fk02 ON per_person_detail ( language_id ASC ) TABLESPACE PEOPLE;
 CREATE INDEX per_person_detail_fk03 ON per_person_detail ( person_status_id ASC ) TABLESPACE PEOPLE;
@@ -103,7 +103,6 @@ ALTER TABLE per_person_detail ADD CONSTRAINT per_person_detail_fk05 FOREIGN KEY 
 
 ----------------- person detail table end -----------------
 
-
 ----------------- identification table -----------------
 CREATE TABLE per_identification
   (
@@ -113,28 +112,30 @@ CREATE TABLE per_identification
     country_id              NUMBER (19) NOT NULL ,
     identification_code     VARCHAR2 (50) NOT NULL ,
     issue_date              DATE
-  )  PCTFREE 10 PCTUSED 40 TABLESPACE #DATA_TABLESPACE# LOGGING STORAGE
+  )  PCTFREE 10 PCTUSED 40 TABLESPACE PEOPLE LOGGING STORAGE
   (
     PCTINCREASE 0 MINEXTENTS 1 MAXEXTENTS UNLIMITED FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT
   );
-COMMENT ON TABLE per_identification IS 'Table to represents identification for each person';
+COMMENT ON TABLE per_identification IS 'Table to represent identification for each person';
 COMMENT ON COLUMN per_identification.identification_id IS 'Unique identifier';
-COMMENT ON COLUMN per_identification.person_detail_id IS 'Person detail foriegn key';
-COMMENT ON COLUMN per_identification.id_type_id IS 'Indentificatin type forigen key';
-COMMENT ON COLUMN per_identification.country_id IS 'Country foriegn key';
+COMMENT ON COLUMN per_identification.person_detail_id IS 'Person detail foreign key';
+COMMENT ON COLUMN per_identification.id_type_id IS 'Indentificatin type foreign key';
+COMMENT ON COLUMN per_identification.country_id IS 'Country foreign key';
 COMMENT ON COLUMN per_identification.identification_code IS 'Idenification code';
-COMMENT ON COLUMN per_identification.issue_date IS 'Date the idendification was issued';
+COMMENT ON COLUMN per_identification.issue_date IS 'Date idendification was issued';
 
-CREATE INDEX per_identification_ID1 ON per_identification (identification_id ASC)
+--  indexes
+CREATE INDEX per_identification_ID1 ON per_identification (identification_id ASC);
 CREATE INDEX per_identification_ID2 ON per_identification (person_detail_id ASC);
 CREATE INDEX per_identification_ID3 ON per_identification (id_type_id ASC);
 CREATE INDEX per_identification_ID4 ON per_identification (country_id ASC);
 
+--  foreign keys
 ALTER TABLE per_identification ADD CONSTRAINT per_identification_PK PRIMARY KEY(identification_id);
 ALTER TABLE per_identification ADD CONSTRAINT per_identification_FK1 FOREIGN KEY(country_id) REFERENCES dir_country (country_id) NOT DEFERRABLE;
 ALTER TABLE per_identification ADD CONSTRAINT per_identification_FK2 FOREIGN KEY(person_detail_id) REFERENCES per_person_detail (person_detail_id) NOT DEFERRABLE;
-ALTER TABLE per_identification ADD CONSTRAINT per_identifier_FK3 FOREIGN KEY(id_type_id) REFERENCES per_id_type (id_type_id) NOT DEFERRABLE;
+ALTER TABLE per_identification ADD CONSTRAINT per_identification_FK3 FOREIGN KEY(id_type_id) REFERENCES per_id_type (id_type_id) NOT DEFERRABLE;
 
+-- Sequence
 CREATE SEQUENCE per_identification_seq START WITH 1 MAXVALUE 9999999999 MINVALUE 1 INCREMENT BY 1 NOCYCLE NOCACHE NOORDER;
-
 ----------------- identification table end -----------------

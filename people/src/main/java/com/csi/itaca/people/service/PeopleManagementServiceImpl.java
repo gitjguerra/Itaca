@@ -84,7 +84,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
             // Do we have any people?
             if (peopleFound.isEmpty()) {
-                errTracking.reject(ErrorConstants.DB_PERSON_NOT_FOUND);
+                errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
             }
             else {
                 // Check if duplicates are allowed
@@ -395,7 +395,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             }
         }
         else {
-            errTracking.reject(ErrorConstants.DB_PERSON_DETAIL_NOT_FOUND);
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
 
         return retPersonDetail;
@@ -411,7 +411,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private PersonEntity getPersonEntity(Long id, Errors errTracking) {
         PersonEntity person = repository.findOne(id);
         if (person == null && errTracking != null) {
-            errTracking.reject(ErrorConstants.DB_PERSON_NOT_FOUND);
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
         return person;
     }
