@@ -57,4 +57,23 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
     public ResponseEntity<List<CompanyTypeDTO>> lookupCompanyTypes() {
         return new ResponseEntity(peopleLookupService.lookupCompanyTypes(), HttpStatus.OK);
     }
+
+    @Override
+    @RequestMapping(value = LOOKUP_COMPANY_PERSON_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CompanyPersonTypeDTO>> lookupCompanyPersonTypes() {
+        return new ResponseEntity(peopleLookupService.lookupCompanyPersonTypes(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_CONTACT_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ContactTypeDTO>> lookupContactTypes() {
+        return new ResponseEntity(peopleLookupService.lookupContactTypes(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_RELATION_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<RelationTypeDTO>> lookupRelationTypes() {
+        return new ResponseEntity(peopleLookupService.lookupRelationTypes(), HttpStatus.OK);
+    }
+
 }

@@ -35,15 +35,6 @@ public interface PeopleManagementServiceProxy {
     String COUNT_DUPLICATE_PERSON_DETAIL    = PERSON_DETAIL_RESOURCE + "/countDuplicates";
     String GET_PERSON_DETAIL                = PERSON_DETAIL_RESOURCE + "/get";
 
-    // Lookup end point URLs...
-    String LOOKUP                   = "/lookup";
-    String LOOKUP_CIVIL_STATUS      = RESOURCE + LOOKUP +"/civilStatus";
-    String LOOKUP_PERSON_STATUS     = RESOURCE + LOOKUP +"/personStatus";
-    String LOOKUP_GENDER            = RESOURCE + LOOKUP +"/gender";
-    String LOOKUP_LANGUAGES         = RESOURCE + LOOKUP +"/languages";
-    String LOOKUP_ID_TYPES          = RESOURCE + LOOKUP +"/idTypes";
-    String LOOKUP_COMPANY_TYPES     = RESOURCE + LOOKUP +"/companyTypes";
-
     /**
      * Gets a person.
      * @param id the person id.

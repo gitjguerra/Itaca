@@ -18,4 +18,9 @@ public interface PeopleLookupService {
 
     List<CompanyTypeDTO> lookupCompanyTypes();
 
+    List<CompanyPersonTypeDTO> lookupCompanyPersonTypes();
+
+    List<ContactTypeDTO> lookupContactTypes();
+
+    List<RelationTypeDTO> lookupRelationTypes();
 }

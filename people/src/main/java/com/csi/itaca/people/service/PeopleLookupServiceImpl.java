@@ -1,5 +1,6 @@
 package com.csi.itaca.people.service;
 
+import com.csi.itaca.people.model.CompanyPersonType;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.people.model.dao.*;
 import com.csi.itaca.people.model.dto.*;
@@ -30,6 +31,14 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
     @Autowired
     private CompanyTypeRepository companyTypeRepository;
 
+    @Autowired
+    private ContactTypeRepository contactTypeRepository;
+
+    @Autowired
+    private RelationTypeRepository relationTypeRepository;
+
+    @Autowired
+    private CompanyPersonTypeRepository companyPersonTypeRepository;
 
     @Autowired
     private Beaner beaner;
@@ -71,4 +80,21 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
         return beaner.transform((List<CompanyTypeEntity>) companyTypeRepository.findAll(), CompanyTypeDTO.class);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<CompanyPersonTypeDTO> lookupCompanyPersonTypes() {
+        return beaner.transform((List<CompanyPersonTypeEntity>) companyPersonTypeRepository.findAll(), CompanyPersonTypeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ContactTypeDTO> lookupContactTypes() {
+        return beaner.transform((List<ContactTypeEntity>) contactTypeRepository.findAll(), ContactTypeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RelationTypeDTO> lookupRelationTypes() {
+        return beaner.transform((List<RelationTypeEntity>) relationTypeRepository.findAll(), RelationTypeDTO.class);
+    }
 }

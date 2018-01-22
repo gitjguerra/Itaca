@@ -472,3 +472,62 @@ include::{snippets}/lookup-gender/http-response.adoc[]
 ==== CURL request
 
 include::{snippets}/lookup-gender/curl-request.adoc[]
+
+
+=== Lookup company person type
+
+==== Request structure
+
+include::{snippets}/lookup-company-person-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-company-person-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-company-person-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-company-person-type/curl-request.adoc[]
+
+
+
+=== Lookup contact type
+
+==== Request structure
+
+include::{snippets}/lookup-contact-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-contact-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-contact-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-contact-type/curl-request.adoc[]
+
+
+
+=== Lookup relation types
+
+==== Request structure
+
+include::{snippets}/lookup-relation-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-relation-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-relation-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-relation-type/curl-request.adoc[]
