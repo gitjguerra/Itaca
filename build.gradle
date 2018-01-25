@@ -33,8 +33,9 @@ subprojects {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "http://192.168.10.252:8080/artifactory/libs-release" }
-    maven { url "http://192.168.10.39:8081/artifactory/libs-release" }
+    flatDir {
+      dirs 'libs'
+    }
   }
   
   dependencies {
