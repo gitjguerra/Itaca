@@ -23,4 +23,11 @@ public interface PeopleLookupService {
     List<ContactTypeDTO> lookupContactTypes();
 
     List<RelationTypeDTO> lookupRelationTypes();
+
+    List<BankDTO> lookupBanks();
+
+    List<AccountTypeDTO> lookupAccountTypes();
+
+    List<AccountClasificationDTO> lookupAccountClasifications();
+
 }

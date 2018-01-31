@@ -2,6 +2,7 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.people.api.PeopleLookupServiceProxy;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
+import com.csi.itaca.people.model.AccountClasification;
 import com.csi.itaca.people.model.RelationType;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.service.PeopleLookupService;
@@ -16,6 +17,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -445,6 +448,133 @@ public class PeopleLookupsRestControllerTest {
                         "lookup-relation-type",
                         responseFields(fieldWithPath("[].id").description("Relation type ID.")
                                 ,fieldWithPath("[].literal").description("literal value.")
+                        )
+                ));
+    }
+
+    /** look up bank test. */
+    @Test
+    public void bankLookup() throws Exception {
+
+        List<BankDTO> list = new ArrayList<>();
+
+        BankDTO item1 = new BankDTO();
+        item1.setId(1L);
+        item1.setBankName("BVBA");
+        item1.setDraftBank(1L);
+        item1.setCode("001");
+        item1.setBic("1");
+        list.add(item1);
+
+        BankDTO item2 = new BankDTO();
+        item2.setId(2L);
+        item2.setBankName("ZURICH");
+        item2.setDraftBank(2L);
+        item2.setCode("002");
+        item2.setBic("2");
+        list.add(item2);
+
+        BankDTO item3 = new BankDTO();
+        item3.setId(3L);
+        item3.setBankName("BANESCO");
+        item3.setDraftBank(3L);
+        item3.setCode("003");
+        item3.setBic("3");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupBanks()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_BANK))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].bankName",is(item1.getBankName())))
+                .andExpect(jsonPath("[0].draftBank",is(item1.getDraftBank().intValue())))
+                .andExpect(jsonPath("[0].code",is(item1.getCode())))
+                .andExpect(jsonPath("[0].bic",is(item1.getBic())))
+
+                .andDo(document(
+                        "lookup-bank",
+                        responseFields(fieldWithPath("[].id").description("Bank type ID.")
+                                ,fieldWithPath("[0].bankName").description("Bank type name.")
+                                ,fieldWithPath("[0].draftBank").description("Bank Draf.")
+                                ,fieldWithPath("[0].bic").description("Bank bic.")
+                                ,fieldWithPath("[0].code").description("Bank code.")
+                        )
+                ));
+    }
+
+    /** look up Account type test. */
+    @Test
+    public void accountTypeLookup() throws Exception {
+
+        List<AccountTypeDTO> list = new ArrayList<>();
+
+        AccountTypeDTO item1 = new AccountTypeDTO();
+        item1.setId(1L);
+        item1.setValor("valor1");
+        list.add(item1);
+
+        AccountTypeDTO item2 = new AccountTypeDTO();
+        item2.setId(2L);
+        item2.setValor("valor2");
+        list.add(item2);
+
+        AccountTypeDTO item3 = new AccountTypeDTO();
+        item3.setId(3L);
+        item3.setValor("valor3");
+        list.add(item3);
+
+
+        Mockito.when(lookupService.lookupAccountTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_ACCOUNT_TYPE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].valor",is(item1.getValor())))
+
+                .andDo(document(
+                        "lookup-account-type",
+                        responseFields(fieldWithPath("[].id").description("Account type ID.")
+                                ,fieldWithPath("[].valor").description("Literal value")
+                        )
+                ));
+    }
+
+    /** look up Account clasification test. */
+    @Test
+    public void accountClasificationLookup() throws Exception {
+
+        List<AccountClasificationDTO> list = new ArrayList<>();
+
+        AccountClasificationDTO item1 = new AccountClasificationDTO();
+        item1.setId(1L);
+        item1.setValue("1");
+        list.add(item1);
+
+        AccountClasificationDTO item2 = new AccountClasificationDTO();
+        item2.setId(2L);
+        item2.setValue("2");
+        list.add(item2);
+
+        AccountClasificationDTO item3 = new AccountClasificationDTO();
+        item3.setId(3L);
+        item3.setValue("3");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupAccountClasifications()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_ACCOUNT_CLASIFIED))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].value",is(item1.getValue())))
+
+                .andDo(document(
+                        "lookup-account-clasification",
+                        responseFields(fieldWithPath("[].id").description("Account Clasified ID.")
+                                ,fieldWithPath("[].value").description("Account Clasified value.")
                         )
                 ));
     }

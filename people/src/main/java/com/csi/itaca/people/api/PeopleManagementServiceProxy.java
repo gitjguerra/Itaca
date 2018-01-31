@@ -1,5 +1,6 @@
 package com.csi.itaca.people.api;
 
+import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,17 @@ public interface PeopleManagementServiceProxy {
     String SEARCH_DUPLICATE_PERSON_DETAIL   = PERSON_DETAIL_RESOURCE + "/findDuplicates";
     String COUNT_DUPLICATE_PERSON_DETAIL    = PERSON_DETAIL_RESOURCE + "/countDuplicates";
     String GET_PERSON_DETAIL                = PERSON_DETAIL_RESOURCE + "/get";
+
+    // End points for account...
+    String RESOURCE_ACCOUNT           = RESOURCE + "/account";
+    String SAVE_ACCOUNT               = RESOURCE + RESOURCE_ACCOUNT + "/save";
+    String DELETE_ACCOUNT             = RESOURCE + RESOURCE_ACCOUNT + "/delete";
+    String SEARCH_ACCOUNT             = RESOURCE + RESOURCE_ACCOUNT + "/search";
+    String COUNT_ACCOUNT              = RESOURCE + RESOURCE_ACCOUNT +"/count";
+    String GET_ACCOUNT                = RESOURCE + RESOURCE_ACCOUNT +"/get";
+
+    String LOOKUP_CARD_TYPE             = RESOURCE_ACCOUNT +"/cardType";
+
 
     /**
      * Gets a person.
@@ -152,31 +164,6 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIResponse<Long> countNacionalidad(Long idDetallePersona);
 
-
-    // account
-
-    ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
-
-    ItacaAPIResponse<List<? extends CuentaBancaria0DTO>> getCuentaBancaria(FiltroDetallePersonaCuentaPaginaOrden peticion);
-
-    ItacaAPIResponse<Long> countCuentaBancaria(Long idDetallePersona);
-
-    ItacaAPIResponse<List<? extends Banco0DTO>> listBancos();
-
-    ItacaAPIResponse<List<? extends TipoCuenta0DTO>> listTipoCuenta();
-
-    ItacaAPIResponse<List<? extends ClasificacionCuenta0DTO>> listClasificacionCuenta();
-
-    ItacaAPIResponse<TarjetaBancaria0DTO> saveOrUpdateTarjetasBancarias(TarjetaBancaria0DTO tarjetaBancaria);
-
-    ItacaAPIResponse<Long> countTarjetaBancaria(Long idDetallePersona);
-
-    public ItacaAPIResponse<List<? extends TarjetaBancaria0DTO>> getTarjetaBancaria(FiltroDetallePersonaTarjetaPaginaOrden filtro);
-
-    ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
-
-
-
     //////PERSONAS RELACIONADAS //////
 
     ItacaAPIResponse<PersonaRelacionada0DTO> saveOrUpdatePersonaRelacion(PersonaRelacionada0DTO personaRelacionada);
@@ -221,4 +208,41 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIResponse<DetallePersona1DTO> sincronizarMetadatos(Long id);
     */
+
+
+    // account
+    /*
+    ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
+
+    ItacaAPIResponse<List<? extends CuentaBancaria0DTO>> getCuentaBancaria(FiltroDetallePersonaCuentaPaginaOrden peticion);
+
+    ItacaAPIResponse<Long> countCuentaBancaria(Long idDetallePersona);
+
+    ItacaAPIResponse<List<? extends Banco0DTO>> listBancos();
+
+    ItacaAPIResponse<List<? extends TipoCuenta0DTO>> listTipoCuenta();
+
+    ItacaAPIResponse<List<? extends ClasificacionCuenta0DTO>> listClasificacionCuenta();
+
+    ItacaAPIResponse<TarjetaBancaria0DTO> saveOrUpdateTarjetasBancarias(TarjetaBancaria0DTO tarjetaBancaria);
+
+    ItacaAPIResponse<Long> countTarjetaBancaria(Long idDetallePersona);
+
+    public ItacaAPIResponse<List<? extends TarjetaBancaria0DTO>> getTarjetaBancaria(FiltroDetallePersonaTarjetaPaginaOrden filtro);
+
+    ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
+
+    */
+
+    /** @return a list of CardTypes.*/
+    ResponseEntity<List<? extends CardType>> lookupCardTypes();
+
+    /**
+     * Saves or updates account.
+     * @param accountToSaveOrUpdate the account to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdatePerson(AccountDTO accountToSaveOrUpdate,BindingResult errTracking);
+
+
 }

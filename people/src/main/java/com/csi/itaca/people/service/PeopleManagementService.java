@@ -1,10 +1,12 @@
 package com.csi.itaca.people.service;
 
+import com.csi.itaca.people.model.dto.AccountDTO;
+import com.csi.itaca.people.model.dto.CardTypeDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.dto.PersonDetailDTO;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;
-
+import com.csi.itaca.people.model.Bank;
 import java.util.List;
 
 /**
@@ -93,5 +95,18 @@ public interface PeopleManagementService {
      * @return the number of person details.
      */
     Long countDuplicatePersonDetails(PeopleSearchFilter filter);
+
+    /**
+     * List of Card Type.
+     * @return the Card Types.
+     */
+    List<? extends CardTypeDTO> lookupCardTypes();
+
+    /**
+     * Saves or updates the provided account.
+     * @param accountToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    AccountDTO saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, Errors errTracking);
 
 }

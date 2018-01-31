@@ -2,8 +2,13 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleLookupServiceProxy;
+import com.csi.itaca.people.model.AccountClasification;
+import com.csi.itaca.people.model.AccountType;
+import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.service.PeopleLookupService;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +22,8 @@ import java.util.List;
  */
 @RestController
 public class PeopleLookupRestController extends ItacaBaseRestController implements PeopleLookupServiceProxy {
+
+    private static final Logger logger = LogManager.getLogger(PeopleLookupRestController.class);
 
     /** lookups service. */
     @Autowired
@@ -74,6 +81,24 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
     @RequestMapping(value = LOOKUP_RELATION_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RelationTypeDTO>> lookupRelationTypes() {
         return new ResponseEntity(peopleLookupService.lookupRelationTypes(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_BANK, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BankDTO>> lookupBanks() {
+        return new ResponseEntity(peopleLookupService.lookupBanks(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_ACCOUNT_TYPE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends AccountType>> lookupAccountTypes() {
+        return new ResponseEntity(peopleLookupService.lookupAccountTypes(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_ACCOUNT_CLASIFIED, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends AccountClasification>> lookupAccountClasifications() {
+        return new ResponseEntity(peopleLookupService.lookupAccountClasifications(), HttpStatus.OK);
     }
 
 }

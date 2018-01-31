@@ -1,6 +1,7 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
+import com.csi.itaca.people.model.Bank;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.repository.*;
@@ -54,6 +55,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Autowired
     private PersonDetailRepository personDetailRepository;
+
+    @Autowired
+    private CardTypeRepository cardTypeRepository;
 
     @Autowired
     private Beaner beaner;
@@ -408,7 +412,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
      * @return this person entity if found otherwise null.
      */
     @Transactional(readOnly = true)
-    private PersonEntity getPersonEntity(Long id, Errors errTracking) {
+    PersonEntity getPersonEntity(Long id, Errors errTracking) {
         PersonEntity person = repository.findOne(id);
         if (person == null && errTracking != null) {
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
@@ -417,7 +421,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     }
 
     @Transactional(readOnly = true)
-    private List<? extends PersonEntity> listPeople(PeopleSearchFilter parameters) {
+    List<? extends PersonEntity> listPeople(PeopleSearchFilter parameters) {
 
         if (parameters.getPersonType().getId().equals(PersonTypeDTO.INDIVIDUAL_PERSON_CODE)) {
 
@@ -640,4 +644,16 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
         return p;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CardTypeDTO> lookupCardTypes() {
+        return  beaner.transform((List<CardTypeEntity>) cardTypeRepository.findAll(), CardTypeDTO.class);
+    }
+
+    @Override
+    public AccountDTO saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, Errors errTracking) {
+        return null;
+    }
+
 }

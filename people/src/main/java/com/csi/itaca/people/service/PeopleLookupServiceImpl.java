@@ -1,10 +1,11 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.people.model.CompanyPersonType;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.people.model.dao.*;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.repository.*;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Service
 public class PeopleLookupServiceImpl implements PeopleLookupService {
+
+    private static final Logger logger = LogManager.getLogger(PeopleLookupServiceImpl.class);
 
     @Autowired
     private CivilStatusRepository civilStatusRepository;
@@ -39,6 +42,15 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
 
     @Autowired
     private CompanyPersonTypeRepository companyPersonTypeRepository;
+
+    @Autowired
+    private BankRepository bankRepository;
+
+    @Autowired
+    private AccountTypeRepository accountTypeRepository;
+
+    @Autowired
+    private AccountClasificationRepository accountClasificationRepository;
 
     @Autowired
     private Beaner beaner;
@@ -97,4 +109,24 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
     public List<RelationTypeDTO> lookupRelationTypes() {
         return beaner.transform((List<RelationTypeEntity>) relationTypeRepository.findAll(), RelationTypeDTO.class);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BankDTO> lookupBanks() {
+        logger.info("********** Entrando a lookupBanks PeopleLookupServiceImpl **********");
+        return  beaner.transform((List<BankEntity>) bankRepository.findAll(), BankDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AccountTypeDTO> lookupAccountTypes() {
+        return  beaner.transform((List<AccountTypeEntity>) accountTypeRepository.findAll(), AccountTypeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AccountClasificationDTO> lookupAccountClasifications() {
+        return  beaner.transform((List<AccountClasificationEntity>) accountClasificationRepository.findAll(), AccountClasificationDTO.class);
+    }
+
 }

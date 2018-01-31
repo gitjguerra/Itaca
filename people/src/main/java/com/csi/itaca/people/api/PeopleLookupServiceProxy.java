@@ -1,5 +1,8 @@
 package com.csi.itaca.people.api;
 
+import com.csi.itaca.people.model.AccountClasification;
+import com.csi.itaca.people.model.AccountType;
+import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.dto.*;
 import org.springframework.http.ResponseEntity;
 
@@ -22,6 +25,10 @@ public interface PeopleLookupServiceProxy {
     String LOOKUP_COMPANY_PERSON_TYPES  = LOOKUP +"/companyPersonTypes";
     String LOOKUP_CONTACT_TYPES         = LOOKUP +"/contactTypes";
     String LOOKUP_RELATION_TYPES        = LOOKUP +"/relationTypes";
+
+    String LOOKUP_BANK                  = LOOKUP +"/bank";
+    String LOOKUP_ACCOUNT_TYPE          = LOOKUP +"/type";
+    String LOOKUP_ACCOUNT_CLASIFIED     = LOOKUP +"/clasified";
 
     /** @return a list of civil statuses.*/
     ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus();
@@ -49,5 +56,14 @@ public interface PeopleLookupServiceProxy {
 
     /** @return a list of relation types.*/
     ResponseEntity<List<RelationTypeDTO>> lookupRelationTypes();
+
+    /** @return a list of banks.*/
+    ResponseEntity<List<BankDTO>> lookupBanks();
+
+    /** @return a list of AccountType.*/
+    ResponseEntity<List<? extends AccountType>> lookupAccountTypes();
+
+    /** @return a list of AccountClassification.*/
+    ResponseEntity<List<? extends AccountClasification>> lookupAccountClasifications();
 
 }
