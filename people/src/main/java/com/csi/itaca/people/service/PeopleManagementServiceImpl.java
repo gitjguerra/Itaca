@@ -1,7 +1,7 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
-import com.csi.itaca.people.model.Bank;
+import com.csi.itaca.people.endpoint.PeopleManagementRestController;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.repository.*;
@@ -16,6 +16,7 @@ import com.csi.itaca.people.model.filters.CompanySearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.tools.utils.jpa.JpaUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,6 +35,9 @@ import java.util.List;
 
 @Service
 public class PeopleManagementServiceImpl implements PeopleManagementService {
+
+    /** Logger */
+    private static Logger logger = Logger.getLogger(PeopleManagementRestController.class);
 
     @Autowired
     private EntityManager entityManager;
@@ -643,12 +647,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }
 
         return p;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<CardTypeDTO> lookupCardTypes() {
-        return  beaner.transform((List<CardTypeEntity>) cardTypeRepository.findAll(), CardTypeDTO.class);
     }
 
     @Override

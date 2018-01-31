@@ -30,4 +30,11 @@ public interface PeopleLookupService {
 
     List<AccountClasificationDTO> lookupAccountClasifications();
 
+    /**
+     * List of Card Type.
+     * @return the Card Types.
+     */
+    List<CardTypeDTO>  lookupCardTypes();
+
+
 }

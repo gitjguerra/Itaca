@@ -2,7 +2,6 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
-import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -117,12 +116,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(personDetailDTO, errTracking);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////// Person detail end ...
-
-    @Override
-    @RequestMapping(value = LOOKUP_CARD_TYPE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<? extends CardType>> lookupCardTypes() {
-        return new ResponseEntity(peopleManagementService.lookupCardTypes(), HttpStatus.OK);
-    }
 
     @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)

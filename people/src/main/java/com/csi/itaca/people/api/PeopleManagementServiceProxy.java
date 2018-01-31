@@ -1,6 +1,5 @@
 package com.csi.itaca.people.api;
 
-import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +42,6 @@ public interface PeopleManagementServiceProxy {
     String SEARCH_ACCOUNT             = RESOURCE + RESOURCE_ACCOUNT + "/search";
     String COUNT_ACCOUNT              = RESOURCE + RESOURCE_ACCOUNT +"/count";
     String GET_ACCOUNT                = RESOURCE + RESOURCE_ACCOUNT +"/get";
-
-    String LOOKUP_CARD_TYPE             = RESOURCE_ACCOUNT +"/cardType";
-
 
     /**
      * Gets a person.
@@ -233,9 +229,6 @@ public interface PeopleManagementServiceProxy {
     ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
 
     */
-
-    /** @return a list of CardTypes.*/
-    ResponseEntity<List<? extends CardType>> lookupCardTypes();
 
     /**
      * Saves or updates account.

@@ -23,8 +23,6 @@ import java.util.List;
 @RestController
 public class PeopleLookupRestController extends ItacaBaseRestController implements PeopleLookupServiceProxy {
 
-    private static final Logger logger = LogManager.getLogger(PeopleLookupRestController.class);
-
     /** lookups service. */
     @Autowired
     private PeopleLookupService peopleLookupService;
@@ -99,6 +97,12 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
     @RequestMapping(value = LOOKUP_ACCOUNT_CLASIFIED, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<? extends AccountClasification>> lookupAccountClasifications() {
         return new ResponseEntity(peopleLookupService.lookupAccountClasifications(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_CARD_TYPE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends CardTypeDTO>> lookupCardTypes() {
+        return new ResponseEntity(peopleLookupService.lookupCardTypes(), HttpStatus.OK);
     }
 
 }
