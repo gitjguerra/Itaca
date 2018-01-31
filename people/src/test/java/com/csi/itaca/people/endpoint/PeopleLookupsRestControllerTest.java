@@ -579,4 +579,41 @@ public class PeopleLookupsRestControllerTest {
                 ));
     }
 
+    /** look up Account card type test. */
+    @Test
+    public void cardTypeLookup() throws Exception {
+
+        List<CardTypeDTO> list = new ArrayList<>();
+
+        CardTypeDTO item1 = new CardTypeDTO();
+        item1.setId(1L);
+        item1.setLiteral("001");
+        list.add(item1);
+
+        CardTypeDTO item2 = new CardTypeDTO();
+        item2.setId(2L);
+        item2.setLiteral("002");
+        list.add(item2);
+
+        CardTypeDTO item3 = new CardTypeDTO();
+        item3.setId(3L);
+        item3.setLiteral("003");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupCardTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_CARD_TYPE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].literal",is(item1.getLiteral())))
+
+                .andDo(document(
+                        "lookup-card-type",
+                        responseFields(fieldWithPath("[].id").description("Card type ID.")
+                                ,fieldWithPath("[].literal").description("Card type literal.")
+                        )
+                ));
+    }
+
 }
