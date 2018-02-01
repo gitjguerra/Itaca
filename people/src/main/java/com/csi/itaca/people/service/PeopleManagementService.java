@@ -3,6 +3,7 @@ package com.csi.itaca.people.service;
 import com.csi.itaca.people.model.dto.AccountDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.dto.PersonDetailDTO;
+import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;
 import java.util.List;
@@ -94,6 +95,7 @@ public interface PeopleManagementService {
      */
     Long countDuplicatePersonDetails(PeopleSearchFilter filter);
 
+    //TODO: (Jose Guerra) Save Or Update Account
     /**
      * Saves or updates the provided account.
      * @param accountToSaveOrUpdate the person to save/update.
@@ -101,4 +103,11 @@ public interface PeopleManagementService {
      */
     AccountDTO saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, Errors errTracking);
 
+    /**
+     * Counts the list of person detail based on the supplied search criteria.
+     * @param filter filter to apply
+     * @return the number of person details.
+     */
+    Long countBankCards(BankCardSearchFilter filter);
+    //ResponseEntity<Long> countTarjetaBancaria(Long idDetallePersona);
 }

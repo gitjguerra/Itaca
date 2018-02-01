@@ -24,10 +24,22 @@ public interface PeopleLookupService {
 
     List<RelationTypeDTO> lookupRelationTypes();
 
+    /**
+     * List of Banks.
+     * @return the Card Types.
+     */
     List<BankDTO> lookupBanks();
 
+    /**
+     * List of Account Types.
+     * @return the Card Types.
+     */
     List<AccountTypeDTO> lookupAccountTypes();
 
+    /**
+     * List of Account Clasification.
+     * @return the Card Types.
+     */
     List<AccountClasificationDTO> lookupAccountClasifications();
 
     /**

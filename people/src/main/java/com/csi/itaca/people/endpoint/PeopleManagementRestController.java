@@ -3,6 +3,7 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
 import org.apache.log4j.Logger;
@@ -118,19 +119,19 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     ////////////////////////////////////////////////////////////////////////////////////////////// Person detail end ...
 
     @Override
-    @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveOrUpdatePerson(AccountDTO accountToSaveOrUpdate, BindingResult errTracking) {
-        return null;
+    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countBankCards(BankCardSearchFilter filter) {
+        return new ResponseEntity<>(peopleManagementService.countBankCards(filter), HttpStatus.OK);
     }
 
-    /*
+    //TODO: (Jose Guerra) Save Or Update Account
     @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate,BindingResult errTracking) {
-
+    public ResponseEntity saveOrUpdatePerson(AccountDTO accountToSaveOrUpdate, BindingResult errTracking) {
+        logger.info("******************** SAVE *************************");
         AccountDTO accountDTO = peopleManagementService.saveOrUpdateAccount(accountToSaveOrUpdate, errTracking);
-        return buildResponseEntity(AccountDTO, errTracking);
+        return buildResponseEntity(accountDTO, errTracking);
     }
-    */
+
 
 }

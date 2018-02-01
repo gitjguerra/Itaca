@@ -2,8 +2,10 @@ package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
 import com.csi.itaca.people.endpoint.PeopleManagementRestController;
+import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
+import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.repository.*;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.people.api.ErrorConstants;
@@ -649,8 +651,112 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 
+    // TODO: (Jose Guerra) CountBankCards method
     @Override
-    public AccountDTO saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, Errors errTracking) {
+    @Transactional(readOnly = true)
+    public Long countBankCards(BankCardSearchFilter filter) {
+
+        if (filter.getCardType().getId().equals(CardType.CARD_TYPE_ID)) {
+            //Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(filter);
+            //return CardTypeRepository.count(spec);
+
+        } else if (filter.getCardType().getLiteral().equals(CardType.LITERAL)) {
+            //Specification<CardTypeEntity> spec = buildDuplicateDetailsSpecForCompany(filter);
+            //return companyDetailRepository.count(spec);
+        }
+
+        return 0L;
+    }
+
+    //TODO: (Jose Guerra) Save Or Update Account
+    @Override
+    @Transactional
+    public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
+
+//********************************************************
+/*
+                    if (cuentaBancariaEntityFor.getCuenta().equals(((CuentaBancaria0DTO) cuentaBancaria0).getCuenta())
+                            && (!(cuentaBancariaEntityFor.getId().equals(cuentaBancaria0.getId()))) ) {
+                        throw new CuentaBancariaDuplicadoException();
+
+                    }
+
+            if (((CuentaBancaria0DTO) cuentaBancaria0).getPrincipal()) {
+                Specification<CuentaBancariaEntity> spec = (root, query, cb) -> {
+                    Predicate p = null;
+                    if (cuentaBancaria0 != null) {
+                        p = cb.equal(root.get(CuentaBancariaEntity.DET_PERSONA).get(DetallePersonaEntity.ID),
+                                ((CuentaBancaria0DTO) cuentaBancaria0).getDetallePersona().getId());
+                        p = cb.and(p, cb.equal(root.get(CuentaBancariaEntity.PRINCIPAL), new Long(1)));
+                    }
+                    return p;
+                };
+
+                List<CuentaBancariaEntity> cuentasBancarias = cuentaBancaria.findAll(spec);
+
+                for (CuentaBancariaEntity cuentabancaria : cuentasBancarias) {
+                    cuentabancaria.setPrincipal(false);
+                    cuentaBancaria.save(cuentabancaria);
+                }
+            }
+
+            cuentaBancariaEntity = beaner.transform(cuentaBancaria0, CuentaBancariaEntity.class);
+            return cuentaBancaria.save(cuentaBancariaEntity);
+*/
+//********************************************************
+/*
+        if (dto.getId() == null
+                && !peopleBusinessLogic.isDuplicatePeopleAllowed()
+                && doseExternalReferenceAlreadyExist(dto.getExternalReferenceCode())) {
+            errTracking.reject(ErrorConstants.DB_DUPLICATE_PERSON_NOT_ALLOWED);
+        }
+        else {
+            if (dto instanceof IndividualDTO) {
+
+                IndividualEntity individualEntity = new IndividualEntity();
+                individualEntity.setId(dto.getId());
+                individualEntity.setIdentificationCode(dto.getIdentificationCode() != null ? dto.getIdentificationCode().trim().toUpperCase() : dto.getIdentificationCode());
+                individualEntity.setExternalReferenceCode(dto.getExternalReferenceCode() != null ? dto.getExternalReferenceCode().trim().toUpperCase() : dto.getExternalReferenceCode());
+                individualEntity.setIdType(beaner.transform(dto.getIdType(), IDTypeEntity.class));
+                individualEntity.setGender(beaner.transform(((IndividualDTO) dto).getGender(), GenderEntity.class));
+                individualEntity.setDateOfBirth(((IndividualDTO) dto).getDateOfBirth());
+                individualEntity = individualRepository.save(individualEntity);
+
+                List<IndividualDetailEntity> detailEntities = new ArrayList<>();
+
+                for (PersonDetail detail : ((IndividualDTO) dto).getDetails()) {
+                    IndividualDetailDTO individualDetailDTO = (IndividualDetailDTO) detail;
+                    IndividualDetailEntity individualDetailEntity = new IndividualDetailEntity();
+
+                    individualDetailEntity.setId(individualDetailDTO.getId());
+                    individualDetailEntity.setSurname1(individualDetailDTO.getSurname1() != null ? individualDetailDTO.getSurname1().trim().toUpperCase() : "");
+                    individualDetailEntity.setSurname2(individualDetailDTO.getSurname2() != null ? individualDetailDTO.getSurname2().trim().toUpperCase() : "");
+                    individualDetailEntity.setName1(individualDetailDTO.getName1() != null ? individualDetailDTO.getName1().trim().toUpperCase() : "");
+                    individualDetailEntity.setName2(individualDetailDTO.getName2() != null ? individualDetailDTO.getName2().trim().toUpperCase() : "");
+                    individualDetailEntity.setName(individualDetailEntity.getName1() + " " + individualDetailEntity.getName2() + " "+ individualDetailEntity.getSurname1() + " " + individualDetailEntity.getSurname2());
+                    individualDetailEntity.setCivilStatus(beaner.transform(individualDetailDTO.getCivilStatus(), CivilStatusEntity.class));
+                    individualDetailEntity.setPersonStatus(beaner.transform(individualDetailDTO.getPersonStatus(), PersonStatusEntity.class));
+                    individualDetailEntity.setLanguage(beaner.transform(individualDetailDTO.getLanguage(), LanguageEntity.class));
+                    individualDetailEntity.setCountry(beaner.transform(individualDetailDTO.getCountry(), CountryEntity.class));
+
+                    individualDetailEntity.setPerson(individualEntity);
+
+                    individualDetailEntity = individualDetailRepository.save(individualDetailEntity);
+                    detailEntities.add(individualDetailEntity);
+                    individualEntity.setDetails(detailEntities);
+                }
+
+                entityManager.flush();
+                entityManager.clear();
+
+                // update id
+                dto.setId(individualEntity.getId());
+
+                return dto;
+
+            }
+        }
+*/
         return null;
     }
 

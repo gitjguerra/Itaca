@@ -141,10 +141,7 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
     @Override
     @Transactional(readOnly = true)
     public List<CardTypeDTO> lookupCardTypes() {
-        logger.info("******************* LOOKUP CARD TYPE implementation ******************************");
         return  beaner.transform((List<CardTypeEntity>) cardTypeRepository.findAll(), CardTypeDTO.class);
     }
-
-
 
 }
