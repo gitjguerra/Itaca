@@ -531,3 +531,81 @@ include::{snippets}/lookup-relation-type/http-response.adoc[]
 ==== CURL request
 
 include::{snippets}/lookup-relation-type/curl-request.adoc[]
+
+
+=== lookup Bank
+
+==== Request structure
+
+include::{snippets}/lookup-bank/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-bank/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-bank/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-bank/curl-request.adoc[]
+
+
+=== lookup Account Type
+
+==== Request structure
+
+include::{snippets}/lookup-account-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-account-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-account-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-account-type/curl-request.adoc[]
+
+
+
+=== lookup Account Clasification
+
+==== Request structure
+
+include::{snippets}/lookup-account-clasification/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-account-clasification/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-account-clasification/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-account-clasification/curl-request.adoc[]
+
+
+
+=== lookup Card Type
+
+==== Request structure
+
+include::{snippets}/lookup-card-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-card-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-card-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-card-type/curl-request.adoc[]
