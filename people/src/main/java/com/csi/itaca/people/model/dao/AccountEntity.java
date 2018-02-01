@@ -58,18 +58,4 @@ public abstract class AccountEntity implements Account {
 	@JoinColumn(name="ID_BANK")
 	private BankEntity bank;
 
-	@Override
-	public PersonDetail getPersonDetail() {
-		return persondetail;
-	}
-
-	@Override
-	public AccountClasification getAccountClasification() {
-		return accountclasification;
-	}
-
-	@Override
-	public AccountType getAccountType() {
-		return accounttype;
-	}
 }

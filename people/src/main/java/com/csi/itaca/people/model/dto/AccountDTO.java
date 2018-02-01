@@ -35,9 +35,4 @@ public class AccountDTO implements Account {
 		this.available = available;
 		this.bank = bank;
 	}
-
-	@Override
-	public PersonDetail getPersonDetail() {
-		return null;
-	}
 }

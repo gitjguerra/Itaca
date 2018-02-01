@@ -1,6 +1,7 @@
 package com.csi.itaca.people.api;
 
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +39,16 @@ public interface PeopleManagementServiceProxy {
 
     // End points for account...
     String RESOURCE_ACCOUNT           = RESOURCE + "/account";
-    String SAVE_ACCOUNT               = RESOURCE + RESOURCE_ACCOUNT + "/save";
-    String DELETE_ACCOUNT             = RESOURCE + RESOURCE_ACCOUNT + "/delete";
-    String SEARCH_ACCOUNT             = RESOURCE + RESOURCE_ACCOUNT + "/search";
-    String COUNT_ACCOUNT              = RESOURCE + RESOURCE_ACCOUNT +"/count";
-    String GET_ACCOUNT                = RESOURCE + RESOURCE_ACCOUNT +"/get";
+    String SAVE_ACCOUNT               = RESOURCE_ACCOUNT + "/save";
+    String DELETE_ACCOUNT             = RESOURCE_ACCOUNT + "/delete";
+    String SEARCH_ACCOUNT             = RESOURCE_ACCOUNT + "/search";
+    String COUNT_ACCOUNT              = RESOURCE_ACCOUNT +"/count";
+    String GET_ACCOUNT                = RESOURCE_ACCOUNT +"/get";
 
-    String COUNT_BANK_CARD            = RESOURCE + RESOURCE_ACCOUNT +"/countCard";
+    String COUNT_BANK_CARD            = RESOURCE_ACCOUNT +"/countCard";
+    String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
+    String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
+
     /**
      * Gets a person.
      * @param id the person id.
@@ -120,15 +124,12 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity<? extends PersonDetailDTO> getPersonDetail(Long detailId);
 
-
-
-    //TODO: (Jose Guerra) Implements modules methods
     /**
      * Saves or updates account.
      * @param accountToSaveOrUpdate the account to save/update.
      * @param errTracking error tracking.
      */
-    ResponseEntity saveOrUpdatePerson(AccountDTO accountToSaveOrUpdate,BindingResult errTracking);
+    ResponseEntity saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate,BindingResult errTracking);
 
     /**
      * counts bank cards.
@@ -136,11 +137,37 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity<Long> countBankCards(BankCardSearchFilter filter);
 
+    /**
+     * Gets a account.
+     * @param id the account id.
+     * @return a response body containing the requested account json object.
+     */
+    ResponseEntity getAccount(Long id);
+
+    /**
+     * counts accounts.
+     * @param filter the filter to find bank cards.
+     */
+    ResponseEntity<Long> countAccount(AccountSearchFilter filter);
+
+    /**
+     * Saves or updates account.
+     * @param bankCardToSaveOrUpdate the bank card to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdateBankCard(BankCardDTO bankCardToSaveOrUpdate,BindingResult errTracking);
+
+    /**
+     * Gets a Bank Card.
+     * @param id the bank card id.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity getBankCard(Long id);
+
     /*
     // account
     ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
     ItacaAPIResponse<Long> countTarjetaBancaria(Long idDetallePersona);
-
     ItacaAPIResponse<List<? extends CuentaBancaria0DTO>> getCuentaBancaria(FiltroDetallePersonaCuentaPaginaOrden peticion);
     ItacaAPIResponse<Long> countCuentaBancaria(Long idDetallePersona);
     ItacaAPIResponse<TarjetaBancaria0DTO> saveOrUpdateTarjetasBancarias(TarjetaBancaria0DTO tarjetaBancaria);

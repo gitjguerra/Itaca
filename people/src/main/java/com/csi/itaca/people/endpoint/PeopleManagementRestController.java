@@ -3,6 +3,7 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -118,20 +119,59 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
     ////////////////////////////////////////////////////////////////////////////////////////////// Person detail end ...
 
-    @Override
-    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> countBankCards(BankCardSearchFilter filter) {
-        return new ResponseEntity<>(peopleManagementService.countBankCards(filter), HttpStatus.OK);
-    }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Account ...
     //TODO: (Jose Guerra) Save Or Update Account
     @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveOrUpdatePerson(AccountDTO accountToSaveOrUpdate, BindingResult errTracking) {
+    public ResponseEntity saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, BindingResult errTracking) {
         logger.info("******************** SAVE *************************");
         AccountDTO accountDTO = peopleManagementService.saveOrUpdateAccount(accountToSaveOrUpdate, errTracking);
         return buildResponseEntity(accountDTO, errTracking);
     }
 
+    //TODO: (Jose Guerra) get Account
+    @Override
+    @RequestMapping(value = GET_ACCOUNT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getAccount(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        AccountDTO account = peopleManagementService.getAccount(id, errTracking);
+        return buildResponseEntity(account, errTracking);
+    }
+
+    //TODO: (Jose Guerra) count Account
+    @Override
+    @RequestMapping(value = COUNT_ACCOUNT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countAccount(AccountSearchFilter filter) {
+        return new ResponseEntity<>(peopleManagementService.countAccount(filter), HttpStatus.OK);
+    }
+
+    //TODO: (Jose Guerra) Save Or Update Bank Card
+    @Override
+    @RequestMapping(value = SAVE_BANK_CARD, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateBankCard(BankCardDTO bankCardToSaveOrUpdate, BindingResult errTracking) {
+        BankCardDTO bankCardDTO = peopleManagementService.saveOrUpdateBankCard(bankCardToSaveOrUpdate, errTracking);
+        return buildResponseEntity(bankCardDTO, errTracking);
+    }
+
+    //TODO: (Jose Guerra) get Bank Card
+    @Override
+    @RequestMapping(value = GET_BANK_CARD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getBankCard(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        BankCardDTO bankCard = peopleManagementService.getBankCard(id, errTracking);
+        return buildResponseEntity(bankCard, errTracking);
+    }
+
+    //TODO: (Jose Guerra) Save Or Update count Bank Card
+    @Override
+    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countBankCards(BankCardSearchFilter filter) {
+        return new ResponseEntity<>(peopleManagementService.countBankCards(filter), HttpStatus.OK);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
 
 }
