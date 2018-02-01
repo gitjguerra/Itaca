@@ -15,8 +15,8 @@ import lombok.Setter;
 public class AccountDTO implements Account {
 	
 	private Long id;
-	//private PersonDetailDTO personDetail = new PersonDetailDTO();
-	private PersonDetailDTO personDetail = null;
+
+	private PersonDetailDTO personDetail;
 	private AccountClasificationDTO accountClasification;
 	private AccountTypeDTO accountType;
 	private String account;
