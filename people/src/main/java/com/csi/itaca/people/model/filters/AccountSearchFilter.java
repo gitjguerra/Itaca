@@ -1,5 +1,7 @@
 package com.csi.itaca.people.model.filters;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,14 +9,11 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@JsonTypeName("FILTRO_BUSCADOR_PERSONACUENTAS0")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY , property = "accountSerchFilter")
 public class AccountSearchFilter {
 
-	public static final String ID 	    				= "id";
-	public static final String ID_PERSON_DETAIL 	    = "personDetail";
-	public static final String ACCOUNTCLASIFIED 	    = "accountClasification";
-	public static final String ACCOUNT 	    			= "account";
-	public static final String PRINCIPAL 	    		= "principal";
-	public static final String AVAILABLE 	    		= "available";
-	public static final String BANK 	    			= "bank";
+	private Long id;
+	private String number;
 
 }

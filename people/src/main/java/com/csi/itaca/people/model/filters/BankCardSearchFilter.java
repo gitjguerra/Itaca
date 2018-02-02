@@ -20,9 +20,6 @@ import javax.validation.constraints.Size;
 })
 public abstract class BankCardSearchFilter {
 
-	public static final String CARD_TYPE_FIELD 		= "cardType";
-	public static final String LITERAL 				= "literal";
-
 	private CardTypeDTO cardType;
 
 	@Size(max=50)

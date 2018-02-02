@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.csi.itaca.people.repository.AccountRepository.*;
+
 @Service
 public class PeopleManagementServiceImpl implements PeopleManagementService {
 
@@ -655,14 +657,82 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 
+    private Predicate applyLikeLowerAccountFilter(CriteriaBuilder cb, Root<? extends AccountEntity> r, String field,
+                                                  String value, Predicate p, int fieldDepth) {
+
+        value = value.trim().toLowerCase();
+
+        if (fieldDepth == 1) {
+            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
+                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
+        } else if (fieldDepth > 1 && fieldDepth < 7) {
+            String fields[] = field.split("[.]", -1);
+            if (fieldDepth == 2) {
+                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
+                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
+            }
+        }
+        return p;
+    }
+    private Predicate applyAccountFilter(Predicate p, CriteriaBuilder cb,
+                                         Root<? extends AccountEntity> r,
+                                         AccountSearchFilter filter) {
+        if (filter.getId() != null) {
+            p = applyLikeLowerAccountFilter(cb, r,AccountEntity.ID+ ".", String.valueOf(filter.getId()), p, 1);
+        }
+        if (StringUtils.isNotEmpty(filter.getNumber())) {
+            p = applyLikeLowerAccountFilter(cb, r, AccountEntity.ACCOUNT, filter.getNumber(), p,2);
+        }
+        return p;
+    }
+
+    private Predicate applyLikeLowerBankCardFilter(CriteriaBuilder cb, Root<? extends BankCardEntity> r, String field,
+                                                  String value, Predicate p, int fieldDepth) {
+
+        value = value.trim().toLowerCase();
+
+        if (fieldDepth == 1) {
+            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
+                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
+        } else if (fieldDepth > 1 && fieldDepth < 7) {
+            String fields[] = field.split("[.]", -1);
+            if (fieldDepth == 2) {
+                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
+                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
+            }
+        }
+        return p;
+    }
+    private Predicate applyBankCardFilter(Predicate p, CriteriaBuilder cb,
+                                         Root<? extends BankCardEntity> r,
+                                          BankCardSearchFilter filter) {
+        if (filter.getId() != null) {
+            p = applyLikeLowerBankCardFilter(cb, r,BankCardEntity.ID_BANK_CARD  + ".", String.valueOf(filter.getId()), p, 1);
+        }
+        if (StringUtils.isNotEmpty(filter.getCardType().getLiteral())) {
+            p = applyLikeLowerBankCardFilter(cb, r, BankCardEntity.CARD, filter.getLiteral(), p,2);
+        }
+        return p;
+    }
+
     // TODO: (Jose Guerra) CountBankCards method
     @Override
     @Transactional(readOnly = true)
     public Long countBankCards(BankCardSearchFilter filter) {
 
-        //BankCard card = beaner.transform(BankCardRepository.count(filter);
-        //return card.getId();
-        return 10L;
+        if (filter.getId() == null) {
+            Specification<BankCardEntity> spec = (root, query, cb) -> {
+                return applyBankCardFilter(null, cb, root, filter);
+            };
+            return bankCardRepository.count(spec);
+
+        } else if (BankCardEntity.ID_BANK_CARD.equals(filter.getId())) {
+            Specification<BankCardEntity> spec = (root, query, cb) -> {
+                return applyBankCardFilter(null, cb, root, filter);
+            };
+            return bankCardRepository.count(spec);
+        }
+        return null;
     }
 
     //TODO: (Jose Guerra) Save Or Update Account
@@ -670,9 +740,10 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
-        logger.info("******************** SAVEorUPDATE PROCESS *************************");
+        logger.info("******************** SAVEorUPDATE ACCOUNT PROCESS *************************");
 
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
+
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
         accountEntity.setPersondetail(beaner.transform(dto.getPersonDetail().getId(), PersonDetailEntity.class));
@@ -689,7 +760,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         // update id
         dto.setId(accountEntity.getId());
 
-        logger.info("******************** Ready return DTO *************************");
+        logger.info("******************** Ready  ACCOUNT return DTO *************************");
 
         return dto;
 
@@ -699,15 +770,37 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     //    @Override
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
-        //AccountEntity account =  AccountRepository.findOne(id);;
-        //return beaner.transform(account, AccountDTO.class);
-        return new AccountDTO();
+        AccountEntity accountEntity = accountRepository.findOne(id);
+        AccountDTO account = null;
+        if (accountEntity!=null) {
+            return beaner.transform(account, AccountDTO.class);
+        }
+        return account;
     }
 
     //TODO: (Jose Guerra) Save Or Update Bank Card
     @Override
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
+
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getId());
+
+        bankCardEntity.setId(dto.getId());
+        bankCardEntity.setAvailable(dto.getAvailable());
+        bankCardEntity.setBank(beaner.transform(dto.getBank().getId(), BankEntity.class));
+        bankCardEntity.setCard(dto.getCard());
+        bankCardEntity.setCardType(beaner.transform(dto.getCardType().getId(), CardTypeEntity.class));
+        bankCardEntity.setExpirationDate(dto.getExpirationDate());
+        bankCardEntity.setPersonDetail(beaner.transform(dto.getPersonDetail().getId(), PersonDetailEntity.class));
+        bankCardEntity.setPrincipal(dto.getPrincipal());
+        bankCardEntity.setSecurityCode(dto.getSecurityCode());
+        bankCardEntity = bankCardRepository.save(bankCardEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // update id
+        dto.setId(bankCardEntity.getId());
 
         return dto;
 
@@ -717,9 +810,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     //    @Override
     public BankCardDTO getBankCard(Long id, Errors errTracking) {
 
-        //AccountEntity account =  AccountRepository.findOne(id);;
-        //return beaner.transform(account, AccountDTO.class);
-        return new BankCardDTO();
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(id);
+        BankCardDTO bankCard = null;
+        if (bankCardEntity!=null) {
+            return beaner.transform(bankCardEntity, BankCardDTO.class);
+        }
+        return bankCard;
     }
 
     // TODO: (Jose Guerra) countAccount method
@@ -727,8 +823,19 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public Long countAccount(AccountSearchFilter filter) {
 
-        //AccountEntity account =  AccountRepository.findOne(id);;
-        //return beaner.transform(account, AccountDTO.class);
-        return 10L;
+        if (filter.getId() == null) {
+            Specification<AccountEntity> spec = (root, query, cb) -> {
+                return applyAccountFilter(null, cb, root, filter);
+            };
+            return accountRepository.count(spec);
+
+        } else if (AccountTypeEntity.ID.equals(filter.getId())) {
+            Specification<AccountEntity> spec = (root, query, cb) -> {
+                return applyAccountFilter(null, cb, root, filter);
+            };
+            return accountRepository.count(spec);
+        }
+        return null;
+
     }
 }

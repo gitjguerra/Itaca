@@ -126,7 +126,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, BindingResult errTracking) {
-        logger.info("******************** SAVE *************************");
         AccountDTO accountDTO = peopleManagementService.saveOrUpdateAccount(accountToSaveOrUpdate, errTracking);
         return buildResponseEntity(accountDTO, errTracking);
     }
