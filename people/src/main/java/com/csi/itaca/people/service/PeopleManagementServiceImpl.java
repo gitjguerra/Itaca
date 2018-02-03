@@ -780,8 +780,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     //    @Override
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
-        AccountEntity accountEntity = accountRepository.findOne(id);
         AccountDTO account = null;
+
+        AccountEntity accountEntity = accountRepository.findOne(id);
         if (accountEntity!=null) {
             return beaner.transform(accountEntity, AccountDTO.class);
         }
@@ -820,8 +821,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     //    @Override
     public BankCardDTO getBankCard(Long id, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(id);
         BankCardDTO bankCard = null;
+
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(id);
         if (bankCardEntity!=null) {
             return beaner.transform(bankCardEntity, BankCardDTO.class);
         }
