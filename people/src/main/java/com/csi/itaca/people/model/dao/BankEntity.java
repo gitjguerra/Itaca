@@ -14,14 +14,14 @@ import javax.persistence.*;
 @Table(name = "per_bank")
 public class BankEntity implements Bank {
 
-    public static final String ID = "BANK_ID";
+    public static final String ID = "ID_BANK";
     public static final String BANK_NAME = "BANK_NAME";
     public static final String CBIC = "CBIC";
     public static final String DRAFTBANK = "DRAFT_BANK_PORTAL";
     public static final String COD_BANK = "COD_BANK";
 
     @Id
-    @Column(name="BANK_ID")
+    @Column(name="ID_BANK")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_PER_BANK")
     @SequenceGenerator(name = "SEQ_PER_BANK", sequenceName = "SEQ_PER_BANK", allocationSize = 1)
     private Long id;

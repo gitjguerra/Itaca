@@ -744,14 +744,24 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
+        logger.info("count:"+accountRepository);
         accountEntity.setId(dto.getId());
+        logger.info("********** hey ******************");
+        logger.info("account:"+dto.getAccount());
         accountEntity.setAccount(dto.getAccount());
+        logger.info("Persondetail:"+dto.getPersonDetail().getId());
         accountEntity.setPersondetail(beaner.transform(dto.getPersonDetail().getId(), PersonDetailEntity.class));
+        logger.info("Accountclasification:"+dto.getAccountClasification().getId());
         accountEntity.setAccountclasification(beaner.transform(dto.getAccountClasification().getId(), AccountClasificationEntity.class));
+        logger.info("Accounttype:"+dto.getAccountType().getId());
         accountEntity.setAccounttype(beaner.transform(dto.getAccountType().getId(), AccountTypeEntity.class));
+        logger.info("Available:"+dto.getAvailable());
         accountEntity.setAvailable(dto.getAvailable());
+        logger.info("Principal:"+dto.getPrincipal());
         accountEntity.setPrincipal(dto.getPrincipal());
+        logger.info("Bank:"+dto.getBank().getId());
         accountEntity.setBank(beaner.transform(dto.getBank().getId(), BankEntity.class));
+
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
@@ -773,7 +783,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         AccountEntity accountEntity = accountRepository.findOne(id);
         AccountDTO account = null;
         if (accountEntity!=null) {
-            return beaner.transform(account, AccountDTO.class);
+            return beaner.transform(accountEntity, AccountDTO.class);
         }
         return account;
     }

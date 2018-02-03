@@ -136,8 +136,8 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     public ResponseEntity getAccount(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
 
         BindingResult errTracking = createErrorTracker();
-        AccountDTO account = peopleManagementService.getAccount(id, errTracking);
-        return buildResponseEntity(account, errTracking);
+        AccountDTO accountGet = peopleManagementService.getAccount(id, errTracking);
+        return buildResponseEntity(accountGet, errTracking);
     }
 
     //TODO: (Jose Guerra) count Account

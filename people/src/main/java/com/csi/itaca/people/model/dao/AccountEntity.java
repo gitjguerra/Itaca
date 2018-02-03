@@ -25,8 +25,8 @@ public abstract class AccountEntity implements Account {
 	public static final String ACCOUNTCLASIFIED = "id_account_clasification";
 	public static final String PRINCIPAL = "principal";
 	public static final String AVAILABLE = "available";
-	public static final String BANK = "id_bank";
-	
+	public static final String ID_BANK = "id_bank";
+
 	@Id
 	@Column(name="ID_BANK_ACCOUNT")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_BANK_ACCOUNT")
@@ -44,7 +44,11 @@ public abstract class AccountEntity implements Account {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="ID_TYPE_ACCOUNT")
 	private AccountTypeEntity accounttype;
-	
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="ID_BANK")
+	private BankEntity bank;
+
 	@Column
 	private String account;
 	
@@ -53,9 +57,5 @@ public abstract class AccountEntity implements Account {
 	
 	@Column
 	private Boolean available;
-	
-	@ManyToOne
-	@JoinColumn(name="ID_BANK")
-	private BankEntity bank;
 
 }
