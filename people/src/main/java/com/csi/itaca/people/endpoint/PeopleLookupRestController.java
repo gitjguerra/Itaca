@@ -20,6 +20,7 @@ import java.util.List;
  * RESTful controller for people lookup items.
  * @author bboothe
  */
+@SuppressWarnings("unchecked")
 @RestController
 public class PeopleLookupRestController extends ItacaBaseRestController implements PeopleLookupServiceProxy {
 

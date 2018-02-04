@@ -49,6 +49,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
  * Test for the people management rest controller.
  * @author bboothe
  */
+@SuppressWarnings("unchecked")
 @RunWith(PowerMockRunner.class)
 public class PeopleManagementRestControllerTest {
 

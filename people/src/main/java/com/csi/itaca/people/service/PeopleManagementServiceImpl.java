@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.csi.itaca.people.repository.AccountRepository.*;
-
+@SuppressWarnings("unchecked")
 @Service
 public class PeopleManagementServiceImpl implements PeopleManagementService {
 

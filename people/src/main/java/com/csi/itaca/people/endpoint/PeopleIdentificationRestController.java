@@ -20,6 +20,7 @@ import java.util.List;
  * Identification Rest interface.
  * @author bboothe
  */
+@SuppressWarnings("unchecked")
 @RestController
 public class PeopleIdentificationRestController extends ItacaBaseRestController implements PeopleIdentificationServiceProxy {
 

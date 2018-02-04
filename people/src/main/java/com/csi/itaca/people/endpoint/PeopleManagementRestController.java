@@ -7,7 +7,6 @@ import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,11 +21,9 @@ import java.util.List;
  * RESTful controller for the people management service.
  * @author bboothe
  */
+@SuppressWarnings("unchecked")
 @RestController
 public class PeopleManagementRestController extends ItacaBaseRestController implements PeopleManagementServiceProxy {
-
-    /** Logger */
-    private static Logger logger = Logger.getLogger(PeopleManagementRestController.class);
 
     /** The people service. */
     @Autowired
