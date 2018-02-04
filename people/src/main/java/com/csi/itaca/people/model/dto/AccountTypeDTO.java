@@ -15,10 +15,4 @@ public class AccountTypeDTO implements AccountType {
 	private Long id;
 
 	private String valor;
-
-	public AccountTypeDTO(Long id, String valor) {
-		super();
-		this.id = id;
-		this.valor = valor;
-	}
 }

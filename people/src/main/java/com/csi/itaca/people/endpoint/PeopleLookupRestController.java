@@ -81,6 +81,7 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
         return new ResponseEntity(peopleLookupService.lookupRelationTypes(), HttpStatus.OK);
     }
 
+    /** lookups bank and account. */
     @Override
     @RequestMapping(value = LOOKUP_BANK, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BankDTO>> lookupBanks() {

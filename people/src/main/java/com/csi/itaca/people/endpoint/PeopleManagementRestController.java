@@ -122,7 +122,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Account ...
-    //TODO: (Jose Guerra) Save Or Update Account
+
     @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, BindingResult errTracking) {
@@ -130,7 +130,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(accountDTO, errTracking);
     }
 
-    //TODO: (Jose Guerra) get Account
     @Override
     @RequestMapping(value = GET_ACCOUNT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getAccount(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
@@ -140,14 +139,12 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(accountGet, errTracking);
     }
 
-    //TODO: (Jose Guerra) count Account
     @Override
     @RequestMapping(value = COUNT_ACCOUNT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> countAccount(AccountSearchFilter filter) {
         return new ResponseEntity<>(peopleManagementService.countAccount(filter), HttpStatus.OK);
     }
 
-    //TODO: (Jose Guerra) Save Or Update Bank Card
     @Override
     @RequestMapping(value = SAVE_BANK_CARD, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveOrUpdateBankCard(BankCardDTO bankCardToSaveOrUpdate, BindingResult errTracking) {
@@ -155,7 +152,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(bankCardDTO, errTracking);
     }
 
-    //TODO: (Jose Guerra) get Bank Card
     @Override
     @RequestMapping(value = GET_BANK_CARD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getBankCard(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
@@ -165,7 +161,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(bankCard, errTracking);
     }
 
-    //TODO: (Jose Guerra) Save Or Update count Bank Card
     @Override
     @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> countBankCards(BankCardSearchFilter filter) {

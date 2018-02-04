@@ -15,10 +15,4 @@ public class CardTypeDTO implements CardType{
 	private Long id;
 	private String literal;
 
-	public CardTypeDTO(Long id, String literal) {
-		super();
-		this.id = id;
-		this.literal = literal;
-	}
-
 }

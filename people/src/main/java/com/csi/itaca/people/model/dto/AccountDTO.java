@@ -1,8 +1,6 @@
 package com.csi.itaca.people.model.dto;
 
 import com.csi.itaca.people.model.Account;
-import com.csi.itaca.people.model.Bank;
-import com.csi.itaca.people.model.PersonDetail;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,5 @@
 package com.csi.itaca.people.model.dao;
 
-import com.csi.itaca.people.model.Account;
 import com.csi.itaca.people.model.BankCard;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
