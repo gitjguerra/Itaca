@@ -767,8 +767,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-    // TODO: (Jose Guerra) getAccount method
-    //    @Override
+    @Override
+    @Transactional
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
         AccountDTO account = null;
@@ -808,8 +808,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-    // TODO: (Jose Guerra) getBankCard method
-    //    @Override
+    @Override
+    @Transactional
     public BankCardDTO getBankCard(Long id, Errors errTracking) {
 
         BankCardDTO bankCard = null;
@@ -847,42 +847,13 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 /*
     @Override
     @Transactional(readOnly = true)
-    public List<? extends ContactDTO> listContacts(PeopleSearchFilter criteria, Errors errTracking) {
+    public List<? extends ContactDTO> listContacts(ContactSearchFilter criteria, Errors errTracking) {
 
         List<? extends ContactDTO> contacts = Collections.EMPTY_LIST;
 
-        if (!peopleBusinessLogic.isLogicalPrimaryKeyCorrect(criteria, errTracking)) {
-
-            PageRequest pr = null;
-            if (criteria.getPagination() != null) {
-                pr = new PageRequest(criteria.getPagination().getPageNo() - 1, criteria.getPagination().getItemsPerPage());
-            }
-
-            if (criteria.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
-
-                Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
-                spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
-
-                if (pr != null) {
-                    contacts = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
-                } else {
-                    contacts = beaner.transform(individualDetailRepository.findAll(spec), IndividualDetailDTO.class);
-                }
-
-            } else if (criteria.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
-
-                Specification<CompanyDetailEntity> spec = buildDuplicateDetailsSpecForCompany(criteria);
-                spec = JpaUtils.applyOrder(CompanyDetailEntity.class, criteria.getOrder(), spec);
-
-                if (pr != null) {
-                    contacts = beaner.transform(companyDetailRepository.findAll(spec, pr).getContent(), CompanyDetailDTO.class);
-                } else {
-                    contacts = beaner.transform(companyDetailRepository.findAll(spec), CompanyDetailDTO.class);
-                }
-
-            }
-
-        }
+        Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
+        spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
+        contacts = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
 
         return contacts;
     }
