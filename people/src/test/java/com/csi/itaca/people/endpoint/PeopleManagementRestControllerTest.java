@@ -2,6 +2,7 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
+import com.csi.itaca.people.model.AccountClasification;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -66,6 +67,11 @@ public class PeopleManagementRestControllerTest {
     private IndividualDTO testIndividualDTO;
     private IndividualDetailDTO testIndividualDetailDTO;
 
+    private BankCardDTO bankCardDTO;
+    private AccountDTO accountDTO;
+    private static final String CARD = "card";
+    private static final String ACCOUNT = "id";
+    private static final String ID_CARD = "idBankCard";
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
@@ -408,5 +414,118 @@ public class PeopleManagementRestControllerTest {
         if (includePerson) fields.addAll(individualFieldsDoc(fieldPrefix+"person.",true,false));
         return fields;
     }
+
+    @Test
+    public void getBankCard() throws Exception {
+
+        BankDTO bankDTO = new BankDTO();
+        bankDTO.setId(1L);
+
+        BankCardDTO bankCardDTO = new BankCardDTO();
+        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setCard("5018782000");
+        bankCardDTO.setIdPersonDetail(1L);
+        bankCardDTO.setIdBank(bankDTO);
+        bankCardDTO.setAvailable(true);
+        bankCardDTO.setPrincipal(true);
+        bankCardDTO.setSecurityCode(1L);
+
+        Mockito.when(service.getBankCard(any(), any(Errors.class) )).thenReturn(bankCardDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_BANK_CARD)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-BankCard",
+                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                                ,fieldWithPath("card").description("Card.")
+                                ,fieldWithPath("idPersonDetail").description("idPersonDetail.")
+                                ,fieldWithPath("idCardType").description("idCardType.")
+                                ,fieldWithPath("principal").description("principal.")
+                                ,fieldWithPath("available").description("available.")
+                                ,fieldWithPath("idBank.id").description("idBank.")
+                                ,fieldWithPath("idBank.bankName").description("bankName.")
+                                ,fieldWithPath("idBank.draftBank").description("draftBank.")
+                                ,fieldWithPath("idBank.bic").description("bic.")
+                                ,fieldWithPath("idBank.code").description("code.")
+                                ,fieldWithPath("expirationDate").description("expirationDate.")
+                                ,fieldWithPath("securityCode").description("securityCode.")
+                        )
+                ));
+    }
+
+    @Test
+    public void getAccount() throws Exception {
+
+        AccountClasificationDTO clasification = new AccountClasificationDTO();
+        clasification.setId(1L);
+        clasification.setValue("Corriente");
+
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(1L);
+        accountDTO.setAccount("5018782000");
+        accountDTO.setAccountClasification(clasification);
+        accountDTO.setPersonDetail(1L);
+        accountDTO.setAvailable(true);
+        accountDTO.setPrincipal(true);
+        accountDTO.setTypeAccount(1L);
+        accountDTO.setIdBank(1L);
+
+        Mockito.when(service.getAccount(any(), any(Errors.class) )).thenReturn(accountDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_ACCOUNT)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1)))
+                .andDo(print())
+                .andExpect(jsonPath(ACCOUNT,is(1)))
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-Account",
+                        responseFields(fieldWithPath("id").description("Id account.")
+                                ,fieldWithPath("personDetail").description("personDetail.")
+                                ,fieldWithPath("accountClasification").description("accountClasification.")
+                                ,fieldWithPath("accountClasification.id").description("id.")
+                                ,fieldWithPath("accountClasification.value").description("value.")
+                                ,fieldWithPath("typeAccount").description("typeAccount.")
+                                ,fieldWithPath("account").description("account.")
+                                ,fieldWithPath("idBank").description("idBank.")
+                                ,fieldWithPath("principal").description("principal.")
+                                ,fieldWithPath("available").description("available.")
+                        )
+                ));
+    }
+
+    @Test
+    public void countBankCard() throws Exception {
+
+        Mockito.when(service.countBankCards(any())).thenReturn(1L);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_BANK_CARD)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-bank-card",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
+
+    @Test
+    public void countAccount() throws Exception {
+
+        Mockito.when(service.countAccount(any())).thenReturn(1L);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-account",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
+
 
 }

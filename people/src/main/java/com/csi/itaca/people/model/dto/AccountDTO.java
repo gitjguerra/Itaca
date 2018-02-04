@@ -16,23 +16,12 @@ public class AccountDTO implements Account {
 	
 	private Long id;
 
-	private PersonDetailDTO personDetail;
+	private Long personDetail;
 	private AccountClasificationDTO accountClasification;
-	private AccountTypeDTO accountType;
+	private Long typeAccount;
 	private String account;
 	private Boolean principal;	
 	private Boolean available;
-	private Bank bank;
+	private Long IdBank;
 
-	public AccountDTO(Long id, PersonDetailDTO personDetail, AccountClasificationDTO accountClasification, AccountTypeDTO accountType, String account, Boolean principal, Boolean available, Bank bank) {
-		super();
-		this.id = id;
-		this.personDetail = personDetail;
-		this.accountClasification = accountClasification;
-		this.accountType = accountType;
-		this.account = account;
-		this.principal = principal;
-		this.available = available;
-		this.bank = bank;
-	}
 }

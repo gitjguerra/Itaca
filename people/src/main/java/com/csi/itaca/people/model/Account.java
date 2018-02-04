@@ -3,12 +3,12 @@ package com.csi.itaca.people.model;
 public interface Account {
 	
 	Long getId();
-	PersonDetail getPersonDetail();
+	Long getPersonDetail();
 	AccountClasification getAccountClasification();
-	AccountType getAccountType();
+	Long getTypeAccount();
 	String getAccount();
 	Boolean getPrincipal();
 	Boolean getAvailable();
-	Bank getBank();
+	Long getIdBank();
 
 }

@@ -122,7 +122,6 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
     @Override
     @Transactional(readOnly = true)
     public List<BankDTO> lookupBanks() {
-        logger.info("********** Entrando a lookupBanks PeopleLookupServiceImpl **********");
         return  beaner.transform((List<BankEntity>) bankRepository.findAll(), BankDTO.class);
     }
 

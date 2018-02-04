@@ -167,7 +167,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     //TODO: (Jose Guerra) Save Or Update count Bank Card
     @Override
-    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> countBankCards(BankCardSearchFilter filter) {
         return new ResponseEntity<>(peopleManagementService.countBankCards(filter), HttpStatus.OK);
     }

@@ -746,12 +746,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
-        accountEntity.setPersondetail(beaner.transform(dto.getPersonDetail().getId(), PersonDetailEntity.class));
-        accountEntity.setAccountclasification(beaner.transform(dto.getAccountClasification().getId(), AccountClasificationEntity.class));
-        accountEntity.setAccounttype(beaner.transform(dto.getAccountType().getId(), AccountTypeEntity.class));
+        accountEntity.setPersonDetail(dto.getPersonDetail());
+        accountEntity.setAccountClasification(beaner.transform(dto.getAccountClasification().getId(), AccountClasificationEntity.class));
+        accountEntity.setTypeAccount(dto.getTypeAccount());
         accountEntity.setAvailable(dto.getAvailable());
         accountEntity.setPrincipal(dto.getPrincipal());
-        accountEntity.setBank(beaner.transform(dto.getBank().getId(), BankEntity.class));
+        accountEntity.setIdBank(dto.getIdBank());
 
         accountEntity = accountRepository.save(accountEntity);
 
@@ -785,15 +785,15 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getId());
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBank().getId());
 
-        bankCardEntity.setId(dto.getId());
+        bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setBank(beaner.transform(dto.getBank().getId(), BankEntity.class));
+        bankCardEntity.setIdBank(beaner.transform(dto.getIdBank(), BankEntity.class));
         bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setCardType(beaner.transform(dto.getCardType().getId(), CardTypeEntity.class));
+        bankCardEntity.setIdCardType(beaner.transform(dto.getIdBankCard(), CardTypeEntity.class));
         bankCardEntity.setExpirationDate(dto.getExpirationDate());
-        bankCardEntity.setPersonDetail(beaner.transform(dto.getPersonDetail().getId(), PersonDetailEntity.class));
+        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
         bankCardEntity = bankCardRepository.save(bankCardEntity);
@@ -802,7 +802,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         entityManager.clear();
 
         // update id
-        dto.setId(bankCardEntity.getId());
+        dto.setIdBankCard(bankCardEntity.getIdBankCard());
 
         return dto;
 
@@ -841,4 +841,54 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return null;
 
     }
+
+
+    // ********************* Contact ************************************************************
+/*
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends ContactDTO> listContacts(PeopleSearchFilter criteria, Errors errTracking) {
+
+        List<? extends ContactDTO> contacts = Collections.EMPTY_LIST;
+
+        if (!peopleBusinessLogic.isLogicalPrimaryKeyCorrect(criteria, errTracking)) {
+
+            PageRequest pr = null;
+            if (criteria.getPagination() != null) {
+                pr = new PageRequest(criteria.getPagination().getPageNo() - 1, criteria.getPagination().getItemsPerPage());
+            }
+
+            if (criteria.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
+
+                Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
+                spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
+
+                if (pr != null) {
+                    contacts = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
+                } else {
+                    contacts = beaner.transform(individualDetailRepository.findAll(spec), IndividualDetailDTO.class);
+                }
+
+            } else if (criteria.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
+
+                Specification<CompanyDetailEntity> spec = buildDuplicateDetailsSpecForCompany(criteria);
+                spec = JpaUtils.applyOrder(CompanyDetailEntity.class, criteria.getOrder(), spec);
+
+                if (pr != null) {
+                    contacts = beaner.transform(companyDetailRepository.findAll(spec, pr).getContent(), CompanyDetailDTO.class);
+                } else {
+                    contacts = beaner.transform(companyDetailRepository.findAll(spec), CompanyDetailDTO.class);
+                }
+
+            }
+
+        }
+
+        return contacts;
+    }
+*/
+
+    // ********************* Contact ************************************************************
+
+
 }

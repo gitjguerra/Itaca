@@ -140,4 +140,23 @@ public interface PeopleManagementService {
      * @return the bank card if found otherwise null.
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
+
+
+
+    /*// contacts
+
+    List<? extends Contacto0DTO> listContactos(Long idDetallePersona, Errors errTracking);
+
+    Contacto0DTO getContact(Long idContact);
+
+    List<? extends ContactDTO>> getPersonContact(ContactPersonDetail filter);
+
+    void deleteContact(Long idContact) throws ContactNotFoundException;
+
+    ContactDTO saveOrUpdateContact(ContactDTO contact);
+
+    Long countContacts(Long idPersonDetail);
+*/
+
+
 }

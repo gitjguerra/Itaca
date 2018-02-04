@@ -164,4 +164,23 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity getBankCard(Long id);
 
+
+    // contacts
+
+    /*ResponseEntity<List<? extends ContactDTO>> listContacts(Long idPersonDetail);
+
+    ResponseEntity<ContactDTO> getContact(Long idContact);
+
+    public ResponseEntity<List<? extends ContactDTO>> getPersonContact(ContactSearchFilter filter);
+
+    ResponseEntity deleteContact(Long idContact) throws ContactNotFoundException;
+
+    ResponseEntity<ContactDTO> saveOrUpdateContacto(ContactDTO contact);
+
+    ResponseEntity<Long> countContacts(Long idPersonDetail);
+
+*/
+
+
+
 }

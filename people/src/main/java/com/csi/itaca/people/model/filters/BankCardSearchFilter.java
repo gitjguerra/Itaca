@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 @JsonSubTypes({ @Type(value = NullTypeSearchFilter.class, 	name = "null")
 })
-public abstract class BankCardSearchFilter {
+public class BankCardSearchFilter {
 
 	private CardTypeDTO cardType;
 

@@ -27,7 +27,7 @@ public class BankEntity implements Bank {
     private Long id;
 
     @Column(name="BANK_NAME")
-    private String bank_name;
+    private String bankName;
 
     @Column(name="CBIC")
     private String cbic;
@@ -36,7 +36,7 @@ public class BankEntity implements Bank {
     private Long draftbank;
 
     @Column(name="COD_BANK")
-    private String cod_bank;
+    private String codBank;
 
     @Override
     public Long getDraftBank() {
@@ -44,7 +44,7 @@ public class BankEntity implements Bank {
     }
     @Override
     public String getBankName() {
-        return bank_name;
+        return bankName;
     }
     @Override
     public String getBic() {
@@ -52,7 +52,7 @@ public class BankEntity implements Bank {
     }
     @Override
     public String getCode() {
-        return cod_bank;
+        return codBank;
     }
 
 
