@@ -429,14 +429,11 @@ public class PeopleManagementRestControllerTest {
     @Test
     public void getBankCard() throws Exception {
 
-        BankDTO bankDTO = new BankDTO();
-        bankDTO.setId(1L);
-
         BankCardDTO bankCardDTO = new BankCardDTO();
         bankCardDTO.setIdBankCard(1L);
         bankCardDTO.setCard("5018782000");
         bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(bankDTO);
+        bankCardDTO.setIdBank(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
@@ -454,7 +451,7 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("idCardType").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank.id").description("idBank.")
+                                , fieldWithPath("idBank").description("idBank.")
                                 , fieldWithPath("idBank.bankName").description("bankName.")
                                 , fieldWithPath("idBank.draftBank").description("draftBank.")
                                 , fieldWithPath("idBank.bic").description("bic.")
@@ -469,13 +466,11 @@ public class PeopleManagementRestControllerTest {
     public void getAccount() throws Exception {
 
         AccountClasificationDTO clasification = new AccountClasificationDTO();
-        clasification.setId(1L);
-        clasification.setValue("Corriente");
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(clasification);
+        accountDTO.setAccountClasification(1L);
         accountDTO.setPersonDetail(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
@@ -542,13 +537,11 @@ public class PeopleManagementRestControllerTest {
     public void saveOrUpdateAccount() throws Exception {
 
         AccountClasificationDTO clasification = new AccountClasificationDTO();
-        clasification.setId(1L);
-        clasification.setValue("Corriente");
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(clasification);
+        accountDTO.setAccountClasification(1L);
         accountDTO.setPersonDetail(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
@@ -568,8 +561,6 @@ public class PeopleManagementRestControllerTest {
                         responseFields(fieldWithPath("id").description("Id account.")
                                 , fieldWithPath("personDetail").description("personDetail.")
                                 , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("accountClasification.id").description("id.")
-                                , fieldWithPath("accountClasification.value").description("value.")
                                 , fieldWithPath("typeAccount").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
                                 , fieldWithPath("idBank").description("idBank.")
@@ -582,14 +573,11 @@ public class PeopleManagementRestControllerTest {
     @Test
     public void saveOrUpdateBankCard() throws Exception {
 
-        BankDTO bankDTO = new BankDTO();
-        bankDTO.setId(1L);
-
         BankCardDTO bankCardDTO = new BankCardDTO();
         bankCardDTO.setIdBankCard(1L);
         bankCardDTO.setCard("5018782000");
         bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(bankDTO);
+        bankCardDTO.setIdBank(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
@@ -609,7 +597,7 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("idCardType").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank.id").description("idBank.")
+                                , fieldWithPath("idBank").description("idBank.")
                                 , fieldWithPath("idBank.bankName").description("bankName.")
                                 , fieldWithPath("idBank.draftBank").description("draftBank.")
                                 , fieldWithPath("idBank.bic").description("bic.")

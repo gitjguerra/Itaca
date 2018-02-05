@@ -6,11 +6,11 @@ public interface BankCard {
 	
 	Long getIdBankCard();
 	Long getIdPersonDetail();
-	CardType getIdCardType();
+	Long getIdCardType();
 	String getCard();
 	Boolean getPrincipal();	
 	Boolean getAvailable();
-	Bank getIdBank();
+	Long getIdBank();
 	LocalDate getExpirationDate();
 	Long getSecurityCode();
 

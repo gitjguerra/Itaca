@@ -33,9 +33,8 @@ public class AccountEntity implements Account {
 	@Column(name="ID_PERSON_DETAIL")
 	private Long personDetail;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_CLASIFICATION_ACCOUNT")
-	private AccountClasificationEntity accountClasification;
+	@Column(name="ID_CLASIFICATION_ACCOUNT")
+	private Long accountClasification;
 
 	@Column(name="ID_TYPE_ACCOUNT")
 	private Long typeAccount;

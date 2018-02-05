@@ -38,9 +38,6 @@ import static com.csi.itaca.people.repository.AccountRepository.*;
 @Service
 public class PeopleManagementServiceImpl implements PeopleManagementService {
 
-    /** Logger */
-    private static Logger logger = Logger.getLogger(PeopleManagementRestController.class);
-
     @Autowired
     private EntityManager entityManager;
 
@@ -740,18 +737,16 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
-        logger.info("******************** SAVEorUPDATE ACCOUNT PROCESS *************************");
+        AccountEntity accountEntity = accountRepository.findOne(1L);
 
-        AccountEntity accountEntity = accountRepository.findOne(dto.getId());
-
-        accountEntity.setId(dto.getId());
-        accountEntity.setAccount(dto.getAccount());
-        accountEntity.setPersonDetail(dto.getPersonDetail());
-        accountEntity.setAccountClasification(beaner.transform(dto.getAccountClasification().getId(), AccountClasificationEntity.class));
-        accountEntity.setTypeAccount(dto.getTypeAccount());
-        accountEntity.setAvailable(dto.getAvailable());
-        accountEntity.setPrincipal(dto.getPrincipal());
-        accountEntity.setIdBank(dto.getIdBank());
+        accountEntity.setId(1L);
+        accountEntity.setAccount("5018782000");
+        accountEntity.setPersonDetail(1L);
+        accountEntity.setAccountClasification(1L);
+        accountEntity.setTypeAccount(1L);
+        accountEntity.setAvailable(true);
+        accountEntity.setPrincipal(true);
+        accountEntity.setIdBank(1L);
 
         accountEntity = accountRepository.save(accountEntity);
 
@@ -760,8 +755,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
         // update id
         dto.setId(accountEntity.getId());
-
-        logger.info("******************** Ready  ACCOUNT return DTO *************************");
 
         return dto;
 
@@ -785,13 +778,13 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBank().getId());
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBank());
 
         bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setIdBank(beaner.transform(dto.getIdBank(), BankEntity.class));
+        bankCardEntity.setIdBank(dto.getIdBank());
         bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setIdCardType(beaner.transform(dto.getIdBankCard(), CardTypeEntity.class));
+        bankCardEntity.setIdCardType(dto.getIdBankCard());
         bankCardEntity.setExpirationDate(dto.getExpirationDate());
         bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());

@@ -37,9 +37,8 @@ public class BankCardEntity implements BankCard {
     private Long idPersonDetail;
 
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_CARD_TYPE")
-    private CardTypeEntity idCardType;
+    @Column(name="ID_CARD_TYPE")
+    private Long idCardType;
 
     @Column(name="CARD")
     private String card;
@@ -56,9 +55,8 @@ public class BankCardEntity implements BankCard {
     @Column(name="SECURITY_CODE")
     private Long securityCode;
 
-    @ManyToOne
-    @JoinColumn(name="ID_BANK")
-    private BankEntity idBank;
+    @Column(name="ID_BANK")
+    private Long idBank;
 
 
 

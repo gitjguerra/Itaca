@@ -14,11 +14,11 @@ public class BankCardDTO implements BankCard {
 
 	private Long idBankCard;
 	private Long idPersonDetail;
-	private CardTypeDTO idCardType;
+	private Long idCardType;
 	private String card;
 	private Boolean principal;
 	private Boolean available;
-	private BankDTO idBank;
+	private Long idBank;
 	private LocalDate expirationDate;
 	private Long securityCode;
 
