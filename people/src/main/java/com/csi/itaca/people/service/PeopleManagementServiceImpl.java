@@ -726,7 +726,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return null;
     }
 
-    //TODO: (Jose Guerra) Save Or Update Account
     @Override
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
@@ -766,24 +765,21 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         if (bankCardEntity == null && errTracking != null){
             bankCardEntity = bankCardUpdateEntity;
         }
-        bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        //bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
         bankCardEntity.setIdBank(dto.getIdBank());
         bankCardEntity.setCard(dto.getCard());
         bankCardEntity.setIdCardType(dto.getIdBankCard());
+     //TODO insertar fecha json (da error DD/MM/YYYY)
         bankCardEntity.setExpirationDate(dto.getExpirationDate());
         bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 
-        logger.info("***SAVE*******");
-
         bankCardEntity = bankCardRepository.save(bankCardEntity);
 
         entityManager.flush();
         entityManager.clear();
-
-        logger.info("***de salida *******");
 
         return beaner.transform(bankCardEntity, BankCardDTO.class);
 
@@ -793,13 +789,11 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
-        AccountDTO account = null;
-
         AccountEntity accountEntity = accountRepository.findOne(id);
-        if (accountEntity!=null) {
-            return beaner.transform(accountEntity, AccountDTO.class);
+        if (accountEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
-        return account;
+        return beaner.transform(accountEntity, AccountDTO.class);
     }
 
     @Override
