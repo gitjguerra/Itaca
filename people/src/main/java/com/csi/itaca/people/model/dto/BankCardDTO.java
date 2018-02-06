@@ -18,9 +18,8 @@ public class BankCardDTO implements BankCard {
 	private String card;
 	private Boolean principal;
 	private Boolean available;
-	private Long idBank;
 	private LocalDate expirationDate;
 	private Long securityCode;
-
+	private Long idBank;
 
 }

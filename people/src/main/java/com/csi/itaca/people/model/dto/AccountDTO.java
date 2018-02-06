@@ -15,10 +15,10 @@ public class AccountDTO implements Account {
 	private Long id;
 
 	private Long personDetail;
+	private String account;
 	private Long accountClasification;
 	private Long typeAccount;
-	private String account;
-	private Boolean principal;	
+	private Boolean principal;
 	private Boolean available;
 	private Long IdBank;
 

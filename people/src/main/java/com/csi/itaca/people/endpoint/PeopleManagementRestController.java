@@ -129,6 +129,13 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
 
     @Override
+    @RequestMapping(value = SAVE_BANK_CARD, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateBankCard(@Valid @RequestBody BankCardDTO bankCardToSaveOrUpdate, BindingResult errTracking) {
+        BankCardDTO bankCardDTO = peopleManagementService.saveOrUpdateBankCard(bankCardToSaveOrUpdate, errTracking);
+        return buildResponseEntity(bankCardDTO, errTracking);
+    }
+
+    @Override
     @RequestMapping(value = GET_ACCOUNT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getAccount(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
 
@@ -141,13 +148,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     @RequestMapping(value = COUNT_ACCOUNT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> countAccount(AccountSearchFilter filter) {
         return new ResponseEntity<>(peopleManagementService.countAccount(filter), HttpStatus.OK);
-    }
-
-    @Override
-    @RequestMapping(value = SAVE_BANK_CARD, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveOrUpdateBankCard(BankCardDTO bankCardToSaveOrUpdate, BindingResult errTracking) {
-        BankCardDTO bankCardDTO = peopleManagementService.saveOrUpdateBankCard(bankCardToSaveOrUpdate, errTracking);
-        return buildResponseEntity(bankCardDTO, errTracking);
     }
 
     @Override

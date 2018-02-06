@@ -16,10 +16,10 @@ import javax.persistence.*;
 public class AccountEntity implements Account {
 	
 	public static final String ID = "id";
-	public static final String ACCOUNT = "account";
-	public static final String ACCOUNTTYPE = "id_type_account";
 	public static final String PERSONDETAIL = "id_person_detail";
+	public static final String ACCOUNT = "account";
 	public static final String ACCOUNTCLASIFIED = "id_account_clasification";
+	public static final String ACCOUNTTYPE = "id_type_account";
 	public static final String PRINCIPAL = "principal";
 	public static final String AVAILABLE = "available";
 	public static final String ID_BANK = "id_bank";
@@ -39,9 +39,6 @@ public class AccountEntity implements Account {
 	@Column(name="ID_TYPE_ACCOUNT")
 	private Long typeAccount;
 
-	@Column(name="ID_BANK")
-	private Long idBank;
-
 	@Column
 	private String account;
 	
@@ -50,5 +47,8 @@ public class AccountEntity implements Account {
 	
 	@Column
 	private Boolean available;
+
+	@Column(name="ID_BANK")
+	private Long idBank;
 
 }

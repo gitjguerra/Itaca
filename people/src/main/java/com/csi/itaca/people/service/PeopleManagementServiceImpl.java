@@ -1,9 +1,6 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
-import com.csi.itaca.people.endpoint.PeopleManagementRestController;
-import com.csi.itaca.people.model.BankCard;
-import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.model.filters.*;
@@ -33,10 +30,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.csi.itaca.people.repository.AccountRepository.*;
 @SuppressWarnings("unchecked")
 @Service
 public class PeopleManagementServiceImpl implements PeopleManagementService {
+
+    final static Logger logger = Logger.getLogger(PeopleManagementServiceImpl.class);
 
     @Autowired
     private EntityManager entityManager;
@@ -58,9 +56,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Autowired
     private PersonDetailRepository personDetailRepository;
-
-    @Autowired
-    private CardTypeRepository cardTypeRepository;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -712,7 +707,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 
-    // TODO: (Jose Guerra) CountBankCards method
     @Override
     @Transactional(readOnly = true)
     public Long countBankCards(BankCardSearchFilter filter) {
@@ -737,26 +731,61 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
-        AccountEntity accountEntity = accountRepository.findOne(1L);
+        AccountEntity accountUpdateEntity = new AccountEntity();
+        AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
-        accountEntity.setId(1L);
-        accountEntity.setAccount("5018782000");
-        accountEntity.setPersonDetail(1L);
-        accountEntity.setAccountClasification(1L);
-        accountEntity.setTypeAccount(1L);
-        accountEntity.setAvailable(true);
-        accountEntity.setPrincipal(true);
-        accountEntity.setIdBank(1L);
+        if (accountEntity == null && errTracking != null){
+            accountEntity = accountUpdateEntity;
 
+        }
+        accountEntity.setId(dto.getId());
+        accountEntity.setAccount(dto.getAccount());
+        accountEntity.setPersonDetail(dto.getPersonDetail());
+        accountEntity.setAccountClasification(dto.getAccountClasification());
+        accountEntity.setTypeAccount(dto.getTypeAccount());
+        accountEntity.setAvailable(dto.getAvailable());
+        accountEntity.setPrincipal(dto.getPrincipal());
+        accountEntity.setIdBank(dto.getIdBank());
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
         entityManager.clear();
 
-        // update id
-        dto.setId(accountEntity.getId());
+        return beaner.transform(accountEntity, AccountDTO.class);
 
-        return dto;
+    }
+
+    @Override
+    @Transactional
+    public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
+
+        BankCardEntity bankCardUpdateEntity = new BankCardEntity();
+
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
+
+        if (bankCardEntity == null && errTracking != null){
+            bankCardEntity = bankCardUpdateEntity;
+        }
+        bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        bankCardEntity.setAvailable(dto.getAvailable());
+        bankCardEntity.setIdBank(dto.getIdBank());
+        bankCardEntity.setCard(dto.getCard());
+        bankCardEntity.setIdCardType(dto.getIdBankCard());
+        bankCardEntity.setExpirationDate(dto.getExpirationDate());
+        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
+        bankCardEntity.setPrincipal(dto.getPrincipal());
+        bankCardEntity.setSecurityCode(dto.getSecurityCode());
+
+        logger.info("***SAVE*******");
+
+        bankCardEntity = bankCardRepository.save(bankCardEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        logger.info("***de salida *******");
+
+        return beaner.transform(bankCardEntity, BankCardDTO.class);
 
     }
 
@@ -773,34 +802,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return account;
     }
 
-    //TODO: (Jose Guerra) Save Or Update Bank Card
-    @Override
-    @Transactional
-    public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
-
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBank());
-
-        bankCardEntity.setIdBankCard(dto.getIdBankCard());
-        bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setIdBank(dto.getIdBank());
-        bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setIdCardType(dto.getIdBankCard());
-        bankCardEntity.setExpirationDate(dto.getExpirationDate());
-        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
-        bankCardEntity.setPrincipal(dto.getPrincipal());
-        bankCardEntity.setSecurityCode(dto.getSecurityCode());
-        bankCardEntity = bankCardRepository.save(bankCardEntity);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        // update id
-        dto.setIdBankCard(bankCardEntity.getIdBankCard());
-
-        return dto;
-
-    }
-
     @Override
     @Transactional
     public BankCardDTO getBankCard(Long id, Errors errTracking) {
@@ -814,7 +815,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return bankCard;
     }
 
-    // TODO: (Jose Guerra) countAccount method
     @Override
     @Transactional
     public Long countAccount(AccountSearchFilter filter) {
@@ -834,25 +834,5 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return null;
 
     }
-
-
-    // ********************* Contact ************************************************************
-/*
-    @Override
-    @Transactional(readOnly = true)
-    public List<? extends ContactDTO> listContacts(ContactSearchFilter criteria, Errors errTracking) {
-
-        List<? extends ContactDTO> contacts = Collections.EMPTY_LIST;
-
-        Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
-        spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
-        contacts = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
-
-        return contacts;
-    }
-*/
-
-    // ********************* Contact ************************************************************
-
 
 }
