@@ -1,7 +1,9 @@
 package com.csi.itaca.people.endpoint;
 
-
+import com.csi.itaca.people.api.PeopleLookupServiceProxy;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
+import com.csi.itaca.people.model.AccountClasification;
+import com.csi.itaca.people.model.RelationType;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.service.PeopleLookupService;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author bboothe
  */
 @RunWith(PowerMockRunner.class)
-public class PeopleManagementRestLookupsControllerTest {
+public class PeopleLookupsRestControllerTest {
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
@@ -45,7 +49,7 @@ public class PeopleManagementRestLookupsControllerTest {
     private PeopleLookupService lookupService;
 
     @InjectMocks
-    private PeopleManagementServiceProxy controller = new PeopleManagementRestController();
+    private PeopleLookupServiceProxy controller = new PeopleLookupRestController();
 
     @Before
     public void setup() {
@@ -87,7 +91,7 @@ public class PeopleManagementRestLookupsControllerTest {
 
         Mockito.when(lookupService.lookupGender()).thenReturn(genders);
 
-        mockMvc.perform(get(PeopleManagementServiceProxy.LOOKUP_GENDER))
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_GENDER))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document(
@@ -130,7 +134,7 @@ public class PeopleManagementRestLookupsControllerTest {
 
         Mockito.when(lookupService.lookupCivilStatus()).thenReturn(civilStatuses);
 
-        mockMvc.perform(get(PeopleManagementServiceProxy.LOOKUP_CIVIL_STATUS))
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_CIVIL_STATUS))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id",is(civilStatusDTO1.getId().intValue())))
@@ -181,7 +185,7 @@ public class PeopleManagementRestLookupsControllerTest {
 
         Mockito.when(lookupService.lookupIdTypes()).thenReturn(idTypes);
 
-        mockMvc.perform(get(PeopleManagementServiceProxy.LOOKUP_ID_TYPES))
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_ID_TYPES))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id",is(idTypeDTO1.getId().intValue())))
@@ -230,7 +234,7 @@ public class PeopleManagementRestLookupsControllerTest {
 
         Mockito.when(lookupService.lookupCompanyTypes()).thenReturn(companyTypes);
 
-        mockMvc.perform(get(PeopleManagementServiceProxy.LOOKUP_COMPANY_TYPES))
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_COMPANY_TYPES))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id",is(companyType1.getId().intValue())))
@@ -267,7 +271,7 @@ public class PeopleManagementRestLookupsControllerTest {
         
         Mockito.when(lookupService.lookupLanguages()).thenReturn(languages);
 
-        mockMvc.perform(get(PeopleManagementServiceProxy.LOOKUP_LANGUAGES))
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_LANGUAGES))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id",is(languageDTO1.getId().intValue())))
@@ -313,7 +317,7 @@ public class PeopleManagementRestLookupsControllerTest {
 
         Mockito.when(lookupService.lookupPersonStatus()).thenReturn(personStatuses);
 
-        mockMvc.perform(get(PeopleManagementServiceProxy.LOOKUP_PERSON_STATUS))
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_PERSON_STATUS))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id",is(personStatus1.getId().intValue())))
@@ -327,6 +331,287 @@ public class PeopleManagementRestLookupsControllerTest {
                                       ,fieldWithPath("[].name").description("Person status name.")
                                       ,fieldWithPath("[].individual").description("'true' if this item is associated with a individual.")
                                       ,fieldWithPath("[].company").description("'true' if this item is associated with a company.")
+                        )
+                ));
+    }
+
+
+    /** look up company person type test. */
+    @Test
+    public void companyPersonTypeLookup() throws Exception {
+
+        List<CompanyPersonTypeDTO> list = new ArrayList<>();
+
+        CompanyPersonTypeDTO item1 = new CompanyPersonTypeDTO();
+        item1.setId(1L);
+        item1.setLiteral("Company person type 1");
+        list.add(item1);
+
+        CompanyPersonTypeDTO item2 = new CompanyPersonTypeDTO();
+        item2.setId(2L);
+        item2.setLiteral("Company person type 2");
+        list.add(item2);
+
+        CompanyPersonTypeDTO item3 = new CompanyPersonTypeDTO();
+        item3.setId(3L);
+        item3.setLiteral("Company person type 3");
+        list.add(item3);
+
+
+        Mockito.when(lookupService.lookupCompanyPersonTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_COMPANY_PERSON_TYPES))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].literal",is(item1.getLiteral())))
+
+                .andDo(document(
+                        "lookup-company-person-type",
+                        responseFields(fieldWithPath("[].id").description("Company person type ID.")
+                                      ,fieldWithPath("[].literal").description("Literal value")
+                        )
+                ));
+    }
+
+
+
+    /** look up contact type test. */
+    @Test
+    public void contactTypeLookup() throws Exception {
+
+        List<ContactTypeDTO> list = new ArrayList<>();
+
+        ContactTypeDTO item1 = new ContactTypeDTO();
+        item1.setId(1L);
+        item1.setValue("Telephone");
+        list.add(item1);
+
+        ContactTypeDTO item2 = new ContactTypeDTO();
+        item2.setId(2L);
+        item2.setValue("Email");
+        list.add(item2);
+
+        ContactTypeDTO item3 = new ContactTypeDTO();
+        item3.setId(3L);
+        item3.setValue("Fax");
+        list.add(item3);
+
+
+        Mockito.when(lookupService.lookupContactTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_CONTACT_TYPES))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].value",is(item1.getValue())))
+
+                .andDo(document(
+                        "lookup-contact-type",
+                        responseFields(fieldWithPath("[].id").description("Contact type ID.")
+                                ,fieldWithPath("[].value").description("Contact type name.")
+                        )
+                ));
+    }
+
+
+    /** look up relation type test. */
+    @Test
+    public void ralationTypeLookup() throws Exception {
+
+        List<RelationTypeDTO> list = new ArrayList<>();
+
+        RelationTypeDTO item1 = new RelationTypeDTO();
+        item1.setId(1L);
+        item1.setLiteral("Relation type 1");
+        list.add(item1);
+
+        RelationTypeDTO item2 = new RelationTypeDTO();
+        item2.setId(2L);
+        item2.setLiteral("Relation type 1");
+        list.add(item2);
+
+        RelationTypeDTO item3 = new RelationTypeDTO();
+        item3.setId(3L);
+        item3.setLiteral("Relation type 1");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupRelationTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_RELATION_TYPES))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].literal",is(item1.getLiteral())))
+
+                .andDo(document(
+                        "lookup-relation-type",
+                        responseFields(fieldWithPath("[].id").description("Relation type ID.")
+                                ,fieldWithPath("[].literal").description("literal value.")
+                        )
+                ));
+    }
+
+    /** look up bank test. */
+    @Test
+    public void bankLookup() throws Exception {
+
+        List<BankDTO> list = new ArrayList<>();
+
+        BankDTO item1 = new BankDTO();
+        item1.setId(1L);
+        item1.setBankName("BVBA");
+        item1.setDraftBank(1L);
+        item1.setCode("001");
+        item1.setBic("1");
+        list.add(item1);
+
+        BankDTO item2 = new BankDTO();
+        item2.setId(2L);
+        item2.setBankName("ZURICH");
+        item2.setDraftBank(2L);
+        item2.setCode("002");
+        item2.setBic("2");
+        list.add(item2);
+
+        BankDTO item3 = new BankDTO();
+        item3.setId(3L);
+        item3.setBankName("BANESCO");
+        item3.setDraftBank(3L);
+        item3.setCode("003");
+        item3.setBic("3");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupBanks()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_BANK))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].bankName",is(item1.getBankName())))
+                .andExpect(jsonPath("[0].draftBank",is(item1.getDraftBank().intValue())))
+                .andExpect(jsonPath("[0].code",is(item1.getCode())))
+                .andExpect(jsonPath("[0].bic",is(item1.getBic())))
+
+                .andDo(document(
+                        "lookup-bank",
+                        responseFields(fieldWithPath("[].id").description("Bank type ID.")
+                                ,fieldWithPath("[0].bankName").description("Bank type name.")
+                                ,fieldWithPath("[0].draftBank").description("Bank Draf.")
+                                ,fieldWithPath("[0].bic").description("Bank bic.")
+                                ,fieldWithPath("[0].code").description("Bank code.")
+                        )
+                ));
+    }
+
+    /** look up Account type test. */
+    @Test
+    public void accountTypeLookup() throws Exception {
+
+        List<AccountTypeDTO> list = new ArrayList<>();
+
+        AccountTypeDTO item1 = new AccountTypeDTO();
+        item1.setId(1L);
+        item1.setValor("valor1");
+        list.add(item1);
+
+        AccountTypeDTO item2 = new AccountTypeDTO();
+        item2.setId(2L);
+        item2.setValor("valor2");
+        list.add(item2);
+
+        AccountTypeDTO item3 = new AccountTypeDTO();
+        item3.setId(3L);
+        item3.setValor("valor3");
+        list.add(item3);
+
+
+        Mockito.when(lookupService.lookupAccountTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_ACCOUNT_TYPE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].valor",is(item1.getValor())))
+
+                .andDo(document(
+                        "lookup-account-type",
+                        responseFields(fieldWithPath("[].id").description("Account type ID.")
+                                ,fieldWithPath("[].valor").description("Literal value")
+                        )
+                ));
+    }
+
+    /** look up Account clasification test. */
+    @Test
+    public void accountClasificationLookup() throws Exception {
+
+        List<AccountClasificationDTO> list = new ArrayList<>();
+
+        AccountClasificationDTO item1 = new AccountClasificationDTO();
+        item1.setId(1L);
+        item1.setValue("1");
+        list.add(item1);
+
+        AccountClasificationDTO item2 = new AccountClasificationDTO();
+        item2.setId(2L);
+        item2.setValue("2");
+        list.add(item2);
+
+        AccountClasificationDTO item3 = new AccountClasificationDTO();
+        item3.setId(3L);
+        item3.setValue("3");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupAccountClasifications()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_ACCOUNT_CLASIFIED))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].value",is(item1.getValue())))
+
+                .andDo(document(
+                        "lookup-account-clasification",
+                        responseFields(fieldWithPath("[].id").description("Account Clasified ID.")
+                                ,fieldWithPath("[].value").description("Account Clasified value.")
+                        )
+                ));
+    }
+
+    /** look up Account card type test. */
+    @Test
+    public void cardTypeLookup() throws Exception {
+
+        List<CardTypeDTO> list = new ArrayList<>();
+
+        CardTypeDTO item1 = new CardTypeDTO();
+        item1.setId(1L);
+        item1.setLiteral("001");
+        list.add(item1);
+
+        CardTypeDTO item2 = new CardTypeDTO();
+        item2.setId(2L);
+        item2.setLiteral("002");
+        list.add(item2);
+
+        CardTypeDTO item3 = new CardTypeDTO();
+        item3.setId(3L);
+        item3.setLiteral("003");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupCardTypes()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_CARD_TYPE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id",is(item1.getId().intValue())))
+                .andExpect(jsonPath("[0].literal",is(item1.getLiteral())))
+
+                .andDo(document(
+                        "lookup-card-type",
+                        responseFields(fieldWithPath("[].id").description("Card type ID.")
+                                ,fieldWithPath("[].literal").description("Card type literal.")
                         )
                 ));
     }

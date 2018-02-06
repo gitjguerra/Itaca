@@ -1,5 +1,8 @@
 package com.csi.itaca.people.businesslogic;
 
+import com.csi.itaca.people.model.Identification;
+import com.csi.itaca.people.model.dto.IdentificationDTO;
+import com.csi.itaca.people.service.PeopleIdentificationService;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.config.model.Configurator;
 import com.csi.itaca.people.api.PeopleModuleConfiguration;
@@ -15,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
+import java.util.List;
+
 @Service
 public class PeopleManagementBusinessLogicImpl implements PeopleManagementBusinessLogic {
 
@@ -24,11 +29,12 @@ public class PeopleManagementBusinessLogicImpl implements PeopleManagementBusine
     @Autowired
     private Beaner beaner;
 
+    @Autowired
+    private PeopleIdentificationService peopleIdentificationService;
+
+
     /**
-     * Checks if the supplied filter key is correct based on the configuration.
-     * @param filter the filter parameters
-     * @param errTracking any errors will be added here.
-     * @return true if correct.
+     * @see PeopleManagementBusinessLogic#isLogicalPrimaryKeyCorrect(PeopleSearchFilter, Errors)
      */
     public boolean isLogicalPrimaryKeyCorrect(PeopleSearchFilter filter, Errors errTracking) {
 
@@ -92,7 +98,35 @@ public class PeopleManagementBusinessLogicImpl implements PeopleManagementBusine
         return initialErrorCount != errTracking.getErrorCount();
     }
 
+    /**
+     * @see PeopleManagementBusinessLogic#isDuplicatePeopleAllowed()
+     */
+
     public boolean isDuplicatePeopleAllowed() {
         return configurator.getConfig(PeopleModuleConfiguration.class).getDuplicatePeopleAllowed();
+    }
+
+    /**
+     * @see PeopleManagementBusinessLogic#isDuplicateIdentification(Identification, Errors)
+     */
+    public boolean isDuplicateIdentification(Identification identification, Errors errTracking) {
+
+        List<IdentificationDTO> identifications =
+                peopleIdentificationService.listIdentifications(identification.getPersonDetailId());
+
+        for (IdentificationDTO entity : identifications) {
+
+            if (entity.getIdType().getId().equals(identification.getIdType().getId())
+                && entity.getIdentificationCode().equals(identification.getIdentificationCode())
+                && entity.getCountry().getId().equals(identification.getCountry().getId())
+                && entity.getPersonDetailId().equals(identification.getPersonDetailId())
+                && (!(entity.getId().equals(identification.getId()))) ) {
+
+                errTracking.reject(ErrorConstants.DB_DUPLICATE_IDENTIFICATION);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

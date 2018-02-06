@@ -3,6 +3,7 @@ package com.csi.itaca.people.service;
 import com.csi.itaca.common.model.dao.CountryEntity;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
+import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.repository.*;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.people.api.ErrorConstants;
@@ -10,11 +11,9 @@ import com.csi.itaca.people.api.ErrorConstants;
 import com.csi.itaca.people.businesslogic.PeopleManagementBusinessLogic;
 import com.csi.itaca.people.model.dao.*;
 import com.csi.itaca.people.model.dto.*;
-import com.csi.itaca.people.model.filters.IndividualSearchFilter;
-import com.csi.itaca.people.model.filters.CompanySearchFilter;
-import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.tools.utils.jpa.JpaUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,12 +26,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 @Service
 public class PeopleManagementServiceImpl implements PeopleManagementService {
+
+    final static Logger logger = Logger.getLogger(PeopleManagementServiceImpl.class);
 
     @Autowired
     private EntityManager entityManager;
@@ -54,6 +57,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Autowired
     private PersonDetailRepository personDetailRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private BankCardRepository bankCardRepository;
 
     @Autowired
     private Beaner beaner;
@@ -84,7 +93,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
             // Do we have any people?
             if (peopleFound.isEmpty()) {
-                errTracking.reject(ErrorConstants.DB_PERSON_NOT_FOUND);
+                errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
             }
             else {
                 // Check if duplicates are allowed
@@ -395,7 +404,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             }
         }
         else {
-            errTracking.reject(ErrorConstants.DB_PERSON_DETAIL_NOT_FOUND);
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
 
         return retPersonDetail;
@@ -408,16 +417,16 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
      * @return this person entity if found otherwise null.
      */
     @Transactional(readOnly = true)
-    private PersonEntity getPersonEntity(Long id, Errors errTracking) {
+    PersonEntity getPersonEntity(Long id, Errors errTracking) {
         PersonEntity person = repository.findOne(id);
         if (person == null && errTracking != null) {
-            errTracking.reject(ErrorConstants.DB_PERSON_NOT_FOUND);
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
         return person;
     }
 
     @Transactional(readOnly = true)
-    private List<? extends PersonEntity> listPeople(PeopleSearchFilter parameters) {
+    List<? extends PersonEntity> listPeople(PeopleSearchFilter parameters) {
 
         if (parameters.getPersonType().getId().equals(PersonTypeDTO.INDIVIDUAL_PERSON_CODE)) {
 
@@ -639,5 +648,114 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }
 
         return p;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countBankCards(Long personDetailId) {
+
+        Specification<BankCardEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(BankCardEntity.ID_PERSON_DETAIL), personDetailId);
+            }
+            return p;
+        };
+        return bankCardRepository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
+
+        AccountEntity accountUpdateEntity = new AccountEntity();
+        AccountEntity accountEntity = accountRepository.findOne(dto.getId());
+
+        if (accountEntity == null && errTracking != null){
+            accountEntity = accountUpdateEntity;
+
+        }
+        accountEntity.setId(dto.getId());
+        accountEntity.setAccount(dto.getAccount());
+        accountEntity.setPersonDetail(dto.getPersonDetail());
+        accountEntity.setAccountClasification(dto.getAccountClasification());
+        accountEntity.setTypeAccount(dto.getTypeAccount());
+        accountEntity.setAvailable(dto.getAvailable());
+        accountEntity.setPrincipal(dto.getPrincipal());
+        accountEntity.setIdBank(dto.getIdBank());
+        accountEntity = accountRepository.save(accountEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(accountEntity, AccountDTO.class);
+
+    }
+
+    @Override
+    @Transactional
+    public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
+
+        BankCardEntity bankCardUpdateEntity = new BankCardEntity();
+
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
+
+        if (bankCardEntity == null && errTracking != null){
+            bankCardEntity = bankCardUpdateEntity;
+        }
+        bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        bankCardEntity.setAvailable(dto.getAvailable());
+        bankCardEntity.setIdBank(dto.getIdBank());
+        bankCardEntity.setCard(dto.getCard());
+        bankCardEntity.setIdCardType(dto.getIdBankCard());
+        bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
+        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
+        bankCardEntity.setPrincipal(dto.getPrincipal());
+        bankCardEntity.setSecurityCode(dto.getSecurityCode());
+
+        bankCardEntity = bankCardRepository.save(bankCardEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(bankCardEntity, BankCardDTO.class);
+
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO getAccount(Long id, Errors errTracking) {
+
+        AccountEntity accountEntity = accountRepository.findOne(id);
+        if (accountEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(accountEntity, AccountDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public BankCardDTO getBankCard(Long id, Errors errTracking) {
+
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(id);
+        if (bankCardEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(bankCardEntity, BankCardDTO.class);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countAccount(Long personDetailId) {
+
+        Specification<AccountEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(AccountEntity.PERSONDETAIL), personDetailId);
+            }
+            return p;
+        };
+        return accountRepository.count(spec);
     }
 }

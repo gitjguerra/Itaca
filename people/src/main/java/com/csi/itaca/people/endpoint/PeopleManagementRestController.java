@@ -3,10 +3,10 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.AccountSearchFilter;
+import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
-import com.csi.itaca.people.service.PeopleLookupService;
 import com.csi.itaca.people.service.PeopleManagementService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,23 +18,16 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * RESTful interface for the people management service.
+ * RESTful controller for the people management service.
  * @author bboothe
  */
+@SuppressWarnings("unchecked")
 @RestController
 public class PeopleManagementRestController extends ItacaBaseRestController implements PeopleManagementServiceProxy {
 
-    /** Logger */
-    private static Logger logger = Logger.getLogger(PeopleManagementRestController.class);
-
-    /** The people service for this rest controller. */
+    /** The people service. */
     @Autowired
     private PeopleManagementService peopleManagementService;
-
-    /** All lookups provided by this service. */
-    @Autowired
-    private PeopleLookupService peopleLookupService;
-
 
     @Override
     @RequestMapping(value = GET_PERSON, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -124,40 +117,53 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     ////////////////////////////////////////////////////////////////////////////////////////////// Person detail end ...
 
 
-    //////////////////////// Lookups ...
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Account ...
+
     @Override
-    @RequestMapping(value = LOOKUP_CIVIL_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus() {
-        return new ResponseEntity(peopleLookupService.lookupCivilStatus(), HttpStatus.OK);
+    @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateAccount(@Valid @RequestBody AccountDTO accountToSaveOrUpdate,
+                                              BindingResult errTracking) {
+        AccountDTO accountDTO = peopleManagementService.saveOrUpdateAccount(accountToSaveOrUpdate, errTracking);
+        return buildResponseEntity(accountDTO, errTracking);
     }
 
     @Override
-    @RequestMapping(value = LOOKUP_PERSON_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PersonStatusDTO>> lookupPersonStatus() {
-        return new ResponseEntity(peopleLookupService.lookupPersonStatus(), HttpStatus.OK);
+    @RequestMapping(value = SAVE_BANK_CARD, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateBankCard(@Valid @RequestBody BankCardDTO bankCardToSaveOrUpdate, BindingResult errTracking) {
+        BankCardDTO bankCardDTO = peopleManagementService.saveOrUpdateBankCard(bankCardToSaveOrUpdate, errTracking);
+        return buildResponseEntity(bankCardDTO, errTracking);
     }
 
     @Override
-    @RequestMapping(value = LOOKUP_GENDER, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenderDTO>> lookupGender() {
-        return new ResponseEntity(peopleLookupService.lookupGender(), HttpStatus.OK);
+    @RequestMapping(value = GET_ACCOUNT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getAccount(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        AccountDTO accountGet = peopleManagementService.getAccount(id, errTracking);
+        return buildResponseEntity(accountGet, errTracking);
     }
 
     @Override
-    @RequestMapping(value = LOOKUP_LANGUAGES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LanguageDTO>> lookupLanguages() {
-        return new ResponseEntity(peopleLookupService.lookupLanguages(), HttpStatus.OK);
+    @RequestMapping(value = COUNT_ACCOUNT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countAccount(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long id) {
+        return new ResponseEntity<>(peopleManagementService.countAccount(id), HttpStatus.OK);
     }
 
     @Override
-    @RequestMapping(value = LOOKUP_ID_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<IDTypeDTO>> lookupIdTypes() {
-        return new ResponseEntity(peopleLookupService.lookupIdTypes(), HttpStatus.OK);
+    @RequestMapping(value = GET_BANK_CARD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getBankCard(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        BankCardDTO bankCard = peopleManagementService.getBankCard(id, errTracking);
+        return buildResponseEntity(bankCard, errTracking);
     }
 
     @Override
-    @RequestMapping(value = LOOKUP_COMPANY_TYPES, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CompanyTypeDTO>> lookupCompanyTypes() {
-        return new ResponseEntity(peopleLookupService.lookupCompanyTypes(), HttpStatus.OK);
+    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countBankCards(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
+        return new ResponseEntity<>(peopleManagementService.countBankCards(idPersonDetail), HttpStatus.OK);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
+
 }
