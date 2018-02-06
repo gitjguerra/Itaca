@@ -800,13 +800,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO getBankCard(Long id, Errors errTracking) {
 
-        BankCardDTO bankCard = null;
-
         BankCardEntity bankCardEntity = bankCardRepository.findOne(id);
-        if (bankCardEntity!=null) {
-            return beaner.transform(bankCardEntity, BankCardDTO.class);
+        if (bankCardEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
-        return bankCard;
+        return beaner.transform(bankCardEntity, BankCardDTO.class);
+
     }
 
     @Override
