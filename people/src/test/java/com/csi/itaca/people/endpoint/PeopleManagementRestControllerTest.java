@@ -575,6 +575,8 @@ public class PeopleManagementRestControllerTest {
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
+        bankCardDTO.setExpirationDate(LocalDate.of(1972, 11, 22));
+
 
         Mockito.when(service.saveOrUpdateBankCard(any(), any(Errors.class))).thenReturn(bankCardDTO);
         mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_BANK_CARD)

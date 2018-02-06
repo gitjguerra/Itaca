@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -765,13 +766,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         if (bankCardEntity == null && errTracking != null){
             bankCardEntity = bankCardUpdateEntity;
         }
-        //bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
         bankCardEntity.setIdBank(dto.getIdBank());
         bankCardEntity.setCard(dto.getCard());
         bankCardEntity.setIdCardType(dto.getIdBankCard());
-     //TODO insertar fecha json (da error DD/MM/YYYY)
-        bankCardEntity.setExpirationDate(dto.getExpirationDate());
+        bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
         bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
@@ -816,6 +816,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             Specification<AccountEntity> spec = (root, query, cb) -> {
                 return applyAccountFilter(null, cb, root, filter);
             };
+
+
+
             return accountRepository.count(spec);
 
         } else if (AccountTypeEntity.ID.equals(filter.getId())) {
