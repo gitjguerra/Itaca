@@ -133,9 +133,9 @@ public interface PeopleManagementServiceProxy {
 
     /**
      * counts bank cards.
-     * @param filter the filter to find bank cards.
+     * @param idPersonDetail the filter to find bank cards.
      */
-    ResponseEntity<Long> countBankCards(BankCardSearchFilter filter);
+    ResponseEntity<Long> countBankCards(Long idPersonDetail);
 
     /**
      * Gets a account.
@@ -146,9 +146,9 @@ public interface PeopleManagementServiceProxy {
 
     /**
      * counts accounts.
-     * @param filter the filter to find bank cards.
+     * @param idPersonDetail the filter to find bank cards.
      */
-    ResponseEntity<Long> countAccount(AccountSearchFilter filter);
+    ResponseEntity<Long> countAccount(Long idPersonDetail);
 
     /**
      * Saves or updates account.

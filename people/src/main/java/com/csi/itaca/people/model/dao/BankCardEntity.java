@@ -16,15 +16,15 @@ import java.time.LocalDate;
 @Table(name = "PER_BANK_CARD")
 public class BankCardEntity implements BankCard {
 
-    public static final String ID_BANK_CARD = "id_bank_card";
-    public static final String ID_PERSON_DETAIL = "id_person_detail";
-    public static final String ID_CARD_TYPE = "id_card_type";
+    public static final String ID_BANK_CARD = "idBankCard";
+    public static final String ID_PERSON_DETAIL = "idPersonDetail";
+    public static final String ID_CARD_TYPE = "idCardType";
     public static final String CARD = "card";
     public static final String PRINCIPAL = "principal";
     public static final String AVAILABLE = "available";
-    public static final String EXPIRATION_DATE = "expiration_date";
-    public static final String SECURITY_CODE = "security_code";
-    public static final String ID_BANK = "id_bank";
+    public static final String EXPIRATION_DATE = "expirationDate";
+    public static final String SECURITY_CODE = "securityCode";
+    public static final String ID_BANK = "idBank";
 
 
     @Id

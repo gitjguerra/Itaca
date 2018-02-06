@@ -146,8 +146,8 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     @Override
     @RequestMapping(value = COUNT_ACCOUNT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> countAccount(AccountSearchFilter filter) {
-        return new ResponseEntity<>(peopleManagementService.countAccount(filter), HttpStatus.OK);
+    public ResponseEntity<Long> countAccount(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long id) {
+        return new ResponseEntity<>(peopleManagementService.countAccount(id), HttpStatus.OK);
     }
 
     @Override
@@ -161,8 +161,8 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     @Override
     @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> countBankCards(BankCardSearchFilter filter) {
-        return new ResponseEntity<>(peopleManagementService.countBankCards(filter), HttpStatus.OK);
+    public ResponseEntity<Long> countBankCards(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
+        return new ResponseEntity<>(peopleManagementService.countBankCards(idPersonDetail), HttpStatus.OK);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
 

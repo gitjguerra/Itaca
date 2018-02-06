@@ -106,10 +106,10 @@ public interface PeopleManagementService {
 
     /**
      * Counts the list of bank cards detail based on the supplied search criteria.
-     * @param filter filter to apply
+     * @param idPersonDetail filter to apply
      * @return the number of banks card.
      */
-    Long countBankCards(BankCardSearchFilter filter);
+    Long countBankCards(Long idPersonDetail);
 
     /**
      * Retrieves a specific account.
@@ -121,10 +121,10 @@ public interface PeopleManagementService {
 
     /**
      * Counts the list of account based on the supplied search criteria.
-     * @param filter filter to apply
+     * @param idPersonDetail filter to apply
      * @return the number of accounts.
      */
-    Long countAccount(AccountSearchFilter filter);
+    Long countAccount(Long idPersonDetail);
 
     /**
      * Saves or updates the provided account.
@@ -140,23 +140,5 @@ public interface PeopleManagementService {
      * @return the bank card if found otherwise null.
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
-
-
-
-    /*// contacts
-
-    List<? extends Contacto0DTO> listContactos(Long idDetallePersona, Errors errTracking);
-
-    Contacto0DTO getContact(Long idContact);
-
-    List<? extends ContactDTO>> getPersonContact(ContactPersonDetail filter);
-
-    void deleteContact(Long idContact) throws ContactNotFoundException;
-
-    ContactDTO saveOrUpdateContact(ContactDTO contact);
-
-    Long countContacts(Long idPersonDetail);
-*/
-
 
 }
