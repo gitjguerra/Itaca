@@ -668,12 +668,10 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
-        AccountEntity accountUpdateEntity = new AccountEntity();
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
         if (accountEntity == null && errTracking != null){
-            accountEntity = accountUpdateEntity;
-
+            accountEntity = new AccountEntity();
         }
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
@@ -696,12 +694,10 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardUpdateEntity = new BankCardEntity();
-
         BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
 
-        if (bankCardEntity == null && errTracking != null){
-            bankCardEntity = bankCardUpdateEntity;
+        if (bankCardEntity == null){
+            bankCardEntity = new BankCardEntity();
         }
         bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
