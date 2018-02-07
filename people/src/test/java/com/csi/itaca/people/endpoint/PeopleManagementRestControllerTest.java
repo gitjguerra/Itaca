@@ -500,7 +500,8 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_BANK_CARD)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(buildPeopleSearchFilter()))
+                .content(buildPeopleSearchFilter())
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -517,7 +518,8 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(buildPeopleSearchFilter()))
+                .content(buildPeopleSearchFilter())
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
