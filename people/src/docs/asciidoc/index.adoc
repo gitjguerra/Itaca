@@ -6,7 +6,7 @@
 :toclevels: 4
 :sectlinks:
 
-= People Management REST API Guide.
+= Itaca People Management RESTful API Guide.
 
 == People Management endpoints
 
@@ -242,6 +242,125 @@ include::{snippets}/find-duplicate-person-detail/http-response.adoc[]
 include::{snippets}/find-duplicate-person-detail/curl-request.adoc[]
 
 
+=== Get identification
+Retrieves an identification.
+
+==== Request structure
+
+include::{snippets}/get-identification/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/get-identification/request-parameters.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-identification/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-identification/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-identification/curl-request.adoc[]
+
+
+=== Count identifications
+Count the number of identification associated with a given person detail ID.
+
+==== Request structure
+
+include::{snippets}/count-identifications/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/count-identifications/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/count-identifications/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-identifications/curl-request.adoc[]
+
+
+=== Delete identification
+Deletes a specified identification.
+
+==== Request structure
+
+include::{snippets}/delete-identification/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/delete-identification/request-parameters.adoc[]
+
+==== Example response
+An ok response indicates that the record was successfully deleted in the database.
+
+include::{snippets}/delete-identification/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-identification/curl-request.adoc[]
+
+
+=== Save identification
+Saves the specified identification.
+
+==== Request structure
+
+include::{snippets}/save-identification/http-request.adoc[]
+
+==== Request body fields
+Provide the id inorder to update the given identification in the database otherwise the application will create a new record in the DB.
+
+include::{snippets}/save-identification/request-fields.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-identification/response-fields.adoc[]
+
+==== Example response
+
+The application will essentially return the identification bean back. If the record was created in the db the id will be updated.
+
+include::{snippets}/save-identification/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-identification/curl-request.adoc[]
+
+
+
+
+=== Find identifications
+Find identifications associated with a given detail person id.
+
+==== Request structure
+
+include::{snippets}/find-identification/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/find-identification/request-parameters.adoc[]
+
+==== Response fields
+
+include::{snippets}/find-identifications/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/find-identifications/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/find-identifications/curl-request.adoc[]
+
+
+
 === Lookup languages
 
 ==== Request structure
@@ -353,3 +472,261 @@ include::{snippets}/lookup-gender/http-response.adoc[]
 ==== CURL request
 
 include::{snippets}/lookup-gender/curl-request.adoc[]
+
+
+=== Lookup company person type
+
+==== Request structure
+
+include::{snippets}/lookup-company-person-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-company-person-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-company-person-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-company-person-type/curl-request.adoc[]
+
+
+
+=== Lookup contact type
+
+==== Request structure
+
+include::{snippets}/lookup-contact-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-contact-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-contact-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-contact-type/curl-request.adoc[]
+
+
+
+=== Lookup relation types
+
+==== Request structure
+
+include::{snippets}/lookup-relation-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-relation-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-relation-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-relation-type/curl-request.adoc[]
+
+
+=== lookup Bank
+
+==== Request structure
+
+include::{snippets}/lookup-bank/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-bank/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-bank/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-bank/curl-request.adoc[]
+
+
+=== lookup Account Type
+
+==== Request structure
+
+include::{snippets}/lookup-account-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-account-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-account-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-account-type/curl-request.adoc[]
+
+
+
+=== lookup Account Clasification
+
+==== Request structure
+
+include::{snippets}/lookup-account-clasification/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-account-clasification/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-account-clasification/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-account-clasification/curl-request.adoc[]
+
+
+
+=== lookup Card Type
+
+==== Request structure
+
+include::{snippets}/lookup-card-type/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-card-type/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-card-type/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-card-type/curl-request.adoc[]
+
+
+
+
+
+=== count Bank Card
+
+==== Request structure
+
+include::{snippets}/count-bank-card/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/count-bank-card/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-bank-card/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-bank-card/curl-request.adoc[]
+
+
+
+=== get Bank Card
+
+==== Request structure
+
+include::{snippets}/get-BankCard/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-BankCard/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-BankCard/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-BankCard/curl-request.adoc[]
+
+
+
+
+=== save or update Bank Card
+
+==== Request structure
+
+include::{snippets}/save-update-bankCard/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-update-bankCard/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-update-bankCard/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-update-bankCard/curl-request.adoc[]
+
+
+=== save or update Account
+
+==== Request structure
+
+include::{snippets}/save-update-account/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-update-account/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-update-account/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-update-account/curl-request.adoc[]
+
+
+=== count Account
+
+==== Request structure
+
+include::{snippets}/count-account/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/count-account/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-account/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-account/curl-request.adoc[]
+
+
+=== get Account
+
+==== Request structure
+
+include::{snippets}/get-Account/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-Account/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-Account/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-Account/curl-request.adoc[]
+
