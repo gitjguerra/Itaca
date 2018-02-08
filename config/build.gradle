@@ -1,5 +1,5 @@
 
-description = ''
+description = 'Itaca configuration'
 dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy', version:'2.4.13'
 }

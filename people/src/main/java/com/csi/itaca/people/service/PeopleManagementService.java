@@ -1,10 +1,13 @@
 package com.csi.itaca.people.service;
 
+import com.csi.itaca.people.model.dto.AccountDTO;
+import com.csi.itaca.people.model.dto.BankCardDTO;
 import com.csi.itaca.people.model.dto.PersonDTO;
 import com.csi.itaca.people.model.dto.PersonDetailDTO;
+import com.csi.itaca.people.model.filters.AccountSearchFilter;
+import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;
-
 import java.util.List;
 
 /**
@@ -93,5 +96,49 @@ public interface PeopleManagementService {
      * @return the number of person details.
      */
     Long countDuplicatePersonDetails(PeopleSearchFilter filter);
+
+    /**
+     * Saves or updates the provided account.
+     * @param accountToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    AccountDTO saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate, Errors errTracking);
+
+    /**
+     * Counts the list of bank cards detail based on the supplied search criteria.
+     * @param idPersonDetail filter to apply
+     * @return the number of banks card.
+     */
+    Long countBankCards(Long idPersonDetail);
+
+    /**
+     * Retrieves a specific account.
+     * @param id the account id.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return the account if found otherwise null.
+     */
+    AccountDTO getAccount(Long id, Errors errTracking);
+
+    /**
+     * Counts the list of account based on the supplied search criteria.
+     * @param idPersonDetail filter to apply
+     * @return the number of accounts.
+     */
+    Long countAccount(Long idPersonDetail);
+
+    /**
+     * Saves or updates the provided account.
+     * @param bankCardToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    BankCardDTO saveOrUpdateBankCard(BankCardDTO bankCardToSaveOrUpdate, Errors errTracking);
+
+    /**
+     * Retrieves a specific bank card.
+     * @param id the bank card id.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return the bank card if found otherwise null.
+     */
+    BankCardDTO getBankCard(Long id, Errors errTracking);
 
 }
