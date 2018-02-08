@@ -1,5 +1,5 @@
 
-description = 'Itaca tools'
+description = ''
 dependencies {
     compile group: 'net.sf.dozer', name: 'dozer', version:'5.4.0'
 }

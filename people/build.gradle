@@ -1,5 +1,5 @@
 
-description = 'People management module'
+description = ''
 dependencies {
   compile project(':config')
   compile project(':common')

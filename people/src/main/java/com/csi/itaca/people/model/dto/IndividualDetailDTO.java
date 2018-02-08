@@ -24,7 +24,7 @@ public class IndividualDetailDTO extends PersonDetailDTO implements IndividualDe
 	
 	private PersonStatusDTO personStatus;
 
-	// We add this annotation(@JsonIgnoreProperties) in order to prevent recursion when generating the JSON.
+	// We add this anotation(@JsonIgnoreProperties) in order to prevent recursion when generating the JSON.
 	@JsonIgnoreProperties("details")
 	private IndividualDTO person;
 

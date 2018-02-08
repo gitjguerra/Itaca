@@ -105,7 +105,7 @@ public class ConfiguratorImpl implements Configurator, Serializable {
 	 */
 	@Override
 	public void registerModule(String name) {
-		log.info("****************** LOAD CONFIGURATIONS START *******************");
+		log.info("****************** INICIADA LA CARGA CONFIGURACIONES *******************");
 		log.info("Modulo: " + name);
 
 		registeredModules.add(name);
@@ -122,7 +122,7 @@ public class ConfiguratorImpl implements Configurator, Serializable {
 		}
 
 		imprimirConfiguraciones();
-		log.info("**************** LOAD CONFIGURATIONS COMPLETED *****************");
+		log.info("***************** FINALIZADA LA CARGA CONFIGURACIONES ******************");
 
 	}
 

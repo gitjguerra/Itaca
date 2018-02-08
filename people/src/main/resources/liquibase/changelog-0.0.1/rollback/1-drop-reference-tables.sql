@@ -16,13 +16,3 @@ drop table per_language;
 drop SEQUENCE per_id_type_seq;
 drop table per_id_type;
 
-drop SEQUENCE per_contact_type_seq;
-drop table per_contact_type;
-
-drop SEQUENCE per_relation_type_seq;
-drop table per_relation_type;
-
-drop SEQUENCE per_company_person_type_seq;
-drop table per_company_person_type;
-
-

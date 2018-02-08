@@ -6,47 +6,16 @@ import java.util.List;
 
 public interface PeopleLookupService {
 
-    List<CivilStatusDTO> lookupCivilStatus();
+    public List<CivilStatusDTO> lookupCivilStatus();
 
-    List<PersonStatusDTO> lookupPersonStatus();
+    public List<PersonStatusDTO> lookupPersonStatus();
 
-    List<GenderDTO> lookupGender();
+    public List<GenderDTO> lookupGender();
 
-    List<LanguageDTO> lookupLanguages();
+    public List<LanguageDTO> lookupLanguages();
 
-    List<IDTypeDTO> lookupIdTypes();
+    public List<IDTypeDTO> lookupIdTypes();
 
-    List<CompanyTypeDTO> lookupCompanyTypes();
-
-    List<CompanyPersonTypeDTO> lookupCompanyPersonTypes();
-
-    List<ContactTypeDTO> lookupContactTypes();
-
-    List<RelationTypeDTO> lookupRelationTypes();
-
-    /**
-     * List of Banks.
-     * @return the Card Types.
-     */
-    List<BankDTO> lookupBanks();
-
-    /**
-     * List of Account Types.
-     * @return the Card Types.
-     */
-    List<AccountTypeDTO> lookupAccountTypes();
-
-    /**
-     * List of Account Clasification.
-     * @return the Card Types.
-     */
-    List<AccountClasificationDTO> lookupAccountClasifications();
-
-    /**
-     * List of Card Type.
-     * @return the Card Types.
-     */
-    List<CardTypeDTO>  lookupCardTypes();
-
+    public List<CompanyTypeDTO> lookupCompanyTypes();
 
 }

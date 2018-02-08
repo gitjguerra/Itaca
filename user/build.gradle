@@ -1,5 +1,5 @@
 
-description = 'User management module'
+description = ''
 dependencies {
   compile project(':common')
   compile project(':tools')
