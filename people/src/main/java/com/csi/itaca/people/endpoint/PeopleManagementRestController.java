@@ -3,10 +3,13 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
+import com.csi.itaca.people.service.PeopleNationalitiesBusinessService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +31,9 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     /** The people service. */
     @Autowired
     private PeopleManagementService peopleManagementService;
+
+    @Autowired
+    private PeopleNationalitiesBusinessService peopleNationalitiesBusinessService;
 
     @Override
     @RequestMapping(value = GET_PERSON, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -115,6 +121,54 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(personDetailDTO, errTracking);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////// Person detail end ...
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Nationalities ...
+
+    @Override
+    @RequestMapping(value = SEARCH_NATIONALITY, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<NationalityDTO>> getPeopleNationalities(@RequestParam(PERSON_DETAIL_ID_PARAM) Long personDetailId, NationalityOrderPaginFilter filter) {
+        List<NationalityDTO> nationalityDTOS = null;
+        if (filter!= null) {
+            nationalityDTOS = peopleNationalitiesBusinessService.getPeopleNationalities(personDetailId, filter.getPagination(),filter.getOrder());
+        }
+        else {
+            nationalityDTOS = peopleNationalitiesBusinessService.getPeopleNationalities(personDetailId);
+        }
+        return new ResponseEntity<>(nationalityDTOS, HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = COUNT_NATIONALITY , method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countNationalities(@RequestParam(PERSON_DETAIL_ID_PARAM) Long personDetailId) {
+        return new ResponseEntity<>(peopleNationalitiesBusinessService.countNationalities(personDetailId), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = DELETE_NATIONALITY, method = RequestMethod.DELETE)
+    public ResponseEntity deleteNationality(@RequestParam(NATIONALITY_ID_PARAM) Long idNationality) {
+        BindingResult errTracking = createErrorTracker();
+        peopleNationalitiesBusinessService.deleteNationality(idNationality,errTracking);
+        return buildResponseEntity(errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = SAVE_UPDATE_NATIONALITY, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateNationality(@RequestBody NationalityDTO nationality) {
+        BindingResult errTracking = createErrorTracker();
+        NationalityDTO nationalityDTOSaved = peopleNationalitiesBusinessService.saveOrUpdateNationality(nationality,errTracking);
+        return buildResponseEntity(nationalityDTOSaved, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = GET_NATIONALITY, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<NationalityDTO> getNationality(@RequestParam(NATIONALITY_ID_PARAM) Long idNationality) {
+        BindingResult errTracking = createErrorTracker();
+        NationalityDTO nationalityDTO = peopleNationalitiesBusinessService.getNationality(idNationality, errTracking);
+        return buildResponseEntity(nationalityDTO, errTracking);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Nationalities end ...
 
 
 
