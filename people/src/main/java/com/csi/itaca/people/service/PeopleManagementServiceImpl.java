@@ -650,6 +650,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
     @Override
     @Transactional(readOnly = true)
@@ -666,6 +667,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     }
 
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
 =======
 
@@ -748,11 +751,15 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     }
 
     //TODO: (Jose Guerra) Save Or Update Account
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     @Override
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
@@ -768,6 +775,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         accountEntity.setPrincipal(dto.getPrincipal());
         accountEntity.setIdBank(dto.getIdBank());
 =======
+=======
+>>>>>>> Stashed changes
         AccountEntity accountEntity = accountRepository.findOne(1L);
 
         accountEntity.setId(1L);
@@ -779,6 +788,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         accountEntity.setPrincipal(true);
         accountEntity.setIdBank(1L);
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         accountEntity = accountRepository.save(accountEntity);
 
@@ -786,18 +798,25 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         entityManager.clear();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         return beaner.transform(accountEntity, AccountDTO.class);
 =======
+=======
+>>>>>>> Stashed changes
         // update id
         dto.setId(accountEntity.getId());
 
         return dto;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     }
 
     @Override
     @Transactional
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
@@ -807,6 +826,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             bankCardEntity = new BankCardEntity();
         }
 =======
+=======
+>>>>>>> Stashed changes
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
         AccountDTO account = null;
@@ -825,6 +846,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
         BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBank());
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
@@ -832,16 +856,22 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         bankCardEntity.setCard(dto.getCard());
         bankCardEntity.setIdCardType(dto.getIdBankCard());
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
         bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 
 =======
+=======
+>>>>>>> Stashed changes
         bankCardEntity.setExpirationDate(dto.getExpirationDate());
         bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         bankCardEntity = bankCardRepository.save(bankCardEntity);
 
@@ -849,18 +879,25 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         entityManager.clear();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         return beaner.transform(bankCardEntity, BankCardDTO.class);
 =======
+=======
+>>>>>>> Stashed changes
         // update id
         dto.setIdBankCard(bankCardEntity.getIdBankCard());
 
         return dto;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     }
 
     @Override
     @Transactional
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
@@ -897,6 +934,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return accountRepository.count(spec);
     }
 =======
+=======
+>>>>>>> Stashed changes
     public BankCardDTO getBankCard(Long id, Errors errTracking) {
 
         BankCardDTO bankCard = null;
@@ -950,5 +989,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
 
 >>>>>>> ebc4ba3... Ajustes SaveOrUpdate
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }

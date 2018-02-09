@@ -19,14 +19,20 @@ public class BankCardDTO implements BankCard {
 	private Boolean principal;
 	private Boolean available;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	private LocalDate expirationDate;
 	private Long securityCode;
 	private Long idBank;
 =======
+=======
+>>>>>>> Stashed changes
 	private Long idBank;
 	private LocalDate expirationDate;
 	private Long securityCode;
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 }

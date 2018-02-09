@@ -16,15 +16,21 @@ public class AccountDTO implements Account {
 
 	private Long personDetail;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	private String account;
 	private Long accountClasification;
 	private Long typeAccount;
 	private Boolean principal;
 =======
+=======
+>>>>>>> Stashed changes
 	private Long accountClasification;
 	private Long typeAccount;
 	private String account;
 	private Boolean principal;	
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 	private Boolean available;
 	private Long IdBank;

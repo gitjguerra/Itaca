@@ -17,6 +17,7 @@ public class AccountEntity implements Account {
 	
 	public static final String ID = "id";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	public static final String PERSONDETAIL = "personDetail";
 	public static final String ACCOUNT = "account";
 	public static final String ACCOUNTCLASIFIED = "accountClasification";
@@ -25,6 +26,8 @@ public class AccountEntity implements Account {
 	public static final String AVAILABLE = "available";
 	public static final String ID_BANK = "IdBank";
 =======
+=======
+>>>>>>> Stashed changes
 	public static final String ACCOUNT = "account";
 	public static final String ACCOUNTTYPE = "id_type_account";
 	public static final String PERSONDETAIL = "id_person_detail";
@@ -32,6 +35,9 @@ public class AccountEntity implements Account {
 	public static final String PRINCIPAL = "principal";
 	public static final String AVAILABLE = "available";
 	public static final String ID_BANK = "id_bank";
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 	@Id
@@ -50,6 +56,12 @@ public class AccountEntity implements Account {
 	private Long typeAccount;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+	@Column(name="ID_BANK")
+	private Long idBank;
+
+>>>>>>> Stashed changes
 =======
 	@Column(name="ID_BANK")
 	private Long idBank;
@@ -65,9 +77,12 @@ public class AccountEntity implements Account {
 	private Boolean available;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	@Column(name="ID_BANK")
 	private Long idBank;
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 }
