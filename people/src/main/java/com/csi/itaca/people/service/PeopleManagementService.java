@@ -1,9 +1,6 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.people.model.dto.AccountDTO;
-import com.csi.itaca.people.model.dto.BankCardDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
-import com.csi.itaca.people.model.dto.PersonDetailDTO;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
@@ -140,5 +137,13 @@ public interface PeopleManagementService {
      * @return the bank card if found otherwise null.
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
+
+    AddressFormat1DTO getAddresformat1(Long id, Errors errTracking);
+
+    Long countAddresformat1(Long addressId);
+
+    AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate, Errors errTracking);
+
+    void deleteaddresformat1(Long personId, Errors errTracking);
 
 }

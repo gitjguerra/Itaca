@@ -17,6 +17,7 @@ public interface PeopleManagementServiceProxy {
 
     // Parameters...
     String ID_PARAM                 = "id";
+    String ID_ADDRES_PARAM          = "addressId";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
 
@@ -49,6 +50,10 @@ public interface PeopleManagementServiceProxy {
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
 
+    String GET_ADDRESFORMAT1              = RESOURCE_ACCOUNT +"/getAddresFormat1";
+    String COUNT_ADDRESFORMAT1            = RESOURCE_ACCOUNT +"/countAddresFormat1";
+    String SAVE_ADDRESFORMAT1              = RESOURCE_ACCOUNT + "/saveAddresFormat1";
+    String DELETE_ADDRESFORMAT1           = RESOURCE_ACCOUNT + "/deleteAddresFormat1";
     /**
      * Gets a person.
      * @param id the person id.
@@ -164,6 +169,14 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity getBankCard(Long id);
 
+
+    ResponseEntity getAddresFormat1(Long id);
+
+    ResponseEntity<Long> countAddresFormat1(Long addressId);
+
+    ResponseEntity saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate,BindingResult errTracking);
+
+    ResponseEntity deleteaddresformat1(Long id);
 
 /*
     //addresses

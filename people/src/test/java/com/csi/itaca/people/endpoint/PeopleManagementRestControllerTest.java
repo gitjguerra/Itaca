@@ -3,6 +3,7 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.AccountClasification;
+import com.csi.itaca.people.model.AddressFormat1;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -73,6 +74,13 @@ public class PeopleManagementRestControllerTest {
     private static final String CARD = "card";
     private static final String ACCOUNT = "id";
     private static final String ID_CARD = "idBankCard";
+
+
+    private AddressFormat1DTO addressFormat1DTO;
+    //private AccountDTO accountDTO;
+    //private static final String CARD = "card";
+    //private static final String ACCOUNT = "id";
+    //private static final String ID_CARD = "idBankCard";
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
@@ -426,16 +434,6 @@ public class PeopleManagementRestControllerTest {
         return fields;
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
     @Test
     public void getBankCard() throws Exception {
 
@@ -462,24 +460,44 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                                 , fieldWithPath("idBank").description("idBank.")
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-                                , fieldWithPath("idBank.bankName").description("bankName.")
-                                , fieldWithPath("idBank.draftBank").description("draftBank.")
-                                , fieldWithPath("idBank.bic").description("bic.")
-                                , fieldWithPath("idBank.code").description("code.")
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
                 ));
     }
+
+
+    @Test
+    public void getAddresformat1() throws Exception {
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdpoblacion("00");
+        addressFormat1DTO.setIdcodpostal("01");
+        addressFormat1DTO.setIdtypevia("02");
+        addressFormat1DTO.setNombrevia("03");
+        addressFormat1DTO.setNumerovia("04");
+        addressFormat1DTO.setComplementos("05");
+
+        Mockito.when(service.getAddresformat1(any(), any(Errors.class))).thenReturn(addressFormat1DTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_ADDRESFORMAT1)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-AddresFormat1",
+                        responseFields(fieldWithPath("addressId").description("IdBankCard type ID.")
+                                , fieldWithPath("idpoblacion").description("Card.")
+                                , fieldWithPath("idcodpostal").description("idPersonDetail.")
+                                , fieldWithPath("idtypevia").description("idCardType.")
+                                , fieldWithPath("nombrevia").description("principal.")
+                                , fieldWithPath("numerovia").description("available.")
+                                , fieldWithPath("complementos").description("idBank.")
+                                                       )
+                ));
+    }
+
+
 
     @Test
     public void getAccount() throws Exception {
@@ -507,16 +525,6 @@ public class PeopleManagementRestControllerTest {
                         responseFields(fieldWithPath("id").description("Id account.")
                                 , fieldWithPath("personDetail").description("personDetail.")
                                 , fieldWithPath("accountClasification").description("accountClasification.")
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-                                , fieldWithPath("accountClasification.id").description("id.")
-                                , fieldWithPath("accountClasification.value").description("value.")
->>>>>>> Stashed changes
-=======
-                                , fieldWithPath("accountClasification.id").description("id.")
-                                , fieldWithPath("accountClasification.value").description("value.")
->>>>>>> Stashed changes
                                 , fieldWithPath("typeAccount").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
                                 , fieldWithPath("idBank").description("idBank.")
@@ -525,7 +533,7 @@ public class PeopleManagementRestControllerTest {
                         )
                 ));
     }
-
+ /* -------------------comentado arturo ----------------------
     @Test
     public void countBankCard() throws Exception {
 
@@ -533,16 +541,7 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_BANK_CARD)
                 .contentType(MediaType.APPLICATION_JSON)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                .content(buildPeopleSearchFilter())
-                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
-=======
                 .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -550,34 +549,68 @@ public class PeopleManagementRestControllerTest {
                         "count-bank-card",
                         requestFields(peopleSearchFilterFieldsDoc())
                 ));
+    }*/
+
+    // ------------------------------------------comentado arturo --------------
+         @Test
+        public void countAddresFormat1() throws Exception {
+            Mockito.when(service.countAddresformat1( any() )).thenReturn(1L);
+            mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ADDRESFORMAT1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .param(PeopleManagementServiceProxy.ID_ADDRES_PARAM, Long.toString(1))
+                    .content(buildAddressSearchFilter()))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("1"))
+                    .andDo(document(
+                            "Count-Address-format",
+                            requestFields(fieldWithPath("addressId").description("Identificador de la ADDRESS"),
+                                    fieldWithPath("idpoblacion").description("Identificador de la poblacion"),
+                                    fieldWithPath("idcodpostal").description("Identificador del codigo postal"),
+                                    fieldWithPath("idtypevia").description("Identificador del tipo via"),
+                                    fieldWithPath("nombrevia").description("Identificador del nombre via"),
+                                    fieldWithPath("numerovia").description("Identificador del numero via"),
+                                    fieldWithPath("complementos").description("complementos")
+                                   )
+                    ));
+        }
+
+    private String buildAddressSearchFilter() {
+
+        AddressFormat1DTO filter = new AddressFormat1DTO();
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdcodpostal(null);
+        addressFormat1DTO.setAddressId(null);
+
+        filter.setAddressId(1L);
+        filter.setIdcodpostal("referenceCode1");
+        filter.setIdtypevia("");
+        filter.setNombrevia("av");
+        filter.setNumerovia("23");
+        filter.setIdpoblacion("caracas");
+        return JsonUtils.asJsonString(filter);
     }
 
-    @Test
-    public void countAccount() throws Exception {
+    /* ------------------------------------------comentado arturo --------------
+        @Test
+        public void countAccount() throws Exception {
 
-        Mockito.when(service.countAccount(any())).thenReturn(1L);
+            Mockito.when(service.countAccount(any())).thenReturn(1L);
 
-        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
-                .contentType(MediaType.APPLICATION_JSON)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                .content(buildPeopleSearchFilter())
-                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("1"))
-                .andDo(document(
-                        "count-account",
-                        requestFields(peopleSearchFilterFieldsDoc())
-                ));
-    }
-
+            mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(buildPeopleSearchFilter()))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("1"))
+                    .andDo(document(
+                            "count-account",
+                            requestFields(peopleSearchFilterFieldsDoc())
+                    ));
+        }
+    */
     @Test
     public void saveOrUpdateAccount() throws Exception {
 
@@ -626,14 +659,8 @@ public class PeopleManagementRestControllerTest {
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         bankCardDTO.setExpirationDate(LocalDate.of(1972, 11, 22));
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
         Mockito.when(service.saveOrUpdateBankCard(any(), any(Errors.class))).thenReturn(bankCardDTO);
         mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_BANK_CARD)
@@ -651,19 +678,6 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                                 , fieldWithPath("idBank").description("idBank.")
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-                                , fieldWithPath("idBank.bankName").description("bankName.")
-                                , fieldWithPath("idBank.draftBank").description("draftBank.")
-                                , fieldWithPath("idBank.bic").description("bic.")
-                                , fieldWithPath("idBank.code").description("code.")
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
@@ -671,12 +685,41 @@ public class PeopleManagementRestControllerTest {
 
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
->>>>>>> Stashed changes
-=======
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
->>>>>>> Stashed changes
+
+    @Test
+    public void saveOrUpdateAddresFotmat() throws Exception {
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdpoblacion("00");
+        addressFormat1DTO.setIdcodpostal("01");
+        addressFormat1DTO.setIdtypevia("02");
+        addressFormat1DTO.setNombrevia("03");
+        addressFormat1DTO.setNumerovia("04");
+        addressFormat1DTO.setComplementos("05");
+
+        Mockito.when(service.saveOrUpdateAddresFotmat(any(), any(Errors.class))).thenReturn(addressFormat1DTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_ADDRESFORMAT1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(addressFormat1DTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-Address-Format",
+                        responseFields(fieldWithPath("addressId").description("Identificador de la ADDRESS")
+                                , fieldWithPath("idpoblacion").description("Identificador de la  poblacion.")
+                                , fieldWithPath("idcodpostal").description("Identificador del Codigo Postal.")
+                                , fieldWithPath("idtypevia").description("Codigo de TYPE de via (1-Calle, 2 - Avenida ...).")
+                                , fieldWithPath("nombrevia").description("Nombre de la via.")
+                                , fieldWithPath("numerovia").description("Numero de via.")
+                                , fieldWithPath("complementos").description("Descripcion complementaria.")
+
+                        )
+                ));
+
+
+
+    }
+
 }

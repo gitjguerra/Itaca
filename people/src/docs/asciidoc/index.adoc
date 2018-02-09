@@ -730,3 +730,83 @@ include::{snippets}/get-Account/http-response.adoc[]
 
 include::{snippets}/get-Account/curl-request.adoc[]
 
+=== Lookup Address Format
+
+==== Request structure
+
+include::{snippets}/lookup-address-format/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-address-format/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-address-format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-address-format/curl-request.adoc[]
+
+
+
+
+
+=== count Address Format
+
+==== Request structure
+
+include::{snippets}/count-Address-Format/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/count-Address-Format/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-Address-Format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-Address-Format/curl-request.adoc[]
+
+
+
+=== get Address Format
+
+==== Request structure
+
+include::{snippets}/get-AddresFormat1/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-AddresFormat1/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-AddresFormat1/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-AddresFormat1/curl-request.adoc[]
+
+
+
+
+=== save or update Address Format
+
+==== Request structure
+
+include::{snippets}/save-Address-Format/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-Address-Format/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-Address-Format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-Address-Format/curl-request.adoc[]
