@@ -1,6 +1,7 @@
 package com.csi.itaca.people.api;
 
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
@@ -19,6 +20,9 @@ public interface PeopleManagementServiceProxy {
     String ID_PARAM                 = "id";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
+    String NATIONALITY_ID_PARAM  = "nationalityId";
+    String COUNTRY_ID = "country.id";
+    String BYDEFAULT = "bydefault";
 
 
     // End points for people...
@@ -36,6 +40,14 @@ public interface PeopleManagementServiceProxy {
     String SEARCH_DUPLICATE_PERSON_DETAIL   = PERSON_DETAIL_RESOURCE + "/findDuplicates";
     String COUNT_DUPLICATE_PERSON_DETAIL    = PERSON_DETAIL_RESOURCE + "/countDuplicates";
     String GET_PERSON_DETAIL                = PERSON_DETAIL_RESOURCE + "/get";
+
+    // End points for nationalities....
+    String NATIONALITY           = RESOURCE + "/nationality";
+    String SEARCH_NATIONALITY             = NATIONALITY + "/find";
+    String COUNT_NATIONALITY             = NATIONALITY + "/count";
+    String DELETE_NATIONALITY             = NATIONALITY + "/delete";
+    String SAVE_UPDATE_NATIONALITY             = NATIONALITY + "/save";
+    String GET_NATIONALITY             = NATIONALITY + "/get";
 
     // End points for account...
     String RESOURCE_ACCOUNT           = RESOURCE + "/account";
@@ -70,8 +82,7 @@ public interface PeopleManagementServiceProxy {
      * @param personToSaveOrUpdate the person to save/update.
      * @param errTracking error tracking.
      */
-    ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate,
-                                      BindingResult errTracking);
+    ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate, BindingResult errTracking);
     /**
      * Deletes a person together with associated details
      * @param id the id of the person to delete.
@@ -130,6 +141,20 @@ public interface PeopleManagementServiceProxy {
      * @param errTracking error tracking.
      */
     ResponseEntity saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate,BindingResult errTracking);
+
+
+    // nationalities
+
+    ResponseEntity<List<NationalityDTO>> getPeopleNationalities(Long personDetailId, NationalityOrderPaginFilter filter);
+
+    ResponseEntity<Long>  countNationalities(Long personDetailId);
+
+    ResponseEntity deleteNationality(Long idNationality);
+
+    ResponseEntity saveOrUpdateNationality(NationalityDTO nationality);
+
+    ResponseEntity<NationalityDTO> getNationality(Long idNationality);
+
 
     /**
      * counts bank cards.
@@ -192,6 +217,30 @@ public interface PeopleManagementServiceProxy {
     ItacaAPIResponse<Contacto0DTO> saveOrUpdateContacto(Contacto0DTO contacto);
 
     ItacaAPIResponse<Long> countContactos(Long idDetallePersona);
+
+
+
+    // account
+
+    ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
+
+    ItacaAPIResponse<List<? extends CuentaBancaria0DTO>> getCuentaBancaria(FiltroDetallePersonaCuentaPaginaOrden peticion);
+
+    ItacaAPIResponse<Long> countCuentaBancaria(Long idDetallePersona);
+
+    ItacaAPIResponse<List<? extends Banco0DTO>> listBancos();
+
+    ItacaAPIResponse<List<? extends TipoCuenta0DTO>> listTipoCuenta();
+
+    ItacaAPIResponse<List<? extends ClasificacionCuenta0DTO>> listClasificacionCuenta();
+
+    ItacaAPIResponse<TarjetaBancaria0DTO> saveOrUpdateTarjetasBancarias(TarjetaBancaria0DTO tarjetaBancaria);
+
+    ItacaAPIResponse<Long> countTarjetaBancaria(Long idDetallePersona);
+
+    public ItacaAPIResponse<List<? extends TarjetaBancaria0DTO>> getTarjetaBancaria(FiltroDetallePersonaTarjetaPaginaOrden filtro);
+
+    ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
 
 
 

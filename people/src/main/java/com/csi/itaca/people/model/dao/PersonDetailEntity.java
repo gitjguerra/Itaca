@@ -23,6 +23,7 @@ public abstract class PersonDetailEntity implements PersonDetail {
 	public static final String NAME 	= "name";
 	public static final String LANGUAGE = "language";
 	public static final String COUNTRY 	= "country";
+	public static final String NATIONALITY 	= "id_nationality";
 
 	@Id
 	@Column(name = "person_detail_id")
@@ -45,21 +46,8 @@ public abstract class PersonDetailEntity implements PersonDetail {
 	@Column(name = "name")
 	private String name;
 
-	/*
-	@MapKey(name = "id")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "detallePersona")
-	@BeanerConfig(contentAs = RelDetPersonaDireccionEntity.class)
-	private List<RelDetPersonaDireccionEntity> direcciones;
-
-	@MapKey(name = "id")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "detallePersona")
-	@BeanerConfig(contentAs = IdentificadorEntity.class)
-	private List<IdentificadorEntity> identificadores;
-	
-	@MapKey(name = "id")
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "detallePersona")
-	@BeanerConfig(contentAs = RelPersonaMetadataEntity.class)
-	private List<RelPersonaMetadataEntity> metadata;
-	*/
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_nationality")
+	private NationalityEntity id_nationality;
 
 }

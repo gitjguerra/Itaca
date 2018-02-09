@@ -2,10 +2,13 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
+import com.csi.itaca.people.model.dao.NationalityEntity;
 import com.csi.itaca.people.model.AccountClasification;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
+import com.csi.itaca.people.model.filters.NationalityDTOFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
+import com.csi.itaca.people.service.PeopleNationalitiesBusinessService;
 import com.csi.itaca.tools.utils.jpa.Pagination;
 import com.csi.itaca.tools.utils.json.JsonUtils;
 import org.junit.Before;
@@ -62,17 +65,23 @@ public class PeopleManagementRestControllerTest {
     @Mock
     private PeopleManagementService service;
 
+    @Mock
+    private PeopleNationalitiesBusinessService peopleNationalitiesBusinessService;
+
     @InjectMocks
     private PeopleManagementServiceProxy controller = new PeopleManagementRestController();
 
     private IndividualDTO testIndividualDTO;
     private IndividualDetailDTO testIndividualDetailDTO;
 
+    private NationalityDTO testNationalityDTO;
+    private IdentificationDTO identificationDTO;
     private BankCardDTO bankCardDTO;
     private AccountDTO accountDTO;
     private static final String CARD = "card";
     private static final String ACCOUNT = "id";
     private static final String ID_CARD = "idBankCard";
+
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
@@ -124,6 +133,18 @@ public class PeopleManagementRestControllerTest {
         testIndividualDetailDTO.setPerson(testIndividualDTO);
 
         testIndividualDTO.setDetails(Collections.singletonList(testIndividualDetailDTO));
+
+        testNationalityDTO = new NationalityDTO();
+        testNationalityDTO.setId(1L);
+
+        identificationDTO = new IdentificationDTO();
+        identificationDTO.setPersonDetailId(2L);
+        testNationalityDTO.setPersonDetailId(identificationDTO.getPersonDetailId());
+        testNationalityDTO.setCountry(countryDTO);
+        testNationalityDTO.setBydefault(true);
+
+
+
     }
 
     /**
@@ -244,6 +265,7 @@ public class PeopleManagementRestControllerTest {
     }
 
 
+    /** Get person detail test. */
     /**
      * Get person detail test.
      */
@@ -425,6 +447,101 @@ public class PeopleManagementRestControllerTest {
         if (includePerson) fields.addAll(individualFieldsDoc(fieldPrefix + "person.", true, false));
         return fields;
     }
+
+    ////******* NATIONALITIES TEST *********////////
+
+
+    /** Get person test. */
+    @Test
+    public void getNationalities() throws Exception {
+        Mockito.when(peopleNationalitiesBusinessService.getNationality(any(), any(Errors.class) )).thenReturn(testNationalityDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_NATIONALITY)
+                .param(PeopleManagementServiceProxy.NATIONALITY_ID_PARAM, Long.toString(1)))
+                .andDo(print())
+                .andExpect(jsonPath("id",is(testNationalityDTO.getId().intValue())))
+                .andExpect(jsonPath("personDetailId",is(testNationalityDTO.getPersonDetailId().intValue())))
+                .andExpect(jsonPath("country.id",is(testNationalityDTO.getCountry().getId().intValue())))
+                .andExpect(jsonPath("bydefault",is(testNationalityDTO.getBydefault())))
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-nationalities",
+                        responseFields(nationalityFieldsDoc(""))
+                ));
+    }
+
+
+    /** Delete Nationalities test. */
+
+    @Test
+    public void deleteNationality() throws Exception {
+        Mockito.when(peopleNationalitiesBusinessService.deleteNationality(any(), any(Errors.class) )).thenReturn(true);
+        mockMvc.perform(delete(PeopleManagementServiceProxy.DELETE_NATIONALITY)
+                .param(PeopleManagementServiceProxy.NATIONALITY_ID_PARAM, Long.toString(15L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "delete-nationality",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.NATIONALITY_ID_PARAM).description("The ID of the nationality to delete."))
+                ));
+    }
+
+
+    /// Count Nationalities test.
+    @Test
+    public void countNationality() throws Exception {
+        Mockito.when(peopleNationalitiesBusinessService.countNationalities( any() )).thenReturn(1L);
+        mockMvc.perform(get(PeopleManagementServiceProxy.COUNT_NATIONALITY)
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(content().string("1"))
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "count-nationalities",
+                       requestParameters(parameterWithName(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM).description("The person detail id."))
+                ));
+    }
+
+
+    /** Save/update Nationalities test. */
+
+    @Test
+    public void saveOrUpdateNationality() throws Exception {
+        Mockito.when(peopleNationalitiesBusinessService.saveOrUpdateNationality(any(), any(Errors.class) )).thenReturn(testNationalityDTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_UPDATE_NATIONALITY)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(testNationalityDTO)))
+                .andDo(print())
+                .andExpect(jsonPath(NationalityEntity.ID_NATIONALITY, is((testNationalityDTO.getId().intValue()))))
+                .andExpect(jsonPath(NationalityEntity.ID_DET_PERSON, is(testNationalityDTO.getPersonDetailId().intValue())))
+                .andExpect(jsonPath("country.id",is(testNationalityDTO.getCountry().getId().intValue())))
+                .andExpect(jsonPath(NationalityEntity.BYDEFAULT,is(testNationalityDTO.getBydefault())))
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "save-nationality",
+                    responseFields(nationalityFieldsDoc())
+                ));
+    }
+
+
+    private List<FieldDescriptor> nationalityFieldsDoc() {
+        return nationalityFieldsDoc("");
+    }
+
+
+    private List<FieldDescriptor> nationalityFieldsDoc(String fieldPrefix) {
+        List<FieldDescriptor> fields = new ArrayList<>();
+        fields.add(fieldWithPath(fieldPrefix+"id").description("The nationalityId."));
+        fields.add(fieldWithPath(fieldPrefix+"personDetailId").description("The ID associated with the identification document type."));
+        fields.add(fieldWithPath(fieldPrefix+"country.id").description("The ID issuing country."));
+        fields.add(fieldWithPath(fieldPrefix+"bydefault").description("ID code for the default country."));
+        return fields;
+    }
+
+
+
+
+    ////******* END NATIONALITIES TEST *********////////
+
 
     @Test
     public void getBankCard() throws Exception {

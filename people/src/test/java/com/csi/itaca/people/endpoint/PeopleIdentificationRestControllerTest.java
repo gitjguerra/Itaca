@@ -101,8 +101,6 @@ public class PeopleIdentificationRestControllerTest {
                 ));
     }
 
-
-
     /** Save/update identification test. */
     @Test
     public void saveOrUpdateIdentification() throws Exception {
