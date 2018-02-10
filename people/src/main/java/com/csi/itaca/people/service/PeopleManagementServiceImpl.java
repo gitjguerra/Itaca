@@ -65,6 +65,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private BankCardRepository bankCardRepository;
 
     @Autowired
+    private RelationRepository relationRepository;
+
+    @Autowired
     private Beaner beaner;
 
     @Autowired
@@ -754,4 +757,19 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         return accountRepository.count(spec);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countPersonRelations(Long idPersonDetail) {
+
+        Specification<PersonRelationEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (idPersonDetail != null) {
+                p = cb.equal(root.get(PersonRelationEntity.ID_PERSON_DETAIL), idPersonDetail);
+            }
+            return p;
+        };
+        return relationRepository.count(spec);
+    }
+
 }

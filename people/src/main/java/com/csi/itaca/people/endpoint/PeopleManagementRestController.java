@@ -164,6 +164,13 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     public ResponseEntity<Long> countBankCards(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
         return new ResponseEntity<>(peopleManagementService.countBankCards(idPersonDetail), HttpStatus.OK);
     }
+
+    @Override
+    @RequestMapping(value = COUNT_PERSON_REL, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countPersonRelations(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
+        return new ResponseEntity<>(peopleManagementService.countPersonRelations(idPersonDetail), HttpStatus.OK);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
 
 }

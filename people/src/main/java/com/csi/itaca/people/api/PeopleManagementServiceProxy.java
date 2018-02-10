@@ -49,6 +49,14 @@ public interface PeopleManagementServiceProxy {
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
 
+    // End points for realtions...
+    String RESOURCE_REL           = RESOURCE + "/relation";
+    String SAVE_REL               = RESOURCE_REL + "/save";
+    String DELETE_REL             = RESOURCE_REL + "/delete";
+    String SEARCH_REL             = RESOURCE_REL + "/search";
+    String COUNT_PERSON_REL       = RESOURCE_REL +"/count";
+    String GET_REL                = RESOURCE_REL +"/get";
+
     /**
      * Gets a person.
      * @param id the person id.
@@ -164,6 +172,12 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity getBankCard(Long id);
 
+    /**
+     * counts accounts.
+     * @param idPersonDetail the filter to find bank cards.
+     */
+    ResponseEntity<Long> countPersonRelations(Long idPersonDetail);
+
 
 /*
     //addresses
@@ -273,6 +287,53 @@ public interface PeopleManagementServiceProxy {
     public ItacaAPIResponse<List<? extends TarjetaBancaria0DTO>> getTarjetaBancaria(FiltroDetallePersonaTarjetaPaginaOrden filtro);
 
     ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
+
+
+    // Relaciones
+	ItacaAPIResponse<List<TipoRelacion0DTO>> getTiposRelacion();
+
+	ItacaAPIResponse<PersonaRelacionada0DTO> saveOrUpdatePersonaRelacion(PersonaRelacionada0DTO personaRelacionada);
+
+	ItacaAPIResponse<Long> countPersonarelacion(Long idPersona);
+
+	public ItacaAPIResponse<List<? extends PersonaRelacionada0DTO>> getPersonaRelacionada(FiltroDetallePersonaRelacionadaPaginaOrden filtro);
+
+	ItacaAPIVoidResponse deletePersonaRelacionada(Long idPersonaRelacionada) throws PersonaRelacionadaNoExisteException;
+	ItacaAPIResponse<List<? extends DetallePersona1DTO>> buscarPersonaPorIdentificador(String codigoIdentificacion);
+
+	ItacaAPIResponse<List<? extends PersonaPublica0DTO>> getPersonasPublicas(FiltroPersonaPublicaPaginaOrden peticion);
+
+	ItacaAPIResponse<PersonaPublica0DTO> saveOrUpdatePersonaPublica(PersonaPublica0DTO personaPublica);
+
+	ItacaAPIResponse<Long> countPersonaPublica(Long idPersona);
+
+	ItacaAPIResponse<Long> countRegimenFiscal(Long idPersona);
+
+	ItacaAPIVoidResponse deleteRegimenFiscal(Long idRegimenFiscal) throws RegimenFiscalNoExisteException;
+
+	ItacaAPIResponse<List<? extends RelDetPersonaRegFiscal0DTO>> getRegimenFiscalPersona(FiltroDetallePersonaRegimenFiscalPaginaOrden filtro);
+
+	ItacaAPIResponse<RelDetPersonaRegFiscal0DTO> saveOrUpdateRegFiscal(RelDetPersonaRegFiscal0DTO regFiscal);
+
+	ItacaAPIResponse<List<EstadoPersona0DTO>> getEstadosPersona();
+
+	ItacaAPIResponse<List<EstadoCivil0DTO>> getEstadosCiviles();
+
+	ItacaAPIResponse<List<Genero0DTO>> getGeneros();
+
+	ItacaAPIResponse<List<Idioma0DTO>> getIdiomas();
+
+	ItacaAPIResponse<List<TipoIdentificacion0DTO>> getTiposIdentificacion();
+
+	ItacaAPIResponse<List<TipoPersonaJuridica0DTO>> getTiposPersonaJuridica();
+
+	ItacaAPIResponse<List<TipoContacto0DTO>> getTiposContacto();
+
+	ItacaAPIResponse<List<TipoRelacion0DTO>> getTiposRelacion();
+
+	ItacaAPIResponse<List<TipoPersonaPublica0DTO>> getTiposPersonaPublica();
+
+	ItacaAPIResponse<DetallePersona1DTO> sincronizarMetadatos(Long id);
 
     */
 

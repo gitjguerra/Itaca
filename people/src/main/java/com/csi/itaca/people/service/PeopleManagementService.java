@@ -141,4 +141,11 @@ public interface PeopleManagementService {
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
 
+    /**
+     * Counts the list of person relations based on the person id.
+     * @param idPersonDetail filter to apply
+     * @return the number of banks card.
+     */
+    Long countPersonRelations(Long idPersonDetail);
+
 }
