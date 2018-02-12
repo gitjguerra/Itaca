@@ -445,13 +445,13 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-BankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                        responseFields(fieldWithPath("bankCardId").description("BankCardId type ID.")
                                 , fieldWithPath("card").description("Card.")
-                                , fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                , fieldWithPath("idCardType").description("idCardType.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
@@ -482,11 +482,11 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "get-Account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                , fieldWithPath("personDetail").description("personDetail.")
-                                , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("typeAccount").description("typeAccount.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                         )
@@ -555,11 +555,11 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "save-update-account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                , fieldWithPath("personDetail").description("personDetail.")
-                                , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("typeAccount").description("typeAccount.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                         )
@@ -588,13 +588,13 @@ public class PeopleManagementRestControllerTest {
 
                 .andDo(document(
                         "save-update-bankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                        responseFields(fieldWithPath("bankCardId").description("IdBankCard type ID.")
                                 , fieldWithPath("card").description("Card.")
-                                , fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                , fieldWithPath("idCardType").description("idCardType.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )

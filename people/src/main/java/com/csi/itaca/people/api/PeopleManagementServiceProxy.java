@@ -15,11 +15,11 @@ import java.util.List;
  */
 public interface PeopleManagementServiceProxy {
 
-    // Parameters...
     String ID_PARAM                 = "id";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
-
+    String IDENTIFICATION_CODE      = "identiificationCode";
+    String ID_PERSON_DETAIL         = "personDetail";
 
     // End points for people...
     String RESOURCE                 = "/people";
