@@ -733,12 +733,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
-        accountEntity.setPersonDetail(dto.getPersonDetail());
-        accountEntity.setAccountClasification(dto.getAccountClasification());
-        accountEntity.setTypeAccount(dto.getTypeAccount());
+        accountEntity.setPersonDetailId(dto.getPersonDetailId());
+        accountEntity.setAccountClasificationId(dto.getAccountClasificationId());
+        accountEntity.setTypeAccountId(dto.getTypeAccountId());
         accountEntity.setAvailable(dto.getAvailable());
         accountEntity.setPrincipal(dto.getPrincipal());
-        accountEntity.setIdBank(dto.getIdBank());
+        accountEntity.setBankId(dto.getBankId());
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
@@ -752,18 +752,18 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getBankCardId());
 
         if (bankCardEntity == null){
             bankCardEntity = new BankCardEntity();
         }
-        bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        bankCardEntity.setBankId(dto.getBankId());
         bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setIdBank(dto.getIdBank());
+        bankCardEntity.setBankCardId(dto.getBankCardId());
         bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setIdCardType(dto.getIdBankCard());
+        bankCardEntity.setCardTypeId(dto.getCardTypeId());
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
-        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
+        bankCardEntity.setPersonDetailId(dto.getPersonDetailId());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 

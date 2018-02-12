@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public interface BankCard {
 	
-	Long getIdBankCard();
-	Long getIdPersonDetail();
-	Long getIdCardType();
+	Long getBankCardId();
+	Long getPersonDetailId();
+	Long getCardTypeId();
 	String getCard();
 	Boolean getPrincipal();	
 	Boolean getAvailable();
-	Long getIdBank();
+	Long getBankId();
 	LocalDate getExpirationDate();
 	Long getSecurityCode();
 

@@ -430,10 +430,10 @@ public class PeopleManagementRestControllerTest {
     public void getBankCard() throws Exception {
 
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(1L);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
@@ -466,12 +466,12 @@ public class PeopleManagementRestControllerTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(1L);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
         Mockito.when(service.getAccount(any(), any(Errors.class))).thenReturn(accountDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_ACCOUNT)
@@ -537,12 +537,12 @@ public class PeopleManagementRestControllerTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(1L);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
         Mockito.when(service.saveOrUpdateAccount(any(), any(Errors.class))).thenReturn(accountDTO);
 
@@ -570,10 +570,10 @@ public class PeopleManagementRestControllerTest {
     public void saveOrUpdateBankCard() throws Exception {
 
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(1L);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
