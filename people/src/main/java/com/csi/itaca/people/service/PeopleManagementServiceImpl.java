@@ -1,8 +1,10 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
+import com.csi.itaca.people.model.Person;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
+import com.csi.itaca.people.model.RelatedPerson;
 import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.repository.*;
 import com.csi.itaca.tools.utils.beaner.Beaner;
@@ -397,16 +399,21 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
         PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
-
+logger.info("********** DENTRO *****************");
         PersonDetailDTO retPersonDetail = null;
         if (personDetailEntity!=null) {
             if (personDetailEntity instanceof IndividualDetailEntity) {
+                logger.info("********** individual *****************");
+
                 retPersonDetail = beaner.transform(personDetailEntity, IndividualDetailDTO.class);
             } else {
+                logger.info("********** company *****************");
+
                 retPersonDetail = beaner.transform(personDetailEntity, CompanyDetailDTO.class);
             }
         }
         else {
+            logger.info("********** Error *****************");
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
 
@@ -678,12 +685,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
-        accountEntity.setPersonDetail(dto.getPersonDetail());
-        accountEntity.setAccountClasification(dto.getAccountClasification());
-        accountEntity.setTypeAccount(dto.getTypeAccount());
+        accountEntity.setPersonDetailId(dto.getPersonDetailId());
+        accountEntity.setAccountClasificationId(dto.getAccountClasificationId());
+        accountEntity.setTypeAccountId(dto.getTypeAccountId());
         accountEntity.setAvailable(dto.getAvailable());
         accountEntity.setPrincipal(dto.getPrincipal());
-        accountEntity.setIdBank(dto.getIdBank());
+        accountEntity.setBankId(dto.getBankId());
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
@@ -697,18 +704,18 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getBankCardId());
 
         if (bankCardEntity == null){
             bankCardEntity = new BankCardEntity();
         }
-        bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        bankCardEntity.setBankCardId(dto.getBankCardId());
         bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setIdBank(dto.getIdBank());
+        bankCardEntity.setBankId(dto.getBankId());
         bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setIdCardType(dto.getIdBankCard());
+        bankCardEntity.setCardTypeId(dto.getBankCardId());
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
-        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
+        bankCardEntity.setPersonDetailId(dto.getPersonDetailId());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 
@@ -762,14 +769,61 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public Long countPersonRelations(Long idPersonDetail) {
 
-        Specification<PersonRelationEntity> spec = (root, query, cb) -> {
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (idPersonDetail != null) {
-                p = cb.equal(root.get(PersonRelationEntity.ID_PERSON_DETAIL), idPersonDetail);
+                p = cb.equal(root.get(RelatedPersonEntity.ID_PERSON_DETAIL), idPersonDetail);
             }
             return p;
         };
         return relationRepository.count(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void deleteRelatedPerson(Long relatedPersonId, Errors errTracking) {
+        relationRepository.delete(relatedPersonId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RelatedPersonDTO saveOrUpdateRelatedPerson(RelatedPersonDTO dto, Errors errTracking) {
+
+        RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(dto.getId());
+        PersonDetailEntity personDetailDTO = personDetailRepository.findOne(relatedPersonEntity.getPersonDetail().getId());
+
+//        if (relatedPersonEntity == null && errTracking != null){
+//            relatedPersonEntity = new RelatedPersonEntity();
+//        }
+
+        relatedPersonEntity.setId(dto.getId());
+        relatedPersonEntity.setPersonDetail(beaner.transform(personDetailDTO.getId(), PersonDetailEntity.class));
+        relatedPersonEntity.setPersonRelId(relatedPersonEntity.getPersonRelId());
+        relatedPersonEntity.setRelationTypeId(relatedPersonEntity.getRelationTypeId());
+        relatedPersonEntity = relationRepository.save(relatedPersonEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(relatedPersonEntity, RelatedPersonDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PersonDetailDTO getFindPersonByIdCode(Long idCode, Errors errTracking) {
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends RelatedPersonDTO> getRelatedPerson(PeopleSearchFilter criteria, Errors errTracking) {
+
+        //RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(id);
+        //if (relatedPersonEntity == null && errTracking != null) {
+        //    errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        //}
+        //return beaner.transform(relatedPersonEntity, RelatedPersonDTO.class);
+        return null;
     }
 
 }

@@ -1,9 +1,6 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.people.model.dto.AccountDTO;
-import com.csi.itaca.people.model.dto.BankCardDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
-import com.csi.itaca.people.model.dto.PersonDetailDTO;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
@@ -147,5 +144,38 @@ public interface PeopleManagementService {
      * @return the number of banks card.
      */
     Long countPersonRelations(Long idPersonDetail);
+
+    /**
+     * Delete the person associated to the provided ID
+     * @param relatedPersonId the id of the person to delete.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    void deleteRelatedPerson(Long relatedPersonId, Errors errTracking);
+
+    /**
+     * Saves or updates the provided account.
+     * @param relatedPersonToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    RelatedPersonDTO saveOrUpdateRelatedPerson(RelatedPersonDTO relatedPersonToSaveOrUpdate, Errors errTracking);
+
+    /**
+     * Get a person detail.
+     * @param idCode the ID of the person detail to retrieve.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return The person detail DTO, null if not found.
+     */
+    PersonDetailDTO getFindPersonByIdCode(Long idCode, Errors errTracking);
+
+    /**
+     * Finds a list of  related person based on the supplied search criteria.
+     * @param criteria search criteria contains the  filter to apply pagination and order properties.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return a list of duplicate person details.
+     */
+    List<? extends RelatedPersonDTO> getRelatedPerson(PeopleSearchFilter criteria, Errors errTracking);
 
 }

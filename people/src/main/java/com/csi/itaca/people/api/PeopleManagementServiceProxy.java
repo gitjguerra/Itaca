@@ -1,5 +1,6 @@
 package com.csi.itaca.people.api;
 
+import com.csi.itaca.people.model.RelatedPerson;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
@@ -19,7 +20,8 @@ public interface PeopleManagementServiceProxy {
     String ID_PARAM                 = "id";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
-
+    String IDENTIFICATION_CODE      = "identiificationCode";
+    String ID_PERSON_DETAIL         = "personDetail";
 
     // End points for people...
     String RESOURCE                 = "/people";
@@ -178,6 +180,34 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity<Long> countPersonRelations(Long idPersonDetail);
 
+    /**
+     * Deletes a related person together with associated details
+     * @param idRelatedPerson the id of the related person to delete.
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteRelatedPerson(Long idRelatedPerson);
+
+    /**
+     * Saves or updates person.
+     * @param relatedPersonToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdateRelatedPerson(RelatedPersonDTO relatedPersonToSaveOrUpdate, BindingResult errTracking);
+
+    /**
+     * Gets a person.
+     * @param idCode the person id.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity<? extends PersonDetailDTO> getFindPersonByIdCode(Long idCode);
+
+
+    /**
+     * Gets a related person.
+     * @param filter search filter.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(PeopleSearchFilter filter);
 
 /*
     //addresses
@@ -288,52 +318,6 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
 
-
-    // Relaciones
-	ItacaAPIResponse<List<TipoRelacion0DTO>> getTiposRelacion();
-
-	ItacaAPIResponse<PersonaRelacionada0DTO> saveOrUpdatePersonaRelacion(PersonaRelacionada0DTO personaRelacionada);
-
-	ItacaAPIResponse<Long> countPersonarelacion(Long idPersona);
-
-	public ItacaAPIResponse<List<? extends PersonaRelacionada0DTO>> getPersonaRelacionada(FiltroDetallePersonaRelacionadaPaginaOrden filtro);
-
-	ItacaAPIVoidResponse deletePersonaRelacionada(Long idPersonaRelacionada) throws PersonaRelacionadaNoExisteException;
-	ItacaAPIResponse<List<? extends DetallePersona1DTO>> buscarPersonaPorIdentificador(String codigoIdentificacion);
-
-	ItacaAPIResponse<List<? extends PersonaPublica0DTO>> getPersonasPublicas(FiltroPersonaPublicaPaginaOrden peticion);
-
-	ItacaAPIResponse<PersonaPublica0DTO> saveOrUpdatePersonaPublica(PersonaPublica0DTO personaPublica);
-
-	ItacaAPIResponse<Long> countPersonaPublica(Long idPersona);
-
-	ItacaAPIResponse<Long> countRegimenFiscal(Long idPersona);
-
-	ItacaAPIVoidResponse deleteRegimenFiscal(Long idRegimenFiscal) throws RegimenFiscalNoExisteException;
-
-	ItacaAPIResponse<List<? extends RelDetPersonaRegFiscal0DTO>> getRegimenFiscalPersona(FiltroDetallePersonaRegimenFiscalPaginaOrden filtro);
-
-	ItacaAPIResponse<RelDetPersonaRegFiscal0DTO> saveOrUpdateRegFiscal(RelDetPersonaRegFiscal0DTO regFiscal);
-
-	ItacaAPIResponse<List<EstadoPersona0DTO>> getEstadosPersona();
-
-	ItacaAPIResponse<List<EstadoCivil0DTO>> getEstadosCiviles();
-
-	ItacaAPIResponse<List<Genero0DTO>> getGeneros();
-
-	ItacaAPIResponse<List<Idioma0DTO>> getIdiomas();
-
-	ItacaAPIResponse<List<TipoIdentificacion0DTO>> getTiposIdentificacion();
-
-	ItacaAPIResponse<List<TipoPersonaJuridica0DTO>> getTiposPersonaJuridica();
-
-	ItacaAPIResponse<List<TipoContacto0DTO>> getTiposContacto();
-
-	ItacaAPIResponse<List<TipoRelacion0DTO>> getTiposRelacion();
-
-	ItacaAPIResponse<List<TipoPersonaPublica0DTO>> getTiposPersonaPublica();
-
-	ItacaAPIResponse<DetallePersona1DTO> sincronizarMetadatos(Long id);
 
     */
 

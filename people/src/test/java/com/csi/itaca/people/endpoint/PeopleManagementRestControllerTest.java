@@ -426,14 +426,17 @@ public class PeopleManagementRestControllerTest {
         return fields;
     }
 
+    /**
+     * Get Bank Card.
+     */
     @Test
     public void getBankCard() throws Exception {
 
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(1L);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
@@ -445,19 +448,22 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-BankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                        responseFields(fieldWithPath("bankCardId").description("BankCardId type ID.")
                                 , fieldWithPath("card").description("Card.")
-                                , fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                , fieldWithPath("idCardType").description("idCardType.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
                 ));
     }
 
+    /**
+     * Get account.
+     */
     @Test
     public void getAccount() throws Exception {
 
@@ -466,12 +472,12 @@ public class PeopleManagementRestControllerTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(1L);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
         Mockito.when(service.getAccount(any(), any(Errors.class))).thenReturn(accountDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_ACCOUNT)
@@ -482,17 +488,20 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "get-Account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                , fieldWithPath("personDetail").description("personDetail.")
-                                , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("typeAccount").description("typeAccount.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                         )
                 ));
     }
 
+    /**
+     * Count Bank Cards.
+     */
     @Test
     public void countBankCard() throws Exception {
 
@@ -511,6 +520,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    /**
+     * Count accounts.
+     */
     @Test
     public void countAccount() throws Exception {
 
@@ -529,6 +541,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    /**
+     * save Or Update Accounts.
+     */
     @Test
     public void saveOrUpdateAccount() throws Exception {
 
@@ -537,12 +552,12 @@ public class PeopleManagementRestControllerTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(1L);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
         Mockito.when(service.saveOrUpdateAccount(any(), any(Errors.class))).thenReturn(accountDTO);
 
@@ -555,25 +570,28 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "save-update-account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                , fieldWithPath("personDetail").description("personDetail.")
-                                , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("typeAccount").description("typeAccount.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                         )
                 ));
     }
 
+    /**
+     * save Or Update Bank Cards.
+     */
     @Test
     public void saveOrUpdateBankCard() throws Exception {
 
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(1L);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
@@ -589,13 +607,13 @@ public class PeopleManagementRestControllerTest {
 
                 .andDo(document(
                         "save-update-bankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                        responseFields(fieldWithPath("bankCardId").description("IdBankCard type ID.")
                                 , fieldWithPath("card").description("Card.")
-                                , fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                , fieldWithPath("idCardType").description("idCardType.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
@@ -603,4 +621,43 @@ public class PeopleManagementRestControllerTest {
 
     }
 
+    /**
+     * Count person relations.
+     */
+    @Test
+    public void countPersonRelations() throws Exception {
+
+        Mockito.when(service.countPersonRelations(any())).thenReturn(1L);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_PERSON_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter())
+                .param(PeopleManagementServiceProxy.ID_PERSON_DETAIL, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-related-person",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
+
+    /**
+     * Delete person relations.
+     */
+    @Test
+    public void deleteRelatedPerson() throws Exception {
+
+        Mockito.doNothing().when(service).deleteRelatedPerson(any(), any(Errors.class));
+
+        mockMvc.perform(delete(PeopleManagementServiceProxy.DELETE_REL)
+                .param(PeopleManagementServiceProxy.ID_PERSON_DETAIL, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "delete-related-person",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PERSON_DETAIL).description("The id of the related person to delete.")
+                        )
+                ));
+    }
 }
