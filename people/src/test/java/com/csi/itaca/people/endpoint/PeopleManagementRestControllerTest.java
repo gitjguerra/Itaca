@@ -426,16 +426,6 @@ public class PeopleManagementRestControllerTest {
         return fields;
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
-=======
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
     @Test
     public void getBankCard() throws Exception {
 
@@ -462,19 +452,6 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                                 , fieldWithPath("idBank").description("idBank.")
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-                                , fieldWithPath("idBank.bankName").description("bankName.")
-                                , fieldWithPath("idBank.draftBank").description("draftBank.")
-                                , fieldWithPath("idBank.bic").description("bic.")
-                                , fieldWithPath("idBank.code").description("code.")
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
@@ -507,16 +484,6 @@ public class PeopleManagementRestControllerTest {
                         responseFields(fieldWithPath("id").description("Id account.")
                                 , fieldWithPath("personDetail").description("personDetail.")
                                 , fieldWithPath("accountClasification").description("accountClasification.")
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-                                , fieldWithPath("accountClasification.id").description("id.")
-                                , fieldWithPath("accountClasification.value").description("value.")
->>>>>>> Stashed changes
-=======
-                                , fieldWithPath("accountClasification.id").description("id.")
-                                , fieldWithPath("accountClasification.value").description("value.")
->>>>>>> Stashed changes
                                 , fieldWithPath("typeAccount").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
                                 , fieldWithPath("idBank").description("idBank.")
@@ -533,16 +500,8 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_BANK_CARD)
                 .contentType(MediaType.APPLICATION_JSON)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                 .content(buildPeopleSearchFilter())
                 .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -559,16 +518,8 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
                 .contentType(MediaType.APPLICATION_JSON)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                 .content(buildPeopleSearchFilter())
                 .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
-=======
-                .content(buildPeopleSearchFilter()))
->>>>>>> Stashed changes
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -626,14 +577,7 @@ public class PeopleManagementRestControllerTest {
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         bankCardDTO.setExpirationDate(LocalDate.of(1972, 11, 22));
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
         Mockito.when(service.saveOrUpdateBankCard(any(), any(Errors.class))).thenReturn(bankCardDTO);
         mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_BANK_CARD)
@@ -651,19 +595,6 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                                 , fieldWithPath("idBank").description("idBank.")
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-                                , fieldWithPath("idBank.bankName").description("bankName.")
-                                , fieldWithPath("idBank.draftBank").description("draftBank.")
-                                , fieldWithPath("idBank.bic").description("bic.")
-                                , fieldWithPath("idBank.code").description("code.")
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
@@ -671,12 +602,4 @@ public class PeopleManagementRestControllerTest {
 
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
->>>>>>> Stashed changes
-=======
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
->>>>>>> Stashed changes
 }

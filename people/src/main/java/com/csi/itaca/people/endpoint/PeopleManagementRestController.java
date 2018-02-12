@@ -120,34 +120,11 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Account ...
 
-    @Override
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-    @RequestMapping(value = LOOKUP_CIVIL_STATUS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CivilStatusDTO>> lookupCivilStatus() {
-        return new ResponseEntity(peopleLookupService.lookupCivilStatus(), HttpStatus.OK);
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveOrUpdateAccount(@Valid @RequestBody AccountDTO accountToSaveOrUpdate,
                                               BindingResult errTracking) {
         AccountDTO accountDTO = peopleManagementService.saveOrUpdateAccount(accountToSaveOrUpdate, errTracking);
         return buildResponseEntity(accountDTO, errTracking);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
->>>>>>> Stashed changes
-=======
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
->>>>>>> Stashed changes
     }
 
     @Override

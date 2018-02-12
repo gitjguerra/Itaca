@@ -649,28 +649,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
         return p;
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long countBankCards(Long personDetailId) {
-
-        Specification<BankCardEntity> spec = (root, query, cb) -> {
-            Predicate p = null;
-            if (personDetailId != null) {
-                p = cb.equal(root.get(BankCardEntity.ID_PERSON_DETAIL), personDetailId);
-            }
-            return p;
-        };
-        return bankCardRepository.count(spec);
-    }
-
-=======
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-=======
 
     private Predicate applyLikeLowerAccountFilter(CriteriaBuilder cb, Root<? extends AccountEntity> r, String field,
                                                   String value, Predicate p, int fieldDepth) {
@@ -730,37 +708,24 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 
-    // TODO: (Jose Guerra) CountBankCards method
     @Override
     @Transactional(readOnly = true)
-    public Long countBankCards(BankCardSearchFilter filter) {
+    public Long countBankCards(Long personDetailId) {
 
-        if (filter.getId() == null) {
-            Specification<BankCardEntity> spec = (root, query, cb) -> {
-                return applyBankCardFilter(null, cb, root, filter);
-            };
-            return bankCardRepository.count(spec);
-
-        } else if (BankCardEntity.ID_BANK_CARD.equals(filter.getId())) {
-            Specification<BankCardEntity> spec = (root, query, cb) -> {
-                return applyBankCardFilter(null, cb, root, filter);
-            };
-            return bankCardRepository.count(spec);
-        }
-        return null;
+        Specification<BankCardEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(BankCardEntity.ID_PERSON_DETAIL), personDetailId);
+            }
+            return p;
+        };
+        return bankCardRepository.count(spec);
     }
 
-    //TODO: (Jose Guerra) Save Or Update Account
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     @Override
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
         if (accountEntity == null && errTracking != null){
@@ -774,50 +739,17 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         accountEntity.setAvailable(dto.getAvailable());
         accountEntity.setPrincipal(dto.getPrincipal());
         accountEntity.setIdBank(dto.getIdBank());
-=======
-=======
->>>>>>> Stashed changes
-        AccountEntity accountEntity = accountRepository.findOne(1L);
-
-        accountEntity.setId(1L);
-        accountEntity.setAccount("5018782000");
-        accountEntity.setPersonDetail(1L);
-        accountEntity.setAccountClasification(1L);
-        accountEntity.setTypeAccount(1L);
-        accountEntity.setAvailable(true);
-        accountEntity.setPrincipal(true);
-        accountEntity.setIdBank(1L);
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
         entityManager.clear();
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         return beaner.transform(accountEntity, AccountDTO.class);
-=======
-=======
->>>>>>> Stashed changes
-        // update id
-        dto.setId(accountEntity.getId());
-
-        return dto;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     }
 
     @Override
     @Transactional
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
         BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
@@ -825,80 +757,27 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         if (bankCardEntity == null){
             bankCardEntity = new BankCardEntity();
         }
-=======
-=======
->>>>>>> Stashed changes
-    public AccountDTO getAccount(Long id, Errors errTracking) {
-
-        AccountDTO account = null;
-
-        AccountEntity accountEntity = accountRepository.findOne(id);
-        if (accountEntity!=null) {
-            return beaner.transform(accountEntity, AccountDTO.class);
-        }
-        return account;
-    }
-
-    //TODO: (Jose Guerra) Save Or Update Bank Card
-    @Override
-    @Transactional
-    public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
-
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBank());
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
         bankCardEntity.setIdBank(dto.getIdBank());
         bankCardEntity.setCard(dto.getCard());
         bankCardEntity.setIdCardType(dto.getIdBankCard());
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
         bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 
-=======
-=======
->>>>>>> Stashed changes
-        bankCardEntity.setExpirationDate(dto.getExpirationDate());
-        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
-        bankCardEntity.setPrincipal(dto.getPrincipal());
-        bankCardEntity.setSecurityCode(dto.getSecurityCode());
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         bankCardEntity = bankCardRepository.save(bankCardEntity);
 
         entityManager.flush();
         entityManager.clear();
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         return beaner.transform(bankCardEntity, BankCardDTO.class);
-=======
-=======
->>>>>>> Stashed changes
-        // update id
-        dto.setIdBankCard(bankCardEntity.getIdBankCard());
-
-        return dto;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     }
 
     @Override
     @Transactional
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
         AccountEntity accountEntity = accountRepository.findOne(id);
@@ -933,64 +812,4 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         return accountRepository.count(spec);
     }
-=======
-=======
->>>>>>> Stashed changes
-    public BankCardDTO getBankCard(Long id, Errors errTracking) {
-
-        BankCardDTO bankCard = null;
-
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(id);
-        if (bankCardEntity!=null) {
-            return beaner.transform(bankCardEntity, BankCardDTO.class);
-        }
-        return bankCard;
-    }
-
-    // TODO: (Jose Guerra) countAccount method
-    @Override
-    @Transactional
-    public Long countAccount(AccountSearchFilter filter) {
-
-        if (filter.getId() == null) {
-            Specification<AccountEntity> spec = (root, query, cb) -> {
-                return applyAccountFilter(null, cb, root, filter);
-            };
-            return accountRepository.count(spec);
-
-        } else if (AccountTypeEntity.ID.equals(filter.getId())) {
-            Specification<AccountEntity> spec = (root, query, cb) -> {
-                return applyAccountFilter(null, cb, root, filter);
-            };
-            return accountRepository.count(spec);
-        }
-        return null;
-
-    }
-
-
-    // ********************* Contact ************************************************************
-/*
-    @Override
-    @Transactional(readOnly = true)
-    public List<? extends ContactDTO> listContacts(ContactSearchFilter criteria, Errors errTracking) {
-
-        List<? extends ContactDTO> contacts = Collections.EMPTY_LIST;
-
-        Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
-        spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
-        contacts = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
-
-        return contacts;
-    }
-*/
-
-    // ********************* Contact ************************************************************
-
-
->>>>>>> ebc4ba3... Ajustes SaveOrUpdate
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }
