@@ -5,6 +5,7 @@ import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -207,7 +208,7 @@ public interface PeopleManagementServiceProxy {
      * @param filter search filter.
      * @return a response body containing the requested person json object.
      */
-    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(PeopleSearchFilter filter);
+    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
 
 /*
     //addresses

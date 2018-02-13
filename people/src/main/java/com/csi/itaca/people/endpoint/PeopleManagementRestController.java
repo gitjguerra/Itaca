@@ -4,6 +4,7 @@ import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -188,8 +189,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
 
     @Override
-    @RequestMapping(value = SEARCH_REL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = SEARCH_REL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends PersonDetailDTO> getFindPersonByIdCode(@RequestParam(PeopleManagementServiceProxy.IDENTIFICATION_CODE) Long idCode) {
         BindingResult errTracking = createErrorTracker();
         PersonDetailDTO personDetailDTO = peopleManagementService.getFindPersonByIdCode(idCode,errTracking);
@@ -199,10 +199,9 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     @Override
     @RequestMapping(value = GET_REL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(@RequestBody PeopleSearchFilter criteria) {
-        BindingResult errTracking = createErrorTracker();
-        List<? extends RelatedPersonDTO> relatedPersonDTO = peopleManagementService.getRelatedPerson(criteria, errTracking);
-        return buildResponseEntity(relatedPersonDTO, errTracking);
+    public ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(@RequestBody RelatedPersonSearchFilter criteria, BindingResult errTracking) {
+        List<? extends RelatedPersonDTO> relatedPerson = peopleManagementService.getRelatedPerson(criteria, errTracking);
+        return buildResponseEntity(relatedPerson, errTracking);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Relations end ...

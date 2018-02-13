@@ -808,22 +808,64 @@ logger.info("********** DENTRO *****************");
         return beaner.transform(relatedPersonEntity, RelatedPersonDTO.class);
     }
 
+    private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
+                                         RelatedPersonSearchFilter filter, String path) {
+
+        if (filter.getId() != null && !filter.getId().isEmpty()) {
+            if (path.isEmpty())
+                p = cb.and(p,
+                        cb.equal(root.get(RelatedPersonEntity.ID), filter.getId()));
+            else
+                p = cb.and(p, cb.equal(root.get(path).get(RelatedPersonEntity.ID),
+                        filter.getId()));
+        }
+
+        if (filter.getPersonDetailId() != null) {
+            if (path.isEmpty())
+                p = cb.and(p, cb.equal(root.get(RelatedPersonEntity.ID_PERSON_DETAIL).get(RelatedPersonEntity.ID),
+                        filter.getPersonDetailId()));
+            else
+                p = cb.and(p,
+                        cb.equal(root.get(path).get(RelatedPersonEntity.ID_PERSON_DETAIL).get(RelatedPersonEntity.ID),
+                                filter.getPersonDetailId()));
+        }
+
+        return p;
+    }
+
+    @Transactional(readOnly = true)
+    List<? extends RelatedPersonEntity> listRelatedPerson(RelatedPersonSearchFilter parameters) {
+
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.and(cb.equal(root.type(), RelatedPersonEntity.class));
+            return applyRelatedFilters(root, p, cb, parameters, "");
+        };
+
+        return relationRepository.findAll(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking) {
+
+        List<? extends RelatedPersonEntity> relatedPersonFound = listRelatedPerson(criteria);
+        if (relatedPersonFound == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(relatedPersonFound, RelatedPersonDTO.class);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public PersonDetailDTO getFindPersonByIdCode(Long idCode, Errors errTracking) {
-        return null;
+
+        RelatedPersonEntity relatedPerson = relationRepository.findOne(idCode);
+        if (relatedPerson == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(relatedPerson, PersonDetailDTO.class);
+
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<? extends RelatedPersonDTO> getRelatedPerson(PeopleSearchFilter criteria, Errors errTracking) {
-
-        //RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(id);
-        //if (relatedPersonEntity == null && errTracking != null) {
-        //    errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
-        //}
-        //return beaner.transform(relatedPersonEntity, RelatedPersonDTO.class);
-        return null;
-    }
 
 }

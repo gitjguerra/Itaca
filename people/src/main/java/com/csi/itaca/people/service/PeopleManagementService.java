@@ -4,6 +4,7 @@ import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import org.springframework.validation.Errors;
 import java.util.List;
 
@@ -176,6 +177,6 @@ public interface PeopleManagementService {
      *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
      * @return a list of duplicate person details.
      */
-    List<? extends RelatedPersonDTO> getRelatedPerson(PeopleSearchFilter criteria, Errors errTracking);
+    List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking);
 
 }
