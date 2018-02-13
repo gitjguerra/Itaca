@@ -14,7 +14,7 @@ import lombok.Setter;
 public class RelatedPersonDTO  implements RelatedPerson {
 
 	private Long id;
-	private PersonDetail personDetail;
+	private Long personDetailId;
 	private Long personRelId;
 	private Long relationTypeId;
 

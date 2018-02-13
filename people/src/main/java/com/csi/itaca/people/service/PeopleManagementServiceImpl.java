@@ -790,16 +790,14 @@ logger.info("********** DENTRO *****************");
     public RelatedPersonDTO saveOrUpdateRelatedPerson(RelatedPersonDTO dto, Errors errTracking) {
 
         RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(dto.getId());
-        PersonDetailEntity personDetailDTO = personDetailRepository.findOne(relatedPersonEntity.getPersonDetail().getId());
-
-//        if (relatedPersonEntity == null && errTracking != null){
-//            relatedPersonEntity = new RelatedPersonEntity();
-//        }
+        if (relatedPersonEntity == null && errTracking != null){
+            relatedPersonEntity = new RelatedPersonEntity();
+        }
 
         relatedPersonEntity.setId(dto.getId());
-        relatedPersonEntity.setPersonDetail(beaner.transform(personDetailDTO.getId(), PersonDetailEntity.class));
-        relatedPersonEntity.setPersonRelId(relatedPersonEntity.getPersonRelId());
-        relatedPersonEntity.setRelationTypeId(relatedPersonEntity.getRelationTypeId());
+        relatedPersonEntity.setPersonDetailId(dto.getPersonDetailId());
+        relatedPersonEntity.setPersonRelId(dto.getPersonRelId());
+        relatedPersonEntity.setRelationTypeId(dto.getRelationTypeId());
         relatedPersonEntity = relationRepository.save(relatedPersonEntity);
 
         entityManager.flush();
@@ -815,19 +813,11 @@ logger.info("********** DENTRO *****************");
             if (path.isEmpty())
                 p = cb.and(p,
                         cb.equal(root.get(RelatedPersonEntity.ID), filter.getId()));
-            else
-                p = cb.and(p, cb.equal(root.get(path).get(RelatedPersonEntity.ID),
-                        filter.getId()));
         }
-
-        if (filter.getPersonDetailId() != null) {
+        if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
             if (path.isEmpty())
-                p = cb.and(p, cb.equal(root.get(RelatedPersonEntity.ID_PERSON_DETAIL).get(RelatedPersonEntity.ID),
-                        filter.getPersonDetailId()));
-            else
                 p = cb.and(p,
-                        cb.equal(root.get(path).get(RelatedPersonEntity.ID_PERSON_DETAIL).get(RelatedPersonEntity.ID),
-                                filter.getPersonDetailId()));
+                        cb.equal(root.get(RelatedPersonEntity.ID_PERSON_DETAIL), filter.getPersonDetailId()));
         }
 
         return p;
@@ -840,8 +830,19 @@ logger.info("********** DENTRO *****************");
             Predicate p = cb.and(cb.equal(root.type(), RelatedPersonEntity.class));
             return applyRelatedFilters(root, p, cb, parameters, "");
         };
-
         return relationRepository.findAll(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RelatedPersonDTO findByPersonId(Long idCode, Errors errTracking) {
+
+        RelatedPersonEntity relatedPerson = relationRepository.findOne(idCode);
+        if (relatedPerson == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(relatedPerson, RelatedPersonDTO.class);
+
     }
 
     @Override
@@ -853,18 +854,6 @@ logger.info("********** DENTRO *****************");
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
         return beaner.transform(relatedPersonFound, RelatedPersonDTO.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PersonDetailDTO getFindPersonByIdCode(Long idCode, Errors errTracking) {
-
-        RelatedPersonEntity relatedPerson = relationRepository.findOne(idCode);
-        if (relatedPerson == null && errTracking != null) {
-            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
-        }
-        return beaner.transform(relatedPerson, PersonDetailDTO.class);
-
     }
 
 

@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "PER_RELATION_PER")
 public class RelatedPersonEntity implements RelatedPerson {
 	public static final String ID = "id";
-	public static final String ID_PERSON_DETAIL = "personDetail";
+	public static final String ID_PERSON_DETAIL = "personDetailId";
 	public static final String ID_PERSON_DETAIL_REL = "personRelId";
 	public static final String RELATION_TYPE = "relationTypeId";
 
@@ -24,9 +24,10 @@ public class RelatedPersonEntity implements RelatedPerson {
 	@SequenceGenerator(name = "SEQ_RELATION_PER", sequenceName = "SEQ_RELATION_PER", allocationSize = 1)
 	private Long id;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="PERSON_DETAIL_ID")
-	private PersonDetailEntity personDetail;
+	//@ManyToOne(fetch=FetchType.LAZY)
+	//@JoinColumn(name="PERSON_DETAIL_ID")
+	@Column(name="PERSON_DETAIL_ID")
+	private Long personDetailId;
 
 	//@ManyToOne(fetch=FetchType.LAZY)
 	//@JoinColumn(name="PERSON_DETAIL2_ID")

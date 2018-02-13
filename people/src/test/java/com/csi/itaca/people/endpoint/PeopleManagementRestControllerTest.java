@@ -467,8 +467,6 @@ public class PeopleManagementRestControllerTest {
     @Test
     public void getAccount() throws Exception {
 
-        AccountClasificationDTO clasification = new AccountClasificationDTO();
-
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
@@ -546,8 +544,6 @@ public class PeopleManagementRestControllerTest {
      */
     @Test
     public void saveOrUpdateAccount() throws Exception {
-
-        AccountClasificationDTO clasification = new AccountClasificationDTO();
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
@@ -660,4 +656,107 @@ public class PeopleManagementRestControllerTest {
                         )
                 ));
     }
+
+    /**
+     * save Or Update Related Persons.
+     */
+    @Test
+    public void saveOrUpdateRelatedPerson() throws Exception {
+
+        RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
+        relatedPersonDTO.setId(1L);
+        relatedPersonDTO.setPersonDetailId(1L);
+        relatedPersonDTO.setPersonRelId(1L);
+        relatedPersonDTO.setRelationTypeId(1L);
+
+        Mockito.when(service.saveOrUpdateRelatedPerson(any(), any(Errors.class))).thenReturn(relatedPersonDTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(relatedPersonDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-update-related_person",
+                        responseFields(fieldWithPath("id").description("Related Person ID.")
+                                , fieldWithPath("personDetailId").description("id Person Detail.")
+                                , fieldWithPath("personRelId").description("Related Person Id.")
+                                , fieldWithPath("relationTypeId").description("Relation Type Id.")
+                        )
+                ));
+
+    }
+
+    /**
+     * Search related person test.
+     */
+    @Test
+    public void findByPersonId() throws Exception {
+
+        RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
+        List relatedPerson = new ArrayList<>();
+        relatedPerson.add(relatedPersonDTO);
+
+        Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(relatedPersonDTO);
+
+        StringBuilder requestBody = new StringBuilder();
+        requestBody.append("{");
+        requestBody.append("\"id\":").append("\"1\"");
+        requestBody.append(",\"personDetailId\":").append("\"1\"");
+        requestBody.append(",\"personRelId\":").append("\"1\"");
+        requestBody.append(",\"relationTypeId\":").append("{\"1\"");
+        requestBody.append("}");
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "findByPersonId-related-person",
+                        responseFields(fieldWithPath("id").description(" ID.")
+                        , fieldWithPath("personDetailId").description("personDetailId.")
+                        , fieldWithPath("personRelId").description("personRelId.")
+                        , fieldWithPath("relationTypeId").description("relationTypeId.")
+                        )
+                ));
+    }
+
+    /**
+     * Get account.
+     */
+    @Test
+    public void getRelatedPerson() throws Exception {
+
+        List relatedPerson = new ArrayList<>();
+        RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
+        relatedPersonDTO.setId(1L);
+        relatedPersonDTO.setPersonDetailId(1L);
+        relatedPersonDTO.setRelationTypeId(1L);
+        relatedPersonDTO.setPersonRelId(1L);
+
+        Mockito.when(service.getRelatedPerson(any(), any(Errors.class))).thenReturn(relatedPerson);
+
+        StringBuilder requestBody = new StringBuilder();
+        requestBody.append("{");
+        requestBody.append("\"id\":").append("\"1\"");
+        requestBody.append(",\"personDetailId\":").append("\"1\"");
+        requestBody.append("}");
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.GET_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-related-person",
+                        responseFields(fieldWithPath("id").description("Related Person ID.")
+                                , fieldWithPath("personDetailId").description("id Person Detail.")
+                                , fieldWithPath("personRelId").description("Related Person Id.")
+                                , fieldWithPath("relationTypeId").description("Relation Type Id.")
+                        )
+                ));
+    }
+
 }

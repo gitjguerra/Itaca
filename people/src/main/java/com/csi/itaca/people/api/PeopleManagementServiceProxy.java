@@ -200,7 +200,7 @@ public interface PeopleManagementServiceProxy {
      * @param idCode the person id.
      * @return a response body containing the requested person json object.
      */
-    ResponseEntity<? extends PersonDetailDTO> getFindPersonByIdCode(Long idCode);
+    ResponseEntity<? extends RelatedPersonDTO> findByPersonId(Long idCode);
 
 
     /**

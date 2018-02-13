@@ -168,7 +168,7 @@ public interface PeopleManagementService {
      *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
      * @return The person detail DTO, null if not found.
      */
-    PersonDetailDTO getFindPersonByIdCode(Long idCode, Errors errTracking);
+    RelatedPersonDTO findByPersonId(Long idCode, Errors errTracking);
 
     /**
      * Finds a list of  related person based on the supplied search criteria.
