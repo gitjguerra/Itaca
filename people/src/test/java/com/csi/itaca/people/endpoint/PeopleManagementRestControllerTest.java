@@ -697,7 +697,8 @@ public class PeopleManagementRestControllerTest {
         List relatedPerson = new ArrayList<>();
         relatedPerson.add(relatedPersonDTO);
 
-        Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(relatedPersonDTO);
+        Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(relatedPerson);
+        //Mockito.when(service.findDuplicatePersonDetails(any(), any(Errors.class))).thenReturn(details);
 
         mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_REL)
                 .param(PeopleManagementServiceProxy.IDENTIFICATION_CODE, Long.toString(1L))

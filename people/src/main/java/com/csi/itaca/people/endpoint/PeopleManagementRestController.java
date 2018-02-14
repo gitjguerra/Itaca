@@ -190,17 +190,17 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     @Override
     @RequestMapping(value = SEARCH_REL, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<? extends RelatedPersonDTO> findByPersonId(@RequestParam(PeopleManagementServiceProxy.IDENTIFICATION_CODE) Long idCode) {
+    public ResponseEntity<List<? extends PersonDetailDTO>> findByPersonId(@RequestParam(PeopleManagementServiceProxy.IDENTIFICATION_CODE) Long idCode) {
         BindingResult errTracking = createErrorTracker();
-        RelatedPersonDTO relatedPersonDTO = peopleManagementService.findByPersonId(idCode,errTracking);
+        PersonDetailDTO relatedPersonDTO = (PersonDetailDTO) peopleManagementService.findByPersonId(idCode,errTracking);
         return buildResponseEntity(relatedPersonDTO, errTracking);
     }
 
     @Override
     @RequestMapping(value = GET_REL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<? extends PersonDetailDTO> getRelatedPerson(@RequestBody RelatedPersonSearchFilter criteria, BindingResult errTracking) {
-        List<? extends PersonDetailDTO> relatedPerson = peopleManagementService.getRelatedPerson(criteria, errTracking);
+    public ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(@RequestBody RelatedPersonSearchFilter criteria, BindingResult errTracking) {
+        List<? extends RelatedPersonDTO> relatedPerson = peopleManagementService.getRelatedPerson(criteria, errTracking);
         return buildResponseEntity(relatedPerson, errTracking);
     }
 

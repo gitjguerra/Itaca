@@ -200,7 +200,7 @@ public interface PeopleManagementServiceProxy {
      * @param idCode the person id.
      * @return a response body containing the requested person json object.
      */
-    ResponseEntity<? extends RelatedPersonDTO> findByPersonId(Long idCode);
+    ResponseEntity<List<? extends PersonDetailDTO>> findByPersonId(Long idCode);
 
 
     /**
@@ -208,7 +208,7 @@ public interface PeopleManagementServiceProxy {
      * @param filter search filter.
      * @return a response body containing the requested person json object.
      */
-    ResponseEntity<? extends PersonDetailDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
+    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
 
 /*
     //addresses
