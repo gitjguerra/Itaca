@@ -708,6 +708,7 @@ public class PeopleManagementRestControllerTest {
         requestBody.append("}");
 
         mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_REL)
+                .param(PeopleManagementServiceProxy.IDENTIFICATION_CODE, Long.toString(1L))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.toString()))
                 .andDo(print())
@@ -715,6 +716,7 @@ public class PeopleManagementRestControllerTest {
 
                 .andDo(document(
                         "findByPersonId-related-person",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.IDENTIFICATION_CODE).description("The Identification Code of the person to retrieve.")),
                         responseFields(fieldWithPath("id").description(" ID.")
                         , fieldWithPath("personDetailId").description("personDetailId.")
                         , fieldWithPath("personRelId").description("personRelId.")
