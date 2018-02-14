@@ -2,7 +2,6 @@ package com.csi.itaca.people.endpoint;
 
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
-import com.csi.itaca.people.model.AccountClasification;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -76,6 +75,7 @@ public class PeopleManagementRestControllerTest {
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
+    private static final String ID = "id";
 
     @Before
     public void setup() {
@@ -723,11 +723,14 @@ public class PeopleManagementRestControllerTest {
     public void getRelatedPerson() throws Exception {
 
         List relatedPerson = new ArrayList<>();
+
         RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
         relatedPersonDTO.setId(1L);
         relatedPersonDTO.setPersonDetailId(1L);
         relatedPersonDTO.setRelationTypeId(1L);
         relatedPersonDTO.setPersonRelId(1L);
+
+        relatedPerson.add(relatedPersonDTO);
 
         Mockito.when(service.getRelatedPerson(any(), any(Errors.class))).thenReturn(relatedPerson);
 
@@ -744,10 +747,10 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-related-person",
-                        responseFields(fieldWithPath("id").description("Related Person ID.")
-                                , fieldWithPath("personDetailId").description("id Person Detail.")
-                                , fieldWithPath("personRelId").description("Related Person Id.")
-                                , fieldWithPath("relationTypeId").description("Relation Type Id.")
+                        responseFields(fieldWithPath("[0].id").description("Related Person ID.")
+                                , fieldWithPath("[0].personDetailId").description("Person Detail ID.")
+                                , fieldWithPath("[0].personRelId").description("Person Detail2 ID.")
+                                , fieldWithPath("[0].relationTypeId").description("Relatetion type ID.")
                         )
                 ));
     }

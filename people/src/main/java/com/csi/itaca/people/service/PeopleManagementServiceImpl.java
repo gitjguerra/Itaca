@@ -812,13 +812,15 @@ logger.info("********** DENTRO *****************");
                 p = cb.and(p,
                         cb.equal(root.get(RelatedPersonEntity.ID), filter.getId()));
         }
-        /*if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
+/*
+        if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
             if (path.isEmpty())
                 p = cb.and(p,
                         cb.equal(root.get(RelatedPersonEntity.ID_PERSON_DETAIL), filter.getPersonDetailId()));
         }
-        logger.info("P: " + p.getExpressions());*/
+*/
         return p;
+
     }
 
     @Transactional(readOnly = true)
