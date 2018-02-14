@@ -208,7 +208,7 @@ public interface PeopleManagementServiceProxy {
      * @param filter search filter.
      * @return a response body containing the requested person json object.
      */
-    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
+    ResponseEntity<? extends PersonDetailDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
 
 /*
     //addresses
@@ -261,7 +261,7 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIVoidResponse deletePersonaRelacionada(Long idPersonaRelacionada) throws PersonaRelacionadaNoExisteException;
 
-    ItacaAPIResponse<List<? extends DetallePersona1DTO>> buscarPersonaPorIdentificador(String codigoIdentificacion);
+    ItacaAPIResponse<List<? extends PersonDetailDTO>> buscarPersonaPorIdentificador(String codigoIdentificacion);
 
 
     // public person

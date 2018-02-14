@@ -177,6 +177,6 @@ public interface PeopleManagementService {
      *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
      * @return a list of duplicate person details.
      */
-    List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking);
+    List<? extends PersonDetailDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking);
 
 }

@@ -1,10 +1,8 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
-import com.csi.itaca.people.model.Person;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
-import com.csi.itaca.people.model.RelatedPerson;
 import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.repository.*;
 import com.csi.itaca.tools.utils.beaner.Beaner;
@@ -814,23 +812,23 @@ logger.info("********** DENTRO *****************");
                 p = cb.and(p,
                         cb.equal(root.get(RelatedPersonEntity.ID), filter.getId()));
         }
-        if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
+        /*if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
             if (path.isEmpty())
                 p = cb.and(p,
                         cb.equal(root.get(RelatedPersonEntity.ID_PERSON_DETAIL), filter.getPersonDetailId()));
         }
-
+        logger.info("P: " + p.getExpressions());*/
         return p;
     }
 
     @Transactional(readOnly = true)
-    List<? extends RelatedPersonEntity> listRelatedPerson(RelatedPersonSearchFilter parameters) {
+    List<? extends PersonDetailEntity> listRelatedPerson(RelatedPersonSearchFilter parameters) {
 
-        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+        Specification<PersonDetailEntity> spec = (root, query, cb) -> {
             Predicate p = cb.and(cb.equal(root.type(), RelatedPersonEntity.class));
             return applyRelatedFilters(root, p, cb, parameters, "");
         };
-        return relationRepository.findAll(spec);
+        return personDetailRepository.findAll(spec);
     }
 
     @Override
@@ -847,13 +845,13 @@ logger.info("********** DENTRO *****************");
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking) {
+    public List<? extends PersonDetailDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking) {
 
-        List<? extends RelatedPersonEntity> relatedPersonFound = listRelatedPerson(criteria);
+        List<? extends PersonDetailEntity> relatedPersonFound = listRelatedPerson(criteria);
         if (relatedPersonFound == null && errTracking != null) {
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
-        return beaner.transform(relatedPersonFound, RelatedPersonDTO.class);
+        return beaner.transform(relatedPersonFound, PersonDetailDTO.class);
     }
 
 
