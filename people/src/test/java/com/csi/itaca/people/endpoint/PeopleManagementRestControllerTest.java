@@ -699,18 +699,9 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(relatedPersonDTO);
 
-        StringBuilder requestBody = new StringBuilder();
-        requestBody.append("{");
-        requestBody.append("\"id\":").append("\"1\"");
-        requestBody.append(",\"personDetailId\":").append("\"1\"");
-        requestBody.append(",\"personRelId\":").append("\"1\"");
-        requestBody.append(",\"relationTypeId\":").append("{\"1\"");
-        requestBody.append("}");
-
         mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_REL)
                 .param(PeopleManagementServiceProxy.IDENTIFICATION_CODE, Long.toString(1L))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody.toString()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
 
