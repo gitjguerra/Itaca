@@ -30,7 +30,7 @@ public class UserEntity implements User {
 	public static final String PASSWORD 		= "password";
 	public static final String USER_LANGUAGE 	= "language_id";
 	public static final String DESCRIPTION 		= "description";
-	public static final String BLOCKED 			= "blocked";
+	public static final String BLOCKED 		= "blockedUser";
 
 	@Id
 	@Column(name = "user_id")
@@ -70,7 +70,7 @@ public class UserEntity implements User {
 	private String email;
 
 	@Column(name = "blocked")
-	private boolean blocked;
+	private boolean blockedUser;
 
 	@Column(name = "blocked_date")
 	private LocalDate blockedDate;

@@ -12,7 +12,7 @@ public class UserManagementBusinessLogicImpl implements UserManagementBusinessLo
 
     @Override
     public boolean isUserAuthorisedToLogOn(UserEntity user) {
-        return !user.isBlocked();
+        return !user.isBlockedUser();
     }
 
     public boolean canChangeUserPassword(UserEntity user, ChangePasswordDTO passwordChange, Errors result) {

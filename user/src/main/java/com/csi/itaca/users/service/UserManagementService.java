@@ -25,26 +25,41 @@ public interface UserManagementService {
     UserDTO auth(String username, String password, Errors errTracking);
 
     /**
-     * Gets user with the given user Id.
+     * Gets user with the given username.
      * @param username the username of the user to retrieve.
      * @param errTracking error tracking.
      * @return the user if found otherwise null.
      */
     UserDTO getUser(String username, Errors errTracking);
+    
+    /**
+     * Gets user with the given user Id.
+     * @param id
+     * @param errTracking
+     * @return user found by id
+     */
+    UserDTO getUserById(Long id, Errors errTracking);
 
     /**
      * Save user. Creates or updates user.
      * @param userToSave users to save.
      * @param errTracking error tracking.
      */
-    void saveUser(UserDTO userToSave, Errors errTracking);
+    UserDTO createUpdateUser(UserDTO userToSave, Errors errTracking);
 
     /**
-     * Deletes the user with the specified user id
+     * Deletes the user with the specified user username
      * @param username the username of user to delete.
      * @param errTracking error tracking.
      */
-    void deleteUser(String username, Errors errTracking);;
+    void deleteUser(String username, Errors errTracking);
+    
+    /**
+     * Deletes the user with the specified user id
+     * @param id
+     * @param errTracking 
+     */
+    void deleteUserById(Long id, Errors errTracking);
 
     /**
      * Updates the users password.

@@ -29,7 +29,7 @@ public class UserDTO extends BaseModelImpl implements User {
 
     private String description;
 
-    private UserLanguageDTO userLanguages;
+    private UserLanguageDTO userLanguage;
 
     private LocalDate companyStartDate;
 
@@ -37,7 +37,7 @@ public class UserDTO extends BaseModelImpl implements User {
 
     private String email;
 
-    private boolean blocked;
+    private boolean blockedUser;
 
     private LocalDate blockedDate;
 }
