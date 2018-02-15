@@ -782,7 +782,7 @@ logger.info("********** DENTRO *****************");
     public void deleteRelatedPerson(Long relatedPersonId, Errors errTracking) {
 
         RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(relatedPersonId);
-        if (relatedPersonEntity != null && errTracking == null){
+        if (relatedPersonEntity != null && errTracking != null){
             relationRepository.delete(relatedPersonEntity);
         }else{
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
