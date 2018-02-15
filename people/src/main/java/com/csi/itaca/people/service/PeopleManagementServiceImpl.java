@@ -397,21 +397,15 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
         PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
-logger.info("********** DENTRO *****************");
         PersonDetailDTO retPersonDetail = null;
         if (personDetailEntity!=null) {
             if (personDetailEntity instanceof IndividualDetailEntity) {
-                logger.info("********** individual *****************");
-
                 retPersonDetail = beaner.transform(personDetailEntity, IndividualDetailDTO.class);
             } else {
-                logger.info("********** company *****************");
-
                 retPersonDetail = beaner.transform(personDetailEntity, CompanyDetailDTO.class);
             }
         }
         else {
-            logger.info("********** Error *****************");
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
 
@@ -814,12 +808,23 @@ logger.info("********** DENTRO *****************");
     @Transactional(readOnly = true)
     public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
 
-        List<? extends PersonEntity> relatedPersons = (List<? extends PersonEntity>) personDetailRepository.findOne(idCode);
+        //List<? extends PersonDetailEntity> related = (List<? extends PersonDetailEntity>) personDetailRepository.findAll();
+        List<? extends PersonDetailEntity> related = (List<? extends PersonDetailEntity>) personDetailRepository.findOne(idCode);
+        return beaner.transform(related, PersonDetailDTO.class);
 
-        if (relatedPersons == null && errTracking != null) {
-            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
-        }
-        return null;
+
+/*
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (idCode != null) {
+                p = cb.equal(root.get(RelatedPersonEntity.ID), idCode);
+            }
+            return p;
+        };
+        List<? extends RelatedPersonEntity> related = (List<? extends RelatedPersonEntity>) relationRepository.findAll(spec);
+
+        return beaner.transform(related, PersonDetailDTO.class);
+*/
 
     }
 
