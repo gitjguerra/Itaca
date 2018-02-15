@@ -780,7 +780,12 @@ logger.info("********** DENTRO *****************");
     @Override
     @Transactional(readOnly = true)
     public void deleteRelatedPerson(Long relatedPersonId, Errors errTracking) {
-        relationRepository.delete(relatedPersonId);
+        RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(relatedPersonId);
+        if(relatedPersonEntity != null && errTracking != null){
+            relationRepository.delete(relatedPersonEntity);
+        }else{
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
     }
 
     @Override
