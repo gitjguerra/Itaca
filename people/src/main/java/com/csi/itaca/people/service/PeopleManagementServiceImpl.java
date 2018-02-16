@@ -1,6 +1,7 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
+import com.csi.itaca.people.model.Person;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.model.filters.*;
@@ -29,6 +30,7 @@ import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -808,24 +810,55 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
 
-        //List<? extends PersonDetailEntity> related = (List<? extends PersonDetailEntity>) personDetailRepository.findAll();
-        List<? extends PersonDetailEntity> related = (List<? extends PersonDetailEntity>) personDetailRepository.findOne(idCode);
-        return beaner.transform(related, PersonDetailDTO.class);
-
-
-/*
-        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+        // Search the personId
+        Specification<PersonEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (idCode != null) {
-                p = cb.equal(root.get(RelatedPersonEntity.ID), idCode);
+                cb.equal(root.get(PersonEntity.ID_CODE), idCode);
             }
             return p;
         };
-        List<? extends RelatedPersonEntity> related = (List<? extends RelatedPersonEntity>) relationRepository.findAll(spec);
+        Person person = repository.findOne(spec);
 
-        return beaner.transform(related, PersonDetailDTO.class);
-*/
+        // extract object PersonDetailDTO with the personId
+        PersonDetailDTO detailDTO = getPersonDetail(person.getId(),errTracking);
 
+        // Search the personDetailId on related persons
+        Specification<RelatedPersonEntity> spec2 = (root, query, cb) -> {
+            Predicate p = null;
+            if (detailDTO.getId()!= null) {
+                p = cb.equal(root.get(RelatedPersonEntity.ID), detailDTO.getId());
+            }
+            return p;
+        };
+        List<? extends RelatedPersonEntity> related = relationRepository.findAll(spec2);
+
+
+        // *** Iterator on RelatedPersonEntity and charge the personDetail object with yours fields ***
+        // create estructure with personDetail data
+        List<PersonDetailDTO> detailDTOS = new ArrayList<>();
+        RelatedPersonEntity relatedPersonEntity = null;
+        PersonDetailDTO newDetailDTO = null;
+
+        if(related.size()!=0){
+            // iterator on data
+            Iterator<? extends RelatedPersonEntity> it = related.iterator();
+            while(it.hasNext()){
+
+                relatedPersonEntity = it.next();
+
+                // extract object PersonDetailDTO
+                newDetailDTO = getPersonDetail(relatedPersonEntity.getPersonDetailId(),errTracking);
+
+                //fill the list with personDetailDTO values
+                detailDTOS.add(newDetailDTO);
+            }
+        }else{
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+
+        // Return listDTO personDetail
+        return detailDTOS;
     }
 
     private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
