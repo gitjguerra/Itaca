@@ -20,6 +20,8 @@ import java.time.LocalDate;
 public class UserDTO extends BaseModelImpl implements User {
 
     private String username;
+    
+    private String password;
 
     private String firstName;
 

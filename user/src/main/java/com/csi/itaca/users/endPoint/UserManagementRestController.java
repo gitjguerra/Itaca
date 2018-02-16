@@ -84,7 +84,6 @@ public class UserManagementRestController extends ItacaBaseRestController implem
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity createUser(@RequestBody UserDTO user, BindingResult errTracking) {
-        user.setUserLanguage(userManagementService.getUserLanguages().get(0)); //temporal wd
         UserDTO updatedUser = userManagementService.createUpdateUser(user, errTracking);
         return buildResponseEntity(updatedUser, errTracking);
     }
