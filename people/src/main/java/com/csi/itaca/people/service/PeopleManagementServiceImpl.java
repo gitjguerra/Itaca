@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -398,7 +399,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
+        logger.info("Detail Request Id:"+personDetailId);
         PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
+        logger.info("Detail Response Data:"+personDetailEntity.getName());
         PersonDetailDTO retPersonDetail = null;
         if (personDetailEntity!=null) {
             if (personDetailEntity instanceof IndividualDetailEntity) {
@@ -810,19 +813,27 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
 
-        // Search the personId
+        // Search the person Identification_Code
+        /*
         Specification<PersonEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (idCode != null) {
-                cb.equal(root.get(PersonEntity.ID_CODE), idCode);
+                p = cb.and(cb.like(root.get(PersonEntity.ID_CODE), "1"));
+                //p = cb.and(cb.equal(root.get(PersonEntity.ID_CODE), idCode));
             }
             return p;
         };
         Person person = repository.findOne(spec);
+        */
 
+        logger.info("Go for Find Detail Data:");
         // extract object PersonDetailDTO with the personId
-        PersonDetailDTO detailDTO = getPersonDetail(person.getId(),errTracking);
+        PersonDetailDTO detailDTO = getPersonDetail(1L,errTracking);
 
+        logger.info("Detail Data:"+detailDTO.getName());
+
+
+        /*
         // Search the personDetailId on related persons
         Specification<RelatedPersonEntity> spec2 = (root, query, cb) -> {
             Predicate p = null;
@@ -833,9 +844,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         List<? extends RelatedPersonEntity> related = relationRepository.findAll(spec2);
 
+        logger.info("related.size():"+related.size());
+
 
         // *** Iterator on RelatedPersonEntity and charge the personDetail object with yours fields ***
         // create estructure with personDetail data
+        /*
         List<PersonDetailDTO> detailDTOS = new ArrayList<>();
         RelatedPersonEntity relatedPersonEntity = null;
         PersonDetailDTO newDetailDTO = null;
@@ -856,9 +870,13 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }else{
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
-
-        // Return listDTO personDetail
         return detailDTOS;
+        */
+
+        //return (root, query, cb) -> cb.like(root.get(attribute), "%" + value + "%");
+
+        return null;
+
     }
 
     private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,

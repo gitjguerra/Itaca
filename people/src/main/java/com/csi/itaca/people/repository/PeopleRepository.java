@@ -6,5 +6,4 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface PeopleRepository extends PagingAndSortingRepository<PersonEntity, Long>
 										,JpaSpecificationExecutor<PersonEntity> {
-
 }
