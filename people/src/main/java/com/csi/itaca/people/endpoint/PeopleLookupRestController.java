@@ -6,6 +6,7 @@ import com.csi.itaca.people.model.AccountClasification;
 import com.csi.itaca.people.model.AccountType;
 import com.csi.itaca.people.model.CardType;
 import com.csi.itaca.people.model.dto.*;
+import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.service.PeopleLookupService;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -103,6 +104,12 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
     @RequestMapping(value = LOOKUP_CARD_TYPE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<? extends CardTypeDTO>> lookupCardTypes() {
         return new ResponseEntity(peopleLookupService.lookupCardTypes(), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = LOOKUP_CARD_TYPE_CONTACT_LIST, method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> listContacts() {
+        return new ResponseEntity(peopleLookupService.lookupContacts(), HttpStatus.OK);
     }
 
 }

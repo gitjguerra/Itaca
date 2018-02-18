@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Errors;
 
@@ -68,13 +69,16 @@ public class PeopleManagementRestControllerTest {
     private IndividualDetailDTO testIndividualDetailDTO;
 
     private BankCardDTO bankCardDTO;
-    private AccountDTO accountDTO;
+
     private static final String CARD = "card";
     private static final String ACCOUNT = "id";
     private static final String ID_CARD = "idBankCard";
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
+
+    private ContactDTO contactDTO;
+    private static final String CONTACT = "id";
 
     @Before
     public void setup() {
@@ -526,6 +530,78 @@ public class PeopleManagementRestControllerTest {
                         requestFields(peopleSearchFilterFieldsDoc())
                 ));
     }
+
+
+    /** Count contact test. */
+    @Test
+    public void countContact() throws Exception {
+
+        Mockito.when(service.countContacts(any())).thenReturn(1L);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_CONTACT)
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-contact",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
+
+    /** Delete contact test. */
+    @Test
+    public void getDeleteContact() throws Exception {
+
+        Mockito.doNothing().when(service).deleteContact(any(), any(Errors.class));
+
+        mockMvc.perform(delete(PeopleManagementServiceProxy.DELETE_CONTACT)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "delete-contact",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The id of the contact to delete.")
+                        )
+                ));
+    }
+
+
+    /*/ get Contact test/*/
+    /*
+    ID_PER_CONTACT	    NUMBER(19,0)
+    ID_PERSON_DETAIL	NUMBER(19,0)
+    ID_CONTACT_TYPE	    NUMBER(19,0)
+    ID_ADDRESS	        NUMBER(19,0)
+    VALUE_CONTACT	    VARCHAR2(100 CHAR)
+
+    */
+
+    @Test
+    public void getContact() throws Exception {
+
+        ContactDTO contactDTO = new ContactDTO();
+
+        Mockito.when(service.getContact(any(), any(Errors.class) )).thenReturn(contactDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.CONTACT)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-Contact",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The id of the contact.")),
+                        responseFields(fieldWithPath("id").description("IdContact type ID.")
+                                ,fieldWithPath("contactType").description("contactType.")
+                                ,fieldWithPath("valueContact").description("valueContact.")
+                                ,fieldWithPath("idAddress").description("idAddress.")
+                                ,fieldWithPath("personDetailId").description("personDetail.")
+
+                        )
+                ));
+    }
+
 
 
 }

@@ -72,6 +72,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private BankCardRepository bankCardRepository;
 
     @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
     private Beaner beaner;
 
     @Autowired
@@ -842,53 +845,115 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-
+    // WU
     // ********************* Contact ************************************************************
-/*
+    @Override
+    public ContactDTO getContact(Long idContact, Errors errTracking) {
+
+        ContactDTO contactDTO = null;
+
+        ContactEntity contactEntity = contactRepository.findOne(idContact);
+        if (contactEntity!=null) {
+            return beaner.transform(contactEntity, ContactDTO.class);
+        }
+        return contactDTO;
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteContact(Long contactId, Errors errTracking) {
+
+        ContactDTO contact = getContact(contactId, errTracking);
+        contactRepository.delete(contact.getId());
+
+    }
+
+    private Predicate applyLikeLowerContactFilter(CriteriaBuilder cb, Root<? extends ContactEntity> r, String field,
+                                                   String value, Predicate p, int fieldDepth) {
+
+        value = value.trim().toLowerCase();
+
+        if (fieldDepth == 1) {
+            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
+                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
+        } else if (fieldDepth > 1 && fieldDepth < 7) {
+            String fields[] = field.split("[.]", -1);
+            if (fieldDepth == 2) {
+                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
+                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
+            }
+        }
+        return p;
+    }
+    private Predicate applyContactFilter(Predicate p, CriteriaBuilder cb,
+                                          Root<? extends ContactEntity> r,
+                                          ContactSearchFilter filter) {
+        if (filter.getId() != null) {
+            p = applyLikeLowerContactFilter(cb, r,ContactEntity.ID + ".", String.valueOf(filter.getId()), p, 1);
+        }
+        return p;
+    }
+
     @Override
     @Transactional(readOnly = true)
-    public List<? extends ContactDTO> listContacts(PeopleSearchFilter criteria, Errors errTracking) {
+    public Long countContacts(Long personDetailId) {
 
-        List<? extends ContactDTO> contacts = Collections.EMPTY_LIST;
-
-        if (!peopleBusinessLogic.isLogicalPrimaryKeyCorrect(criteria, errTracking)) {
-
-            PageRequest pr = null;
-            if (criteria.getPagination() != null) {
-                pr = new PageRequest(criteria.getPagination().getPageNo() - 1, criteria.getPagination().getItemsPerPage());
+        Specification<ContactEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(ContactEntity.ID_PERSON_DETAIL), personDetailId);
             }
+            return p;
+        };
+        return contactRepository.count(spec);
+    }
 
-            if (criteria.getPersonType().getId().equals(PersonType.INDIVIDUAL_PERSON_CODE)) {
+    @Override
+    @Transactional
+    public ContactDTO saveOrUpdateContact(ContactDTO dto, Errors errTracking) {
 
-                Specification<IndividualDetailEntity> spec = buildDuplicateDetailsSpecForIndividual(criteria);
-                spec = JpaUtils.applyOrder(IndividualDetailEntity.class, criteria.getOrder(), spec);
+        ContactEntity contactEntity2 = contactRepository.findOne(dto.getId());
 
-                if (pr != null) {
-                    contacts = beaner.transform(individualDetailRepository.findAll(spec, pr).getContent(), IndividualDetailDTO.class);
-                } else {
-                    contacts = beaner.transform(individualDetailRepository.findAll(spec), IndividualDetailDTO.class);
-                }
-
-            } else if (criteria.getPersonType().getId().equals(PersonType.COMPANY_PERSON_CODE)) {
-
-                Specification<CompanyDetailEntity> spec = buildDuplicateDetailsSpecForCompany(criteria);
-                spec = JpaUtils.applyOrder(CompanyDetailEntity.class, criteria.getOrder(), spec);
-
-                if (pr != null) {
-                    contacts = beaner.transform(companyDetailRepository.findAll(spec, pr).getContent(), CompanyDetailDTO.class);
-                } else {
-                    contacts = beaner.transform(companyDetailRepository.findAll(spec), CompanyDetailDTO.class);
-                }
-
-            }
-
+        if (contactEntity2 == null && errTracking != null){
+            contactEntity2 = new ContactEntity();
         }
 
-        return contacts;
+        contactEntity2.setId(dto.getId());
+        contactEntity2.setContactType(dto.getContactType());
+        contactEntity2.setPersonDetailId(dto.getPersonDetailId());
+        contactEntity2.setIdAddress(dto.getIdAddress());
+        contactEntity2.setValueContact(dto.getValueContact());
+
+        contactEntity2 = contactRepository.save(contactEntity2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(contactEntity2, ContactDTO.class);
+
     }
-*/
+
+    private Predicate applyContactFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
+                                         ContactSearchFilter filter, String path) {
+
+        if (filter.getId() != null) {
+                p = cb.equal(root.get(ContactEntity.ID), 1);
+        }
+        return p;
+    }
+
+    @Override
+    public ContactDTO getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
+
+        Specification<ContactEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(ContactEntity.ID), criteria.getId());
+            return applyContactFilters(root, p, cb, criteria, "");
+        };
+
+        return beaner.transform(contactRepository.findOne(spec), ContactDTO.class);
+
+    }
 
     // ********************* Contact ************************************************************
-
-
 }
