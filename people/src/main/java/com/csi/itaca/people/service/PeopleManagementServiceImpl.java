@@ -813,12 +813,23 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
 
+        /*
+        *********************************************************************************
+        Process
+            1) Search the person Identification_Code on Person
+            2) Take the Person id and Search PersonDetail
+            3) Take the PersonDetail and Search Relations
+            4) Put each relations on PersonDetail List and transform to PersonDetailDTO
+        *********************************************************************************
+         */
+
+
         // Search the person Identification_Code
         /*
         Specification<PersonEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (idCode != null) {
-                p = cb.and(cb.like(root.get(PersonEntity.ID_CODE), "1"));
+                p = cb.and(cb.like(root.get(PersonEntity.ID_CODE), idCode));
                 //p = cb.and(cb.equal(root.get(PersonEntity.ID_CODE), idCode));
             }
             return p;
