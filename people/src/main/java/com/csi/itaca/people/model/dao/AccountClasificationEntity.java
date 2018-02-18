@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class AccountClasificationEntity implements AccountClasification {
 
     public static final String ID = "id";
-    public static final String VALUE = "Value";
+    public static final String VALUE = "value";
 
     @Id
     @Column(name="ID_CLASIFICATION_ACCOUNT")

@@ -12,15 +12,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BankCardDTO implements BankCard {
 
-	private Long idBankCard;
-	private Long idPersonDetail;
-	private CardTypeDTO idCardType;
+	private Long bankCardId;
+	private Long personDetailId;
+	private Long cardTypeId;
 	private String card;
 	private Boolean principal;
 	private Boolean available;
-	private BankDTO idBank;
 	private LocalDate expirationDate;
 	private Long securityCode;
-
+	private Long bankId;
 
 }

@@ -16,10 +16,4 @@ public class AccountClasificationDTO implements AccountClasification {
 
 	private String value;
 
-	public AccountClasificationDTO(Long id, String value) {
-		super();
-		this.id = id;
-		this.value = value;
-	}
-
 }

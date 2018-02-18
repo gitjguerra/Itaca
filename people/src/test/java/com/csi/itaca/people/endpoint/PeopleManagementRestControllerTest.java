@@ -50,6 +50,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
  * Test for the people management rest controller.
  * @author bboothe
  */
+@SuppressWarnings("unchecked")
 @RunWith(PowerMockRunner.class)
 public class PeopleManagementRestControllerTest {
 
@@ -84,12 +85,12 @@ public class PeopleManagementRestControllerTest {
     public void setup() {
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                                 .apply(documentationConfiguration(this.restDocumentation))
-                                 .build();
+                .apply(documentationConfiguration(this.restDocumentation))
+                .build();
 
         testIndividualDTO = new IndividualDTO();
         testIndividualDTO.setId(1L);
-        testIndividualDTO.setDateOfBirth(LocalDate.of(1987,06,12) );
+        testIndividualDTO.setDateOfBirth(LocalDate.of(1987, 06, 12));
         testIndividualDTO.setExternalReferenceCode("Ref123");
         testIndividualDTO.setIdentificationCode("IDCode123");
 
@@ -129,24 +130,28 @@ public class PeopleManagementRestControllerTest {
         testIndividualDTO.setDetails(Collections.singletonList(testIndividualDetailDTO));
     }
 
-    /** Get person test. */
+    /**
+     * Get person test.
+     */
     @Test
     public void getPerson() throws Exception {
-        Mockito.when(service.getPerson(any(), any(Errors.class) )).thenReturn(testIndividualDTO);
+        Mockito.when(service.getPerson(any(), any(Errors.class))).thenReturn(testIndividualDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_PERSON)
                 .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
                 .andDo(print())
-                .andExpect(jsonPath(EXTERNAL_REFERENCE_CODE_FIELD,is(testIndividualDTO.getExternalReferenceCode())))
-                .andExpect(jsonPath(ID_CODE_FIELD,is(testIndividualDTO.getIdentificationCode())))
+                .andExpect(jsonPath(EXTERNAL_REFERENCE_CODE_FIELD, is(testIndividualDTO.getExternalReferenceCode())))
+                .andExpect(jsonPath(ID_CODE_FIELD, is(testIndividualDTO.getIdentificationCode())))
                 .andExpect(status().isOk())
                 .andDo(document(
-                            "get-person",
-                            requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The ID of the person to retrieve.")),
-                            responseFields(individualFieldsDoc("",true,true))
+                        "get-person",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The ID of the person to retrieve.")),
+                        responseFields(individualFieldsDoc("", true, true))
                 ));
-   }
+    }
 
-    /** Delete person test. */
+    /**
+     * Delete person test.
+     */
     @Test
     public void getDeletePerson() throws Exception {
 
@@ -163,7 +168,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-    /** Search people test. */
+    /**
+     * Search people test.
+     */
     @Test
     public void searchPeople() throws Exception {
         List people = new ArrayList<>();
@@ -186,24 +193,24 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
 
                 // verify individual
-                .andExpect(jsonPath("[0].id",is(testIndividualDTO.getId().intValue())))
-                .andExpect(jsonPath("[0].idType.id",is(testIndividualDTO.getIdType().getId().intValue())))
+                .andExpect(jsonPath("[0].id", is(testIndividualDTO.getId().intValue())))
+                .andExpect(jsonPath("[0].idType.id", is(testIndividualDTO.getIdType().getId().intValue())))
 
                 .andDo(document(
                         "find-person",
                         requestFields(
                                 fieldWithPath("@type").description("The type of person to search for. Must be \"individual\" or \"company\".")
-                               ,fieldWithPath("personType.id").description("The person type. Must be same as @type.")
-                               ,fieldWithPath("idCode").description("The ID code.")
-                               ,fieldWithPath("idType.id").description("The ID associated with the identification document type.")
+                                , fieldWithPath("personType.id").description("The person type. Must be same as @type.")
+                                , fieldWithPath("idCode").description("The ID code.")
+                                , fieldWithPath("idType.id").description("The ID associated with the identification document type.")
                         ),
-                        responseFields(individualFieldsDoc("[]", false,true))
+                        responseFields(individualFieldsDoc("[]", false, true))
                 ));
     }
 
     @Test
     public void saveOrUpdatePerson() throws Exception {
-        Mockito.when(service.saveOrUpdatePerson(any(), any(Errors.class) )).thenReturn(testIndividualDTO);
+        Mockito.when(service.saveOrUpdatePerson(any(), any(Errors.class))).thenReturn(testIndividualDTO);
 
         mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_PERSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -212,16 +219,16 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
 
                 // verify individual
-               .andExpect(jsonPath("id",is(testIndividualDTO.getId().intValue())))
-               .andExpect(jsonPath("idType.id",is(testIndividualDTO.getIdType().getId().intValue())))
-               .andExpect(jsonPath("identificationCode",is(testIndividualDTO.getIdentificationCode())))
-               .andExpect(jsonPath("externalReferenceCode",is(testIndividualDTO.getExternalReferenceCode())))
-               .andExpect(jsonPath("gender.id",is(testIndividualDTO.getGender().getId().intValue())))
+                .andExpect(jsonPath("id", is(testIndividualDTO.getId().intValue())))
+                .andExpect(jsonPath("idType.id", is(testIndividualDTO.getIdType().getId().intValue())))
+                .andExpect(jsonPath("identificationCode", is(testIndividualDTO.getIdentificationCode())))
+                .andExpect(jsonPath("externalReferenceCode", is(testIndividualDTO.getExternalReferenceCode())))
+                .andExpect(jsonPath("gender.id", is(testIndividualDTO.getGender().getId().intValue())))
 
                 .andDo(document(
                         "save-update-person",
-                        requestFields(individualFieldsDoc("",true,true)),
-                        responseFields(individualFieldsDoc("",true,true))
+                        requestFields(individualFieldsDoc("", true, true)),
+                        responseFields(individualFieldsDoc("", true, true))
                 ));
     }
 
@@ -241,25 +248,26 @@ public class PeopleManagementRestControllerTest {
     }
 
 
-
-    /** Get person detail test. */
+    /**
+     * Get person detail test.
+     */
     @Test
     public void getPersonDetail() throws Exception {
-        Mockito.when(service.getPersonDetail(any(), any(Errors.class) )).thenReturn(testIndividualDetailDTO);
+        Mockito.when(service.getPersonDetail(any(), any(Errors.class))).thenReturn(testIndividualDetailDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_PERSON_DETAIL)
                 .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L)))
                 .andDo(print())
-                .andExpect(jsonPath("id",is(testIndividualDetailDTO.getId().intValue())))
-                .andExpect(jsonPath("language.id",is(testIndividualDetailDTO.getLanguage().getId().intValue())))
-                .andExpect(jsonPath("name1",is(testIndividualDetailDTO.getName1())))
-                .andExpect(jsonPath("name2",is(testIndividualDetailDTO.getName2())))
-                .andExpect(jsonPath("surname1",is(testIndividualDetailDTO.getSurname1())))
-                .andExpect(jsonPath("surname2",is(testIndividualDetailDTO.getSurname2())))
+                .andExpect(jsonPath("id", is(testIndividualDetailDTO.getId().intValue())))
+                .andExpect(jsonPath("language.id", is(testIndividualDetailDTO.getLanguage().getId().intValue())))
+                .andExpect(jsonPath("name1", is(testIndividualDetailDTO.getName1())))
+                .andExpect(jsonPath("name2", is(testIndividualDetailDTO.getName2())))
+                .andExpect(jsonPath("surname1", is(testIndividualDetailDTO.getSurname1())))
+                .andExpect(jsonPath("surname2", is(testIndividualDetailDTO.getSurname2())))
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-person-detail",
                         requestParameters(parameterWithName(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM).description("The ID of the person detail to retrieve.")),
-                        responseFields(individualDetailsFieldsDoc("",true))
+                        responseFields(individualDetailsFieldsDoc("", true))
                 ));
     }
 
@@ -277,13 +285,15 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "find-person-detail",
                         requestFields(peopleSearchFilterFieldsDoc()),
-                        responseFields(individualDetailsFieldsDoc("[]",true))
+                        responseFields(individualDetailsFieldsDoc("[]", true))
 
                 ));
 
     }
 
-    /** Count person detail test. */
+    /**
+     * Count person detail test.
+     */
     @Test
     public void countPersonDetail() throws Exception {
 
@@ -316,7 +326,7 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "find-duplicate-person-detail",
                         requestFields(peopleSearchFilterFieldsDoc()),
-                        responseFields(individualDetailsFieldsDoc("[]",true))
+                        responseFields(individualDetailsFieldsDoc("[]", true))
 
                 ));
 
@@ -392,68 +402,62 @@ public class PeopleManagementRestControllerTest {
 
     private List<FieldDescriptor> individualFieldsDoc(String fieldPrefix, boolean includePersonType, boolean includeDetails) {
         List<FieldDescriptor> fields = new ArrayList<>();
-        fields.add(fieldWithPath(fieldPrefix+"id").description("Person ID."));
-        if (includePersonType) fields.add(fieldWithPath(fieldPrefix+"personType").description("Person type ('individual' or 'company')"));
-        fields.add(fieldWithPath(fieldPrefix+"identificationCode").description("Identification code"));
-        fields.add(fieldWithPath(fieldPrefix+"externalReferenceCode").description("External reference code."));
-        fields.add(fieldWithPath(fieldPrefix+"dateOfBirth").description("The person's date of birth."));
-        fields.add(fieldWithPath(fieldPrefix+"idType.id").description("Identification type ID."));
-        fields.add(fieldWithPath(fieldPrefix+"gender.id").description("Gender ID."));
-        if (includeDetails) fields.addAll(individualDetailsFieldsDoc(fieldPrefix+"details[].",false));
+        fields.add(fieldWithPath(fieldPrefix + "id").description("Person ID."));
+        if (includePersonType)
+            fields.add(fieldWithPath(fieldPrefix + "personType").description("Person type ('individual' or 'company')"));
+        fields.add(fieldWithPath(fieldPrefix + "identificationCode").description("Identification code"));
+        fields.add(fieldWithPath(fieldPrefix + "externalReferenceCode").description("External reference code."));
+        fields.add(fieldWithPath(fieldPrefix + "dateOfBirth").description("The person's date of birth."));
+        fields.add(fieldWithPath(fieldPrefix + "idType.id").description("Identification type ID."));
+        fields.add(fieldWithPath(fieldPrefix + "gender.id").description("Gender ID."));
+        if (includeDetails) fields.addAll(individualDetailsFieldsDoc(fieldPrefix + "details[].", false));
         return fields;
     }
 
     private List<FieldDescriptor> individualDetailsFieldsDoc(String fieldPrefix, boolean includePerson) {
         List<FieldDescriptor> fields = new ArrayList<>();
-        fields.add(fieldWithPath(fieldPrefix+"id").description("Detail ID."));
-        fields.add(fieldWithPath(fieldPrefix+"name").description("Concatenated name."));
-        fields.add(fieldWithPath(fieldPrefix+"name1").description("First name."));
-        fields.add(fieldWithPath(fieldPrefix+"name2").description("Second name."));
-        fields.add(fieldWithPath(fieldPrefix+"surname1").description("First surname."));
-        fields.add(fieldWithPath(fieldPrefix+"surname2").description("Second surname."));
-        fields.add(fieldWithPath(fieldPrefix+"civilStatus.id").description("Civil status ID."));
-        fields.add(fieldWithPath(fieldPrefix+"personStatus.id").description("Person status ID."));
-        fields.add(fieldWithPath(fieldPrefix+"country.id").description("Country ID."));
-        fields.add(fieldWithPath(fieldPrefix+"language.id").description("Language ID."));
-        if (includePerson) fields.addAll(individualFieldsDoc(fieldPrefix+"person.",true,false));
+        fields.add(fieldWithPath(fieldPrefix + "id").description("Detail ID."));
+        fields.add(fieldWithPath(fieldPrefix + "name").description("Concatenated name."));
+        fields.add(fieldWithPath(fieldPrefix + "name1").description("First name."));
+        fields.add(fieldWithPath(fieldPrefix + "name2").description("Second name."));
+        fields.add(fieldWithPath(fieldPrefix + "surname1").description("First surname."));
+        fields.add(fieldWithPath(fieldPrefix + "surname2").description("Second surname."));
+        fields.add(fieldWithPath(fieldPrefix + "civilStatus.id").description("Civil status ID."));
+        fields.add(fieldWithPath(fieldPrefix + "personStatus.id").description("Person status ID."));
+        fields.add(fieldWithPath(fieldPrefix + "country.id").description("Country ID."));
+        fields.add(fieldWithPath(fieldPrefix + "language.id").description("Language ID."));
+        if (includePerson) fields.addAll(individualFieldsDoc(fieldPrefix + "person.", true, false));
         return fields;
     }
 
     @Test
     public void getBankCard() throws Exception {
 
-        BankDTO bankDTO = new BankDTO();
-        bankDTO.setId(1L);
-
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(bankDTO);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
 
-        Mockito.when(service.getBankCard(any(), any(Errors.class) )).thenReturn(bankCardDTO);
+        Mockito.when(service.getBankCard(any(), any(Errors.class))).thenReturn(bankCardDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_BANK_CARD)
                 .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-BankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
-                                ,fieldWithPath("card").description("Card.")
-                                ,fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                ,fieldWithPath("idCardType").description("idCardType.")
-                                ,fieldWithPath("principal").description("principal.")
-                                ,fieldWithPath("available").description("available.")
-                                ,fieldWithPath("idBank.id").description("idBank.")
-                                ,fieldWithPath("idBank.bankName").description("bankName.")
-                                ,fieldWithPath("idBank.draftBank").description("draftBank.")
-                                ,fieldWithPath("idBank.bic").description("bic.")
-                                ,fieldWithPath("idBank.code").description("code.")
-                                ,fieldWithPath("expirationDate").description("expirationDate.")
-                                ,fieldWithPath("securityCode").description("securityCode.")
+                        responseFields(fieldWithPath("bankCardId").description("BankCardId type ID.")
+                                , fieldWithPath("card").description("Card.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
+                                , fieldWithPath("principal").description("principal.")
+                                , fieldWithPath("available").description("available.")
+                                , fieldWithPath("bankId").description("idBank.")
+                                , fieldWithPath("expirationDate").description("expirationDate.")
+                                , fieldWithPath("securityCode").description("securityCode.")
                         )
                 ));
     }
@@ -462,37 +466,33 @@ public class PeopleManagementRestControllerTest {
     public void getAccount() throws Exception {
 
         AccountClasificationDTO clasification = new AccountClasificationDTO();
-        clasification.setId(1L);
-        clasification.setValue("Corriente");
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(clasification);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
-        Mockito.when(service.getAccount(any(), any(Errors.class) )).thenReturn(accountDTO);
+        Mockito.when(service.getAccount(any(), any(Errors.class))).thenReturn(accountDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_ACCOUNT)
                 .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1)))
                 .andDo(print())
-                .andExpect(jsonPath(ACCOUNT,is(1)))
+                .andExpect(jsonPath(ACCOUNT, is(1)))
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-Account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                ,fieldWithPath("personDetail").description("personDetail.")
-                                ,fieldWithPath("accountClasification").description("accountClasification.")
-                                ,fieldWithPath("accountClasification.id").description("id.")
-                                ,fieldWithPath("accountClasification.value").description("value.")
-                                ,fieldWithPath("typeAccount").description("typeAccount.")
-                                ,fieldWithPath("account").description("account.")
-                                ,fieldWithPath("idBank").description("idBank.")
-                                ,fieldWithPath("principal").description("principal.")
-                                ,fieldWithPath("available").description("available.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
+                                , fieldWithPath("account").description("account.")
+                                , fieldWithPath("bankId").description("idBank.")
+                                , fieldWithPath("principal").description("principal.")
+                                , fieldWithPath("available").description("available.")
                         )
                 ));
     }
@@ -504,7 +504,8 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_BANK_CARD)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(buildPeopleSearchFilter()))
+                .content(buildPeopleSearchFilter())
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -521,7 +522,8 @@ public class PeopleManagementRestControllerTest {
 
         mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(buildPeopleSearchFilter()))
+                .content(buildPeopleSearchFilter())
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -531,6 +533,78 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    @Test
+    public void saveOrUpdateAccount() throws Exception {
+
+        AccountClasificationDTO clasification = new AccountClasificationDTO();
+
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(1L);
+        accountDTO.setAccount("5018782000");
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
+        accountDTO.setAvailable(true);
+        accountDTO.setPrincipal(true);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
+
+        Mockito.when(service.saveOrUpdateAccount(any(), any(Errors.class))).thenReturn(accountDTO);
+
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_ACCOUNT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(accountDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-update-account",
+                        responseFields(fieldWithPath("id").description("Id account.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
+                                , fieldWithPath("account").description("account.")
+                                , fieldWithPath("bankId").description("idBank.")
+                                , fieldWithPath("principal").description("principal.")
+                                , fieldWithPath("available").description("available.")
+                        )
+                ));
+    }
+
+    @Test
+    public void saveOrUpdateBankCard() throws Exception {
+
+        BankCardDTO bankCardDTO = new BankCardDTO();
+        bankCardDTO.setBankCardId(1L);
+        bankCardDTO.setCard("5018782000");
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
+        bankCardDTO.setAvailable(true);
+        bankCardDTO.setPrincipal(true);
+        bankCardDTO.setSecurityCode(1L);
+        bankCardDTO.setExpirationDate(LocalDate.of(1972, 11, 22));
+
+        Mockito.when(service.saveOrUpdateBankCard(any(), any(Errors.class))).thenReturn(bankCardDTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_BANK_CARD)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(bankCardDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-update-bankCard",
+                        responseFields(fieldWithPath("bankCardId").description("IdBankCard type ID.")
+                                , fieldWithPath("card").description("Card.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
+                                , fieldWithPath("principal").description("principal.")
+                                , fieldWithPath("available").description("available.")
+                                , fieldWithPath("bankId").description("idBank.")
+                                , fieldWithPath("expirationDate").description("expirationDate.")
+                                , fieldWithPath("securityCode").description("securityCode.")
+                        )
+                ));
+
+    }
 
     /** Count contact test. */
     @Test

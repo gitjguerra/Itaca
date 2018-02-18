@@ -609,3 +609,124 @@ include::{snippets}/lookup-card-type/http-response.adoc[]
 ==== CURL request
 
 include::{snippets}/lookup-card-type/curl-request.adoc[]
+
+
+
+
+
+=== count Bank Card
+
+==== Request structure
+
+include::{snippets}/count-bank-card/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/count-bank-card/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-bank-card/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-bank-card/curl-request.adoc[]
+
+
+
+=== get Bank Card
+
+==== Request structure
+
+include::{snippets}/get-BankCard/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-BankCard/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-BankCard/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-BankCard/curl-request.adoc[]
+
+
+
+
+=== save or update Bank Card
+
+==== Request structure
+
+include::{snippets}/save-update-bankCard/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-update-bankCard/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-update-bankCard/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-update-bankCard/curl-request.adoc[]
+
+
+=== save or update Account
+
+==== Request structure
+
+include::{snippets}/save-update-account/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-update-account/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-update-account/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-update-account/curl-request.adoc[]
+
+
+=== count Account
+
+==== Request structure
+
+include::{snippets}/count-account/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/count-account/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-account/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-account/curl-request.adoc[]
+
+
+=== get Account
+
+==== Request structure
+
+include::{snippets}/get-Account/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-Account/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-Account/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-Account/curl-request.adoc[]
+
