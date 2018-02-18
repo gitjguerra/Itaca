@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
@@ -812,6 +814,17 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
+
+        /*
+        // ****** Prueba de Select ******
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<RelatedPersonEntity> q = cb.createQuery(RelatedPersonEntity.class);
+        Root<RelatedPersonEntity> c = q.from(RelatedPersonEntity.class);
+        q.select(c);
+        TypedQuery<RelatedPersonEntity> query = entityManager.createQuery(q);
+        List<RelatedPersonEntity> results = query.getResultList();
+        logger.info("Resultados:"+results.size());
+        */
 
         /*
         *********************************************************************************
