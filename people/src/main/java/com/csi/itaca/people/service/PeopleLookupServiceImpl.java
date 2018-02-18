@@ -57,6 +57,9 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
     private CardTypeRepository cardTypeRepository;
 
     @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
     private Beaner beaner;
 
 
@@ -138,4 +141,9 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
         return  beaner.transform((List<CardTypeEntity>) cardTypeRepository.findAll(), CardTypeDTO.class);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ContactDTO> lookupContacts() {
+        return  beaner.transform((List<ContactEntity>) contactRepository.findAll(), ContactDTO.class);
+    }
 }

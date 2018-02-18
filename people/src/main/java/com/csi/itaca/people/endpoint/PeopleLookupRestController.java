@@ -107,4 +107,9 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
         return new ResponseEntity(peopleLookupService.lookupCardTypes(), HttpStatus.OK);
     }
 
+    @Override
+    @RequestMapping(value = LOOKUP_CARD_TYPE_CONTACT_LIST, method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> listContacts() {
+        return new ResponseEntity(peopleLookupService.lookupContacts(), HttpStatus.OK);
+    }
 }

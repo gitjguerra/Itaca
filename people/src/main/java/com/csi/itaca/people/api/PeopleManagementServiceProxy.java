@@ -3,6 +3,7 @@ package com.csi.itaca.people.api;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
+import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -49,6 +50,13 @@ public interface PeopleManagementServiceProxy {
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
 
+    // End points for contacts...
+    String RESOURCE_CONTACT           = RESOURCE + "/contact";
+    String PERSON_CONTACT             = RESOURCE_CONTACT + "/getPersonContact";
+    String CONTACT                    = RESOURCE_CONTACT + "/get";
+    String DELETE_CONTACT             = RESOURCE_CONTACT + "/delete";
+    String COUNT_CONTACT              = RESOURCE_CONTACT +"/count";
+    String SAVE_CONTACT               = RESOURCE_CONTACT + "/save";
     /**
      * Gets a person.
      * @param id the person id.
@@ -164,7 +172,39 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity getBankCard(Long id);
 
+    /**
+     * Gets a contact.
+     * @param idContact the contact id.
+     * @return a response body containing the requested contact json object.
+     */
+    ResponseEntity getContact(Long idContact);
 
+    /**
+     * Gets a contact.
+     * @param criteria the contact id.
+     * @return a response body containing the requested contact json object.
+     */
+    ResponseEntity getPersonContact(ContactSearchFilter criteria);
+
+    /**
+     * Deletes a contact
+     * @param idContact the contact id .
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteContact(Long idContact);
+
+    /**
+     * counts contact.
+     * @param idPersonDetail the filter to find contact.
+     */
+    ResponseEntity<Long> countContact(Long idPersonDetail);
+
+    /**
+     * Saves or updates contact.
+     * @param contactToSaveOrUpdate the contact to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdateContact(ContactDTO contactToSaveOrUpdate,BindingResult errTracking);
 /*
     //addresses
 
