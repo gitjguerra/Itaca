@@ -401,9 +401,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
-        logger.info("Detail Request Id:"+personDetailId);
+
         PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
-        logger.info("Detail Response Data:"+personDetailEntity.getName());
+
         PersonDetailDTO retPersonDetail = null;
         if (personDetailEntity!=null) {
             if (personDetailEntity instanceof IndividualDetailEntity) {
@@ -816,17 +816,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
 
         /*
-        // ****** Prueba de Select ******
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<RelatedPersonEntity> q = cb.createQuery(RelatedPersonEntity.class);
-        Root<RelatedPersonEntity> c = q.from(RelatedPersonEntity.class);
-        q.select(c);
-        TypedQuery<RelatedPersonEntity> query = entityManager.createQuery(q);
-        List<RelatedPersonEntity> results = query.getResultList();
-        logger.info("Resultados:"+results.size());
-        */
-
-        /*
         *********************************************************************************
         Process
             1) Search the person Identification_Code on Person
@@ -838,26 +827,18 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
 
         // Search the person Identification_Code
-        /*
         Specification<PersonEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (idCode != null) {
-                p = cb.and(cb.like(root.get(PersonEntity.ID_CODE), idCode));
-                //p = cb.and(cb.equal(root.get(PersonEntity.ID_CODE), idCode));
+                p = cb.and(cb.equal(root.get(PersonEntity.ID_CODE), idCode));
             }
             return p;
         };
         Person person = repository.findOne(spec);
-        */
 
-        logger.info("Go for Find Detail Data:");
-        // extract object PersonDetailDTO with the personId
-        PersonDetailDTO detailDTO = getPersonDetail(1L,errTracking);
+         //extract object PersonDetailDTO with the personId
+        PersonDetailDTO detailDTO = getPersonDetail(person.getId(),errTracking);
 
-        logger.info("Detail Data:"+detailDTO.getName());
-
-
-        /*
         // Search the personDetailId on related persons
         Specification<RelatedPersonEntity> spec2 = (root, query, cb) -> {
             Predicate p = null;
@@ -868,12 +849,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         List<? extends RelatedPersonEntity> related = relationRepository.findAll(spec2);
 
-        logger.info("related.size():"+related.size());
-
-
         // *** Iterator on RelatedPersonEntity and charge the personDetail object with yours fields ***
         // create estructure with personDetail data
-        /*
         List<PersonDetailDTO> detailDTOS = new ArrayList<>();
         RelatedPersonEntity relatedPersonEntity = null;
         PersonDetailDTO newDetailDTO = null;
@@ -895,11 +872,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
         return detailDTOS;
-        */
-
-        //return (root, query, cb) -> cb.like(root.get(attribute), "%" + value + "%");
-
-        return null;
 
     }
 
