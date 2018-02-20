@@ -3,13 +3,9 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
-import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
-import com.csi.itaca.people.model.filters.AccountSearchFilter;
-import com.csi.itaca.people.model.filters.BankCardSearchFilter;
-import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.service.PeopleManagementService;
 import com.csi.itaca.people.service.PeopleNationalitiesBusinessService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -170,9 +166,61 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Nationalities end ...
 
+    ////////////////////////////////////////////////////////////////////////////////////////////// Regime Fiscal...
+
+    @Override
+    @RequestMapping(value = COUNT_FISCAL_REGIME, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countFiscalRegime(@RequestParam(PERSON_DETAIL_ID_PARAM) Long personDetailId) {
+        return new ResponseEntity<>(peopleManagementService.countFiscalRegime(personDetailId), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = DELETE_FISCAL_REGIME, method = RequestMethod.DELETE)
+    public ResponseEntity deleteFiscalRegime(@RequestParam(FISCAL_REGIME_ID_PARAM) Long idFicalRegime) {
+        BindingResult errTracking = createErrorTracker();
+        peopleManagementService.deleteFiscalRegime(idFicalRegime,errTracking);
+        return buildResponseEntity(errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = SEARCH_FISCAL_REGIME, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DetPersonFiscalRegimeDTO>> getPeopleFiscalRegime(@RequestParam(PERSON_DETAIL_ID_PARAM) Long personDetailId, FilterDetailPersonFiscalRegimePaginationOrder filter) {
+        List<DetPersonFiscalRegimeDTO> detPersonFiscalRegimeDTOS = null;
+        if (filter!= null) {
+            detPersonFiscalRegimeDTOS = peopleManagementService.getPeopleFiscalRegime(personDetailId, filter.getPagination(),filter.getOrder());
+        }
+        else {
+            detPersonFiscalRegimeDTOS = peopleManagementService.getPeopleFiscalRegime(personDetailId);
+        }
+        return new ResponseEntity<>(detPersonFiscalRegimeDTOS, HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = SAVE_UPDATE_FISCAL_REGIME, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DetPersonFiscalRegimeDTO> saveOrUpdateFiscalRegime(@RequestBody DetPersonFiscalRegimeDTO detPersonFiscalRegime) {
+        BindingResult errTracking = createErrorTracker();
+        DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTOSaved = peopleManagementService.saveOrUpdateDetPeopleFiscalRegime(detPersonFiscalRegime,errTracking);
+        return buildResponseEntity(detPersonFiscalRegimeDTOSaved, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = GET_FISCAL_REGIME, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DetPersonFiscalRegimeDTO> getFiscalRegime(@RequestParam(FISCAL_REGIME_ID_PARAM) Long idFicalRegime) {
+        BindingResult errTracking = createErrorTracker();
+        DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO = peopleManagementService.getFiscalRegime(idFicalRegime, errTracking);
+        return buildResponseEntity(detPersonFiscalRegimeDTO, errTracking);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Regime Fiscal end ...
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Account ...
+
+    @Override
+    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countBankCards(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
+        return new ResponseEntity<>(peopleManagementService.countBankCards(idPersonDetail), HttpStatus.OK);
+    }
 
     @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -213,11 +261,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(bankCard, errTracking);
     }
 
-    @Override
-    @RequestMapping(value = COUNT_BANK_CARD, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> countBankCards(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
-        return new ResponseEntity<>(peopleManagementService.countBankCards(idPersonDetail), HttpStatus.OK);
-    }
     ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
+
 
 }

@@ -12,6 +12,8 @@ import com.csi.itaca.people.businesslogic.PeopleManagementBusinessLogic;
 import com.csi.itaca.people.model.dao.*;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.tools.utils.jpa.JpaUtils;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +68,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Autowired
     private Beaner beaner;
+
+    @Autowired
+    private DetPersonFiscalRegimeRepository detPersonFiscalRegimeRepository;
 
     @Autowired
     private PeopleManagementBusinessLogic peopleBusinessLogic;
@@ -754,4 +759,92 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         return accountRepository.count(spec);
     }
+
+
+    /////////////////////////////////////////////////// FISCAL REGIME
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetailId) {
+        return getPeopleFiscalRegime(personDetailId,null,null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetail, Pagination pagination, Order order) {
+        Specification<FiscalRegimeEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(FiscalRegimeEntity.PERSON_DETAIL_ID), personDetail);
+            if (order != null && order.getField() != null) {
+                if(order.isAscending()){
+                    query.orderBy(cb.asc(root.get(JpaUtils.getField(FiscalRegimeEntity.class, order))));
+                } else {
+                    query.orderBy(cb.desc(root.get(JpaUtils.getField(FiscalRegimeEntity.class, order))));
+                }
+            }
+
+            return p;
+        };
+
+        List<? extends FiscalRegimeEntity> fiscalRegimeEntities = null;
+        if (pagination != null) {
+            PageRequest pr = new PageRequest(pagination.getPageNo() - 1, pagination.getItemsPerPage());
+            fiscalRegimeEntities = detPersonFiscalRegimeRepository.findAll(spec, pr).getContent();
+        }
+        else {
+            fiscalRegimeEntities = detPersonFiscalRegimeRepository.findAll(spec);
+        }
+
+        return beaner.transform(fiscalRegimeEntities, DetPersonFiscalRegimeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countFiscalRegime(Long personDetailId) {
+        Specification<FiscalRegimeEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(FiscalRegimeEntity.PERSON_DETAIL_ID), personDetailId);
+            }
+            return p;
+        };
+        return detPersonFiscalRegimeRepository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteFiscalRegime(Long idFicalRegime, Errors errTracking) {
+        FiscalRegimeEntity fiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
+        if (fiscalRegimeEntity != null) {
+            detPersonFiscalRegimeRepository.delete(fiscalRegimeEntity);
+            return true;
+        } else {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional
+    public DetPersonFiscalRegimeDTO saveOrUpdateDetPeopleFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO, Errors errTracking) {
+        FiscalRegimeEntity fiscalRegimeEntityToSave = beaner.transform(detPersonFiscalRegimeDTO, FiscalRegimeEntity.class);
+        FiscalRegimeEntity fiscalRegimeSavedEntity = detPersonFiscalRegimeRepository.save(fiscalRegimeEntityToSave);
+        return beaner.transform(fiscalRegimeSavedEntity, DetPersonFiscalRegimeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DetPersonFiscalRegimeDTO getFiscalRegime(Long idFicalRegime, Errors errTracking) {
+        FiscalRegimeEntity fiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
+        if (fiscalRegimeEntity!=null) {
+            return beaner.transform(fiscalRegimeEntity, DetPersonFiscalRegimeDTO.class);
+        }
+        else {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+            return null;
+        }
+    }
+
+    /////////////////////////////////////////////////// END FISCAL REGIME
+
+
 }

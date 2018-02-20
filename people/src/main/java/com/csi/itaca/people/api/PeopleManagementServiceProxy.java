@@ -1,10 +1,7 @@
 package com.csi.itaca.people.api;
 
 import com.csi.itaca.people.model.dto.*;
-import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
-import com.csi.itaca.people.model.filters.AccountSearchFilter;
-import com.csi.itaca.people.model.filters.BankCardSearchFilter;
-import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -21,6 +18,7 @@ public interface PeopleManagementServiceProxy {
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
     String NATIONALITY_ID_PARAM  = "nationalityId";
+    String FISCAL_REGIME_ID_PARAM  = "fiscalRegimeId";
     String COUNTRY_ID = "country.id";
     String BYDEFAULT = "bydefault";
 
@@ -61,6 +59,16 @@ public interface PeopleManagementServiceProxy {
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
 
+    // End points for fiscal regime....
+    String FISCAL_REGIME           = RESOURCE + "/regime";
+    String SEARCH_FISCAL_REGIME             = FISCAL_REGIME + "/find";
+    String COUNT_FISCAL_REGIME             = FISCAL_REGIME + "/count";
+    String DELETE_FISCAL_REGIME             = FISCAL_REGIME + "/delete";
+    String SAVE_UPDATE_FISCAL_REGIME             = FISCAL_REGIME + "/save";
+    String GET_FISCAL_REGIME             = FISCAL_REGIME + "/get";
+
+
+
     /**
      * Gets a person.
      * @param id the person id.
@@ -96,8 +104,6 @@ public interface PeopleManagementServiceProxy {
      * @return true if provided external reference code exists, otherwise false.
      */
     ResponseEntity<Boolean> checkExternalReferenceExists(String externalReferenceCode);
-
-
     //////////////////////// Person detail ...
 
     /**
@@ -155,7 +161,6 @@ public interface PeopleManagementServiceProxy {
 
     ResponseEntity<NationalityDTO> getNationality(Long idNationality);
 
-
     /**
      * counts bank cards.
      * @param idPersonDetail the filter to find bank cards.
@@ -188,6 +193,41 @@ public interface PeopleManagementServiceProxy {
      * @return a response body containing the requested person json object.
      */
     ResponseEntity getBankCard(Long id);
+
+    // Regime Fiscal
+
+    /**
+     * counts Fiscal Regime.
+     * @param personDetailId the filter to find Fiscal Regime.
+     */
+    ResponseEntity<Long> countFiscalRegime(Long personDetailId);
+
+    /**
+     * Deletes a Fiscal Regime together with associated details
+     * @param idFicalRegime the id of the Fiscal Regime to delete.
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteFiscalRegime(Long idFicalRegime);
+
+    /**
+     * Returns a count the number of Fiscal Regime detail items based on the supplied search criteria.
+     * @param filter search filter.
+     * @return People Fiscal Regime details.
+     */
+    ResponseEntity<List<DetPersonFiscalRegimeDTO>> getPeopleFiscalRegime(Long personDetailId, FilterDetailPersonFiscalRegimePaginationOrder filter);
+
+    /**
+     * Saves or updates FiscalRegime.
+     * @param detPersonFiscalRegime the Fiscal Regime to save/update.
+     */
+    ResponseEntity<DetPersonFiscalRegimeDTO> saveOrUpdateFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegime);
+
+    /**
+     * Gets a fiscal regime.
+     * @param idFicalRegime the fiscal regime id.
+     * @return a response body containing the requested fiscal regime json object.
+     */
+    ResponseEntity<DetPersonFiscalRegimeDTO> getFiscalRegime(Long idFicalRegime);
 
 
 /*
