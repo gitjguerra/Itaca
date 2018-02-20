@@ -813,66 +813,16 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking) {
+    public List<? extends PersonDetailDTO> findByPersonId(Long personId, Errors errTracking) {
 
-        /*
-        *********************************************************************************
-        Process
-            1) Search the person Identification_Code on Person
-            2) Take the Person id and Search PersonDetail
-            3) Take the PersonDetail and Search Relations
-            4) Put each relations on PersonDetail List and transform to PersonDetailDTO
-        *********************************************************************************
-         */
-
-
-        // Search the person Identification_Code
-        Specification<PersonEntity> spec = (root, query, cb) -> {
+        Specification<PersonDetailEntity> spec = (root, query, cb) -> {
             Predicate p = null;
-            if (idCode != null) {
-                p = cb.and(cb.equal(root.get(PersonEntity.ID_CODE), idCode));
+            if (personId != null) {
+                p = cb.equal(root.get(PersonDetailEntity.PERSON).get(PersonEntity.ID), personId);
             }
             return p;
         };
-        Person person = repository.findOne(spec);
-
-         //extract object PersonDetailDTO with the personId
-        PersonDetailDTO detailDTO = getPersonDetail(person.getId(),errTracking);
-
-        // Search the personDetailId on related persons
-        Specification<RelatedPersonEntity> spec2 = (root, query, cb) -> {
-            Predicate p = null;
-            if (detailDTO.getId()!= null) {
-                p = cb.equal(root.get(RelatedPersonEntity.ID), detailDTO.getId());
-            }
-            return p;
-        };
-        List<? extends RelatedPersonEntity> related = relationRepository.findAll(spec2);
-
-        // *** Iterator on RelatedPersonEntity and charge the personDetail object with yours fields ***
-        // create estructure with personDetail data
-        List<PersonDetailDTO> detailDTOS = new ArrayList<>();
-        RelatedPersonEntity relatedPersonEntity = null;
-        PersonDetailDTO newDetailDTO = null;
-
-        if(related.size()!=0){
-            // iterator on data
-            Iterator<? extends RelatedPersonEntity> it = related.iterator();
-            while(it.hasNext()){
-
-                relatedPersonEntity = it.next();
-
-                // extract object PersonDetailDTO
-                newDetailDTO = getPersonDetail(relatedPersonEntity.getPersonDetailId(),errTracking);
-
-                //fill the list with personDetailDTO values
-                detailDTOS.add(newDetailDTO);
-            }
-        }else{
-            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
-        }
-        return detailDTOS;
-
+        return beaner.transform(personDetailRepository.findAll(spec), PersonDetailDTO.class);
     }
 
     private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
