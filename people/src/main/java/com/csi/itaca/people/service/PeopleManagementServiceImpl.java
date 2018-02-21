@@ -1,7 +1,6 @@
 package com.csi.itaca.people.service;
 
 import com.csi.itaca.common.model.dao.CountryEntity;
-import com.csi.itaca.people.model.Person;
 import com.csi.itaca.people.model.PersonDetail;
 import com.csi.itaca.people.model.PersonType;
 import com.csi.itaca.people.model.filters.*;
@@ -19,21 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -822,7 +817,17 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             }
             return p;
         };
-        return beaner.transform(personDetailRepository.findAll(spec), PersonDetailDTO.class);
+
+        List<? extends PersonDetailEntity> personDetail = personDetailRepository.findAll(spec);
+        if (personDetail==null || personDetail.isEmpty()) {
+            return Collections.emptyList();
+        }
+        else if (personDetail.get(0) instanceof IndividualDetailEntity) {
+            return beaner.transform(personDetail, IndividualDetailDTO.class);
+        }
+        else {
+            return beaner.transform(personDetail, CompanyDetailDTO.class);
+        }
     }
 
     private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
