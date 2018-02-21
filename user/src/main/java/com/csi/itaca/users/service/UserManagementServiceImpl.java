@@ -16,6 +16,7 @@ import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
 import com.csi.itaca.users.repository.UserConfigRepository;
 import com.csi.itaca.users.repository.UserLanguageRepository;
 import com.csi.itaca.users.repository.UserRepository;
+import java.time.LocalDate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,12 +114,25 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     @Transactional
     public UserDTO createUpdateUser(UserDTO userToSave, Errors errTracking) {
-
+        
+        if (userToSave.isActiveUser()) {
+             userToSave.setCompanyEndDate(null);
+        } else {
+            userToSave.setCompanyEndDate(LocalDate.now());
+            userToSave.setBlockedUser(true);
+        }
         // TODO: better to implement a create user & update user methods.
         UserEntity userToSaveEntity = beaner.transform(userToSave, UserEntity.class);
-
+        
+        if (userToSaveEntity.isBlockedUser()) {
+                userToSaveEntity.setBlockedDate(LocalDate.now());
+        } else {
+                userToSaveEntity.setBlockedDate(null);
+        }
+         
         if (userToSave.getId() == null) {
             // create
+            userToSaveEntity.setCompanyStartDate(LocalDate.now());
             entityManager.persist(userToSaveEntity);
         }
         else {

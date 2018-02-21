@@ -43,8 +43,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
      * @param criteria
      * @return list of users
      */
-    @RequestMapping(value = "", method = RequestMethod.GET, 
-                            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getAllUsers(@RequestBody(required = false) UserFilterPaginationOrderDTO criteria) {
         List<UserDTO> users = null;
         if (criteria!=null) {
@@ -80,9 +79,8 @@ public class UserManagementRestController extends ItacaBaseRestController implem
      * @param errTracking
      * @return ???
      */
-    @RequestMapping(value = "", method = RequestMethod.POST,
-            consumes = { MediaType.APPLICATION_JSON_VALUE },
-            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE },
+                                                              produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity createUser(@RequestBody UserDTO user, BindingResult errTracking) {
         UserDTO updatedUser = userManagementService.createUpdateUser(user, errTracking);
         return buildResponseEntity(updatedUser, errTracking);
@@ -96,9 +94,8 @@ public class UserManagementRestController extends ItacaBaseRestController implem
      * @param user
      * @return ???
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT,
-                    consumes = { MediaType.APPLICATION_JSON_VALUE },
-                    produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE },
+                                                                 produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody UserDTO user, BindingResult errTracking) {
         UserDTO updatedUser = userManagementService.createUpdateUser(user, errTracking);
         return buildResponseEntity(updatedUser, errTracking);
@@ -111,27 +108,25 @@ public class UserManagementRestController extends ItacaBaseRestController implem
      * @param id
      * @return ???
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE,
-                            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity deleteUser(@PathVariable("id") Long id) {
         BindingResult errTracking = createErrorTracker();
         userManagementService.deleteUserById(id, errTracking);
         return buildResponseEntity(errTracking);
     }
 //end of basic CRUDs
-    
+
     @Override
-    @RequestMapping(value = AUTH, method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value ="/auth", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity auth(@RequestParam(UserManagementServiceProxy.AUTH_USERNAME_PARAM) String username,
                                @RequestParam(UserManagementServiceProxy.AUTH_PASSWORD_PARAM) String password) {
-
         BindingResult errTracking = createErrorTracker();
         UserDTO user = userManagementService.auth(username, password, errTracking);
         return buildResponseEntity(user, errTracking);
     }
 
     @Override
-    @RequestMapping(value = CHANGE_PASSWORD, method = RequestMethod.PUT,
+    @RequestMapping(value = "/changePassword", method = RequestMethod.PUT,
                     consumes = { MediaType.APPLICATION_JSON_VALUE },
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordDTO changePassword,
@@ -149,6 +144,12 @@ public class UserManagementRestController extends ItacaBaseRestController implem
 
         return ApiGlobalRestExceptionHandler.buildApiErrorsView(errTracking);
     }
+    
+    @RequestMapping(value = "/getLanguages", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity getLanguages() {
+        List<UserLanguageDTO> languages = userManagementService.getUserLanguages();
+        return new ResponseEntity<>(languages, HttpStatus.OK);
+    }
 
     @Override
     @RequestMapping(value = UPDATE_PREFERENCES, method = RequestMethod.PUT,
@@ -156,7 +157,6 @@ public class UserManagementRestController extends ItacaBaseRestController implem
             produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity updateUserPreferences(@Valid @RequestBody PersonalPreferencesDTO preferences,
                                                 BindingResult errTracking) {
-
         // Are there any validation errors?
         if (!errTracking.hasErrors()) {
             // Attempt preferences update
@@ -169,9 +169,8 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return ApiGlobalRestExceptionHandler.buildApiErrorsView(errTracking);
     }
 
-    @RequestMapping(value = SAVE_USER_CONFIG, method = RequestMethod.PUT,
-            consumes = { MediaType.APPLICATION_JSON_VALUE },
-            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = SAVE_USER_CONFIG, method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE },
+                                                                          produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity saveUserConfig(@Valid @RequestBody UserConfigDTO userConfig, BindingResult errTracking) {
         userManagementService.saveUserConfig(userConfig, errTracking);
         return buildResponseEntity(errTracking);
@@ -192,11 +191,5 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         CountDTO counts = new CountDTO();
         counts.setUserCount(userManagementService.countUsers(userFilter));
         return new ResponseEntity(counts, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/getLanguages", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity getLanguages() {
-        List<UserLanguageDTO> languages = userManagementService.getUserLanguages();
-        return new ResponseEntity<>(languages, HttpStatus.OK);
     }
 }
