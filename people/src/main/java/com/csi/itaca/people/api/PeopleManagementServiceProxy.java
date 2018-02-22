@@ -17,6 +17,7 @@ import java.util.List;
 public interface PeopleManagementServiceProxy {
 
     String ID_PARAM                 = "id";
+    String ID_ADDRES_PARAM          = "addressId";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
     String IDENTIFICATION_CODE      = "identiificationCode";
@@ -57,6 +58,12 @@ public interface PeopleManagementServiceProxy {
     String DELETE_CONTACT             = RESOURCE_CONTACT + "/delete";
     String COUNT_CONTACT              = RESOURCE_CONTACT +"/count";
     String SAVE_CONTACT               = RESOURCE_CONTACT + "/save";
+
+    String GET_ADDRESFORMAT1              = RESOURCE_ACCOUNT +"/getAddresFormat1";
+    String COUNT_ADDRESFORMAT1            = RESOURCE_ACCOUNT +"/countAddresFormat1";
+    String SAVE_ADDRESFORMAT1              = RESOURCE_ACCOUNT + "/saveAddresFormat1";
+    String DELETE_ADDRESFORMAT1           = RESOURCE_ACCOUNT + "/deleteAddresFormat1";
+
     /**
      * Gets a person.
      * @param id the person id.
@@ -205,6 +212,15 @@ public interface PeopleManagementServiceProxy {
      * @param errTracking error tracking.
      */
     ResponseEntity saveOrUpdateContact(ContactDTO contactToSaveOrUpdate,BindingResult errTracking);
+
+    ResponseEntity getAddresFormat1(Long id);
+
+    ResponseEntity<Long> countAddresFormat1(Long addressId);
+
+    ResponseEntity saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate,BindingResult errTracking);
+
+    ResponseEntity deleteaddresformat1(Long id);
+
 /*
     //addresses
 

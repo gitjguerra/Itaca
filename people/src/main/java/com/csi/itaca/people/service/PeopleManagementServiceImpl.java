@@ -73,6 +73,11 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Autowired
     private PeopleManagementBusinessLogic peopleBusinessLogic;
 
+    @Autowired
+    private AddressFormat1Repository addressFormat1Repository;
+
+
+
     @Override
     public PersonDTO getPerson(Long id, Errors errTracking) {
         PersonEntity person = getPersonEntity(id, errTracking);
@@ -781,6 +786,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Override
     @Transactional
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
         AccountEntity accountEntity = accountRepository.findOne(id);
@@ -870,6 +877,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 
+    // ********************* Contact ************************************************************
+
     @Override
     @Transactional(readOnly = true)
     public Long countContacts(Long personDetailId) {
@@ -931,4 +940,76 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     }
 
     // ********************* Contact ************************************************************
+
+    @Override
+    @Transactional
+    public AddressFormat1DTO getAddresformat1(Long id, Errors errTracking) {
+
+        AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(id);
+        if (addressFormat1Entity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countAddresformat1(Long addresformat) {
+
+        Specification<AddressFormat1Entity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (addresformat != null) {
+                p = cb.equal(root.get(AddressFormat1Entity.ID), addresformat);
+            }
+            return p;
+        };
+        return addressFormat1Repository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO dto, Errors errTracking) {
+
+        AddressFormat1Entity addressFormat1UpdateEntity = new AddressFormat1Entity();
+
+        AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(dto.getAddressId());
+
+        if (addressFormat1Entity == null && errTracking != null){
+            addressFormat1Entity = addressFormat1UpdateEntity;
+        }
+        addressFormat1Entity.setAddressId(dto.getAddressId());
+        addressFormat1Entity.setIdpoblacion(dto.getidpoblacion());
+        addressFormat1Entity.setIdcodpostal(dto.getidcodpostal());
+        addressFormat1Entity.setIdtypevia(dto.getidtypevia());
+        addressFormat1Entity.setNombrevia(dto.getnombrevia());
+        addressFormat1Entity.setNumerovia(dto.getnumerovia());
+        addressFormat1Entity.setComplementos(dto.getcomplementos());
+
+        addressFormat1Entity = addressFormat1Repository.save(addressFormat1Entity);
+        entityManager.flush();
+        entityManager.clear();
+        return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteaddresformat1(Long Id, Errors errTracking) {
+        AddressFormat1Entity addresformatToDelete = getaddresEntity(Id, errTracking);
+        addressFormat1Repository.delete(addresformatToDelete);
+    }
+
+    @Transactional(readOnly = true)
+    AddressFormat1Entity getaddresEntity(Long id, Errors errTracking) {
+        AddressFormat1Entity Address = addressFormat1Repository.findOne(id);
+        if (Address == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return Address;
+    }
+
+
+
 }

@@ -24,7 +24,7 @@ logging:
     org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer: DEBUG
   
 server:
-  port: 8081
+  port: 8085
   contextPath: /itaca
 
 configurator:

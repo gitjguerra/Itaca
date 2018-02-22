@@ -3,6 +3,7 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.AccountClasification;
+import com.csi.itaca.people.model.AddressFormat1;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -73,6 +74,13 @@ public class PeopleManagementRestControllerTest {
     private static final String CARD = "card";
     private static final String ACCOUNT = "id";
     private static final String ID_CARD = "idBankCard";
+
+
+    private AddressFormat1DTO addressFormat1DTO;
+    //private AccountDTO accountDTO;
+    //private static final String CARD = "card";
+    //private static final String ACCOUNT = "id";
+    //private static final String ID_CARD = "idBankCard";
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
@@ -458,6 +466,39 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+
+    @Test
+    public void getAddresformat1() throws Exception {
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdpoblacion("00");
+        addressFormat1DTO.setIdcodpostal("01");
+        addressFormat1DTO.setIdtypevia("02");
+        addressFormat1DTO.setNombrevia("03");
+        addressFormat1DTO.setNumerovia("04");
+        addressFormat1DTO.setComplementos("05");
+
+        Mockito.when(service.getAddresformat1(any(), any(Errors.class))).thenReturn(addressFormat1DTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_ADDRESFORMAT1)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-AddresFormat1",
+                        responseFields(fieldWithPath("addressId").description("IdBankCard type ID.")
+                                , fieldWithPath("idpoblacion").description("Card.")
+                                , fieldWithPath("idcodpostal").description("idPersonDetail.")
+                                , fieldWithPath("idtypevia").description("idCardType.")
+                                , fieldWithPath("nombrevia").description("principal.")
+                                , fieldWithPath("numerovia").description("available.")
+                                , fieldWithPath("complementos").description("idBank.")
+                                                       )
+                ));
+    }
+
+
+
     @Test
     public void getAccount() throws Exception {
 
@@ -670,6 +711,42 @@ public class PeopleManagementRestControllerTest {
 
                         )
                 ));
+    }
+
+    @Test
+    public void saveOrUpdateAddresFotmat() throws Exception {
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdpoblacion("00");
+        addressFormat1DTO.setIdcodpostal("01");
+        addressFormat1DTO.setIdtypevia("02");
+        addressFormat1DTO.setNombrevia("03");
+        addressFormat1DTO.setNumerovia("04");
+        addressFormat1DTO.setComplementos("05");
+
+        Mockito.when(service.saveOrUpdateAddresFotmat(any(), any(Errors.class))).thenReturn(addressFormat1DTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_ADDRESFORMAT1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(addressFormat1DTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-Address-Format",
+                        responseFields(fieldWithPath("addressId").description("Identificador de la ADDRESS")
+                                , fieldWithPath("idpoblacion").description("Identificador de la  poblacion.")
+                                , fieldWithPath("idcodpostal").description("Identificador del Codigo Postal.")
+                                , fieldWithPath("idtypevia").description("Codigo de TYPE de via (1-Calle, 2 - Avenida ...).")
+                                , fieldWithPath("nombrevia").description("Nombre de la via.")
+                                , fieldWithPath("numerovia").description("Numero de via.")
+                                , fieldWithPath("complementos").description("Descripcion complementaria.")
+
+                        )
+                ));
+
+
+
     }
 
 }

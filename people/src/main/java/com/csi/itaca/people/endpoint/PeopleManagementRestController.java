@@ -121,6 +121,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Account ...
 
+    @Override
     @RequestMapping(value = SAVE_ACCOUNT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveOrUpdateAccount(@Valid @RequestBody AccountDTO accountToSaveOrUpdate,
                                               BindingResult errTracking) {
@@ -165,6 +166,39 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return new ResponseEntity<>(peopleManagementService.countBankCards(idPersonDetail), HttpStatus.OK);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
+    /////////////////////////////////////////////////////////////////////////////////////////////  address ini ...
+
+    @Override
+    @RequestMapping(value = GET_ADDRESFORMAT1, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getAddresFormat1(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        AddressFormat1DTO user = peopleManagementService.getAddresformat1(id, errTracking);
+        return buildResponseEntity(user, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = COUNT_ADDRESFORMAT1, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countAddresFormat1(@RequestParam(PeopleManagementServiceProxy.ID_ADDRES_PARAM) Long addressId) {
+        return new ResponseEntity<>(peopleManagementService.countAddresformat1(addressId), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = SAVE_ADDRESFORMAT1, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateAddresFotmat(@Valid @RequestBody AddressFormat1DTO addresFotmatToSaveOrUpdate,
+                                              BindingResult errTracking) {
+        AddressFormat1DTO addressFormat1DTO = peopleManagementService.saveOrUpdateAddresFotmat(addresFotmatToSaveOrUpdate, errTracking);
+        return buildResponseEntity(addressFormat1DTO, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = DELETE_ADDRESFORMAT1, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteaddresformat1(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+
+        BindingResult errTracking = createErrorTracker();
+        peopleManagementService.deleteaddresformat1(id,errTracking);
+        return buildResponseEntity(errTracking);
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////// Contacts ...
 

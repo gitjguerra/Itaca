@@ -177,4 +177,12 @@ public interface PeopleManagementService {
      */
     ContactDTO saveOrUpdateContact(ContactDTO contactToSaveOrUpdate, Errors errTracking);
 
+    AddressFormat1DTO getAddresformat1(Long id, Errors errTracking);
+
+    Long countAddresformat1(Long addressId);
+
+    AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate, Errors errTracking);
+
+    void deleteaddresformat1(Long personId, Errors errTracking);
+
 }

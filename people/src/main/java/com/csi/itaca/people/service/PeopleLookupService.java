@@ -53,4 +53,7 @@ public interface PeopleLookupService {
      * @return the contacts.
      */
     List<ContactDTO> lookupContacts();
+    List<AddressFormat1DTO>  lookupAddresFormat1();
+
+
 }
