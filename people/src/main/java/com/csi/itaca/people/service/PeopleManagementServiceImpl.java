@@ -65,9 +65,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private BankCardRepository bankCardRepository;
 
     @Autowired
-    private ContactRepository contactRepository;
-
-    @Autowired
     private Beaner beaner;
 
     @Autowired
@@ -76,7 +73,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Autowired
     private AddressFormat1Repository addressFormat1Repository;
 
-
+    @Autowired
+    private PublicPersonRepository publicPersonRepository;
 
     @Override
     public PersonDTO getPerson(Long id, Errors errTracking) {
@@ -658,64 +656,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return p;
     }
 
-    private Predicate applyLikeLowerAccountFilter(CriteriaBuilder cb, Root<? extends AccountEntity> r, String field,
-                                                  String value, Predicate p, int fieldDepth) {
-
-        value = value.trim().toLowerCase();
-
-        if (fieldDepth == 1) {
-            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
-                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
-        } else if (fieldDepth > 1 && fieldDepth < 7) {
-            String fields[] = field.split("[.]", -1);
-            if (fieldDepth == 2) {
-                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
-                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
-            }
-        }
-        return p;
-    }
-    private Predicate applyAccountFilter(Predicate p, CriteriaBuilder cb,
-                                         Root<? extends AccountEntity> r,
-                                         AccountSearchFilter filter) {
-        if (filter.getId() != null) {
-            p = applyLikeLowerAccountFilter(cb, r,AccountEntity.ID+ ".", String.valueOf(filter.getId()), p, 1);
-        }
-        if (StringUtils.isNotEmpty(filter.getNumber())) {
-            p = applyLikeLowerAccountFilter(cb, r, AccountEntity.ACCOUNT, filter.getNumber(), p,2);
-        }
-        return p;
-    }
-
-    private Predicate applyLikeLowerBankCardFilter(CriteriaBuilder cb, Root<? extends BankCardEntity> r, String field,
-                                                  String value, Predicate p, int fieldDepth) {
-
-        value = value.trim().toLowerCase();
-
-        if (fieldDepth == 1) {
-            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
-                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
-        } else if (fieldDepth > 1 && fieldDepth < 7) {
-            String fields[] = field.split("[.]", -1);
-            if (fieldDepth == 2) {
-                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
-                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
-            }
-        }
-        return p;
-    }
-    private Predicate applyBankCardFilter(Predicate p, CriteriaBuilder cb,
-                                         Root<? extends BankCardEntity> r,
-                                          BankCardSearchFilter filter) {
-        if (filter.getId() != null) {
-            p = applyLikeLowerBankCardFilter(cb, r,BankCardEntity.ID_BANK_CARD  + ".", String.valueOf(filter.getId()), p, 1);
-        }
-        if (StringUtils.isNotEmpty(filter.getCardType().getLiteral())) {
-            p = applyLikeLowerBankCardFilter(cb, r, BankCardEntity.CARD, filter.getLiteral(), p,2);
-        }
-        return p;
-    }
-
     @Override
     @Transactional(readOnly = true)
     public Long countBankCards(Long personDetailId) {
@@ -734,19 +674,21 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
+        AccountEntity accountUpdateEntity = new AccountEntity();
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
         if (accountEntity == null && errTracking != null){
-            accountEntity = new AccountEntity();
+            accountEntity = accountUpdateEntity;
+
         }
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
-        accountEntity.setPersonDetailId(dto.getPersonDetailId());
-        accountEntity.setAccountClasificationId(dto.getAccountClasificationId());
-        accountEntity.setTypeAccountId(dto.getTypeAccountId());
+        accountEntity.setPersonDetail(dto.getPersonDetail());
+        accountEntity.setAccountClasification(dto.getAccountClasification());
+        accountEntity.setTypeAccount(dto.getTypeAccount());
         accountEntity.setAvailable(dto.getAvailable());
         accountEntity.setPrincipal(dto.getPrincipal());
-        accountEntity.setBankId(dto.getBankId());
+        accountEntity.setIdBank(dto.getIdBank());
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
@@ -760,18 +702,20 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getBankCardId());
+        BankCardEntity bankCardUpdateEntity = new BankCardEntity();
 
-        if (bankCardEntity == null){
-            bankCardEntity = new BankCardEntity();
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
+
+        if (bankCardEntity == null && errTracking != null){
+            bankCardEntity = bankCardUpdateEntity;
         }
-        bankCardEntity.setBankId(dto.getBankId());
+        bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setBankCardId(dto.getBankCardId());
+        bankCardEntity.setIdBank(dto.getIdBank());
         bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setCardTypeId(dto.getCardTypeId());
+        bankCardEntity.setIdCardType(dto.getIdBankCard());
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
-        bankCardEntity.setPersonDetailId(dto.getPersonDetailId());
+        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 
@@ -821,123 +765,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return accountRepository.count(spec);
     }
 
-    // WU
-    // ********************* Contact ************************************************************
-    @Override
-    public ContactDTO getContact(Long idContact, Errors errTracking) {
-
-        ContactDTO contactDTO = null;
-
-        ContactEntity contactEntity = contactRepository.findOne(idContact);
-        if (contactEntity!=null) {
-            return beaner.transform(contactEntity, ContactDTO.class);
-        }
-        return contactDTO;
-
-    }
-
-    @Override
-    @Transactional
-    public void deleteContact(Long contactId, Errors errTracking) {
-
-        ContactDTO contact = getContact(contactId, errTracking);
-        if(contact==null){
-            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
-        }else{
-            contactRepository.delete(contact.getId());
-        }
-
-    }
-
-    private Predicate applyLikeLowerContactFilter(CriteriaBuilder cb, Root<? extends ContactEntity> r, String field,
-                                                  String value, Predicate p, int fieldDepth) {
-
-        value = value.trim().toLowerCase();
-
-        if (fieldDepth == 1) {
-            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
-                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
-        } else if (fieldDepth > 1 && fieldDepth < 7) {
-            String fields[] = field.split("[.]", -1);
-            if (fieldDepth == 2) {
-                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
-                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
-            }
-        }
-        return p;
-    }
-    private Predicate applyContactFilter(Predicate p, CriteriaBuilder cb,
-                                         Root<? extends ContactEntity> r,
-                                         ContactSearchFilter filter) {
-        if (filter.getId() != null) {
-            p = applyLikeLowerContactFilter(cb, r,ContactEntity.ID + ".", String.valueOf(filter.getId()), p, 1);
-        }
-        return p;
-    }
-
-    // ********************* Contact ************************************************************
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long countContacts(Long personDetailId) {
-
-        Specification<ContactEntity> spec = (root, query, cb) -> {
-            Predicate p = null;
-            if (personDetailId != null) {
-                p = cb.equal(root.get(ContactEntity.ID_PERSON_DETAIL), personDetailId);
-            }
-            return p;
-        };
-        return contactRepository.count(spec);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ContactDTO saveOrUpdateContact(ContactDTO dto, Errors errTracking) {
-
-        ContactEntity contactEntity2 = contactRepository.findOne(dto.getId());
-
-        if (contactEntity2 == null && errTracking != null){
-            contactEntity2 = new ContactEntity();
-        }
-
-        contactEntity2.setId(dto.getId());
-        contactEntity2.setContactType(dto.getContactType());
-        contactEntity2.setPersonDetailId(dto.getPersonDetailId());
-        contactEntity2.setIdAddress(dto.getIdAddress());
-        contactEntity2.setValueContact(dto.getValueContact());
-
-        contactEntity2 = contactRepository.save(contactEntity2);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        return beaner.transform(contactEntity2, ContactDTO.class);
-
-    }
-
-    private Predicate applyContactFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
-                                          ContactSearchFilter filter, String path) {
-
-        if (filter.getId() != null) {
-            p = cb.equal(root.get(ContactEntity.ID), 1);
-        }
-        return p;
-    }
-
-    @Override
-    public ContactDTO getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
-
-        Specification<ContactEntity> spec = (root, query, cb) -> {
-            Predicate p = cb.equal(root.get(ContactEntity.ID), criteria.getId());
-            return applyContactFilters(root, p, cb, criteria, "");
-        };
-
-        return beaner.transform(contactRepository.findOne(spec), ContactDTO.class);
-
-    }
-
-    // ********************* Contact ************************************************************
 
     @Override
     @Transactional
@@ -968,26 +795,40 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional
     public AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO dto, Errors errTracking) {
-
         AddressFormat1Entity addressFormat1UpdateEntity = new AddressFormat1Entity();
-
         AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(dto.getAddressId());
-
         if (addressFormat1Entity == null && errTracking != null){
             addressFormat1Entity = addressFormat1UpdateEntity;
         }
         addressFormat1Entity.setAddressId(dto.getAddressId());
-        addressFormat1Entity.setIdpoblacion(dto.getidpoblacion());
-        addressFormat1Entity.setIdcodpostal(dto.getidcodpostal());
-        addressFormat1Entity.setIdtypevia(dto.getidtypevia());
-        addressFormat1Entity.setNombrevia(dto.getnombrevia());
-        addressFormat1Entity.setNumerovia(dto.getnumerovia());
-        addressFormat1Entity.setComplementos(dto.getcomplementos());
-
+        addressFormat1Entity.setIdpoblacion(dto.getIdpoblacion());
+        addressFormat1Entity.setIdcodpostal(dto.getIdcodpostal());
+        addressFormat1Entity.setIdtypevia(dto.getIdtypevia());
+        addressFormat1Entity.setNombrevia(dto.getNombrevia());
+        addressFormat1Entity.setNumerovia(dto.getNumerovia());
+        addressFormat1Entity.setComplementos(dto.getComplementos());
         addressFormat1Entity = addressFormat1Repository.save(addressFormat1Entity);
         entityManager.flush();
         entityManager.clear();
         return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+    @Override
+    @Transactional
+    public PublicPersonDTO saveOrUpdatePublicPerson(PublicPersonDTO dto, Errors errTracking) {
+        PublicPersonEntity PublicPersonUpdateEntity = new PublicPersonEntity();
+        PublicPersonEntity publicPersonEntity = publicPersonRepository.findOne(dto.getIdPerPublicPerson());
+        if (publicPersonEntity == null && errTracking != null){
+            publicPersonEntity = PublicPersonUpdateEntity;
+        }
+        publicPersonEntity.setIdPerPublicPerson(dto.getIdPerPublicPerson());
+        publicPersonEntity.setIdTypePublicPerson(dto.getIdTypePublicPerson());
+        publicPersonEntity.setIdPerson(dto.getIdPerson());
+        publicPersonEntity = publicPersonRepository.save(publicPersonEntity);
+        entityManager.flush();
+        entityManager.clear();
+        return beaner.transform(publicPersonEntity, PublicPersonDTO.class);
 
     }
 
@@ -1006,6 +847,54 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
         }
         return Address;
+    }
+
+
+    @Override
+    @Transactional
+    public PublicPersonDTO getPublicPerson(Long id, Errors errTracking) {
+
+        PublicPersonEntity publicPersonEntity = publicPersonRepository.findOne(id);
+        if (publicPersonEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(publicPersonEntity, PublicPersonDTO.class);
+
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long counPublicPerson(Long PublicPerson) {
+
+        Specification<PublicPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (PublicPerson != null) {
+                p = cb.equal(root.get(PublicPersonEntity.id_per_public_person), PublicPerson);
+            }
+            return p;
+        };
+        return publicPersonRepository.count(spec);
+    }
+
+
+
+
+
+    @Override
+    @Transactional
+    public void deletePublicPerson(Long Id, Errors errTracking) {
+        PublicPersonEntity PublicPersonformatToDelete = getPublicPersonEntity(Id, errTracking);
+        publicPersonRepository.delete(PublicPersonformatToDelete);
+    }
+
+    @Transactional(readOnly = true)
+    PublicPersonEntity getPublicPersonEntity(Long id, Errors errTracking) {
+        PublicPersonEntity Person = publicPersonRepository.findOne(id);
+        if (Person == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return Person;
     }
 
 

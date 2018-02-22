@@ -15,47 +15,47 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 public class AddressFormat1DTO implements AddressFormat1 {
 
-	private Long addressId;
+	private Long AddressId;
 
-	private String idpoblacion;
+	private String Idpoblacion;
 
-	private String idcodpostal;
+	private String Idcodpostal;
 
-	private String idtypevia;
+	private String Idtypevia;
 
-	private String nombrevia;
+	private String Nombrevia;
 
-	private String numerovia;
+	private String Numerovia;
 
-	private String complementos;
+	private String Complementos;
 
 	@Override
-	public String getidpoblacion() {
-		return idpoblacion;
+	public String getIdpoblacion() {
+		return Idpoblacion;
 	}
 
 	@Override
-	public String getidcodpostal() {
-		return idcodpostal;
+	public String getIdcodpostal() {
+		return Idcodpostal;
 	}
 
 	@Override
-	public String getidtypevia() {
-		return idtypevia;
+	public String getIdtypevia() {
+		return Idtypevia;
 	}
 
 	@Override
-	public String getnombrevia() {
-		return nombrevia;
+	public String getNombrevia() {
+		return Nombrevia;
 	}
 
 	@Override
-	public String getnumerovia() {
-		return numerovia;
+	public String getNumerovia() {
+		return Numerovia;
 	}
 
 	@Override
-	public String getcomplementos() {
-		return complementos;
+	public String getComplementos() {
+		return Complementos;
 	}
 }

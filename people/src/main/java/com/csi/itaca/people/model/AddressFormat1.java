@@ -4,17 +4,16 @@ public interface AddressFormat1 {
 	
 	Long getAddressId();
 
-	String getidpoblacion();
+	String getIdpoblacion();
 
-	String getidcodpostal();
+	String getIdcodpostal();
 
-	String getidtypevia();
+	String getIdtypevia();
 
-	String getnombrevia();
+	String getNombrevia();
 
-	String getnumerovia();
+	String getNumerovia();
 
-	String getcomplementos();
-
+	String getComplementos();
 
 }

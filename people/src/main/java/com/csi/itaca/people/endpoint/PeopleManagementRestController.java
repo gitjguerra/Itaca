@@ -5,7 +5,6 @@ import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
-import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,6 +190,16 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(addressFormat1DTO, errTracking);
     }
 
+
+    @Override
+    @RequestMapping(value = SAVE_PUBLICPERSON, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdatePublicPerson(@Valid @RequestBody PublicPersonDTO publicPersonFotmatToSaveOrUpdate,
+                                                   BindingResult errTracking) {
+        PublicPersonDTO publicPersonDTO = peopleManagementService.saveOrUpdatePublicPerson(publicPersonFotmatToSaveOrUpdate, errTracking);
+        return buildResponseEntity(publicPersonDTO, errTracking);
+    }
+
+
     @Override
     @RequestMapping(value = DELETE_ADDRESFORMAT1, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteaddresformat1(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
@@ -200,48 +209,33 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(errTracking);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////// Contacts ...
 
     @Override
-    @RequestMapping(value = CONTACT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getContact(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long idContact) {
+    @RequestMapping(value = GET_PUBLICPERSON, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getPublicPerson(@RequestParam(PeopleManagementServiceProxy.ID_PUBLIC_PERSON) Long id) {
 
         BindingResult errTracking = createErrorTracker();
-        ContactDTO contactGet = peopleManagementService.getContact(idContact, errTracking);
-        return buildResponseEntity(contactGet, errTracking);
+        PublicPersonDTO user = peopleManagementService.getPublicPerson(id, errTracking);
+        return buildResponseEntity(user, errTracking);
     }
 
     @Override
-    @RequestMapping(value = PERSON_CONTACT, method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPersonContact(ContactSearchFilter criteria) {
-        BindingResult errTracking = createErrorTracker();
-        ContactDTO personContact = peopleManagementService.getPersonContact(criteria, errTracking);
-        return buildResponseEntity(personContact, errTracking);
+    @RequestMapping(value = COUNT_PUBLICPERSON, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> counPublicPerson(@RequestParam(PeopleManagementServiceProxy.ID_PUBLIC_PERSON) Long publicpersonId) {
+        return new ResponseEntity<>(peopleManagementService.counPublicPerson(publicpersonId), HttpStatus.OK);
     }
 
+
+
+
     @Override
-    @RequestMapping(value = DELETE_CONTACT, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteContact(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
+    @RequestMapping(value = DELETE_PUBLICPERSON, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity DeletePublicPerson(@RequestParam(PeopleManagementServiceProxy.ID_PUBLIC_PERSON) Long id) {
 
         BindingResult errTracking = createErrorTracker();
-        peopleManagementService.deleteContact(id,errTracking);
+        peopleManagementService.deletePublicPerson(id,errTracking);
         return buildResponseEntity(errTracking);
     }
 
-    @Override
-    @RequestMapping(value = COUNT_CONTACT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> countContact(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
-        return new ResponseEntity<>(peopleManagementService.countContacts(idPersonDetail), HttpStatus.OK);
-    }
-
-    @Override
-    @RequestMapping(value = SAVE_CONTACT, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ContactDTO> saveOrUpdateContact(@Valid @RequestBody ContactDTO contactToSaveOrUpdate,
-                                                          BindingResult errTracking) {
-        ContactDTO contactDTO = peopleManagementService.saveOrUpdateContact(contactToSaveOrUpdate, errTracking);
-        return buildResponseEntity(contactDTO, errTracking);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////// Contacts End ...
 
 }

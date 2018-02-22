@@ -17,70 +17,75 @@ import javax.persistence.*;
 //@DiscriminatorColumn(name="person_type", discriminatorType=DiscriminatorType.STRING)
 public class AddressFormat1Entity implements AddressFormat1 {
 
-	public static final String ID 						= "addressId";
-	public static final String id_poblacion 			= "idpoblacion";
-	public static final String id_cod_postal 			= "idcodpostal";
-	public static final String id_type_via 	            = "idtypevia";
-	public static final String nombre_via 				= "nombrevia";
-	public static final String numero_via 				= "numerovia";
-	public static final String complemento  			= "complementos";
+	public static final String ID 						= "AddressId";
+	public static final String id_poblacion 			= "Idpoblacion";
+	public static final String id_cod_postal 			= "Idcodpostal";
+	public static final String id_type_via 	            = "Idtypevia";
+	public static final String nombre_via 				= "Nombrevia";
+	public static final String numero_via 				= "Numerovia";
+	public static final String complemento  			= "Complementos";
 
 
 	@Id
 	@Column(name="id_address")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_TYPE_ADDRESS")
 	@SequenceGenerator(name = "SEQ_TYPE_ADDRESS", sequenceName = "SEQ_TYPE_ADDRESS", allocationSize = 1)
-	private Long addressId;
+	private Long AddressId;
 
 	@Column(name="id_poblacion")
-	private String idpoblacion;
+	public String Idpoblacion;
 
 	@Column(name="id_cod_postal")
-	private String idcodpostal;
+	private String Idcodpostal;
 
 	//@Column
 	//private Long publica;
 
 	@Column(name="id_type_via")
-	private String idtypevia;
+	private String Idtypevia;
 
 	@Column(name="nombre_via")
-	private String nombrevia;
+	private String Nombrevia;
 
 
 	@Column(name="numero_via")
-	private String numerovia;
+	private String Numerovia;
 
 	@Column(name="complemento")
-	private String complementos;
+	private String Complementos;
+
 
 	@Override
-	public String getidpoblacion() {
-		return idpoblacion;
+	public String getIdpoblacion() {
+		return Idpoblacion;
+	}
+
+
+	@Override
+	public String getIdcodpostal() {
+		return Idcodpostal;
 	}
 
 	@Override
-	public String getidcodpostal() {
-		return idcodpostal;
+	public String getIdtypevia() {
+		return Idtypevia;
 	}
 
 	@Override
-	public String getidtypevia() {
-		return idtypevia;
+	public String getNombrevia() {
+		return Nombrevia;
 	}
 
 	@Override
-	public String getnombrevia() {
-		return nombrevia;
+	public String getNumerovia() {
+		return Numerovia;
 	}
 
 	@Override
-	public String getnumerovia() {
-		return numerovia;
+	public String getComplementos() {
+		return Complementos;
 	}
 
-	@Override
-	public String getcomplementos() {
-		return complementos;
-	}
+
+
 }
