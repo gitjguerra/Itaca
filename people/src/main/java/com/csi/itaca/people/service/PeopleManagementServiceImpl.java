@@ -786,8 +786,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     @Override
     @Transactional
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     public AccountDTO getAccount(Long id, Errors errTracking) {
 
         AccountEntity accountEntity = accountRepository.findOne(id);
