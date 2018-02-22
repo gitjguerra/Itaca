@@ -86,7 +86,7 @@ public class PeopleManagementRestControllerTest {
 
         testIndividualDTO = new IndividualDTO();
         testIndividualDTO.setId(1L);
-        testIndividualDTO.setDateOfBirth(LocalDate.of(1987, 06, 12));
+        testIndividualDTO.setDateOfBirth(LocalDate.of(1987, 6, 12));
         testIndividualDTO.setExternalReferenceCode("Ref123");
         testIndividualDTO.setIdentificationCode("IDCode123");
 
@@ -174,17 +174,16 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.findPeople(any(), any(Errors.class))).thenReturn(people);
 
-        StringBuilder requestBody = new StringBuilder();
-        requestBody.append("{");
-        requestBody.append("\"@type\":").append("\"individual\"");
-        requestBody.append(",\"personType\":").append("{\"id\":\"individual\"}");
-        requestBody.append(",\"idCode\":").append("\"IDCODE123\"");
-        requestBody.append(",\"idType\":").append("{\"id\":\"2\"}");
-        requestBody.append("}");
+        String requestBody = "{" +
+                "\"@type\":" + "\"individual\"" +
+                ",\"personType\":" + "{\"id\":\"individual\"}" +
+                ",\"idCode\":" + "\"IDCODE123\"" +
+                ",\"idType\":" + "{\"id\":\"2\"}" +
+                "}";
 
         mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_PEOPLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody.toString()))
+                .content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -693,25 +692,36 @@ public class PeopleManagementRestControllerTest {
     @Test
     public void findByPersonId() throws Exception {
 
-        RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
-        List relatedPerson = new ArrayList<>();
-        relatedPerson.add(relatedPersonDTO);
+        List people = new ArrayList<>();
+        people.add(testIndividualDTO);
 
-        Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(relatedPerson);
-
-        mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_REL)
-                .param(PeopleManagementServiceProxy.IDENTIFICATION_CODE, Long.toString(1L))
-                .contentType(MediaType.APPLICATION_JSON))
+        Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(people);
+        mockMvc.perform(get(PeopleManagementServiceProxy.SEARCH_REL)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
                 .andDo(print())
                 .andExpect(status().isOk())
-
                 .andDo(document(
                         "findByPersonId-related-person",
-                        requestParameters(parameterWithName(PeopleManagementServiceProxy.IDENTIFICATION_CODE).description("The Identification Code of the person to retrieve.")),
-                        responseFields(fieldWithPath("id").description(" ID.")
-                        , fieldWithPath("personDetailId").description("personDetailId.")
-                        , fieldWithPath("personRelId").description("personRelId.")
-                        , fieldWithPath("relationTypeId").description("relationTypeId.")
+                        //responseFields(individualFieldsDoc("", true, true))
+
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The ID of the person detail to retrieve.")),
+                        responseFields(
+                                fieldWithPath("[0].id").description("Related Person ID.")
+                                , fieldWithPath("[0].idType.id").description("person.idType.id.")
+                                , fieldWithPath("[0].identificationCode").description("person.identificationCode.")
+                                , fieldWithPath("[0].externalReferenceCode").description("person.externalReferenceCode.")
+                                , fieldWithPath("[0].gender.id").description("person.gender.id.")
+                                , fieldWithPath("[0].dateOfBirth").description("person.dateOfBirth.")
+                                , fieldWithPath("[0].details[0].id").description("id details.")
+                                , fieldWithPath("[0].details[0].language.id").description("language details.")
+                                , fieldWithPath("[0].details[0].country.id").description("country.id details.")
+                                , fieldWithPath("[0].details[0].name").description("name details.")
+                                , fieldWithPath("[0].details[0].name1").description("name1 details.")
+                                , fieldWithPath("[0].details[0].name2").description("name2 details.")
+                                , fieldWithPath("[0].details[0].surname1").description("surname1 details.")
+                                , fieldWithPath("[0].details[0].surname2").description("surname2 details.")
+                                , fieldWithPath("[0].details[0].civilStatus.id").description("civil status id details.")
+                                , fieldWithPath("[0].details[0].personStatus.id").description("language id details.")
                         )
                 ));
     }
@@ -734,15 +744,14 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.getRelatedPerson(any(), any(Errors.class))).thenReturn(relatedPerson);
 
-        StringBuilder requestBody = new StringBuilder();
-        requestBody.append("{");
-        requestBody.append("\"id\":").append("\"1\"");
-        requestBody.append(",\"personDetailId\":").append("\"1\"");
-        requestBody.append("}");
+        String requestBody = "{" +
+                "\"id\":" + "\"1\"" +
+                ",\"personDetailId\":" + "\"1\"" +
+                "}";
 
         mockMvc.perform(post(PeopleManagementServiceProxy.GET_REL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody.toString()))
+                .content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document(
