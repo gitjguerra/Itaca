@@ -106,7 +106,7 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
     public ResponseEntity<List<? extends CardTypeDTO>> lookupCardTypes() {
         return new ResponseEntity(peopleLookupService.lookupCardTypes(), HttpStatus.OK);
     }
-
+    //address
     @Override
     @RequestMapping(value = LOOKUP_ADDRESFORMAT1, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressFormat1DTO>> lookupAddresFormat1() {

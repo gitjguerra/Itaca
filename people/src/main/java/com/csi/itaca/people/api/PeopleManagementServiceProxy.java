@@ -51,7 +51,7 @@ public interface PeopleManagementServiceProxy {
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
 
-
+   /////Address
     String RESOURCE_ADDRESS               = RESOURCE + "/address";
     String GET_ADDRESFORMAT1              = RESOURCE_ADDRESS +"/get";
     String COUNT_ADDRESFORMAT1            = RESOURCE_ADDRESS +"/count";

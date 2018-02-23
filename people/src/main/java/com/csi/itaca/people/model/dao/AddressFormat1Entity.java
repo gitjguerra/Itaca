@@ -13,8 +13,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "dir_format_1")
-//@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name="person_type", discriminatorType=DiscriminatorType.STRING)
 public class AddressFormat1Entity implements AddressFormat1 {
 
 	public static final String ID 						= "AddressId";

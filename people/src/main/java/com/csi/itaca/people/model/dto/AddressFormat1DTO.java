@@ -16,17 +16,11 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class AddressFormat1DTO implements AddressFormat1 {
 
 	private Long AddressId;
-
 	private String Idpoblacion;
-
 	private String Idcodpostal;
-
 	private String Idtypevia;
-
 	private String Nombrevia;
-
 	private String Numerovia;
-
 	private String Complementos;
 
 	@Override

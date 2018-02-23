@@ -73,7 +73,7 @@ public interface PeopleLookupServiceProxy {
 
     /** @return a list of CardTypes.*/
     ResponseEntity<List<?  extends CardTypeDTO>> lookupCardTypes();
-
+   // address
     ResponseEntity<List<AddressFormat1DTO>> lookupAddresFormat1();
 
     ResponseEntity<List<PublicPersonDTO>> lookupPublicPerson();

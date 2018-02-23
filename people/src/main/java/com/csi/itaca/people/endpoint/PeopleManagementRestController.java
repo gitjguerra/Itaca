@@ -166,7 +166,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
     ////////////////////////////////////////////////////////////////////////////////////////////// Account end ...
     /////////////////////////////////////////////////////////////////////////////////////////////  address ini ...
-
+    //address
     @Override
     @RequestMapping(value = GET_ADDRESFORMAT1, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getAddresFormat1(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {

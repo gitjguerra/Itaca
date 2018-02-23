@@ -12,8 +12,6 @@ import lombok.Setter;
 public class PublicPersonDTO implements PublicPerson {
 
 	private Long IdPerPublicPerson;
-
 	private String IdTypePublicPerson;
-
 	private String IdPerson;
 }

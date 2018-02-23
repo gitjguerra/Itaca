@@ -143,11 +143,13 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
         return  beaner.transform((List<CardTypeEntity>) cardTypeRepository.findAll(), CardTypeDTO.class);
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public List<AddressFormat1DTO> lookupAddresFormat1() {
         return  beaner.transform((List<AddressFormat1Entity>) addressFormat1Repository.findAll(), AddressFormat1DTO.class);
     }
+
 
     @Override
     @Transactional(readOnly = true)

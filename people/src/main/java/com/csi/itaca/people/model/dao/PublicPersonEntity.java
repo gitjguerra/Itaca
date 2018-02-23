@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PER_PUBLIC_PERSON")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name="person_type", discriminatorType=DiscriminatorType.STRING)
 public class PublicPersonEntity implements PublicPerson {
 
 

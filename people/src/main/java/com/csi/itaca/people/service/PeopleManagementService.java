@@ -137,7 +137,7 @@ public interface PeopleManagementService {
      * @return the bank card if found otherwise null.
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
-
+//address
     AddressFormat1DTO getAddresformat1(Long id, Errors errTracking);
 
     Long countAddresformat1(Long addressId);
@@ -145,7 +145,7 @@ public interface PeopleManagementService {
     AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate, Errors errTracking);
 
     void deleteaddresformat1(Long personId, Errors errTracking);
-
+//person
 
     PublicPersonDTO getPublicPerson(Long id, Errors errTracking);
 
