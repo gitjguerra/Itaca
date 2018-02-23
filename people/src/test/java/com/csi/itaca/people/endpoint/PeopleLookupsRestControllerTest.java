@@ -616,4 +616,70 @@ public class PeopleLookupsRestControllerTest {
                 ));
     }
 
+    /** look up Account card type test.  */
+    @Test
+    public void AddressFormat1DTO() throws Exception {
+
+        List<AddressFormat1DTO> list = new ArrayList<>();
+
+        AddressFormat1DTO item1 = new AddressFormat1DTO();
+        item1.setAddressId(1L);
+        item1.setIdpoblacion("001");
+        item1.setIdcodpostal("001");
+        item1.setIdtypevia("001");
+        item1.setNombrevia("001");
+        item1.setNumerovia("001");
+        item1.setComplementos("001");
+        list.add(item1);
+
+        AddressFormat1DTO item2 = new AddressFormat1DTO();
+        item2.setAddressId(2L);
+        item2.setIdpoblacion("002");
+        item2.setIdcodpostal("002");
+        item2.setIdtypevia("002");
+        item2.setNombrevia("002");
+        item2.setNumerovia("002");
+        item2.setComplementos("002");
+        list.add(item2);
+
+        AddressFormat1DTO item3 = new AddressFormat1DTO();
+        item3.setAddressId(2L);
+        item3.setIdpoblacion("003");
+        item3.setIdcodpostal("003");
+        item3.setIdtypevia("003");
+        item3.setNombrevia("003");
+        item3.setNumerovia("003");
+        item3.setComplementos("003");
+        list.add(item3);
+
+        Mockito.when(lookupService.lookupAddresFormat1()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_ADDRESFORMAT1))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].addressId",is(item1.getAddressId().intValue())))
+                .andDo(document(
+                        "lookup-address-format",
+                        responseFields(fieldWithPath("[].addressId").description("Identificador de la ADDRESS")
+                                ,fieldWithPath("[].idpoblacion").description("Identificador de la  poblacion")
+                                ,fieldWithPath("[].idcodpostal").description("Identificador del Codigo Postal")
+                                ,fieldWithPath("[].idtypevia").description("Codigo de TYPE de via (1-Calle, 2 - Avenida ...")
+                                ,fieldWithPath("[].nombrevia").description("Nombre de la via")
+                                ,fieldWithPath("[].numerovia").description("Numero de via")
+                                ,fieldWithPath("[].complementos").description("Descripcion complementaria")
+                        )
+                ));
+    }
+
+/*
+
+    public static final String id_poblacion 			= "";
+    public static final String id_cod_postal 			= "";
+    public static final String id_type_via 	            = "";
+    public static final String nombre_via 				= "";
+    public static final String numero_via 				= "";
+    public static final String complemento  			= "";
+*/
+
+
 }

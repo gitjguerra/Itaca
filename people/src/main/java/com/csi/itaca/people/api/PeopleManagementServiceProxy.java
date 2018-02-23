@@ -17,6 +17,8 @@ public interface PeopleManagementServiceProxy {
 
     // Parameters...
     String ID_PARAM                 = "id";
+    String ID_ADDRES_PARAM          = "addressId";
+    String ID_PUBLIC_PERSON         = "publicpersonId";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
 
@@ -48,6 +50,19 @@ public interface PeopleManagementServiceProxy {
     String COUNT_BANK_CARD            = RESOURCE_ACCOUNT +"/countCard";
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
+
+
+    String RESOURCE_ADDRESS               = RESOURCE + "/address";
+    String GET_ADDRESFORMAT1              = RESOURCE_ADDRESS +"/get";
+    String COUNT_ADDRESFORMAT1            = RESOURCE_ADDRESS +"/count";
+    String SAVE_ADDRESFORMAT1              = RESOURCE_ADDRESS + "/save";
+    String DELETE_ADDRESFORMAT1           = RESOURCE_ADDRESS + "/delete";
+
+    String RESOURCE_PUBLIC               = RESOURCE + "/Public";
+    String GET_PUBLICPERSON              = RESOURCE_PUBLIC +"/getPublicPerson";
+    String COUNT_PUBLICPERSON            = RESOURCE_PUBLIC +"/counPublicPerson";
+    String SAVE_PUBLICPERSON             = RESOURCE_PUBLIC + "/savePublicPerson";
+    String DELETE_PUBLICPERSON           = RESOURCE_PUBLIC + "/deletePublicPerson";
 
     /**
      * Gets a person.
@@ -164,6 +179,23 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity getBankCard(Long id);
 
+
+    ResponseEntity getAddresFormat1(Long id);
+
+    ResponseEntity<Long> countAddresFormat1(Long addressId);
+
+    ResponseEntity saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate,BindingResult errTracking);
+
+    ResponseEntity deleteaddresformat1(Long id);
+
+
+    ResponseEntity getPublicPerson(Long id);
+
+    ResponseEntity<Long> counPublicPerson(Long publicpersonId);
+
+    ResponseEntity saveOrUpdatePublicPerson(PublicPersonDTO publicPersonFotmatToSaveOrUpdate,BindingResult errTracking);
+
+    ResponseEntity DeletePublicPerson(Long id);
 
 /*
     //addresses

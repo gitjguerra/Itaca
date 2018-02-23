@@ -70,6 +70,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Autowired
     private PeopleManagementBusinessLogic peopleBusinessLogic;
 
+    @Autowired
+    private AddressFormat1Repository addressFormat1Repository;
+
+    @Autowired
+    private PublicPersonRepository publicPersonRepository;
+
     @Override
     public PersonDTO getPerson(Long id, Errors errTracking) {
         PersonEntity person = getPersonEntity(id, errTracking);
@@ -668,10 +674,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
+        AccountEntity accountUpdateEntity = new AccountEntity();
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
         if (accountEntity == null && errTracking != null){
-            accountEntity = new AccountEntity();
+            accountEntity = accountUpdateEntity;
+
         }
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
@@ -694,10 +702,12 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
+        BankCardEntity bankCardUpdateEntity = new BankCardEntity();
+
         BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
 
-        if (bankCardEntity == null){
-            bankCardEntity = new BankCardEntity();
+        if (bankCardEntity == null && errTracking != null){
+            bankCardEntity = bankCardUpdateEntity;
         }
         bankCardEntity.setIdBankCard(dto.getIdBankCard());
         bankCardEntity.setAvailable(dto.getAvailable());
@@ -754,4 +764,139 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         return accountRepository.count(spec);
     }
+
+
+    @Override
+    @Transactional
+    public AddressFormat1DTO getAddresformat1(Long id, Errors errTracking) {
+
+        AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(id);
+        if (addressFormat1Entity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countAddresformat1(Long addresformat) {
+
+        Specification<AddressFormat1Entity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (addresformat != null) {
+                p = cb.equal(root.get(AddressFormat1Entity.ID), addresformat);
+            }
+            return p;
+        };
+        return addressFormat1Repository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO dto, Errors errTracking) {
+        AddressFormat1Entity addressFormat1UpdateEntity = new AddressFormat1Entity();
+        AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(dto.getAddressId());
+        if (addressFormat1Entity == null && errTracking != null){
+            addressFormat1Entity = addressFormat1UpdateEntity;
+        }
+        addressFormat1Entity.setAddressId(dto.getAddressId());
+        addressFormat1Entity.setIdpoblacion(dto.getIdpoblacion());
+        addressFormat1Entity.setIdcodpostal(dto.getIdcodpostal());
+        addressFormat1Entity.setIdtypevia(dto.getIdtypevia());
+        addressFormat1Entity.setNombrevia(dto.getNombrevia());
+        addressFormat1Entity.setNumerovia(dto.getNumerovia());
+        addressFormat1Entity.setComplementos(dto.getComplementos());
+        addressFormat1Entity = addressFormat1Repository.save(addressFormat1Entity);
+        entityManager.flush();
+        entityManager.clear();
+        return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+    @Override
+    @Transactional
+    public PublicPersonDTO saveOrUpdatePublicPerson(PublicPersonDTO dto, Errors errTracking) {
+        PublicPersonEntity PublicPersonUpdateEntity = new PublicPersonEntity();
+        PublicPersonEntity publicPersonEntity = publicPersonRepository.findOne(dto.getIdPerPublicPerson());
+        if (publicPersonEntity == null && errTracking != null){
+            publicPersonEntity = PublicPersonUpdateEntity;
+        }
+        publicPersonEntity.setIdPerPublicPerson(dto.getIdPerPublicPerson());
+        publicPersonEntity.setIdTypePublicPerson(dto.getIdTypePublicPerson());
+        publicPersonEntity.setIdPerson(dto.getIdPerson());
+        publicPersonEntity = publicPersonRepository.save(publicPersonEntity);
+        entityManager.flush();
+        entityManager.clear();
+        return beaner.transform(publicPersonEntity, PublicPersonDTO.class);
+
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteaddresformat1(Long Id, Errors errTracking) {
+        AddressFormat1Entity addresformatToDelete = getaddresEntity(Id, errTracking);
+        addressFormat1Repository.delete(addresformatToDelete);
+    }
+
+    @Transactional(readOnly = true)
+    AddressFormat1Entity getaddresEntity(Long id, Errors errTracking) {
+        AddressFormat1Entity Address = addressFormat1Repository.findOne(id);
+        if (Address == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return Address;
+    }
+
+
+    @Override
+    @Transactional
+    public PublicPersonDTO getPublicPerson(Long id, Errors errTracking) {
+
+        PublicPersonEntity publicPersonEntity = publicPersonRepository.findOne(id);
+        if (publicPersonEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(publicPersonEntity, PublicPersonDTO.class);
+
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long counPublicPerson(Long PublicPerson) {
+
+        Specification<PublicPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (PublicPerson != null) {
+                p = cb.equal(root.get(PublicPersonEntity.id_per_public_person), PublicPerson);
+            }
+            return p;
+        };
+        return publicPersonRepository.count(spec);
+    }
+
+
+
+
+
+    @Override
+    @Transactional
+    public void deletePublicPerson(Long Id, Errors errTracking) {
+        PublicPersonEntity PublicPersonformatToDelete = getPublicPersonEntity(Id, errTracking);
+        publicPersonRepository.delete(PublicPersonformatToDelete);
+    }
+
+    @Transactional(readOnly = true)
+    PublicPersonEntity getPublicPersonEntity(Long id, Errors errTracking) {
+        PublicPersonEntity Person = publicPersonRepository.findOne(id);
+        if (Person == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return Person;
+    }
+
+
+
 }
