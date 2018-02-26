@@ -169,13 +169,13 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     ////////////////////////////////////////////////////////////////////////////////////////////// Relations  ...
     @Override
     @RequestMapping(value = COUNT_PERSON_REL, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> countPersonRelations(@RequestParam(PeopleManagementServiceProxy.ID_PERSON_DETAIL) Long idPersonDetail) {
+    public ResponseEntity<Long> countPersonRelations(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
         return new ResponseEntity<>(peopleManagementService.countPersonRelations(idPersonDetail), HttpStatus.OK);
     }
 
     @Override
     @RequestMapping(value = DELETE_REL, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteRelatedPerson(@RequestParam(PeopleManagementServiceProxy.ID_PERSON_DETAIL) Long idRelatedPerson) {
+    public ResponseEntity deleteRelatedPerson(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idRelatedPerson) {
         BindingResult errTracking = createErrorTracker();
         peopleManagementService.deleteRelatedPerson(idRelatedPerson,errTracking);
         return buildResponseEntity(errTracking);

@@ -14,8 +14,8 @@ import javax.persistence.*;
 @Table(name = "PER_RELATION_PER")
 public class RelatedPersonEntity implements RelatedPerson {
 	public static final String ID = "id";
-	public static final String ID_PERSON_DETAIL = "personDetailId";
-	public static final String ID_PERSON_DETAIL_REL = "personRelId";
+	public static final String PERSON_DETAIL_ID = "personDetailId";
+	public static final String PERSON_DETAIL_REL_ID = "personRelId";
 	public static final String RELATION_TYPE = "relationTypeId";
 
 	@Id
