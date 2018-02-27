@@ -796,32 +796,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-    private Predicate applyLikeLowerContactFilter(CriteriaBuilder cb, Root<? extends ContactEntity> r, String field,
-                                                  String value, Predicate p, int fieldDepth) {
-
-        value = value.trim().toLowerCase();
-
-        if (fieldDepth == 1) {
-            p = p == null ? p = cb.like(cb.lower(r.get(field)), "%" + value + "%")
-                    : cb.and(p, cb.like(cb.lower(r.get(field)), "%" + value + "%"));
-        } else if (fieldDepth > 1 && fieldDepth < 7) {
-            String fields[] = field.split("[.]", -1);
-            if (fieldDepth == 2) {
-                p = p == null ? p = cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%")
-                        : cb.and(p,cb.like(cb.lower(r.get(fields[0]).get(fields[1])), "%" + value + "%"));
-            }
-        }
-        return p;
-    }
-    private Predicate applyContactFilter(Predicate p, CriteriaBuilder cb,
-                                         Root<? extends ContactEntity> r,
-                                         ContactSearchFilter filter) {
-        if (filter.getId() != null) {
-            p = applyLikeLowerContactFilter(cb, r,ContactEntity.ID + ".", String.valueOf(filter.getId()), p, 1);
-        }
-        return p;
-    }
-
     @Override
     @Transactional(readOnly = true)
     public Long countContacts(Long personDetailId) {
@@ -861,26 +835,27 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-    private Predicate applyContactFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
-                                          ContactSearchFilter filter, String path) {
-
-        if (filter.getId() != null) {
-            p = cb.equal(root.get(ContactEntity.ID), 1);
-        }
-        return p;
-    }
-
     @Override
     @Transactional(readOnly = true)
-    public ContactDTO getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
+    public List<? extends ContactDTO> getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
+
+        logger.info("*********** VA *******************");
+
+        logger.info("*********** ID *******************"+criteria.getId());
 
         Specification<ContactEntity> spec = (root, query, cb) -> {
-            Predicate p = cb.equal(root.get(ContactEntity.ID), criteria.getId());
-            return applyContactFilters(root, p, cb, criteria, "");
+            Predicate p = null;
+            if (criteria != null) {
+                p = cb.equal(root.get(ContactEntity.ID), criteria.getId());
+            }
+            return p;
         };
 
-        return beaner.transform(contactRepository.findOne(spec), ContactDTO.class);
-
+        List<? extends ContactDTO> contact = beaner.transform(contactRepository.findAll(spec), ContactDTO.class);
+        if (contact==null || contact.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return beaner.transform(contact, ContactDTO.class);
     }
 
     // ********************* Contact ************************************************************

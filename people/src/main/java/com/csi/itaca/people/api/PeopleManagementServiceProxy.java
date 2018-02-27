@@ -201,7 +201,7 @@ public interface PeopleManagementServiceProxy {
      * @param criteria the contact id.
      * @return a response body containing the requested contact json object.
      */
-    ResponseEntity getPersonContact(ContactSearchFilter criteria);
+    ResponseEntity<List<? extends ContactDTO>> getPersonContact(ContactSearchFilter criteria);
 
     /**
      * Deletes a contact

@@ -153,7 +153,7 @@ public interface PeopleManagementService {
      * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
      * @return the contact if found otherwise null.
      */
-    ContactDTO getPersonContact(ContactSearchFilter criteria, Errors errTracking);
+    List<? extends ContactDTO>  getPersonContact(ContactSearchFilter criteria, Errors errTracking);
 
     /**
      * Delete the Contact associated to the Contact ID

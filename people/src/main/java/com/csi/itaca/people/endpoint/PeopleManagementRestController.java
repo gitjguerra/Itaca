@@ -180,10 +180,9 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
 
     @Override
     @RequestMapping(value = PERSON_CONTACT, method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPersonContact(ContactSearchFilter criteria) {
+    public ResponseEntity<List<? extends ContactDTO>> getPersonContact(@RequestBody ContactSearchFilter criteria) {
         BindingResult errTracking = createErrorTracker();
-        ContactDTO personContact = peopleManagementService.getPersonContact(criteria, errTracking);
-        return buildResponseEntity(personContact, errTracking);
+        return buildResponseEntity(peopleManagementService.getPersonContact(criteria,errTracking), errTracking);
     }
 
     @Override
