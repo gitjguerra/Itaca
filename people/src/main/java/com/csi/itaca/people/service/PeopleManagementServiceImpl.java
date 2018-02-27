@@ -666,7 +666,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         Specification<BankCardEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (personDetailId != null) {
-                p = cb.equal(root.get(BankCardEntity.ID_PERSON_DETAIL), personDetailId);
+                p = cb.equal(root.get(BankCardEntity.PERSON_DETAIL_ID), personDetailId);
             }
             return p;
         };

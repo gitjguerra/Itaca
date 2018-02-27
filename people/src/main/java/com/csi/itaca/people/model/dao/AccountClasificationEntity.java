@@ -18,7 +18,7 @@ public class AccountClasificationEntity implements AccountClasification {
     public static final String VALUE = "value";
 
     @Id
-    @Column(name="ID_CLASIFICATION_ACCOUNT")
+    @Column(name="CLASIFICATION_ACCOUNT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_CLASIFICATION_ACCOUNT")
     @SequenceGenerator(name = "SEQ_CLASIFICATION_ACCOUNT", sequenceName = "SEQ_CLASIFICATION_ACCOUNT", allocationSize = 1)
     private Long id;

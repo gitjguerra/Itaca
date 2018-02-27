@@ -18,7 +18,7 @@ public class AccountTypeEntity implements AccountType {
     public static final String VALOR = "valor";
 
     @Id
-    @Column(name="ID_TYPE_ACCOUNT")
+    @Column(name="TYPE_ACCOUNT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_TYPE_ACCOUNT")
     @SequenceGenerator(name = "SEQ_TYPE_ACCOUNT", sequenceName = "SEQ_TYPE_ACCOUNT", allocationSize = 1)
     private Long id;

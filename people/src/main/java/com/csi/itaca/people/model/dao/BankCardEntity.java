@@ -16,27 +16,27 @@ import java.time.LocalDate;
 @Table(name = "PER_BANK_CARD")
 public class BankCardEntity implements BankCard {
 
-    public static final String ID_BANK_CARD = "bankCardId";
-    public static final String ID_PERSON_DETAIL = "personDetailId";
-    public static final String ID_CARD_TYPE = "cardTypeId";
+    public static final String BANK_CARD_ID = "bankCardId";
+    public static final String PERSON_DETAIL_ID = "personDetailId";
+    public static final String CARD_TYPE_ID = "cardTypeId";
     public static final String CARD = "card";
     public static final String PRINCIPAL = "principal";
     public static final String AVAILABLE = "available";
     public static final String EXPIRATION_DATE = "expirationDate";
     public static final String SECURITY_CODE = "securityCode";
-    public static final String ID_BANK = "bankId";
+    public static final String BANK_ID = "bankId";
 
     @Id
-    @Column(name="ID_BANK_CARD")
+    @Column(name="BANK_CARD_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_BANK_CARD")
     @SequenceGenerator(name = "SEQ_BANK_CARD", sequenceName = "SEQ_BANK_CARD", allocationSize = 1)
     private Long bankCardId;
 
-    @Column(name="ID_PERSON_DETAIL")
+    @Column(name="PERSON_DETAIL_ID")
     private Long personDetailId;
 
 
-    @Column(name="ID_CARD_TYPE")
+    @Column(name="CARD_TYPE_ID")
     private Long cardTypeId;
 
     @Column(name="CARD")
@@ -54,7 +54,7 @@ public class BankCardEntity implements BankCard {
     @Column(name="SECURITY_CODE")
     private Long securityCode;
 
-    @Column(name="ID_BANK")
+    @Column(name="BANK_ID")
     private Long bankId;
 
 }

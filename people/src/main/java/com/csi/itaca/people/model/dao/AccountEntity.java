@@ -22,24 +22,24 @@ public class AccountEntity implements Account {
 	public static final String ACCOUNTTYPE = "typeAccountId";
 	public static final String PRINCIPAL = "principal";
 	public static final String AVAILABLE = "available";
-	public static final String ID_BANK = "bankId";
+	public static final String BANK_ID = "bankId";
 
 	@Id
-	@Column(name="ID_BANK_ACCOUNT")
+	@Column(name="BANK_ACCOUNT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_BANK_ACCOUNT")
 	@SequenceGenerator(name = "SEQ_BANK_ACCOUNT", sequenceName = "SEQ_BANK_ACCOUNT", allocationSize = 1)
 	private Long id;
 
-	@Column(name="ID_PERSON_DETAIL")
+	@Column(name="PERSON_DETAIL_ID")
 	private Long personDetailId;
 
-	@Column(name="ID_CLASIFICATION_ACCOUNT")
+	@Column(name="CLASIFICATION_ACCOUNT_ID")
 	private Long accountClasificationId;
 
-	@Column(name="ID_TYPE_ACCOUNT")
+	@Column(name="TYPE_ACCOUNT_ID")
 	private Long typeAccountId;
 
-	@Column(name="ID_BANK")
+	@Column(name="BANK_ID")
 	private Long bankId;
 
 	@Column
