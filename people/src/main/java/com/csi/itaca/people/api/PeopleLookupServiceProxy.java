@@ -31,6 +31,9 @@ public interface PeopleLookupServiceProxy {
     String LOOKUP_ACCOUNT_CLASIFIED     = LOOKUP +"/clasified";
     String LOOKUP_CARD_TYPE             = LOOKUP +"/cardType";
 
+    String LOOKUP_CARD_TYPE_CONTACT_LIST                 = LOOKUP +"/contactsList";
+
+
     String LOOKUP_ADDRESFORMAT1                  = LOOKUP +"/addresformat1";
 
     String LOOKUP_PUBLICPERSON                  = LOOKUP +"/PublicPerson";
@@ -73,7 +76,11 @@ public interface PeopleLookupServiceProxy {
 
     /** @return a list of CardTypes.*/
     ResponseEntity<List<?  extends CardTypeDTO>> lookupCardTypes();
-   // address
+
+    /** @return a list of Contacts.*/
+    ResponseEntity<Long> listContacts();
+
+    // address
     ResponseEntity<List<AddressFormat1DTO>> lookupAddresFormat1();
 
     ResponseEntity<List<PublicPersonDTO>> lookupPublicPerson();
