@@ -839,10 +839,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional(readOnly = true)
     public List<? extends ContactDTO> getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
 
-        logger.info("*********** VA *******************");
-
-        logger.info("*********** ID *******************"+criteria.getId());
-
         Specification<ContactEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (criteria != null) {
