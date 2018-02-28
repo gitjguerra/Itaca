@@ -14,12 +14,12 @@ public class AccountDTO implements Account {
 	
 	private Long id;
 
-	private Long personDetail;
+	private Long personDetailId;
 	private String account;
-	private Long accountClasification;
-	private Long typeAccount;
+	private Long accountClasificationId;
+	private Long typeAccountId;
 	private Boolean principal;
 	private Boolean available;
-	private Long IdBank;
+	private Long bankId;
 
 }

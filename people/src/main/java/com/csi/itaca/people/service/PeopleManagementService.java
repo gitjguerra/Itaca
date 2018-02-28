@@ -1,11 +1,9 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.people.model.dto.AccountDTO;
-import com.csi.itaca.people.model.dto.BankCardDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
-import com.csi.itaca.people.model.dto.PersonDetailDTO;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
+import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.validation.Errors;
 import java.util.List;
@@ -140,5 +138,63 @@ public interface PeopleManagementService {
      * @return the bank card if found otherwise null.
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
+
+    /**
+     * Retrieves a specific contact.
+     * @param idContact the contact id.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return the contact if found otherwise null.
+     */
+    ContactDTO getContact(Long idContact, Errors errTracking);
+
+    /**
+     * Retrieves a specific contact.
+     * @param criteria the contact id.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return the contact if found otherwise null.
+     */
+    List<? extends ContactDTO>  getPersonContact(ContactSearchFilter criteria, Errors errTracking);
+
+    /**
+     * Delete the Contact associated to the Contact ID
+     * @param contactId the id of the Contact to delete.
+     * @param errTracking error tracker. Will advise if Contact not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    void deleteContact(Long contactId, Errors errTracking);
+
+    /**
+     * the list of Contact based on the supplied search criteria.
+     * @param idPersonDetail filter to apply
+     * @return the number of Contact.
+     */
+    Long countContacts(Long idPersonDetail);
+
+    /**
+     * Saves or updates contact.
+     * @param contactToSaveOrUpdate the contact to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    ContactDTO saveOrUpdateContact(ContactDTO contactToSaveOrUpdate, Errors errTracking);
+
+
+
+    //address
+    AddressFormat1DTO getAddresformat1(Long id, Errors errTracking);
+
+    Long countAddresformat1(Long addressId);
+
+    AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate, Errors errTracking);
+
+    void deleteaddresformat1(Long personId, Errors errTracking);
+//person
+
+    PublicPersonDTO getPublicPerson(Long id, Errors errTracking);
+
+    Long counPublicPerson(Long publicpersonId);
+
+    PublicPersonDTO saveOrUpdatePublicPerson(PublicPersonDTO publicPersonFotmatToSaveOrUpdate, Errors errTracking);
+
+    void deletePublicPerson(Long publicpersonId, Errors errTracking);
 
 }

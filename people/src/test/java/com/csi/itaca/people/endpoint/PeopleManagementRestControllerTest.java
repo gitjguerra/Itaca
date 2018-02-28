@@ -3,6 +3,7 @@ package com.csi.itaca.people.endpoint;
 import com.csi.itaca.common.model.dto.CountryDTO;
 import com.csi.itaca.people.api.PeopleManagementServiceProxy;
 import com.csi.itaca.people.model.AccountClasification;
+import com.csi.itaca.people.model.AddressFormat1;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.IndividualSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
@@ -73,6 +74,13 @@ public class PeopleManagementRestControllerTest {
     private static final String CARD = "card";
     private static final String ACCOUNT = "id";
     private static final String ID_CARD = "idBankCard";
+
+
+    private AddressFormat1DTO addressFormat1DTO;
+    //private AccountDTO accountDTO;
+    //private static final String CARD = "card";
+    //private static final String ACCOUNT = "id";
+    //private static final String ID_CARD = "idBankCard";
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
@@ -430,10 +438,10 @@ public class PeopleManagementRestControllerTest {
     public void getBankCard() throws Exception {
 
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(1L);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
@@ -445,18 +453,51 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document(
                         "get-BankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                        responseFields(fieldWithPath("bankCardId").description("BankCardId type ID.")
                                 , fieldWithPath("card").description("Card.")
-                                , fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                , fieldWithPath("idCardType").description("idCardType.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
                 ));
     }
+
+
+    @Test
+    public void getAddresformat1() throws Exception {
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdpoblacion("00");
+        addressFormat1DTO.setIdcodpostal("01");
+        addressFormat1DTO.setIdtypevia("02");
+        addressFormat1DTO.setNombrevia("03");
+        addressFormat1DTO.setNumerovia("04");
+        addressFormat1DTO.setComplementos("05");
+
+        Mockito.when(service.getAddresformat1(any(), any(Errors.class))).thenReturn(addressFormat1DTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_ADDRESFORMAT1)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-AddresFormat1",
+                        responseFields(fieldWithPath("addressId").description("IdBankCard type ID.")
+                                , fieldWithPath("idpoblacion").description("Card.")
+                                , fieldWithPath("idcodpostal").description("idPersonDetail.")
+                                , fieldWithPath("idtypevia").description("idCardType.")
+                                , fieldWithPath("nombrevia").description("principal.")
+                                , fieldWithPath("numerovia").description("available.")
+                                , fieldWithPath("complementos").description("idBank.")
+                                                       )
+                ));
+    }
+
+
 
     @Test
     public void getAccount() throws Exception {
@@ -466,12 +507,12 @@ public class PeopleManagementRestControllerTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(1L);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
         Mockito.when(service.getAccount(any(), any(Errors.class))).thenReturn(accountDTO);
         mockMvc.perform(get(PeopleManagementServiceProxy.GET_ACCOUNT)
@@ -482,11 +523,11 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "get-Account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                , fieldWithPath("personDetail").description("personDetail.")
-                                , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("typeAccount").description("typeAccount.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                         )
@@ -537,12 +578,12 @@ public class PeopleManagementRestControllerTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
         accountDTO.setAccount("5018782000");
-        accountDTO.setAccountClasification(1L);
-        accountDTO.setPersonDetail(1L);
+        accountDTO.setAccountClasificationId(1L);
+        accountDTO.setPersonDetailId(1L);
         accountDTO.setAvailable(true);
         accountDTO.setPrincipal(true);
-        accountDTO.setTypeAccount(1L);
-        accountDTO.setIdBank(1L);
+        accountDTO.setTypeAccountId(1L);
+        accountDTO.setBankId(1L);
 
         Mockito.when(service.saveOrUpdateAccount(any(), any(Errors.class))).thenReturn(accountDTO);
 
@@ -555,11 +596,11 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "save-update-account",
                         responseFields(fieldWithPath("id").description("Id account.")
-                                , fieldWithPath("personDetail").description("personDetail.")
-                                , fieldWithPath("accountClasification").description("accountClasification.")
-                                , fieldWithPath("typeAccount").description("typeAccount.")
+                                , fieldWithPath("personDetailId").description("personDetail.")
+                                , fieldWithPath("accountClasificationId").description("accountClasification.")
+                                , fieldWithPath("typeAccountId").description("typeAccount.")
                                 , fieldWithPath("account").description("account.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
                         )
@@ -570,15 +611,14 @@ public class PeopleManagementRestControllerTest {
     public void saveOrUpdateBankCard() throws Exception {
 
         BankCardDTO bankCardDTO = new BankCardDTO();
-        bankCardDTO.setIdBankCard(1L);
+        bankCardDTO.setBankCardId(1L);
         bankCardDTO.setCard("5018782000");
-        bankCardDTO.setIdPersonDetail(1L);
-        bankCardDTO.setIdBank(1L);
+        bankCardDTO.setPersonDetailId(1L);
+        bankCardDTO.setBankId(1L);
         bankCardDTO.setAvailable(true);
         bankCardDTO.setPrincipal(true);
         bankCardDTO.setSecurityCode(1L);
         bankCardDTO.setExpirationDate(LocalDate.of(1972, 11, 22));
-
 
         Mockito.when(service.saveOrUpdateBankCard(any(), any(Errors.class))).thenReturn(bankCardDTO);
         mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_BANK_CARD)
@@ -589,17 +629,123 @@ public class PeopleManagementRestControllerTest {
 
                 .andDo(document(
                         "save-update-bankCard",
-                        responseFields(fieldWithPath("idBankCard").description("IdBankCard type ID.")
+                        responseFields(fieldWithPath("bankCardId").description("IdBankCard type ID.")
                                 , fieldWithPath("card").description("Card.")
-                                , fieldWithPath("idPersonDetail").description("idPersonDetail.")
-                                , fieldWithPath("idCardType").description("idCardType.")
+                                , fieldWithPath("personDetailId").description("idPersonDetail.")
+                                , fieldWithPath("cardTypeId").description("idCardType.")
                                 , fieldWithPath("principal").description("principal.")
                                 , fieldWithPath("available").description("available.")
-                                , fieldWithPath("idBank").description("idBank.")
+                                , fieldWithPath("bankId").description("idBank.")
                                 , fieldWithPath("expirationDate").description("expirationDate.")
                                 , fieldWithPath("securityCode").description("securityCode.")
                         )
                 ));
+
+    }
+
+    /** Count contact test. */
+    @Test
+    public void countContact() throws Exception {
+
+        Mockito.when(service.countContacts(any())).thenReturn(1L);
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_CONTACT)
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-contact",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
+
+    /** Delete contact test. */
+    @Test
+    public void getDeleteContact() throws Exception {
+
+        Mockito.doNothing().when(service).deleteContact(any(), any(Errors.class));
+
+        mockMvc.perform(delete(PeopleManagementServiceProxy.DELETE_CONTACT)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "delete-contact",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The id of the contact to delete.")
+                        )
+                ));
+    }
+
+
+    /*/ get Contact test/*/
+    /*
+    ID_PER_CONTACT	    NUMBER(19,0)
+    ID_PERSON_DETAIL	NUMBER(19,0)
+    ID_CONTACT_TYPE	    NUMBER(19,0)
+    ID_ADDRESS	        NUMBER(19,0)
+    VALUE_CONTACT	    VARCHAR2(100 CHAR)
+
+    */
+
+    @Test
+    public void getContact() throws Exception {
+
+        ContactDTO contactDTO = new ContactDTO();
+
+        Mockito.when(service.getContact(any(), any(Errors.class) )).thenReturn(contactDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.CONTACT)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-Contact",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The id of the contact.")),
+                        responseFields(fieldWithPath("id").description("IdContact type ID.")
+                                ,fieldWithPath("contactType").description("contactType.")
+                                ,fieldWithPath("valueContact").description("valueContact.")
+                                ,fieldWithPath("idAddress").description("idAddress.")
+                                ,fieldWithPath("personDetailId").description("personDetail.")
+
+                        )
+                ));
+    }
+
+    @Test
+    public void saveOrUpdateAddresFotmat() throws Exception {
+
+        AddressFormat1DTO addressFormat1DTO = new AddressFormat1DTO();
+        addressFormat1DTO.setAddressId(1L);
+        addressFormat1DTO.setIdpoblacion("00");
+        addressFormat1DTO.setIdcodpostal("01");
+        addressFormat1DTO.setIdtypevia("02");
+        addressFormat1DTO.setNombrevia("03");
+        addressFormat1DTO.setNumerovia("04");
+        addressFormat1DTO.setComplementos("05");
+
+        Mockito.when(service.saveOrUpdateAddresFotmat(any(), any(Errors.class))).thenReturn(addressFormat1DTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_ADDRESFORMAT1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(addressFormat1DTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-Address-Format",
+                        responseFields(fieldWithPath("addressId").description("Identificador de la ADDRESS")
+                                , fieldWithPath("idpoblacion").description("Identificador de la  poblacion.")
+                                , fieldWithPath("idcodpostal").description("Identificador del Codigo Postal.")
+                                , fieldWithPath("idtypevia").description("Codigo de TYPE de via (1-Calle, 2 - Avenida ...).")
+                                , fieldWithPath("nombrevia").description("Nombre de la via.")
+                                , fieldWithPath("numerovia").description("Numero de via.")
+                                , fieldWithPath("complementos").description("Descripcion complementaria.")
+
+                        )
+                ));
+
+
 
     }
 
