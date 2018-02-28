@@ -19,7 +19,29 @@ Retrieves a person associated with the supplied ID.
 ==== Request structure
 
 include::{snippets}/get-person/http-request.adoc[]
+=== Get person
 
+Retrieves a person associated with the supplied ID.
+
+==== Request structure
+
+include::{snippets}/get-person/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/get-person/request-parameters.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-person/curl-request.adoc[]
 ==== Request parameters
 
 include::{snippets}/get-person/request-parameters.adoc[]
@@ -531,6 +553,87 @@ include::{snippets}/lookup-relation-type/http-response.adoc[]
 ==== CURL request
 
 include::{snippets}/lookup-relation-type/curl-request.adoc[]
+
+
+
+=== Count Nationalities
+
+==== Request structure
+
+include::{snippets}/count-nationalities/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/count-nationalities/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/count-nationalities/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-nationalities/curl-request.adoc[]
+
+
+=== Delete Nationalities
+
+==== Request structure
+
+include::{snippets}/delete-nationality/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/delete-nationality/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-nationality/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-nationality/curl-request.adoc[]
+
+
+=== Get Nationalities
+
+==== Request structure
+
+include::{snippets}/get-nationalities/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-nationalities/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-nationalities/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-nationalities/curl-request.adoc[]
+
+
+=== Save Nationalities
+
+Save a Nationality
+
+==== Request structure
+
+include::{snippets}/save-nationality/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-nationality/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-nationality/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-nationality/curl-request.adoc[]
+
+
 
 
 === lookup Bank
