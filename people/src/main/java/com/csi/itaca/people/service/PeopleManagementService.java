@@ -5,6 +5,8 @@ import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
 import org.springframework.validation.Errors;
 import java.util.List;
 
@@ -196,5 +198,48 @@ public interface PeopleManagementService {
     PublicPersonDTO saveOrUpdatePublicPerson(PublicPersonDTO publicPersonFotmatToSaveOrUpdate, Errors errTracking);
 
     void deletePublicPerson(Long publicpersonId, Errors errTracking);
+
+
+    /**
+     * Returns a count the number of Fiscal Regime detail items based on the supplied search criteria.
+     * @param personDetailId the filter to find Fiscal Regime.
+     * @return People Fiscal Regime details.
+     */
+    List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetailId);
+
+    /**
+     * Returns a count the number of Fiscal Regime detail items based on the supplied search criteria.
+     * @param personDetailId the filter to find Fiscal Regime.
+     * @return People Fiscal Regime details.
+   */
+    List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetailId, Pagination pagination, Order order);
+
+    /**
+     * Counts the list of Fiscal Regime based on the supplied search criteria.
+     * @param personDetailId filter to apply
+     * @return the number of accounts.
+     */
+    Long countFiscalRegime(Long personDetailId);
+
+    /**
+     * Deletes a Fiscal Regime together with associated details
+     * @param idFicalRegime the id of the Fiscal Regime to delete.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return status ok response if the delete was successful.
+     */
+    boolean deleteFiscalRegime(Long idFicalRegime, Errors errTracking);
+    /**
+     * Saves or updates FiscalRegime.
+     * @param detPersonFiscalRegimeDTO the Fiscal Regime to save/update.
+     */
+    DetPersonFiscalRegimeDTO saveOrUpdateDetPeopleFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO, Errors errTracking);
+
+/**
+ * Gets a fiscal regime.
+ * @param idFicalRegime the fiscal regime id.
+ * @return a response body containing the requested fiscal regime json object.
+ */
+    DetPersonFiscalRegimeDTO getFiscalRegime(Long idFicalRegime, Errors errTracking);
+
 
 }

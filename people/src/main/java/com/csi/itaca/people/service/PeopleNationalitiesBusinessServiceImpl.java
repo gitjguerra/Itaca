@@ -64,7 +64,6 @@ public class PeopleNationalitiesBusinessServiceImpl implements PeopleNationaliti
 		return beaner.transform(nationalityEntities, NationalityDTO.class);
 	}
 
-
 	@Override
 	@Transactional
 	public boolean deleteNationality(Long idNationality, Errors errTracking) {
@@ -106,7 +105,7 @@ public class PeopleNationalitiesBusinessServiceImpl implements PeopleNationaliti
 	@Transactional(readOnly = true)
 	public Long countNationalities(Long personDetailId) {
 
-			Specification<NationalityEntity> spec = (root, query, cb) -> {
+	Specification<NationalityEntity> spec = (root, query, cb) -> {
 			Predicate p = null;
 			if (personDetailId != null) {
 				p = cb.equal(root.get(NationalityEntity.ID_DET_PERSON), personDetailId);
@@ -114,6 +113,7 @@ public class PeopleNationalitiesBusinessServiceImpl implements PeopleNationaliti
 			return p;
 		};
 		return nationalityRepository.count(spec);
+
 	}
 
 

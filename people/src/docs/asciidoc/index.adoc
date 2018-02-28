@@ -835,6 +835,96 @@ include::{snippets}/get-Account/curl-request.adoc[]
 
 === Lookup Address Format
 
+
+=== Count Regime
+
+==== Request structure
+
+include::{snippets}/count-regime/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/count-regime/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/count-regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-regime/curl-request.adoc[]
+
+
+=== Delete Regime
+
+==== Request structure
+
+include::{snippets}/delete-regime/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/delete-regime/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-regime/curl-request.adoc[]
+
+
+=== Get Regime
+
+==== Request structure
+
+include::{snippets}/get-Regime/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-Regime/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-Regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-Regime/curl-request.adoc[]
+
+
+=== Save Regime
+
+==== Request structure
+
+include::{snippets}/save-regime/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-regime/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-regime/curl-request.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ==== Request structure
 
 include::{snippets}/lookup-address-format/http-request.adoc[]

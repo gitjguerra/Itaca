@@ -77,6 +77,7 @@ public class PeopleManagementRestControllerTest {
 
     private NationalityDTO testNationalityDTO;
     private IdentificationDTO identificationDTO;
+
     private BankCardDTO bankCardDTO;
     private AccountDTO accountDTO;
     private static final String CARD = "card";
@@ -92,6 +93,11 @@ public class PeopleManagementRestControllerTest {
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
+
+    private DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO;
+
+
+
 
     @Before
     public void setup() {
@@ -150,6 +156,14 @@ public class PeopleManagementRestControllerTest {
         testNationalityDTO.setCountry(countryDTO);
         testNationalityDTO.setBydefault(true);
 
+        detPersonFiscalRegimeDTO = new DetPersonFiscalRegimeDTO();
+        detPersonFiscalRegimeDTO.setId(1L);
+        detPersonFiscalRegimeDTO.setPersonDetailId(1L);
+        FiscalRegimeAmountsDTO fiscalRegimeAmounts = new FiscalRegimeAmountsDTO();
+        fiscalRegimeAmounts.setId(100L);
+        detPersonFiscalRegimeDTO.setFiscalRegimeAmounts(fiscalRegimeAmounts);
+        detPersonFiscalRegimeDTO.setAnnuity(2012L);
+        detPersonFiscalRegimeDTO.setEffectDate(LocalDate.of(1972, 11, 22));
 
 
     }
@@ -545,10 +559,122 @@ public class PeopleManagementRestControllerTest {
     }
 
 
-
-
     ////******* END NATIONALITIES TEST *********////////
 
+    ////******* REGIME FISCAL TEST *********///////////
+
+    /** Get Regime test. */
+
+      @Test
+    public void getRegime() throws Exception {
+
+        Mockito.when(service.getFiscalRegime(any(), any(Errors.class))).thenReturn(detPersonFiscalRegimeDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_FISCAL_REGIME)
+                .param(PeopleManagementServiceProxy.FISCAL_REGIME_ID_PARAM, Long.toString(2))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(detPersonFiscalRegimeDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "get-Regime",
+                        responseFields(
+                                  fieldWithPath("id").description("The Regime Id")
+                                , fieldWithPath("personDetailId").description("The ID associated with the Regime")
+                                , fieldWithPath("fiscalRegimeAmounts.id").description("The ID associated with th Regime Amounts")
+                                , fieldWithPath("annuity").description("The Payment annuity.")
+                                , fieldWithPath("effectDate").description("Effective date of payment.")
+                                , fieldWithPath("fiscalRegimeAmounts.fiscalRegime").description("The ID associated from Regime Amounts Entity to Regime Entity.")
+                                , fieldWithPath("fiscalRegimeAmounts.taxes").description("The taxes of Regime.")
+                                , fieldWithPath("fiscalRegimeAmounts.retention").description("The retention of Regime.")
+                                , fieldWithPath("fiscalRegimeAmounts.startDate").description("Initial date of the payment period.")
+                                , fieldWithPath("fiscalRegimeAmounts.endDate").description("Final date of the payment period")
+
+
+                        )
+                ));
+
+    }
+
+
+    /// Count Regime test.
+    @Test
+    public void countRegime() throws Exception {
+        Mockito.when(service.countFiscalRegime( any() )).thenReturn(1L);
+        mockMvc.perform(get(PeopleManagementServiceProxy.COUNT_FISCAL_REGIME)
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(content().string("1"))
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "count-regime",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM).description("The person detail id."))
+                ));
+    }
+
+    /** Delete Regime test. */
+
+    @Test
+    public void deleteRegime() throws Exception {
+        Mockito.when(service.deleteFiscalRegime(any(), any(Errors.class) )).thenReturn(true);
+        mockMvc.perform(delete(PeopleManagementServiceProxy.DELETE_FISCAL_REGIME)
+                .param(PeopleManagementServiceProxy.FISCAL_REGIME_ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "delete-regime",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.FISCAL_REGIME_ID_PARAM).description("The ID of the fiscal regime to delete."))
+                ));
+    }
+
+
+
+    @Test
+    public void saveOrUpdateRegime() throws Exception {
+
+        DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO2 = new DetPersonFiscalRegimeDTO();
+        detPersonFiscalRegimeDTO2.setId(1L);
+        detPersonFiscalRegimeDTO2.setPersonDetailId(1L);
+        FiscalRegimeAmountsDTO fiscalRegimeAmounts = new FiscalRegimeAmountsDTO();
+        fiscalRegimeAmounts.setId(100L);
+        fiscalRegimeAmounts.setTaxes(200L);
+        fiscalRegimeAmounts.setStartDate(LocalDate.of(1972, 11, 20));
+        fiscalRegimeAmounts.setEndDate(LocalDate.of(1972, 11, 21));
+        detPersonFiscalRegimeDTO2.setFiscalRegimeAmounts(fiscalRegimeAmounts);
+        detPersonFiscalRegimeDTO2.setAnnuity(2012L);
+        detPersonFiscalRegimeDTO2.setEffectDate(LocalDate.of(1972, 11, 22));
+
+        Mockito.when(service.saveOrUpdateDetPeopleFiscalRegime(any(), any(Errors.class))).thenReturn(detPersonFiscalRegimeDTO2);
+
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_UPDATE_FISCAL_REGIME)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(detPersonFiscalRegimeDTO2)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "save-regime",
+                        responseFields(regimeFieldsDoc(""))
+                ));
+    }
+
+
+    private List<FieldDescriptor> regimeFieldsDoc(String fieldPrefix) {
+        List<FieldDescriptor> fields = new ArrayList<>();
+        fields.add(fieldWithPath(fieldPrefix+"id").description("The Regime Id."));
+        fields.add(fieldWithPath(fieldPrefix+"personDetailId").description("The ID associated with the Regime."));
+        fields.add(fieldWithPath(fieldPrefix+"fiscalRegimeAmounts.id").description("The ID associated with th Regime Amounts."));
+        fields.add(fieldWithPath(fieldPrefix+"annuity").description("The Payment annuity."));
+        fields.add(fieldWithPath(fieldPrefix+"effectDate").description("Effective date of payment."));
+        fields.add(fieldWithPath(fieldPrefix+"fiscalRegimeAmounts.fiscalRegime").description("The ID associated from Regime Amounts Entity to Regime Entity.."));
+        fields.add(fieldWithPath("fiscalRegimeAmounts.taxes").description("The taxes of Regime."));
+        fields.add(fieldWithPath("fiscalRegimeAmounts.retention").description("The retention of Regime."));
+        fields.add(fieldWithPath("fiscalRegimeAmounts.startDate").description("Initial date of the payment period."));
+        fields.add(fieldWithPath("fiscalRegimeAmounts.endDate").description("Final date of the payment period"));
+        return fields;
+    }
+
+
+    ////******* END REGIME FISCAL TEST *********////////
 
     @Test
     public void getBankCard() throws Exception {
