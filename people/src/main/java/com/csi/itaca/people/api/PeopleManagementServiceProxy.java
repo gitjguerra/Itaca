@@ -54,7 +54,7 @@ public interface PeopleManagementServiceProxy {
 
     // End points for contacts...
     String RESOURCE_CONTACT           = RESOURCE + "/contact";
-    String PERSON_CONTACT               = RESOURCE_CONTACT + "/getPersonContact";
+    String PERSON_CONTACT             = RESOURCE_CONTACT + "/getPersonContact";
     String CONTACT                    = RESOURCE_CONTACT + "/get";
     String DELETE_CONTACT             = RESOURCE_CONTACT + "/delete";
     String COUNT_CONTACT              = RESOURCE_CONTACT +"/count";
@@ -65,7 +65,7 @@ public interface PeopleManagementServiceProxy {
     String RESOURCE_ADDRESS               = RESOURCE + "/address";
     String GET_ADDRESFORMAT1              = RESOURCE_ADDRESS +"/get";
     String COUNT_ADDRESFORMAT1            = RESOURCE_ADDRESS +"/count";
-    String SAVE_ADDRESFORMAT1              = RESOURCE_ADDRESS + "/save";
+    String SAVE_ADDRESFORMAT1             = RESOURCE_ADDRESS + "/save";
     String DELETE_ADDRESFORMAT1           = RESOURCE_ADDRESS + "/delete";
 
     String RESOURCE_PUBLIC               = RESOURCE + "/Public";

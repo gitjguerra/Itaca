@@ -768,7 +768,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return accountRepository.count(spec);
     }
 
-    // WU
+
     // ********************* Contact ************************************************************
     @Override
     public ContactDTO getContact(Long idContact, Errors errTracking) {
@@ -803,7 +803,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         Specification<ContactEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (personDetailId != null) {
-                p = cb.equal(root.get(ContactEntity.ID_PERSON_DETAIL), personDetailId);
+                p = cb.equal(root.get(ContactEntity.PERSON_DETAIL_ID), personDetailId);
             }
             return p;
         };

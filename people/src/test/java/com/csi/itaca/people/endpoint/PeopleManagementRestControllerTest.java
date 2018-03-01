@@ -682,10 +682,10 @@ public class PeopleManagementRestControllerTest {
 
     /*/ get Contact test/*/
     /*
-    ID_PER_CONTACT	    NUMBER(19,0)
-    ID_PERSON_DETAIL	NUMBER(19,0)
-    ID_CONTACT_TYPE	    NUMBER(19,0)
-    ID_ADDRESS	        NUMBER(19,0)
+    PER_CONTACT_ID	    NUMBER(19,0)
+    PERSON_DETAIL_ID	NUMBER(19,0)
+    CONTACT_TYPE_ID	    NUMBER(19,0)
+    ADDRESS_ID	        NUMBER(19,0)
     VALUE_CONTACT	    VARCHAR2(100 CHAR)
 
     */
