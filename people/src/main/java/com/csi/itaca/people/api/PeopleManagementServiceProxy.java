@@ -1,12 +1,8 @@
 package com.csi.itaca.people.api;
 
-import com.csi.itaca.people.model.RelatedPerson;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
-import com.csi.itaca.people.model.filters.AccountSearchFilter;
-import com.csi.itaca.people.model.filters.BankCardSearchFilter;
-//import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import org.springframework.http.ResponseEntity;
