@@ -15,8 +15,7 @@ import javax.persistence.*;
 @Table(name = "PER_PUBLIC_PERSON")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 public class PublicPersonEntity implements PublicPerson {
-
-
+    //AG
 	public static final String id_per_public_person 	= "IdPerPublicPerson";
 	public static final String id_type_public_person 	= "IdTypePublicPerson";
 	public static final String id_person 			    = "IdPerson";

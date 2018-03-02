@@ -90,6 +90,7 @@ public class PeopleManagementRestControllerTest {
     //private static final String CARD = "card";
     //private static final String ACCOUNT = "id";
     //private static final String ID_CARD = "idBankCard";
+    private PublicPersonDTO publicPersonDTO;
 
     private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
     private static final String ID_CODE_FIELD = "identificationCode";
@@ -954,7 +955,7 @@ public class PeopleManagementRestControllerTest {
                         )
                 ));
     }
-
+    /** look up Address Save or update type test. */
     @Test
     public void saveOrUpdateAddresFotmat() throws Exception {
 
@@ -983,6 +984,96 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("nombrevia").description("Nombre de la via.")
                                 , fieldWithPath("numerovia").description("Numero de via.")
                                 , fieldWithPath("complementos").description("Descripcion complementaria.")
+
+                        )
+                ));
+
+
+
+    }
+
+
+    //-------------------------------------------------Public Person --------------------------------------
+    @Test
+    public void getPublicPerson() throws Exception {
+
+        PublicPersonDTO publicPersonDTO = new PublicPersonDTO();
+        publicPersonDTO.setIdPerPublicPerson(1L);
+        publicPersonDTO.setIdTypePublicPerson("00");
+        publicPersonDTO.setIdPerson("01");
+
+
+        Mockito.when(service.getPublicPerson(any(), any(Errors.class))).thenReturn(publicPersonDTO);
+        mockMvc.perform(get(PeopleManagementServiceProxy.GET_PUBLICPERSON)
+                .param(PeopleManagementServiceProxy.ID_PUBLIC_PERSON, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "GetPublic-Person",
+                        responseFields(fieldWithPath("idPerPublicPerson").description("Identifier of the public person")
+                                , fieldWithPath("idTypePublicPerson").description("Public type identifier")
+                                , fieldWithPath("idPerson").description("Identifier of the person")
+                        )
+                ));
+    }
+
+
+    private String buildPublicPersonSearchFilter() {
+
+        PublicPersonDTO filter = new PublicPersonDTO();
+
+        PublicPersonDTO publicPersonDTO = new PublicPersonDTO();
+        publicPersonDTO.setIdPerPublicPerson(1L);
+        publicPersonDTO.setIdTypePublicPerson(null);
+        publicPersonDTO.setIdPerson(null);
+
+        filter.setIdPerPublicPerson(1L);
+        filter.setIdTypePublicPerson("002");
+        filter.setIdPerson("002");
+        return JsonUtils.asJsonString(filter);
+    }
+
+
+    @Test
+    public void countPublicPerson() throws Exception {
+        Mockito.when(service.counPublicPerson( any() )).thenReturn(1L);
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_PUBLICPERSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param(PeopleManagementServiceProxy.ID_PUBLIC_PERSON, Long.toString(1))
+                .content(buildPublicPersonSearchFilter()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "Count-public-person",
+                        requestFields(fieldWithPath("idPerPublicPerson").description("Identifier of the public person"),
+                                fieldWithPath("idTypePublicPerson").description("Public type identifier"),
+                                fieldWithPath("idPerson").description("Identifier of the person")
+                        )
+                ));
+    }
+
+    @Test
+    public void saveOrUpdatePublicPerson() throws Exception {
+
+        PublicPersonDTO publicPersonDTO = new PublicPersonDTO();
+        publicPersonDTO.setIdPerPublicPerson(1L);
+        publicPersonDTO.setIdTypePublicPerson("00");
+        publicPersonDTO.setIdPerson("01");
+
+        Mockito.when(service.saveOrUpdatePublicPerson(any(), any(Errors.class))).thenReturn(publicPersonDTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_PUBLICPERSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(publicPersonDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-Public-Person",
+                        responseFields(fieldWithPath("idPerPublicPerson").description("Identifier of the public person")
+                                , fieldWithPath("idTypePublicPerson").description("Public type identifier")
+                                , fieldWithPath("idPerson").description("Identifier of the person")
+
 
                         )
                 ));

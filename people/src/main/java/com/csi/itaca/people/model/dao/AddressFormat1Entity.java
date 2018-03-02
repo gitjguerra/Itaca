@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "dir_format_1")
 public class AddressFormat1Entity implements AddressFormat1 {
-
+    //AG
 	public static final String ID 						= "AddressId";
 	public static final String id_poblacion 			= "Idpoblacion";
 	public static final String id_cod_postal 			= "Idcodpostal";

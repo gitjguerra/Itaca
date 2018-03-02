@@ -326,7 +326,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
 
     @Override
-    @RequestMapping(value = COUNT_ADDRESFORMAT1, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = COUNT_ADDRESFORMAT1, method = RequestMethod.POST)
     public ResponseEntity<Long> countAddresFormat1(@RequestParam(PeopleManagementServiceProxy.ID_ADDRES_PARAM) Long addressId) {
         return new ResponseEntity<>(peopleManagementService.countAddresformat1(addressId), HttpStatus.OK);
     }
@@ -369,7 +369,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     }
 
     @Override
-    @RequestMapping(value = COUNT_PUBLICPERSON, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = COUNT_PUBLICPERSON, method = RequestMethod.POST)
     public ResponseEntity<Long> counPublicPerson(@RequestParam(PeopleManagementServiceProxy.ID_PUBLIC_PERSON) Long publicpersonId) {
         return new ResponseEntity<>(peopleManagementService.counPublicPerson(publicpersonId), HttpStatus.OK);
     }

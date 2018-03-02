@@ -14,7 +14,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @NoArgsConstructor
 public class AddressFormat1DTO implements AddressFormat1 {
-
+	//AG
 	private Long AddressId;
 	private String Idpoblacion;
 	private String Idcodpostal;

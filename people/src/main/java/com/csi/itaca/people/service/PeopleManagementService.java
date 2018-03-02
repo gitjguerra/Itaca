@@ -155,7 +155,7 @@ public interface PeopleManagementService {
      * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
      * @return the contact if found otherwise null.
      */
-    List<? extends ContactDTO>  getPersonContact(ContactSearchFilter criteria, Errors errTracking);
+   List<? extends ContactDTO>  getPersonContact(ContactSearchFilter criteria, Errors errTracking);
 
     /**
      * Delete the Contact associated to the Contact ID
@@ -181,7 +181,7 @@ public interface PeopleManagementService {
 
 
 
-    //address
+    //address AG
     AddressFormat1DTO getAddresformat1(Long id, Errors errTracking);
 
     Long countAddresformat1(Long addressId);
@@ -189,8 +189,8 @@ public interface PeopleManagementService {
     AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate, Errors errTracking);
 
     void deleteaddresformat1(Long personId, Errors errTracking);
-//person
 
+    //person AG
     PublicPersonDTO getPublicPerson(Long id, Errors errTracking);
 
     Long counPublicPerson(Long publicpersonId);

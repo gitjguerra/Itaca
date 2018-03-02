@@ -80,9 +80,10 @@ public interface PeopleLookupServiceProxy {
     /** @return a list of Contacts.*/
     ResponseEntity<Long> listContacts();
 
-    // address
+    /** @return a list of address. AG*/
     ResponseEntity<List<AddressFormat1DTO>> lookupAddresFormat1();
 
+    /** @return a list of PublicPerson. AG*/
     ResponseEntity<List<PublicPersonDTO>> lookupPublicPerson();
 
 }

@@ -928,7 +928,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-    @Override
+    //@Override
     @Transactional(readOnly = true)
     public List<? extends ContactDTO> getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
 
@@ -950,7 +950,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     // ********************* Contact ************************************************************
 
 
-
+    // ********************* Address ************************************************************
     @Override
     @Transactional
     public AddressFormat1DTO getAddresformat1(Long id, Errors errTracking) {
@@ -1034,7 +1034,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return Address;
     }
 
-
+    // ********************* Public Person ************************************************************
     @Override
     @Transactional
     public PublicPersonDTO getPublicPerson(Long id, Errors errTracking) {

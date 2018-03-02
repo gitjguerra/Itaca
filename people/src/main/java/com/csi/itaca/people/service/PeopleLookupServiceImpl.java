@@ -153,14 +153,14 @@ public class PeopleLookupServiceImpl implements PeopleLookupService {
     }
 
 
-
+    //Address AG
     @Override
     @Transactional(readOnly = true)
     public List<AddressFormat1DTO> lookupAddresFormat1() {
         return  beaner.transform((List<AddressFormat1Entity>) addressFormat1Repository.findAll(), AddressFormat1DTO.class);
     }
 
-
+    //Public Person AG
     @Override
     @Transactional(readOnly = true)
     public List<PublicPersonDTO> lookupPublicPerson() {

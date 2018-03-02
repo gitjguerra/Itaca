@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PublicPersonDTO implements PublicPerson {
-
+	//AG
 	private Long IdPerPublicPerson;
 	private String IdTypePublicPerson;
 	private String IdPerson;

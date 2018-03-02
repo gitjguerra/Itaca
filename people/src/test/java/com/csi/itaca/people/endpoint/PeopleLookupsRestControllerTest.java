@@ -616,7 +616,7 @@ public class PeopleLookupsRestControllerTest {
                 ));
     }
 
-    /** look up Account card type test.  */
+    /** look up Addres type test. */
     @Test
     public void AddressFormat1DTO() throws Exception {
 
@@ -671,6 +671,38 @@ public class PeopleLookupsRestControllerTest {
                 ));
     }
 
+
+    /** look up Public Person test. */
+    @Test
+    public void lookupPublicPerson() throws Exception {
+
+        List<PublicPersonDTO> list = new ArrayList<>();
+
+        PublicPersonDTO item1 = new PublicPersonDTO();
+        item1.setIdPerPublicPerson(1L);
+        item1.setIdTypePublicPerson("001");
+        item1.setIdPerson("001");
+        list.add(item1);
+
+        PublicPersonDTO item2 = new PublicPersonDTO();
+        item2.setIdPerPublicPerson(2L);
+        item2.setIdTypePublicPerson("002");
+        item2.setIdPerson("002");
+        list.add(item2);
+
+        Mockito.when(lookupService.lookupPublicPerson()).thenReturn(list);
+
+        mockMvc.perform(get(PeopleLookupServiceProxy.LOOKUP_PUBLICPERSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "lookup-Public-Person",
+                        responseFields(fieldWithPath("[].idPerPublicPerson").description("Identifier of the public person")
+                                ,fieldWithPath("[].idTypePublicPerson").description("Public type identifier")
+                                ,fieldWithPath("[].idPerson").description("Identifier of the person")
+                        )
+                ));
+    }
 /*
 
     public static final String id_poblacion 			= "";

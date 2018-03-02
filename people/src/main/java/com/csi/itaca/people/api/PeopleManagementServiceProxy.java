@@ -5,7 +5,7 @@ import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
-import com.csi.itaca.people.model.filters.ContactSearchFilter;
+//import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -75,13 +75,14 @@ public interface PeopleManagementServiceProxy {
     String SAVE_CONTACT               = RESOURCE_CONTACT + "/save";
 
 
-   /////Address
+   /////// End points for Address.... AG
     String RESOURCE_ADDRESS               = RESOURCE + "/address";
     String GET_ADDRESFORMAT1              = RESOURCE_ADDRESS +"/get";
     String COUNT_ADDRESFORMAT1            = RESOURCE_ADDRESS +"/count";
     String SAVE_ADDRESFORMAT1              = RESOURCE_ADDRESS + "/save";
     String DELETE_ADDRESFORMAT1           = RESOURCE_ADDRESS + "/delete";
 
+    /////// End points for Public Person... AG
     String RESOURCE_PUBLIC               = RESOURCE + "/Public";
     String GET_PUBLICPERSON              = RESOURCE_PUBLIC +"/getPublicPerson";
     String COUNT_PUBLICPERSON            = RESOURCE_PUBLIC +"/counPublicPerson";
@@ -293,6 +294,7 @@ public interface PeopleManagementServiceProxy {
     ResponseEntity saveOrUpdateContact(ContactDTO contactToSaveOrUpdate,BindingResult errTracking);
 
 
+
     ResponseEntity getAddresFormat1(Long id);
 
     ResponseEntity<Long> countAddresFormat1(Long addressId);
@@ -300,6 +302,7 @@ public interface PeopleManagementServiceProxy {
     ResponseEntity saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate,BindingResult errTracking);
 
     ResponseEntity deleteaddresformat1(Long id);
+
 
 
     ResponseEntity getPublicPerson(Long id);
