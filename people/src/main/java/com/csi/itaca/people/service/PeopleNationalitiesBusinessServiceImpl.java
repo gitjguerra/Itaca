@@ -40,7 +40,7 @@ public class PeopleNationalitiesBusinessServiceImpl implements PeopleNationaliti
 	@Transactional(readOnly = true)
 	public List<NationalityDTO> getPeopleNationalities(Long personDetail, Pagination pagination, Order order) {
 		Specification<NationalityEntity> spec = (root, query, cb) -> {
-			Predicate p = cb.equal(root.get(NationalityEntity.ID_DET_PERSON), personDetail);
+			Predicate p = cb.equal(root.get(NationalityEntity.PERSON_DETAIL_ID), personDetail);
 			if (order != null && order.getField() != null) {
 				if(order.isAscending()){
 					query.orderBy(cb.asc(root.get(JpaUtils.getField(NationalityEntity.class, order))));
@@ -108,7 +108,7 @@ public class PeopleNationalitiesBusinessServiceImpl implements PeopleNationaliti
 	Specification<NationalityEntity> spec = (root, query, cb) -> {
 			Predicate p = null;
 			if (personDetailId != null) {
-				p = cb.equal(root.get(NationalityEntity.ID_DET_PERSON), personDetailId);
+				p = cb.equal(root.get(NationalityEntity.PERSON_DETAIL_ID), personDetailId);
 			}
 			return p;
 		};

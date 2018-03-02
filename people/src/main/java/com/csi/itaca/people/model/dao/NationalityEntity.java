@@ -20,8 +20,8 @@ public class NationalityEntity implements Nationality {
 	 */
 	public static final String ID_NATIONALITY = "id";
 	public static final String BYDEFAULT = "bydefault";
-	public static final String ID_DET_PERSON = "personDetailId";
-	public static final String ID_COUNTRY = "country";
+	public static final String PERSON_DETAIL_ID = "personDetailId";
+	public static final String COUNTRY_ID = "country";
 
 	@Id
 	@Column(name="ID_NATIONALITY")
@@ -29,12 +29,12 @@ public class NationalityEntity implements Nationality {
 	@SequenceGenerator(name = "SEQ_NATIONALITY", sequenceName = "SEQ_NATIONALITY", allocationSize = 1)
 	private Long id;
 
-	@Column(name = "id_det_person")
+	@Column(name = "PERSON_DETAIL_ID")
 	private Long personDetailId;
 
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_COUNTRY")
+	@JoinColumn(name="COUNTRY_ID")
 	private CountryEntity country;
 
 	
