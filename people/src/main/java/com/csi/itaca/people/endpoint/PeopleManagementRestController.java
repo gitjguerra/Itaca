@@ -9,6 +9,7 @@ import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import com.csi.itaca.people.service.PeopleManagementService;
 import com.csi.itaca.people.service.PeopleNationalitiesBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -312,10 +313,7 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
     ////////////////////////////////////////////////////////////////////////////////////////////// Contacts End ...
 
 
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////  address ini ...
-    //address
     @Override
     @RequestMapping(value = GET_ADDRESFORMAT1, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getAddresFormat1(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long id) {
@@ -374,9 +372,6 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return new ResponseEntity<>(peopleManagementService.counPublicPerson(publicpersonId), HttpStatus.OK);
     }
 
-
-
-
     @Override
     @RequestMapping(value = DELETE_PUBLICPERSON, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity DeletePublicPerson(@RequestParam(PeopleManagementServiceProxy.ID_PUBLIC_PERSON) Long id) {
@@ -386,5 +381,46 @@ public class PeopleManagementRestController extends ItacaBaseRestController impl
         return buildResponseEntity(errTracking);
     }
 
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Relations  ...
+
+    @Override
+    @RequestMapping(value = COUNT_PERSON_REL, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countPersonRelations(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idPersonDetail) {
+        return new ResponseEntity<>(peopleManagementService.countPersonRelations(idPersonDetail), HttpStatus.OK);
+    }
+
+    @Override
+    @RequestMapping(value = DELETE_REL, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteRelatedPerson(@RequestParam(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM) Long idRelatedPerson) {
+        BindingResult errTracking = createErrorTracker();
+        peopleManagementService.deleteRelatedPerson(idRelatedPerson,errTracking);
+        return buildResponseEntity(errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = SAVE_REL, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveOrUpdateRelatedPerson(@Valid @RequestBody RelatedPersonDTO relatedPersonToSaveOrUpdate, BindingResult errTracking) {
+        RelatedPersonDTO relatedPersonDTO = peopleManagementService.saveOrUpdateRelatedPerson(relatedPersonToSaveOrUpdate, errTracking);
+        return buildResponseEntity(relatedPersonDTO, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = SEARCH_REL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends PersonDetailDTO>> findByPersonId(@RequestParam(PeopleManagementServiceProxy.ID_PARAM) Long idCode) {
+        BindingResult errTracking = createErrorTracker();
+        return buildResponseEntity(peopleManagementService.findByPersonId(idCode,errTracking), errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = GET_REL, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(@RequestBody RelatedPersonSearchFilter criteria, BindingResult errTracking) {
+        List<? extends RelatedPersonDTO> relatedPerson = peopleManagementService.getRelatedPerson(criteria, errTracking);
+        return buildResponseEntity(relatedPerson, errTracking);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////// Relations end ...
 
 }

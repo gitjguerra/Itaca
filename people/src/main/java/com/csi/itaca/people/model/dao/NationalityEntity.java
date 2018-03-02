@@ -29,12 +29,12 @@ public class NationalityEntity implements Nationality {
 	@SequenceGenerator(name = "SEQ_NATIONALITY", sequenceName = "SEQ_NATIONALITY", allocationSize = 1)
 	private Long id;
 
-	@Column(name = "person_detail_id")
+	@Column(name = "id_det_person")
 	private Long personDetailId;
 
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="COUNTRY_ID")
+	@JoinColumn(name="ID_COUNTRY")
 	private CountryEntity country;
 
 	

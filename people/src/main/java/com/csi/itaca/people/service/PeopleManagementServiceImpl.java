@@ -67,6 +67,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private BankCardRepository bankCardRepository;
 
     @Autowired
+    private RelationRepository relationRepository;
+
+    @Autowired
     private ContactRepository contactRepository;
 
     @Autowired
@@ -407,6 +410,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
+
         PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
 
         PersonDetailDTO retPersonDetail = null;
@@ -711,7 +715,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
         BankCardEntity bankCardUpdateEntity = new BankCardEntity();
-
         BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getBankCardId());
 
         if (bankCardEntity == null && errTracking != null){
@@ -722,6 +725,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         bankCardEntity.setBankId(dto.getBankId());
         bankCardEntity.setCard(dto.getCard());
         bankCardEntity.setCardTypeId(dto.getCardTypeId());
+        bankCardEntity.setCardTypeId(dto.getBankCardId());
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
         bankCardEntity.setPersonDetailId(dto.getPersonDetailId());
         bankCardEntity.setPrincipal(dto.getPrincipal());
@@ -771,6 +775,116 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
             return p;
         };
         return accountRepository.count(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countPersonRelations(Long idPersonDetail) {
+
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (idPersonDetail != null) {
+                p = cb.equal(root.get(RelatedPersonEntity.PERSON_DETAIL_ID), idPersonDetail);
+            }
+            return p;
+        };
+        return relationRepository.count(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void deleteRelatedPerson(Long relatedPersonId, Errors errTracking) {
+
+        RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(relatedPersonId);
+        if (relatedPersonEntity != null && errTracking != null){
+            relationRepository.delete(relatedPersonEntity);
+        }else{
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RelatedPersonDTO saveOrUpdateRelatedPerson(RelatedPersonDTO dto, Errors errTracking) {
+
+        RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(dto.getId());
+        if (relatedPersonEntity == null && errTracking != null){
+            relatedPersonEntity = new RelatedPersonEntity();
+        }
+
+        relatedPersonEntity.setId(dto.getId());
+        relatedPersonEntity.setPersonDetailId(dto.getPersonDetailId());
+        relatedPersonEntity.setPersonRelId(dto.getPersonRelId());
+        relatedPersonEntity.setRelationTypeId(dto.getRelationTypeId());
+        relatedPersonEntity = relationRepository.save(relatedPersonEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(relatedPersonEntity, RelatedPersonDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends PersonDetailDTO> findByPersonId(Long personId, Errors errTracking) {
+
+        Specification<PersonDetailEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personId != null) {
+                p = cb.equal(root.get(PersonDetailEntity.PERSON).get(PersonEntity.ID), personId);
+            }
+            return p;
+        };
+
+        List<? extends PersonDetailEntity> personDetail = personDetailRepository.findAll(spec);
+        if (personDetail==null || personDetail.isEmpty()) {
+            return Collections.emptyList();
+        }
+        else if (personDetail.get(0) instanceof IndividualDetailEntity) {
+            return beaner.transform(personDetail, IndividualDetailDTO.class);
+        }
+        else {
+            return beaner.transform(personDetail, CompanyDetailDTO.class);
+        }
+    }
+
+    private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
+                                          RelatedPersonSearchFilter filter, String path) {
+
+        if (filter.getId() != null && !filter.getId().isEmpty()) {
+            if (path.isEmpty())
+                p = cb.equal(root.get(RelatedPersonEntity.ID), filter.getId());
+        }
+
+        if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
+            if (path.isEmpty())
+                p = cb.and(p,
+                        cb.equal(root.get(RelatedPersonEntity.PERSON_DETAIL_ID), filter.getPersonDetailId()));
+        }
+
+        return p;
+
+    }
+
+    @Transactional(readOnly = true)
+    List<? extends RelatedPersonEntity> listRelatedPerson(RelatedPersonSearchFilter parameters) {
+
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.and(cb.equal(root.type(), RelatedPersonEntity.class));
+            return applyRelatedFilters(root, p, cb, parameters, "");
+        };
+        return relationRepository.findAll(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking) {
+
+        List<? extends RelatedPersonEntity> relatedPersonFound = listRelatedPerson(criteria);
+        if (relatedPersonFound == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(relatedPersonFound, RelatedPersonDTO.class);
     }
 
 
@@ -859,8 +973,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     /////////////////////////////////////////////////// END FISCAL REGIME
 
-
-
     // WU
     // ********************* Contact ************************************************************
     @Override
@@ -928,7 +1040,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-    //@Override
+    @Override
     @Transactional(readOnly = true)
     public List<? extends ContactDTO> getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
 
@@ -976,7 +1088,8 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         return addressFormat1Repository.count(spec);
     }
-  //address
+
+    //address
     @Override
     @Transactional
     public AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO dto, Errors errTracking) {
@@ -1017,7 +1130,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     }
 
-
     @Override
     @Transactional
     public void deleteaddresformat1(Long Id, Errors errTracking) {
@@ -1033,6 +1145,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }
         return Address;
     }
+
 
     // ********************* Public Person ************************************************************
     @Override
@@ -1062,10 +1175,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         return publicPersonRepository.count(spec);
     }
 
-
-
-
-
     @Override
     @Transactional
     public void deletePublicPerson(Long Id, Errors errTracking) {
@@ -1081,7 +1190,5 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         }
         return Person;
     }
-
-
 
 }

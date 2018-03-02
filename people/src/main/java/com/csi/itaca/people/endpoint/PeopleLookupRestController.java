@@ -113,7 +113,6 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
         return new ResponseEntity(peopleLookupService.lookupContacts(), HttpStatus.OK);
     }
 
-
     //Address
     @Override
     @RequestMapping(value = LOOKUP_ADDRESFORMAT1, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -127,6 +126,5 @@ public class PeopleLookupRestController extends ItacaBaseRestController implemen
     public ResponseEntity<List<PublicPersonDTO>> lookupPublicPerson() {
         return new ResponseEntity(peopleLookupService.lookupPublicPerson(), HttpStatus.OK);
     }
-
 
 }

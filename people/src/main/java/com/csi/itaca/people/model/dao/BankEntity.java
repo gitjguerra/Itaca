@@ -14,11 +14,11 @@ import javax.persistence.*;
 @Table(name = "per_bank")
 public class BankEntity implements Bank {
 
-    public static final String ID = "BANK_ID";
-    public static final String BANK_NAME = "BANK_NAME";
-    public static final String CBIC = "CBIC";
-    public static final String DRAFTBANK = "DRAFT_BANK_PORTAL";
-    public static final String COD_BANK = "BANK_COD";
+    public static final String ID = "id";
+    public static final String BANK_NAME = "bankName";
+    public static final String CBIC = "cbic";
+    public static final String DRAFTBANK = "draftbank";
+    public static final String BANK_COD = "bankCod";
 
     @Id
     @Column(name="BANK_ID")
@@ -39,21 +39,17 @@ public class BankEntity implements Bank {
     private String bankCod;
 
     @Override
-    public Long getDraftBank() {
-        return draftbank;
-    }
-    @Override
-    public String getBankName() {
-        return bankName;
-    }
-    @Override
     public String getBic() {
         return cbic;
     }
+
+    @Override
+    public Long getDraftBank() {
+        return draftbank;
+    }
+
     @Override
     public String getCode() {
         return bankCod;
     }
-
-
 }

@@ -54,9 +54,9 @@ public interface PeopleLookupService {
      */
     List<ContactDTO> lookupContacts();
 
-
     //address  //AG
     List<AddressFormat1DTO>  lookupAddresFormat1();
+
     //Public Person  //AG
     List<PublicPersonDTO>  lookupPublicPerson();
 }

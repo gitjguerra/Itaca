@@ -80,24 +80,17 @@ public class PeopleManagementRestControllerTest {
 
     private BankCardDTO bankCardDTO;
     private AccountDTO accountDTO;
-    private static final String CARD = "card";
-    private static final String ACCOUNT = "id";
-    private static final String ID_CARD = "idBankCard";
-
 
     private AddressFormat1DTO addressFormat1DTO;
-    //private AccountDTO accountDTO;
-    //private static final String CARD = "card";
-    //private static final String ACCOUNT = "id";
-    //private static final String ID_CARD = "idBankCard";
     private PublicPersonDTO publicPersonDTO;
-
-    private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
-    private static final String ID_CODE_FIELD = "identificationCode";
 
     private DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO;
 
-
+    private static final String EXTERNAL_REFERENCE_CODE_FIELD = "externalReferenceCode";
+    private static final String ID_CODE_FIELD = "identificationCode";
+    private static final String ID = "id";
+    private static final String CARD = "card";
+    private static final String ACCOUNT = "id";
 
 
     @Before
@@ -109,7 +102,7 @@ public class PeopleManagementRestControllerTest {
 
         testIndividualDTO = new IndividualDTO();
         testIndividualDTO.setId(1L);
-        testIndividualDTO.setDateOfBirth(LocalDate.of(1987, 06, 12));
+        testIndividualDTO.setDateOfBirth(LocalDate.of(1987, 6, 12));
         testIndividualDTO.setExternalReferenceCode("Ref123");
         testIndividualDTO.setIdentificationCode("IDCode123");
 
@@ -217,17 +210,16 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.findPeople(any(), any(Errors.class))).thenReturn(people);
 
-        StringBuilder requestBody = new StringBuilder();
-        requestBody.append("{");
-        requestBody.append("\"@type\":").append("\"individual\"");
-        requestBody.append(",\"personType\":").append("{\"id\":\"individual\"}");
-        requestBody.append(",\"idCode\":").append("\"IDCODE123\"");
-        requestBody.append(",\"idType\":").append("{\"id\":\"2\"}");
-        requestBody.append("}");
+        String requestBody = "{" +
+                "\"@type\":" + "\"individual\"" +
+                ",\"personType\":" + "{\"id\":\"individual\"}" +
+                ",\"idCode\":" + "\"IDCODE123\"" +
+                ",\"idType\":" + "{\"id\":\"2\"}" +
+                "}";
 
         mockMvc.perform(post(PeopleManagementServiceProxy.SEARCH_PEOPLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody.toString()))
+                .content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
 
@@ -271,7 +263,6 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     @Test
     public void getCheckExtRefExists() throws Exception {
         Mockito.when(service.doseExternalReferenceAlreadyExist(any())).thenReturn(true);
@@ -286,8 +277,6 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
-    /** Get person detail test. */
     /**
      * Get person detail test.
      */
@@ -350,7 +339,6 @@ public class PeopleManagementRestControllerTest {
                         requestFields(peopleSearchFilterFieldsDoc())
                 ));
     }
-
 
     @Test
     public void findDuplicatePersonDetail() throws Exception {
@@ -470,8 +458,8 @@ public class PeopleManagementRestControllerTest {
         return fields;
     }
 
-    ////******* NATIONALITIES TEST *********////////
 
+    ////******* NATIONALITIES TEST *********////////
 
     /** Get person test. */
     @Test
@@ -491,9 +479,7 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     /** Delete Nationalities test. */
-
     @Test
     public void deleteNationality() throws Exception {
         Mockito.when(peopleNationalitiesBusinessService.deleteNationality(any(), any(Errors.class) )).thenReturn(true);
@@ -506,7 +492,6 @@ public class PeopleManagementRestControllerTest {
                         requestParameters(parameterWithName(PeopleManagementServiceProxy.NATIONALITY_ID_PARAM).description("The ID of the nationality to delete."))
                 ));
     }
-
 
     /// Count Nationalities test.
     @Test
@@ -523,9 +508,7 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     /** Save/update Nationalities test. */
-
     @Test
     public void saveOrUpdateNationality() throws Exception {
         Mockito.when(peopleNationalitiesBusinessService.saveOrUpdateNationality(any(), any(Errors.class) )).thenReturn(testNationalityDTO);
@@ -544,11 +527,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     private List<FieldDescriptor> nationalityFieldsDoc() {
         return nationalityFieldsDoc("");
     }
-
 
     private List<FieldDescriptor> nationalityFieldsDoc(String fieldPrefix) {
         List<FieldDescriptor> fields = new ArrayList<>();
@@ -558,14 +539,13 @@ public class PeopleManagementRestControllerTest {
         fields.add(fieldWithPath(fieldPrefix+"bydefault").description("ID code for the default country."));
         return fields;
     }
-
-
     ////******* END NATIONALITIES TEST *********////////
+
+
 
     ////******* REGIME FISCAL TEST *********///////////
 
     /** Get Regime test. */
-
       @Test
     public void getRegime() throws Exception {
 
@@ -597,7 +577,6 @@ public class PeopleManagementRestControllerTest {
 
     }
 
-
     /// Count Regime test.
     @Test
     public void countRegime() throws Exception {
@@ -614,7 +593,6 @@ public class PeopleManagementRestControllerTest {
     }
 
     /** Delete Regime test. */
-
     @Test
     public void deleteRegime() throws Exception {
         Mockito.when(service.deleteFiscalRegime(any(), any(Errors.class) )).thenReturn(true);
@@ -627,8 +605,6 @@ public class PeopleManagementRestControllerTest {
                         requestParameters(parameterWithName(PeopleManagementServiceProxy.FISCAL_REGIME_ID_PARAM).description("The ID of the fiscal regime to delete."))
                 ));
     }
-
-
 
     @Test
     public void saveOrUpdateRegime() throws Exception {
@@ -658,7 +634,6 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     private List<FieldDescriptor> regimeFieldsDoc(String fieldPrefix) {
         List<FieldDescriptor> fields = new ArrayList<>();
         fields.add(fieldWithPath(fieldPrefix+"id").description("The Regime Id."));
@@ -673,10 +648,11 @@ public class PeopleManagementRestControllerTest {
         fields.add(fieldWithPath("fiscalRegimeAmounts.endDate").description("Final date of the payment period"));
         return fields;
     }
-
-
     ////******* END REGIME FISCAL TEST *********////////
 
+    /**
+     * Get Bank Card.
+     */
     @Test
     public void getBankCard() throws Exception {
 
@@ -709,7 +685,6 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     @Test
     public void getAddresformat1() throws Exception {
 
@@ -740,12 +715,11 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
-
+    /**
+     * Get Account.
+     */
     @Test
     public void getAccount() throws Exception {
-
-        AccountClasificationDTO clasification = new AccountClasificationDTO();
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(1L);
@@ -777,6 +751,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    /**
+     * Count Bank Cards.
+     */
     @Test
     public void countBankCard() throws Exception {
 
@@ -795,6 +772,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    /**
+     * Count accounts.
+     */
     @Test
     public void countAccount() throws Exception {
 
@@ -813,6 +793,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    /**
+     * save Or Update Accounts.
+     */
     @Test
     public void saveOrUpdateAccount() throws Exception {
 
@@ -850,6 +833,9 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
+    /**
+     * save Or Update Bank Cards.
+     */
     @Test
     public void saveOrUpdateBankCard() throws Exception {
 
@@ -924,15 +910,6 @@ public class PeopleManagementRestControllerTest {
 
 
     /*/ get Contact test/*/
-    /*
-    ID_PER_CONTACT	    NUMBER(19,0)
-    ID_PERSON_DETAIL	NUMBER(19,0)
-    ID_CONTACT_TYPE	    NUMBER(19,0)
-    ID_ADDRESS	        NUMBER(19,0)
-    VALUE_CONTACT	    VARCHAR2(100 CHAR)
-
-    */
-
     @Test
     public void getContact() throws Exception {
 
@@ -955,6 +932,7 @@ public class PeopleManagementRestControllerTest {
                         )
                 ));
     }
+
     /** look up Address Save or update type test. */
     @Test
     public void saveOrUpdateAddresFotmat() throws Exception {
@@ -987,9 +965,6 @@ public class PeopleManagementRestControllerTest {
 
                         )
                 ));
-
-
-
     }
 
 
@@ -1017,7 +992,6 @@ public class PeopleManagementRestControllerTest {
                 ));
     }
 
-
     private String buildPublicPersonSearchFilter() {
 
         PublicPersonDTO filter = new PublicPersonDTO();
@@ -1032,7 +1006,6 @@ public class PeopleManagementRestControllerTest {
         filter.setIdPerson("002");
         return JsonUtils.asJsonString(filter);
     }
-
 
     @Test
     public void countPublicPerson() throws Exception {
@@ -1077,9 +1050,154 @@ public class PeopleManagementRestControllerTest {
 
                         )
                 ));
+    }
 
+    /**
+     * Count person relations.
+     */
+    @Test
+    public void countPersonRelations() throws Exception {
 
+        Mockito.when(service.countPersonRelations(any())).thenReturn(1L);
 
+        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_PERSON_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(buildPeopleSearchFilter())
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(document(
+                        "count-related-person",
+                        requestFields(peopleSearchFilterFieldsDoc())
+                ));
+    }
+
+    /**
+     * Delete person relations.
+     */
+    @Test
+    public void deleteRelatedPerson() throws Exception {
+
+        Mockito.doNothing().when(service).deleteRelatedPerson(any(), any(Errors.class));
+
+        mockMvc.perform(delete(PeopleManagementServiceProxy.DELETE_REL)
+                .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "delete-related-person",
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM).description("The id of the related person to delete.")
+                        )
+                ));
+    }
+
+    /**
+     * save Or Update Related Persons.
+     */
+    @Test
+    public void saveOrUpdateRelatedPerson() throws Exception {
+
+        RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
+        relatedPersonDTO.setId(1L);
+        relatedPersonDTO.setPersonDetailId(1L);
+        relatedPersonDTO.setPersonRelId(1L);
+        relatedPersonDTO.setRelationTypeId(1L);
+
+        Mockito.when(service.saveOrUpdateRelatedPerson(any(), any(Errors.class))).thenReturn(relatedPersonDTO);
+        mockMvc.perform(put(PeopleManagementServiceProxy.SAVE_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtils.asJsonString(relatedPersonDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andDo(document(
+                        "save-update-related_person",
+                        responseFields(fieldWithPath("id").description("Related Person ID.")
+                                , fieldWithPath("personDetailId").description("id Person Detail.")
+                                , fieldWithPath("personRelId").description("Related Person Id.")
+                                , fieldWithPath("relationTypeId").description("Relation Type Id.")
+                        )
+                ));
+
+    }
+
+    /**
+     * Search related person test.
+     */
+    @Test
+    public void findByPersonId() throws Exception {
+
+        List people = new ArrayList<>();
+        people.add(testIndividualDTO);
+
+        Mockito.when(service.findByPersonId(any(), any(Errors.class))).thenReturn(people);
+        mockMvc.perform(get(PeopleManagementServiceProxy.SEARCH_REL)
+                .param(PeopleManagementServiceProxy.ID_PARAM, Long.toString(1L)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "findByPersonId-related-person",
+                        //responseFields(individualFieldsDoc("", true, true))
+
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.ID_PARAM).description("The ID of the person detail to retrieve.")),
+                        responseFields(
+                                fieldWithPath("[0].id").description("Related Person ID.")
+                                , fieldWithPath("[0].idType.id").description("person.idType.id.")
+                                , fieldWithPath("[0].identificationCode").description("person.identificationCode.")
+                                , fieldWithPath("[0].externalReferenceCode").description("person.externalReferenceCode.")
+                                , fieldWithPath("[0].gender.id").description("person.gender.id.")
+                                , fieldWithPath("[0].dateOfBirth").description("person.dateOfBirth.")
+                                , fieldWithPath("[0].details[0].id").description("id details.")
+                                , fieldWithPath("[0].details[0].language.id").description("language details.")
+                                , fieldWithPath("[0].details[0].country.id").description("country.id details.")
+                                , fieldWithPath("[0].details[0].name").description("name details.")
+                                , fieldWithPath("[0].details[0].name1").description("name1 details.")
+                                , fieldWithPath("[0].details[0].name2").description("name2 details.")
+                                , fieldWithPath("[0].details[0].surname1").description("surname1 details.")
+                                , fieldWithPath("[0].details[0].surname2").description("surname2 details.")
+                                , fieldWithPath("[0].details[0].civilStatus.id").description("civil status id details.")
+                                , fieldWithPath("[0].details[0].personStatus.id").description("language id details.")
+                        )
+                ));
+    }
+
+    /**
+     * Get account.
+     */
+    @Test
+    public void getRelatedPerson() throws Exception {
+
+        List relatedPerson = new ArrayList<>();
+
+        RelatedPersonDTO relatedPersonDTO = new RelatedPersonDTO();
+        relatedPersonDTO.setId(1L);
+        relatedPersonDTO.setPersonDetailId(1L);
+        relatedPersonDTO.setRelationTypeId(1L);
+        relatedPersonDTO.setPersonRelId(1L);
+
+        relatedPerson.add(relatedPersonDTO);
+
+        Mockito.when(service.getRelatedPerson(any(), any(Errors.class))).thenReturn(relatedPerson);
+
+        String requestBody = "{" +
+                "\"id\":" + "\"1\"" +
+                ",\"personDetailId\":" + "\"1\"" +
+                "}";
+
+        mockMvc.perform(post(PeopleManagementServiceProxy.GET_REL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document(
+                        "get-related-person",
+                        responseFields(fieldWithPath("[0].id").description("Related Person ID.")
+                                , fieldWithPath("[0].personDetailId").description("Person Detail ID.")
+                                , fieldWithPath("[0].personRelId").description("Person Detail2 ID.")
+                                , fieldWithPath("[0].relationTypeId").description("Relatetion type ID.")
+                        )
+                ));
     }
 
 }

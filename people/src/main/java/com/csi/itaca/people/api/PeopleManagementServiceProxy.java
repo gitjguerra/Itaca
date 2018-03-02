@@ -1,5 +1,6 @@
 package com.csi.itaca.people.api;
 
+import com.csi.itaca.people.model.RelatedPerson;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.*;
 import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
@@ -7,6 +8,7 @@ import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
 //import com.csi.itaca.people.model.filters.ContactSearchFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -74,7 +76,6 @@ public interface PeopleManagementServiceProxy {
     String COUNT_CONTACT              = RESOURCE_CONTACT +"/count";
     String SAVE_CONTACT               = RESOURCE_CONTACT + "/save";
 
-
    /////// End points for Address.... AG
     String RESOURCE_ADDRESS               = RESOURCE + "/address";
     String GET_ADDRESFORMAT1              = RESOURCE_ADDRESS +"/get";
@@ -97,7 +98,13 @@ public interface PeopleManagementServiceProxy {
     String SAVE_UPDATE_FISCAL_REGIME             = FISCAL_REGIME + "/save";
     String GET_FISCAL_REGIME             = FISCAL_REGIME + "/get";
 
-
+    // End points for realtions...
+    String RESOURCE_REL           = RESOURCE + "/relation";
+    String SAVE_REL               = RESOURCE_REL + "/save";
+    String DELETE_REL             = RESOURCE_REL + "/delete";
+    String SEARCH_REL             = RESOURCE_REL + "/search";
+    String COUNT_PERSON_REL       = RESOURCE_REL +"/count";
+    String GET_REL                = RESOURCE_REL +"/get";
 
     /**
      * Gets a person.
@@ -294,7 +301,6 @@ public interface PeopleManagementServiceProxy {
     ResponseEntity saveOrUpdateContact(ContactDTO contactToSaveOrUpdate,BindingResult errTracking);
 
 
-
     ResponseEntity getAddresFormat1(Long id);
 
     ResponseEntity<Long> countAddresFormat1(Long addressId);
@@ -302,7 +308,6 @@ public interface PeopleManagementServiceProxy {
     ResponseEntity saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate,BindingResult errTracking);
 
     ResponseEntity deleteaddresformat1(Long id);
-
 
 
     ResponseEntity getPublicPerson(Long id);
@@ -313,7 +318,44 @@ public interface PeopleManagementServiceProxy {
 
     ResponseEntity DeletePublicPerson(Long id);
 
+
+    /**
+     * counts accounts.
+     * @param idPersonDetail the filter to find bank cards.
+     */
+    ResponseEntity<Long> countPersonRelations(Long idPersonDetail);
+
+    /**
+     * Deletes a related person together with associated details
+     * @param idRelatedPerson the id of the related person to delete.
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteRelatedPerson(Long idRelatedPerson);
+
+    /**
+     * Saves or updates person.
+     * @param relatedPersonToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdateRelatedPerson(RelatedPersonDTO relatedPersonToSaveOrUpdate, BindingResult errTracking);
+
+    /**
+     * Gets a person.
+     * @param idCode the person id.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity<List<? extends PersonDetailDTO>> findByPersonId(Long idCode);
+
+    /**
+     * Gets a related person.
+     * @param filter search filter.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
+
+
 /*
+
     //addresses
 
     ItacaAPIResponse<List<? extends RelDetPersonaDireccion1DTO>> listDireccionesPersonas(Long idDetallePersona);
@@ -342,7 +384,6 @@ public interface PeopleManagementServiceProxy {
     ItacaAPIResponse<Long> countContactos(Long idDetallePersona);
 
 
-
     // account
 
     ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
@@ -366,7 +407,6 @@ public interface PeopleManagementServiceProxy {
     ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
 
 
-
     // nationalities
 
     ItacaAPIResponse<List<? extends Nacionalidad0DTO>> getNacionalidades(FiltroNacionalidadPaginaOrden peticion);
@@ -375,8 +415,8 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIResponse<Nacionalidad0DTO> saveOrUpdateNacionalidad(Nacionalidad0DTO nacionalidad,
                                                                 Boolean actualizarDuplicado) throws NacionalidadDuplicadaException;
-
     ItacaAPIResponse<Long> countNacionalidad(Long idDetallePersona);
+
 
     //////PERSONAS RELACIONADAS //////
 
@@ -400,7 +440,6 @@ public interface PeopleManagementServiceProxy {
     ItacaAPIResponse<Long> countPersonaPublica(Long idPersona);
 
 
-
     // Regime
 
     ItacaAPIResponse<Long> countRegimenFiscal(Long idPersona);
@@ -422,31 +461,5 @@ public interface PeopleManagementServiceProxy {
 
     ItacaAPIResponse<DetallePersona1DTO> sincronizarMetadatos(Long id);
     */
-
-
-    // account
-    /*
-    ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
-
-    ItacaAPIResponse<List<? extends CuentaBancaria0DTO>> getCuentaBancaria(FiltroDetallePersonaCuentaPaginaOrden peticion);
-
-    ItacaAPIResponse<Long> countCuentaBancaria(Long idDetallePersona);
-
-    ItacaAPIResponse<List<? extends Banco0DTO>> listBancos();
-
-    ItacaAPIResponse<List<? extends TipoCuenta0DTO>> listTipoCuenta();
-
-    ItacaAPIResponse<List<? extends ClasificacionCuenta0DTO>> listClasificacionCuenta();
-
-    ItacaAPIResponse<TarjetaBancaria0DTO> saveOrUpdateTarjetasBancarias(TarjetaBancaria0DTO tarjetaBancaria);
-
-    ItacaAPIResponse<Long> countTarjetaBancaria(Long idDetallePersona);
-
-    public ItacaAPIResponse<List<? extends TarjetaBancaria0DTO>> getTarjetaBancaria(FiltroDetallePersonaTarjetaPaginaOrden filtro);
-
-    ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
-
-    */
-
 
 }
