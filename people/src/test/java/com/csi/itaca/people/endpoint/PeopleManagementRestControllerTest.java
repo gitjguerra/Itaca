@@ -681,14 +681,6 @@ public class PeopleManagementRestControllerTest {
 
 
     /*/ get Contact test/*/
-    /*
-    PER_CONTACT_ID	    NUMBER(19,0)
-    PERSON_DETAIL_ID	NUMBER(19,0)
-    CONTACT_TYPE_ID	    NUMBER(19,0)
-    ADDRESS_ID	        NUMBER(19,0)
-    VALUE_CONTACT	    VARCHAR2(100 CHAR)
-
-    */
 
     @Test
     public void getContact() throws Exception {
