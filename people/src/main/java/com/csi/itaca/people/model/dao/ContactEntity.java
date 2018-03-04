@@ -15,27 +15,27 @@ import javax.persistence.*;
 public class ContactEntity implements Contact {
 	
 	public static final String ID = "id";
-	public static final String ID_CONTACT_TYPE = "ContactType";
+	public static final String CONTACT_TYPE_ID = "ContactType";
 	public static final String VALUE_CONTACT = "valueContact";
-	public static final String ID_ADDRESS = "idAddress";
-	public static final String ID_PERSON_DETAIL = "personDetailId";
+	public static final String ADDRESS_ID = "idAddress";
+	public static final String PERSON_DETAIL_ID = "personDetailId";
 
 	@Id
-	@Column(name="ID_PER_CONTACT")
+	@Column(name="PER_CONTACT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_CONTACT")
 	@SequenceGenerator(name = "SEQ_CONTACT", sequenceName = "SEQ_CONTACT", allocationSize = 1)
 	private Long id;
 	
-	@Column(name="ID_PERSON_DETAIL")
+	@Column(name="PERSON_DETAIL_ID")
 	private Long personDetailId;
 	
-	@Column(name="ID_CONTACT_TYPE")
+	@Column(name="CONTACT_TYPE_ID")
 	private Long contactType;
 	
 	@Column(name="VALUE_CONTACT")
 	private String valueContact;
 	
-	@Column(name="ID_ADDRESS")
+	@Column(name="ADDRESS_ID")
 	private Long idAddress;
 
 }

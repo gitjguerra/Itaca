@@ -725,7 +725,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         bankCardEntity.setBankId(dto.getBankId());
         bankCardEntity.setCard(dto.getCard());
         bankCardEntity.setCardTypeId(dto.getCardTypeId());
-        bankCardEntity.setCardTypeId(dto.getBankCardId());
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
         bankCardEntity.setPersonDetailId(dto.getPersonDetailId());
         bankCardEntity.setPrincipal(dto.getPrincipal());
@@ -974,6 +973,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     /////////////////////////////////////////////////// END FISCAL REGIME
 
     // WU
+
     // ********************* Contact ************************************************************
     @Override
     public ContactDTO getContact(Long idContact, Errors errTracking) {
@@ -1008,7 +1008,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         Specification<ContactEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (personDetailId != null) {
-                p = cb.equal(root.get(ContactEntity.ID_PERSON_DETAIL), personDetailId);
+                p = cb.equal(root.get(ContactEntity.PERSON_DETAIL_ID), personDetailId);
             }
             return p;
         };

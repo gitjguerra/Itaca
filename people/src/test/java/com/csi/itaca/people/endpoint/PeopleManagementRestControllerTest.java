@@ -517,7 +517,7 @@ public class PeopleManagementRestControllerTest {
                 .content(JsonUtils.asJsonString(testNationalityDTO)))
                 .andDo(print())
                 .andExpect(jsonPath(NationalityEntity.ID_NATIONALITY, is((testNationalityDTO.getId().intValue()))))
-                .andExpect(jsonPath(NationalityEntity.ID_DET_PERSON, is(testNationalityDTO.getPersonDetailId().intValue())))
+                .andExpect(jsonPath(NationalityEntity.PERSON_DETAIL_ID, is(testNationalityDTO.getPersonDetailId().intValue())))
                 .andExpect(jsonPath("country.id",is(testNationalityDTO.getCountry().getId().intValue())))
                 .andExpect(jsonPath(NationalityEntity.BYDEFAULT,is(testNationalityDTO.getBydefault())))
                 .andExpect(status().isOk())
