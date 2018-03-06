@@ -94,7 +94,7 @@ public interface PeopleManagementServiceProxy {
     String SAVE_UPDATE_FISCAL_REGIME             = FISCAL_REGIME + "/save";
     String GET_FISCAL_REGIME             = FISCAL_REGIME + "/get";
 
-    // End points for realtions...
+    // End points for relations...
     String RESOURCE_REL           = RESOURCE + "/relation";
     String SAVE_REL               = RESOURCE_REL + "/save";
     String DELETE_REL             = RESOURCE_REL + "/delete";
