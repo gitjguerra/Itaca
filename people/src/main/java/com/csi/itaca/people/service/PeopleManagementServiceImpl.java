@@ -972,8 +972,6 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
 
     /////////////////////////////////////////////////// END FISCAL REGIME
 
-    // WU
-
     // ********************* Contact ************************************************************
     @Override
     public ContactDTO getContact(Long idContact, Errors errTracking) {
