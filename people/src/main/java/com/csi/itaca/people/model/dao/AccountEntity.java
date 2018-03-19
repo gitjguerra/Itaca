@@ -16,28 +16,31 @@ import javax.persistence.*;
 public class AccountEntity implements Account {
 	
 	public static final String ID = "id";
-	public static final String PERSONDETAIL = "personDetail";
+	public static final String PERSONDETAIL = "personDetailId";
 	public static final String ACCOUNT = "account";
-	public static final String ACCOUNTCLASIFIED = "accountClasification";
-	public static final String ACCOUNTTYPE = "typeAccount";
+	public static final String ACCOUNTCLASIFIED = "accountClasificationId";
+	public static final String ACCOUNTTYPE = "typeAccountId";
 	public static final String PRINCIPAL = "principal";
 	public static final String AVAILABLE = "available";
-	public static final String ID_BANK = "IdBank";
+	public static final String BANK_ID = "bankId";
 
 	@Id
-	@Column(name="ID_BANK_ACCOUNT")
+	@Column(name="BANK_ACCOUNT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_BANK_ACCOUNT")
 	@SequenceGenerator(name = "SEQ_BANK_ACCOUNT", sequenceName = "SEQ_BANK_ACCOUNT", allocationSize = 1)
 	private Long id;
 
-	@Column(name="ID_PERSON_DETAIL")
-	private Long personDetail;
+	@Column(name="PERSON_DETAIL_ID")
+	private Long personDetailId;
 
-	@Column(name="ID_CLASIFICATION_ACCOUNT")
-	private Long accountClasification;
+	@Column(name="CLASIFICATION_ACCOUNT_ID")
+	private Long accountClasificationId;
 
-	@Column(name="ID_TYPE_ACCOUNT")
-	private Long typeAccount;
+	@Column(name="TYPE_ACCOUNT_ID")
+	private Long typeAccountId;
+
+	@Column(name="BANK_ID")
+	private Long bankId;
 
 	@Column
 	private String account;
@@ -47,8 +50,5 @@ public class AccountEntity implements Account {
 	
 	@Column
 	private Boolean available;
-
-	@Column(name="ID_BANK")
-	private Long idBank;
 
 }

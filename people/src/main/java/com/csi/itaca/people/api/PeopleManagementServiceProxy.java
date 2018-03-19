@@ -1,9 +1,10 @@
 package com.csi.itaca.people.api;
 
 import com.csi.itaca.people.model.dto.*;
-import com.csi.itaca.people.model.filters.AccountSearchFilter;
-import com.csi.itaca.people.model.filters.BankCardSearchFilter;
+import com.csi.itaca.people.model.filters.*;
+import com.csi.itaca.people.model.filters.NationalityOrderPaginFilter;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -17,8 +18,14 @@ public interface PeopleManagementServiceProxy {
 
     // Parameters...
     String ID_PARAM                 = "id";
+    String ID_ADDRES_PARAM          = "addressId";
+    String ID_PUBLIC_PERSON         = "publicpersonId";
     String EXT_REF_PARAM            = "extRefCode";
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
+    String NATIONALITY_ID_PARAM  = "nationalityId";
+    String FISCAL_REGIME_ID_PARAM  = "fiscalRegimeId";
+    String COUNTRY_ID = "country.id";
+    String BYDEFAULT = "bydefault";
 
 
     // End points for people...
@@ -37,6 +44,14 @@ public interface PeopleManagementServiceProxy {
     String COUNT_DUPLICATE_PERSON_DETAIL    = PERSON_DETAIL_RESOURCE + "/countDuplicates";
     String GET_PERSON_DETAIL                = PERSON_DETAIL_RESOURCE + "/get";
 
+    // End points for nationalities....
+    String NATIONALITY           = RESOURCE + "/nationality";
+    String SEARCH_NATIONALITY             = NATIONALITY + "/find";
+    String COUNT_NATIONALITY             = NATIONALITY + "/count";
+    String DELETE_NATIONALITY             = NATIONALITY + "/delete";
+    String SAVE_UPDATE_NATIONALITY             = NATIONALITY + "/save";
+    String GET_NATIONALITY             = NATIONALITY + "/get";
+
     // End points for account...
     String RESOURCE_ACCOUNT           = RESOURCE + "/account";
     String SAVE_ACCOUNT               = RESOURCE_ACCOUNT + "/save";
@@ -48,6 +63,44 @@ public interface PeopleManagementServiceProxy {
     String COUNT_BANK_CARD            = RESOURCE_ACCOUNT +"/countCard";
     String GET_BANK_CARD              = RESOURCE_ACCOUNT +"/getCard";
     String SAVE_BANK_CARD             = RESOURCE_ACCOUNT +"/saveCard";
+
+    // End points for contacts...
+    String RESOURCE_CONTACT           = RESOURCE + "/contact";
+    String PERSON_CONTACT             = RESOURCE_CONTACT + "/getPersonContact";
+    String CONTACT                    = RESOURCE_CONTACT + "/get";
+    String DELETE_CONTACT             = RESOURCE_CONTACT + "/delete";
+    String COUNT_CONTACT              = RESOURCE_CONTACT +"/count";
+    String SAVE_CONTACT               = RESOURCE_CONTACT + "/save";
+
+   /////// End points for Address.... AG
+    String RESOURCE_ADDRESS               = RESOURCE + "/address";
+    String GET_ADDRESFORMAT1              = RESOURCE_ADDRESS +"/get";
+    String COUNT_ADDRESFORMAT1            = RESOURCE_ADDRESS +"/count";
+    String SAVE_ADDRESFORMAT1             = RESOURCE_ADDRESS + "/save";
+    String DELETE_ADDRESFORMAT1           = RESOURCE_ADDRESS + "/delete";
+
+    /////// End points for Public Person... AG
+    String RESOURCE_PUBLIC               = RESOURCE + "/Public";
+    String GET_PUBLICPERSON              = RESOURCE_PUBLIC +"/getPublicPerson";
+    String COUNT_PUBLICPERSON            = RESOURCE_PUBLIC +"/counPublicPerson";
+    String SAVE_PUBLICPERSON             = RESOURCE_PUBLIC + "/savePublicPerson";
+    String DELETE_PUBLICPERSON           = RESOURCE_PUBLIC + "/deletePublicPerson";
+
+    // End points for fiscal regime....
+    String FISCAL_REGIME           = RESOURCE + "/regime";
+    String SEARCH_FISCAL_REGIME             = FISCAL_REGIME + "/find";
+    String COUNT_FISCAL_REGIME             = FISCAL_REGIME + "/count";
+    String DELETE_FISCAL_REGIME             = FISCAL_REGIME + "/delete";
+    String SAVE_UPDATE_FISCAL_REGIME             = FISCAL_REGIME + "/save";
+    String GET_FISCAL_REGIME             = FISCAL_REGIME + "/get";
+
+    // End points for relations...
+    String RESOURCE_REL           = RESOURCE + "/relation";
+    String SAVE_REL               = RESOURCE_REL + "/save";
+    String DELETE_REL             = RESOURCE_REL + "/delete";
+    String SEARCH_REL             = RESOURCE_REL + "/search";
+    String COUNT_PERSON_REL       = RESOURCE_REL +"/count";
+    String GET_REL                = RESOURCE_REL +"/get";
 
     /**
      * Gets a person.
@@ -70,8 +123,7 @@ public interface PeopleManagementServiceProxy {
      * @param personToSaveOrUpdate the person to save/update.
      * @param errTracking error tracking.
      */
-    ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate,
-                                      BindingResult errTracking);
+    ResponseEntity saveOrUpdatePerson(PersonDTO personToSaveOrUpdate, BindingResult errTracking);
     /**
      * Deletes a person together with associated details
      * @param id the id of the person to delete.
@@ -85,8 +137,6 @@ public interface PeopleManagementServiceProxy {
      * @return true if provided external reference code exists, otherwise false.
      */
     ResponseEntity<Boolean> checkExternalReferenceExists(String externalReferenceCode);
-
-
     //////////////////////// Person detail ...
 
     /**
@@ -131,6 +181,19 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity saveOrUpdateAccount(AccountDTO accountToSaveOrUpdate,BindingResult errTracking);
 
+
+    // nationalities
+
+    ResponseEntity<List<NationalityDTO>> getPeopleNationalities(Long personDetailId, NationalityOrderPaginFilter filter);
+
+    ResponseEntity<Long>  countNationalities(Long personDetailId);
+
+    ResponseEntity deleteNationality(Long idNationality);
+
+    ResponseEntity saveOrUpdateNationality(NationalityDTO nationality);
+
+    ResponseEntity<NationalityDTO> getNationality(Long idNationality);
+
     /**
      * counts bank cards.
      * @param idPersonDetail the filter to find bank cards.
@@ -164,117 +227,126 @@ public interface PeopleManagementServiceProxy {
      */
     ResponseEntity getBankCard(Long id);
 
+    // Regime Fiscal
+    /**
+     * Gets a contact.
+     * @param idContact the contact id.
+     * @return a response body containing the requested contact json object.
+     */
+    ResponseEntity getContact(Long idContact);
 
-/*
-    //addresses
+    /**
+     * counts Fiscal Regime.
+     * @param personDetailId the filter to find Fiscal Regime.
+     */
+    ResponseEntity<Long> countFiscalRegime(Long personDetailId);
 
-    ItacaAPIResponse<List<? extends RelDetPersonaDireccion1DTO>> listDireccionesPersonas(Long idDetallePersona);
+    /**
+     * Deletes a Fiscal Regime together with associated details
+     * @param idFicalRegime the id of the Fiscal Regime to delete.
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteFiscalRegime(Long idFicalRegime);
 
-    public ItacaAPIResponse<List<? extends RelDetPersonaDireccion1DTO>> getDireccionesPersona(FiltroDetallePersonaDireccionPaginaOrden filtro);
+    /**
+     * Returns a count the number of Fiscal Regime detail items based on the supplied search criteria.
+     * @param filter search filter.
+     * @return People Fiscal Regime details.
+     */
+    ResponseEntity<List<DetPersonFiscalRegimeDTO>> getPeopleFiscalRegime(Long personDetailId, FilterDetailPersonFiscalRegimePaginationOrder filter);
 
-    ItacaAPIVoidResponse deleteDireccion(Long id) throws DireccionNoExisteException, DireccionDeContacto;
+    /**
+     * Saves or updates FiscalRegime.
+     * @param detPersonFiscalRegime the Fiscal Regime to save/update.
+     */
+    ResponseEntity<DetPersonFiscalRegimeDTO> saveOrUpdateFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegime);
 
-    ItacaAPIResponse<RelDetPersonaDireccion1DTO> saveOrUpdateDireccion(RelDetPersonaDireccion1DTO direccion);
-
-    ItacaAPIResponse<Long> countDireccionesPersonas(Long idDetallePersona);
-
-
-    // contacts
-
-    ItacaAPIResponse<List<? extends Contacto0DTO>> listContactos(Long idDetallePersona);
-
-    ItacaAPIResponse<Contacto0DTO> getContacto(Long idContacto);
-
-    public ItacaAPIResponse<List<? extends Contacto0DTO>> getContactoPersona(FiltroDetallePersonaContactoPaginaOrden filtro);
-
-    ItacaAPIVoidResponse deleteContacto(Long idContacto) throws ContactoNoExisteException;
-
-    ItacaAPIResponse<Contacto0DTO> saveOrUpdateContacto(Contacto0DTO contacto);
-
-    ItacaAPIResponse<Long> countContactos(Long idDetallePersona);
-
-
-
-    // nationalities
-
-    ItacaAPIResponse<List<? extends Nacionalidad0DTO>> getNacionalidades(FiltroNacionalidadPaginaOrden peticion);
-
-    ItacaAPIVoidResponse deleteNacionalidad(Long idNacionalidad);
-
-    ItacaAPIResponse<Nacionalidad0DTO> saveOrUpdateNacionalidad(Nacionalidad0DTO nacionalidad,
-                                                                Boolean actualizarDuplicado) throws NacionalidadDuplicadaException;
-
-    ItacaAPIResponse<Long> countNacionalidad(Long idDetallePersona);
-
-    //////PERSONAS RELACIONADAS //////
-
-    ItacaAPIResponse<PersonaRelacionada0DTO> saveOrUpdatePersonaRelacion(PersonaRelacionada0DTO personaRelacionada);
-
-    ItacaAPIResponse<Long> countPersonarelacion(Long idPersona);
-
-    public ItacaAPIResponse<List<? extends PersonaRelacionada0DTO>> getPersonaRelacionada(FiltroDetallePersonaRelacionadaPaginaOrden filtro);
-
-    ItacaAPIVoidResponse deletePersonaRelacionada(Long idPersonaRelacionada) throws PersonaRelacionadaNoExisteException;
-
-    ItacaAPIResponse<List<? extends DetallePersona1DTO>> buscarPersonaPorIdentificador(String codigoIdentificacion);
+    /**
+     * Gets a fiscal regime.
+     * @param idFicalRegime the fiscal regime id.
+     * @return a response body containing the requested fiscal regime json object.
+     */
+    ResponseEntity<DetPersonFiscalRegimeDTO> getFiscalRegime(Long idFicalRegime);
 
 
-    // public person
+    /**
+     * Gets a contact.
+     * @param criteria the contact id.
+     * @return a response body containing the requested contact json object.
+     */
+    ResponseEntity<List<? extends ContactDTO>> getPersonContact(ContactSearchFilter criteria);
 
-    ItacaAPIResponse<List<? extends PersonaPublica0DTO>> getPersonasPublicas(FiltroPersonaPublicaPaginaOrden peticion);
+    /**
+     * Deletes a contact
+     * @param idContact the contact id .
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteContact(Long idContact);
 
-    ItacaAPIResponse<PersonaPublica0DTO> saveOrUpdatePersonaPublica(PersonaPublica0DTO personaPublica);
+    /**
+     * counts contact.
+     * @param idPersonDetail the filter to find contact.
+     */
+    ResponseEntity<Long> countContact(Long idPersonDetail);
 
-    ItacaAPIResponse<Long> countPersonaPublica(Long idPersona);
-
-
-
-    // Regime
-
-    ItacaAPIResponse<Long> countRegimenFiscal(Long idPersona);
-
-    ItacaAPIVoidResponse deleteRegimenFiscal(Long idRegimenFiscal) throws RegimenFiscalNoExisteException;
-
-    ItacaAPIResponse<List<? extends RelDetPersonaRegFiscal0DTO>> getRegimenFiscalPersona(FiltroDetallePersonaRegimenFiscalPaginaOrden filtro);
-
-    ItacaAPIResponse<RelDetPersonaRegFiscal0DTO> saveOrUpdateRegFiscal(RelDetPersonaRegFiscal0DTO regFiscal);
-
-
-    // lookups
-
-    ItacaAPIResponse<List<TipoContacto0DTO>> getTiposContacto();
-
-    ItacaAPIResponse<List<TipoRelacion0DTO>> getTiposRelacion();
-
-    ItacaAPIResponse<List<TipoPersonaPublica0DTO>> getTiposPersonaPublica();
-
-    ItacaAPIResponse<DetallePersona1DTO> sincronizarMetadatos(Long id);
-    */
+    /**
+     * Saves or updates contact.
+     * @param contactToSaveOrUpdate the contact to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdateContact(ContactDTO contactToSaveOrUpdate,BindingResult errTracking);
 
 
-    // account
-    /*
-    ItacaAPIResponse<CuentaBancaria0DTO> saveOrUpdateCuentaBancaria(CuentaBancaria0DTO CuentaBancaria);
+    ResponseEntity getAddresFormat1(Long id);
 
-    ItacaAPIResponse<List<? extends CuentaBancaria0DTO>> getCuentaBancaria(FiltroDetallePersonaCuentaPaginaOrden peticion);
+    ResponseEntity<Long> countAddresFormat1(Long addressId);
 
-    ItacaAPIResponse<Long> countCuentaBancaria(Long idDetallePersona);
+    ResponseEntity saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate,BindingResult errTracking);
 
-    ItacaAPIResponse<List<? extends Banco0DTO>> listBancos();
+    ResponseEntity deleteaddresformat1(Long id);
 
-    ItacaAPIResponse<List<? extends TipoCuenta0DTO>> listTipoCuenta();
 
-    ItacaAPIResponse<List<? extends ClasificacionCuenta0DTO>> listClasificacionCuenta();
+    ResponseEntity getPublicPerson(Long id);
 
-    ItacaAPIResponse<TarjetaBancaria0DTO> saveOrUpdateTarjetasBancarias(TarjetaBancaria0DTO tarjetaBancaria);
+    ResponseEntity<Long> counPublicPerson(Long publicpersonId);
 
-    ItacaAPIResponse<Long> countTarjetaBancaria(Long idDetallePersona);
+    ResponseEntity saveOrUpdatePublicPerson(PublicPersonDTO publicPersonFotmatToSaveOrUpdate,BindingResult errTracking);
 
-    public ItacaAPIResponse<List<? extends TarjetaBancaria0DTO>> getTarjetaBancaria(FiltroDetallePersonaTarjetaPaginaOrden filtro);
+    ResponseEntity DeletePublicPerson(Long id);
 
-    ItacaAPIResponse<List<? extends TipoTarjeta0DTO>> listTiposTarjeta();
 
-    */
+    /**
+     * counts accounts.
+     * @param idPersonDetail the filter to find bank cards.
+     */
+    ResponseEntity<Long> countPersonRelations(Long idPersonDetail);
 
+    /**
+     * Deletes a related person together with associated details
+     * @param idRelatedPerson the id of the related person to delete.
+     * @return status ok response if the delete was successful.
+     */
+    ResponseEntity deleteRelatedPerson(Long idRelatedPerson);
+
+    /**
+     * Saves or updates person.
+     * @param relatedPersonToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracking.
+     */
+    ResponseEntity saveOrUpdateRelatedPerson(RelatedPersonDTO relatedPersonToSaveOrUpdate, BindingResult errTracking);
+
+    /**
+     * Gets a person.
+     * @param idCode the person id.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity<List<? extends PersonDetailDTO>> findByPersonId(Long idCode);
+
+    /**
+     * Gets a related person.
+     * @param filter search filter.
+     * @return a response body containing the requested person json object.
+     */
+    ResponseEntity<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter filter, BindingResult errTracking);
 
 }

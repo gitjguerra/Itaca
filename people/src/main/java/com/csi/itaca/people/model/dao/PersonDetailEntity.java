@@ -30,8 +30,8 @@ public abstract class PersonDetailEntity implements PersonDetail {
 	@SequenceGenerator(name = "per_person_detail_seq", sequenceName = "per_person_detail_seq", allocationSize = 1)
 	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="person_id", nullable=false)
+	@ManyToOne
+	@JoinColumn(name="person_id", nullable=false)
 	private PersonEntity person;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -55,7 +55,7 @@ public abstract class PersonDetailEntity implements PersonDetail {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "detallePersona")
 	@BeanerConfig(contentAs = IdentificadorEntity.class)
 	private List<IdentificadorEntity> identificadores;
-	
+
 	@MapKey(name = "id")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "detallePersona")
 	@BeanerConfig(contentAs = RelPersonaMetadataEntity.class)

@@ -12,6 +12,8 @@ import com.csi.itaca.people.businesslogic.PeopleManagementBusinessLogic;
 import com.csi.itaca.people.model.dao.*;
 import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.tools.utils.jpa.JpaUtils;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +67,25 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     private BankCardRepository bankCardRepository;
 
     @Autowired
+    private RelationRepository relationRepository;
+
+    @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
     private Beaner beaner;
 
     @Autowired
+    private DetPersonFiscalRegimeRepository detPersonFiscalRegimeRepository;
+
+    @Autowired
     private PeopleManagementBusinessLogic peopleBusinessLogic;
+
+    @Autowired
+    private AddressFormat1Repository addressFormat1Repository;
+
+    @Autowired
+    private PublicPersonRepository publicPersonRepository;
 
     @Override
     public PersonDTO getPerson(Long id, Errors errTracking) {
@@ -253,7 +270,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public void deletePerson(Long personId, Errors errTracking) {
         PersonEntity personToDelete = getPersonEntity(personId, errTracking);
         repository.delete(personToDelete);
@@ -393,6 +410,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public PersonDetailDTO getPersonDetail(Long personDetailId, Errors errTracking) {
+
         PersonDetailEntity personDetailEntity = personDetailRepository.findOne(personDetailId);
 
         PersonDetailDTO retPersonDetail = null;
@@ -657,7 +675,7 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         Specification<BankCardEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (personDetailId != null) {
-                p = cb.equal(root.get(BankCardEntity.ID_PERSON_DETAIL), personDetailId);
+                p = cb.equal(root.get(BankCardEntity.PERSON_DETAIL_ID), personDetailId);
             }
             return p;
         };
@@ -668,19 +686,21 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public AccountDTO saveOrUpdateAccount(AccountDTO dto, Errors errTracking) {
 
+        AccountEntity accountUpdateEntity = new AccountEntity();
         AccountEntity accountEntity = accountRepository.findOne(dto.getId());
 
         if (accountEntity == null && errTracking != null){
-            accountEntity = new AccountEntity();
+            accountEntity = accountUpdateEntity;
+
         }
         accountEntity.setId(dto.getId());
         accountEntity.setAccount(dto.getAccount());
-        accountEntity.setPersonDetail(dto.getPersonDetail());
-        accountEntity.setAccountClasification(dto.getAccountClasification());
-        accountEntity.setTypeAccount(dto.getTypeAccount());
+        accountEntity.setPersonDetailId(dto.getPersonDetailId());
+        accountEntity.setAccountClasificationId(dto.getAccountClasificationId());
+        accountEntity.setTypeAccountId(dto.getTypeAccountId());
         accountEntity.setAvailable(dto.getAvailable());
         accountEntity.setPrincipal(dto.getPrincipal());
-        accountEntity.setIdBank(dto.getIdBank());
+        accountEntity.setBankId(dto.getBankId());
         accountEntity = accountRepository.save(accountEntity);
 
         entityManager.flush();
@@ -694,18 +714,19 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Transactional
     public BankCardDTO saveOrUpdateBankCard(BankCardDTO dto, Errors errTracking) {
 
-        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getIdBankCard());
+        BankCardEntity bankCardUpdateEntity = new BankCardEntity();
+        BankCardEntity bankCardEntity = bankCardRepository.findOne(dto.getBankCardId());
 
-        if (bankCardEntity == null){
-            bankCardEntity = new BankCardEntity();
+        if (bankCardEntity == null && errTracking != null){
+            bankCardEntity = bankCardUpdateEntity;
         }
-        bankCardEntity.setIdBankCard(dto.getIdBankCard());
+        bankCardEntity.setBankCardId(dto.getBankCardId());
         bankCardEntity.setAvailable(dto.getAvailable());
-        bankCardEntity.setIdBank(dto.getIdBank());
+        bankCardEntity.setBankId(dto.getBankId());
         bankCardEntity.setCard(dto.getCard());
-        bankCardEntity.setIdCardType(dto.getIdBankCard());
+        bankCardEntity.setCardTypeId(dto.getCardTypeId());
         bankCardEntity.setExpirationDate(LocalDate.of(dto.getExpirationDate().getYear(), dto.getExpirationDate().getMonth(), dto.getExpirationDate().getDayOfMonth()));
-        bankCardEntity.setIdPersonDetail(dto.getIdPersonDetail());
+        bankCardEntity.setPersonDetailId(dto.getPersonDetailId());
         bankCardEntity.setPrincipal(dto.getPrincipal());
         bankCardEntity.setSecurityCode(dto.getSecurityCode());
 
@@ -754,4 +775,418 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
         };
         return accountRepository.count(spec);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countPersonRelations(Long idPersonDetail) {
+
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (idPersonDetail != null) {
+                p = cb.equal(root.get(RelatedPersonEntity.PERSON_DETAIL_ID), idPersonDetail);
+            }
+            return p;
+        };
+        return relationRepository.count(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void deleteRelatedPerson(Long relatedPersonId, Errors errTracking) {
+
+        RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(relatedPersonId);
+        if (relatedPersonEntity != null && errTracking != null){
+            relationRepository.delete(relatedPersonEntity);
+        }else{
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RelatedPersonDTO saveOrUpdateRelatedPerson(RelatedPersonDTO dto, Errors errTracking) {
+
+        RelatedPersonEntity relatedPersonEntity = relationRepository.findOne(dto.getId());
+        if (relatedPersonEntity == null && errTracking != null){
+            relatedPersonEntity = new RelatedPersonEntity();
+        }
+
+        relatedPersonEntity.setId(dto.getId());
+        relatedPersonEntity.setPersonDetailId(dto.getPersonDetailId());
+        relatedPersonEntity.setPersonRelId(dto.getPersonRelId());
+        relatedPersonEntity.setRelationTypeId(dto.getRelationTypeId());
+        relatedPersonEntity = relationRepository.save(relatedPersonEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(relatedPersonEntity, RelatedPersonDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends PersonDetailDTO> findByPersonId(Long personId, Errors errTracking) {
+
+        Specification<PersonDetailEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personId != null) {
+                p = cb.equal(root.get(PersonDetailEntity.PERSON).get(PersonEntity.ID), personId);
+            }
+            return p;
+        };
+
+        List<? extends PersonDetailEntity> personDetail = personDetailRepository.findAll(spec);
+        if (personDetail==null || personDetail.isEmpty()) {
+            return Collections.emptyList();
+        }
+        else if (personDetail.get(0) instanceof IndividualDetailEntity) {
+            return beaner.transform(personDetail, IndividualDetailDTO.class);
+        }
+        else {
+            return beaner.transform(personDetail, CompanyDetailDTO.class);
+        }
+    }
+
+    private Predicate applyRelatedFilters(Root<?> root, Predicate p, CriteriaBuilder cb,
+                                          RelatedPersonSearchFilter filter, String path) {
+
+        if (filter.getId() != null && !filter.getId().isEmpty()) {
+            if (path.isEmpty())
+                p = cb.equal(root.get(RelatedPersonEntity.ID), filter.getId());
+        }
+
+        if (filter.getPersonDetailId() != null && !filter.getPersonDetailId().isEmpty()) {
+            if (path.isEmpty())
+                p = cb.and(p,
+                        cb.equal(root.get(RelatedPersonEntity.PERSON_DETAIL_ID), filter.getPersonDetailId()));
+        }
+
+        return p;
+
+    }
+
+    @Transactional(readOnly = true)
+    List<? extends RelatedPersonEntity> listRelatedPerson(RelatedPersonSearchFilter parameters) {
+
+        Specification<RelatedPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.and(cb.equal(root.type(), RelatedPersonEntity.class));
+            return applyRelatedFilters(root, p, cb, parameters, "");
+        };
+        return relationRepository.findAll(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking) {
+
+        List<? extends RelatedPersonEntity> relatedPersonFound = listRelatedPerson(criteria);
+        if (relatedPersonFound == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(relatedPersonFound, RelatedPersonDTO.class);
+    }
+
+
+    /////////////////////////////////////////////////// FISCAL REGIME
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetailId) {
+        return getPeopleFiscalRegime(personDetailId,null,null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetail, Pagination pagination, Order order) {
+        Specification<FiscalRegimeEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(FiscalRegimeEntity.PERSON_DETAIL_ID), personDetail);
+            if (order != null && order.getField() != null) {
+                if(order.isAscending()){
+                    query.orderBy(cb.asc(root.get(JpaUtils.getField(FiscalRegimeEntity.class, order))));
+                } else {
+                    query.orderBy(cb.desc(root.get(JpaUtils.getField(FiscalRegimeEntity.class, order))));
+                }
+            }
+
+            return p;
+        };
+
+        List<? extends FiscalRegimeEntity> fiscalRegimeEntities = null;
+        if (pagination != null) {
+            PageRequest pr = new PageRequest(pagination.getPageNo() - 1, pagination.getItemsPerPage());
+            fiscalRegimeEntities = detPersonFiscalRegimeRepository.findAll(spec, pr).getContent();
+        }
+        else {
+            fiscalRegimeEntities = detPersonFiscalRegimeRepository.findAll(spec);
+        }
+
+        return beaner.transform(fiscalRegimeEntities, DetPersonFiscalRegimeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countFiscalRegime(Long personDetailId) {
+        Specification<FiscalRegimeEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(FiscalRegimeEntity.PERSON_DETAIL_ID), personDetailId);
+            }
+            return p;
+        };
+        return detPersonFiscalRegimeRepository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteFiscalRegime(Long idFicalRegime, Errors errTracking) {
+        FiscalRegimeEntity fiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
+        if (fiscalRegimeEntity != null) {
+            detPersonFiscalRegimeRepository.delete(fiscalRegimeEntity);
+            return true;
+        } else {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional
+    public DetPersonFiscalRegimeDTO saveOrUpdateDetPeopleFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO, Errors errTracking) {
+        FiscalRegimeEntity fiscalRegimeEntityToSave = beaner.transform(detPersonFiscalRegimeDTO, FiscalRegimeEntity.class);
+        FiscalRegimeEntity fiscalRegimeSavedEntity = detPersonFiscalRegimeRepository.save(fiscalRegimeEntityToSave);
+        return beaner.transform(fiscalRegimeSavedEntity, DetPersonFiscalRegimeDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DetPersonFiscalRegimeDTO getFiscalRegime(Long idFicalRegime, Errors errTracking) {
+        FiscalRegimeEntity fiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
+        if (fiscalRegimeEntity!=null) {
+            return beaner.transform(fiscalRegimeEntity, DetPersonFiscalRegimeDTO.class);
+        }
+        else {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+            return null;
+        }
+    }
+
+    /////////////////////////////////////////////////// END FISCAL REGIME
+
+    // ********************* Contact ************************************************************
+    @Override
+    public ContactDTO getContact(Long idContact, Errors errTracking) {
+
+        ContactDTO contactDTO = null;
+
+        ContactEntity contactEntity = contactRepository.findOne(idContact);
+        if (contactEntity!=null) {
+            return beaner.transform(contactEntity, ContactDTO.class);
+        }
+        return contactDTO;
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteContact(Long contactId, Errors errTracking) {
+
+        ContactDTO contact = getContact(contactId, errTracking);
+        if(contact==null){
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }else{
+            contactRepository.delete(contact.getId());
+        }
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countContacts(Long personDetailId) {
+
+        Specification<ContactEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (personDetailId != null) {
+                p = cb.equal(root.get(ContactEntity.PERSON_DETAIL_ID), personDetailId);
+            }
+            return p;
+        };
+        return contactRepository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public ContactDTO saveOrUpdateContact(ContactDTO dto, Errors errTracking) {
+
+        ContactEntity contactEntity2 = contactRepository.findOne(dto.getId());
+
+        if (contactEntity2 == null && errTracking != null){
+            contactEntity2 = new ContactEntity();
+        }
+
+        contactEntity2.setId(dto.getId());
+        contactEntity2.setContactType(dto.getContactType());
+        contactEntity2.setPersonDetailId(dto.getPersonDetailId());
+        contactEntity2.setIdAddress(dto.getIdAddress());
+        contactEntity2.setValueContact(dto.getValueContact());
+
+        contactEntity2 = contactRepository.save(contactEntity2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return beaner.transform(contactEntity2, ContactDTO.class);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends ContactDTO> getPersonContact(ContactSearchFilter criteria, Errors errTracking) {
+
+        Specification<ContactEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (criteria != null) {
+                p = cb.equal(root.get(ContactEntity.ID), criteria.getId());
+            }
+            return p;
+        };
+
+        List<? extends ContactDTO> contact = beaner.transform(contactRepository.findAll(spec), ContactDTO.class);
+        if (contact==null || contact.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return beaner.transform(contact, ContactDTO.class);
+    }
+
+    // ********************* Contact ************************************************************
+
+
+    // ********************* Address ************************************************************
+    @Override
+    @Transactional
+    public AddressFormat1DTO getAddresformat1(Long id, Errors errTracking) {
+
+        AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(id);
+        if (addressFormat1Entity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countAddresformat1(Long addresformat) {
+
+        Specification<AddressFormat1Entity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (addresformat != null) {
+                p = cb.equal(root.get(AddressFormat1Entity.ID), addresformat);
+            }
+            return p;
+        };
+        return addressFormat1Repository.count(spec);
+    }
+
+    //address
+    @Override
+    @Transactional
+    public AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO dto, Errors errTracking) {
+        AddressFormat1Entity addressFormat1UpdateEntity = new AddressFormat1Entity();
+        AddressFormat1Entity addressFormat1Entity = addressFormat1Repository.findOne(dto.getAddressId());
+        if (addressFormat1Entity == null && errTracking != null){
+            addressFormat1Entity = addressFormat1UpdateEntity;
+        }
+        addressFormat1Entity.setAddressId(dto.getAddressId());
+        addressFormat1Entity.setIdpoblacion(dto.getIdpoblacion());
+        addressFormat1Entity.setIdcodpostal(dto.getIdcodpostal());
+        addressFormat1Entity.setIdtypevia(dto.getIdtypevia());
+        addressFormat1Entity.setNombrevia(dto.getNombrevia());
+        addressFormat1Entity.setNumerovia(dto.getNumerovia());
+        addressFormat1Entity.setComplementos(dto.getComplementos());
+        addressFormat1Entity = addressFormat1Repository.save(addressFormat1Entity);
+        entityManager.flush();
+        entityManager.clear();
+        return beaner.transform(addressFormat1Entity, AddressFormat1DTO.class);
+
+    }
+
+    @Override
+    @Transactional
+    public PublicPersonDTO saveOrUpdatePublicPerson(PublicPersonDTO dto, Errors errTracking) {
+        PublicPersonEntity PublicPersonUpdateEntity = new PublicPersonEntity();
+        PublicPersonEntity publicPersonEntity = publicPersonRepository.findOne(dto.getIdPerPublicPerson());
+        if (publicPersonEntity == null && errTracking != null){
+            publicPersonEntity = PublicPersonUpdateEntity;
+        }
+        publicPersonEntity.setIdPerPublicPerson(dto.getIdPerPublicPerson());
+        publicPersonEntity.setIdTypePublicPerson(dto.getIdTypePublicPerson());
+        publicPersonEntity.setIdPerson(dto.getIdPerson());
+        publicPersonEntity = publicPersonRepository.save(publicPersonEntity);
+        entityManager.flush();
+        entityManager.clear();
+        return beaner.transform(publicPersonEntity, PublicPersonDTO.class);
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteaddresformat1(Long Id, Errors errTracking) {
+        AddressFormat1Entity addresformatToDelete = getaddresEntity(Id, errTracking);
+        addressFormat1Repository.delete(addresformatToDelete);
+    }
+
+    @Transactional(readOnly = true)
+    AddressFormat1Entity getaddresEntity(Long id, Errors errTracking) {
+        AddressFormat1Entity Address = addressFormat1Repository.findOne(id);
+        if (Address == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return Address;
+    }
+
+
+    // ********************* Public Person ************************************************************
+    @Override
+    @Transactional
+    public PublicPersonDTO getPublicPerson(Long id, Errors errTracking) {
+
+        PublicPersonEntity publicPersonEntity = publicPersonRepository.findOne(id);
+        if (publicPersonEntity == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return beaner.transform(publicPersonEntity, PublicPersonDTO.class);
+
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long counPublicPerson(Long PublicPerson) {
+
+        Specification<PublicPersonEntity> spec = (root, query, cb) -> {
+            Predicate p = null;
+            if (PublicPerson != null) {
+                p = cb.equal(root.get(PublicPersonEntity.id_per_public_person), PublicPerson);
+            }
+            return p;
+        };
+        return publicPersonRepository.count(spec);
+    }
+
+    @Override
+    @Transactional
+    public void deletePublicPerson(Long Id, Errors errTracking) {
+        PublicPersonEntity PublicPersonformatToDelete = getPublicPersonEntity(Id, errTracking);
+        publicPersonRepository.delete(PublicPersonformatToDelete);
+    }
+
+    @Transactional(readOnly = true)
+    PublicPersonEntity getPublicPersonEntity(Long id, Errors errTracking) {
+        PublicPersonEntity Person = publicPersonRepository.findOne(id);
+        if (Person == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
+        }
+        return Person;
+    }
+
 }
