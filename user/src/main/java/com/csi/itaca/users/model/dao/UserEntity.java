@@ -16,21 +16,23 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.ManyToOne;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "usr_user")
+@ToString
 public class UserEntity implements User {
 
 	// Fields used by the service implementations.
-	public static final String ID 				= "id";
+	public static final String ID 			= "id";
 	public static final String USERNAME 		= "username";
 	public static final String PASSWORD 		= "password";
 	public static final String USER_LANGUAGE 	= "language_id";
 	public static final String DESCRIPTION 		= "description";
-	public static final String BLOCKED 			= "blocked";
+	public static final String BLOCKED 		= "blockedUser";
 
 	@Id
 	@Column(name = "user_id")
@@ -70,7 +72,7 @@ public class UserEntity implements User {
 	private String email;
 
 	@Column(name = "blocked")
-	private boolean blocked;
+	private boolean blockedUser;
 
 	@Column(name = "blocked_date")
 	private LocalDate blockedDate;

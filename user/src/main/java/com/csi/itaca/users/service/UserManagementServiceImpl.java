@@ -16,6 +16,7 @@ import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
 import com.csi.itaca.users.repository.UserConfigRepository;
 import com.csi.itaca.users.repository.UserLanguageRepository;
 import com.csi.itaca.users.repository.UserRepository;
+import java.time.LocalDate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +86,12 @@ public class UserManagementServiceImpl implements UserManagementService {
         User user = getUserEntity(username, errTracking);
         return beaner.transform(user, UserDTO.class);
     }
+    
+    @Override
+    public UserDTO getUserById(Long id, Errors errTracking) {
+        User user = getUserEntity(id, errTracking);
+        return beaner.transform(user, UserDTO.class);
+    }
 
     @Transactional(readOnly = true)
     private UserEntity getUserEntity(String username, Errors errTracking) {
@@ -94,24 +101,54 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
         return user;
     }
-
+    
+    @Transactional(readOnly = true)
+    private UserEntity getUserEntity(Long id, Errors errTracking) {
+        UserEntity user = repository.findById(id);
+        if (user == null && errTracking != null) {
+            errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_FOUND);
+        }
+        return user;
+    }
+    
     @Override
     @Transactional
-    public void saveUser(UserDTO userToSave, Errors errTracking) {
-
+    public UserDTO createUpdateUser(UserDTO userToSave, Errors errTracking) {
+        
+        if (userToSave.isActiveUser()) {
+             userToSave.setCompanyEndDate(null);
+        } else {
+            userToSave.setCompanyEndDate(LocalDate.now());
+            userToSave.setBlockedUser(true);
+        }
         // TODO: better to implement a create user & update user methods.
         UserEntity userToSaveEntity = beaner.transform(userToSave, UserEntity.class);
-        UserLanguageEntity userLanguageEntity = beaner.transform(userToSave.getUserLanguages(), UserLanguageEntity.class);
-        userToSaveEntity.setUserLanguage(userLanguageEntity);
-
-        if (userLanguageEntity.getId() == null) {
+        
+        if (userToSaveEntity.isBlockedUser()) {
+                userToSaveEntity.setBlockedDate(LocalDate.now());
+        } else {
+                userToSaveEntity.setBlockedDate(null);
+        }
+         
+        if (userToSave.getId() == null) {
             // create
+            userToSaveEntity.setCompanyStartDate(LocalDate.now());
             entityManager.persist(userToSaveEntity);
         }
         else {
-            // update
+            //update the entered fields
+            userToSaveEntity.setUsername(userToSave.getUsername());
+            userToSaveEntity.setFirstName(userToSave.getFirstName());
+            userToSaveEntity.setLastName(userToSave.getLastName());
+            userToSaveEntity.setEmail(userToSave.getEmail());
+            userToSaveEntity.setDescription(userToSave.getDescription());
+            userToSaveEntity.setCompanyCode(userToSave.getCompanyCode());
+            UserLanguageEntity userLanguageEntity = beaner.transform(userToSave.getUserLanguage(), UserLanguageEntity.class);
+            userToSaveEntity.setUserLanguage(userLanguageEntity);
             repository.save(userToSaveEntity);
         }
+        
+        return beaner.transform(userToSaveEntity, UserDTO.class);
     }
 
     @Override
@@ -121,7 +158,15 @@ public class UserManagementServiceImpl implements UserManagementService {
             repository.delete(user.getId());
         }
     }
-
+    
+    @Override
+    public void deleteUserById(Long id, Errors errTracking) {
+        User user = getUserEntity(id, errTracking);
+        if (user != null) {
+            repository.delete(user.getId());
+        }
+    }
+    
     @Override
     @Transactional
     public Boolean changePassword(ChangePasswordDTO passwordChange, Errors errTracking) {
@@ -251,7 +296,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             if (userFilter!=null) {
                 p = cb.like(cb.lower(root.get(UserEntity.USERNAME)), "%" + userFilter.getUsername().toLowerCase() + "%");
                 p = cb.and(p, cb.like(cb.lower(root.get(UserEntity.DESCRIPTION)), "%" + userFilter.getDescription().toLowerCase() + "%"));
-                p = cb.and(p, cb.equal(root.get(UserEntity.BLOCKED), userFilter.getBlocked()));
+                p = cb.and(p, cb.equal(root.get(UserEntity.BLOCKED), userFilter.getBlockedUser()));
             }
             return p;
         };

@@ -13,6 +13,6 @@ public class UserSearchFilterDTO {
 
     private String description = "";
 
-    private Boolean blocked = Boolean.FALSE;
+    private Boolean blockedUser = Boolean.FALSE;
 
 }
