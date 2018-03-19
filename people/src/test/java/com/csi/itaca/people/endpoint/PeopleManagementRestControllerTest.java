@@ -759,7 +759,7 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.countBankCards(any())).thenReturn(1L);
 
-        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_BANK_CARD)
+        mockMvc.perform(get(PeopleManagementServiceProxy.COUNT_BANK_CARD)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(buildPeopleSearchFilter())
                 .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
@@ -780,7 +780,7 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.countAccount(any())).thenReturn(1L);
 
-        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_ACCOUNT)
+        mockMvc.perform(get(PeopleManagementServiceProxy.COUNT_ACCOUNT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(buildPeopleSearchFilter())
                 .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1)))
@@ -1060,7 +1060,7 @@ public class PeopleManagementRestControllerTest {
 
         Mockito.when(service.countPersonRelations(any())).thenReturn(1L);
 
-        mockMvc.perform(post(PeopleManagementServiceProxy.COUNT_PERSON_REL)
+        mockMvc.perform(get(PeopleManagementServiceProxy.COUNT_PERSON_REL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(buildPeopleSearchFilter())
                 .param(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM, Long.toString(1L)))

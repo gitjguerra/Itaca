@@ -83,7 +83,7 @@ public class UserManagementServiceImplTest {
         adminUserDTO.setUsername(TEST_ADMIN_USERNAME);
         adminUserEnity = new UserEntity();
         adminUserEnity.setUsername(TEST_ADMIN_USERNAME);
-        adminUserEnity.setBlocked(false);
+        adminUserEnity.setBlockedUser(false);
 
 
         // Blocked user setup.
@@ -91,9 +91,9 @@ public class UserManagementServiceImplTest {
         blockedUserDTO.setUsername(BLOCKED_USERNAME);
         blockedUserEntity = new UserEntity();
         blockedUserEntity.setUsername(BLOCKED_USERNAME);
-        blockedUserEntity.setBlocked(true);
+        blockedUserEntity.setBlockedUser(true);
         when(userRepository.findByUsernameAndPassword(BLOCKED_USERNAME, BLOCKED_PASSWORD)).thenReturn(blockedUserEntity);
-        when(userManBusiness.isUserAuthorisedToLogOn(blockedUserEntity)).thenReturn(!blockedUserEntity.isBlocked());
+        when(userManBusiness.isUserAuthorisedToLogOn(blockedUserEntity)).thenReturn(!blockedUserEntity.isBlockedUser());
     }
 
     /**
@@ -103,7 +103,7 @@ public class UserManagementServiceImplTest {
     public void okAuthTest() {
         // Mock all the calls the service will make.
         Mockito.when(userRepository.findByUsernameAndPassword(TEST_ADMIN_USERNAME, TEST_ADMIN_PASSWORD)).thenReturn(adminUserEnity);
-        Mockito.when(userManBusiness.isUserAuthorisedToLogOn(adminUserEnity)).thenReturn(!adminUserEnity.isBlocked());
+        Mockito.when(userManBusiness.isUserAuthorisedToLogOn(adminUserEnity)).thenReturn(!adminUserEnity.isBlockedUser());
         Mockito.when(beaner.transform(adminUserEnity, UserDTO.class)).thenReturn(adminUserDTO);
 
         BindingResult errorTracking = mock(BindingResult.class);
@@ -135,7 +135,7 @@ public class UserManagementServiceImplTest {
     public void blockedUserLogonAuthTest() {
         // Mock all the calls the service will make.
         when(userRepository.findByUsernameAndPassword(BLOCKED_USERNAME, BLOCKED_PASSWORD)).thenReturn(blockedUserEntity);
-        when(userManBusiness.isUserAuthorisedToLogOn(blockedUserEntity)).thenReturn(!blockedUserEntity.isBlocked());
+        when(userManBusiness.isUserAuthorisedToLogOn(blockedUserEntity)).thenReturn(!blockedUserEntity.isBlockedUser());
 
         BindingResult errorTracking = mock(BindingResult.class);
         impl.auth(BLOCKED_USERNAME, BLOCKED_PASSWORD, errorTracking);
