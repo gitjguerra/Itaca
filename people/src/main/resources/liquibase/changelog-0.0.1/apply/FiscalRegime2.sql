@@ -28,7 +28,7 @@ CREATE INDEX fis_fiscal_regime_amounts_fk1 ON
     fis_fiscal_regime_amounts ( id_fis_fiscal_regime ASC )
         TABLESPACE PEOPLE LOGGING;
 
-ALTER TABLE fis_fiscal_regime_amounts ADD CONSTRAINT fis_fiscal_regime_amounts_pk PRIMARY KEY ( id_fis_fiscal_regime_amounts );
+ALTER TABLE fis_fiscal_regime_amounts ADD CONSTRAINT fis_fiscal_regime_amounts_pk PRIMARY KEY ( fis_fiscal_regime_amounts_id );
 
 ALTER TABLE fis_fiscal_regime_amounts ADD CONSTRAINT fis_fiscal_regime_imp_fk1 FOREIGN KEY ( id_fis_fiscal_regime )
     REFERENCES fis_fiscal_regime ( id_fis_fiscal_regime )
