@@ -8,7 +8,7 @@ public interface DetPersonFiscalRegime {
 
 	Long getPersonDetailId();
 
-	FiscalRegimeAmounts getFiscalRegimeAmounts();
+	Long getFiscalRegimeAmounts();
 
 	Long getAnnuity();
 

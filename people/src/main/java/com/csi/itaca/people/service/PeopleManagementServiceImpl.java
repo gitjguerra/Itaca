@@ -898,20 +898,20 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetail, Pagination pagination, Order order) {
-        Specification<FiscalRegimeEntity> spec = (root, query, cb) -> {
-            Predicate p = cb.equal(root.get(FiscalRegimeEntity.PERSON_DETAIL_ID), personDetail);
+        Specification<PerFiscalRegimeEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(PerFiscalRegimeEntity.PERSON_DETAIL_ID), personDetail);
             if (order != null && order.getField() != null) {
                 if(order.isAscending()){
-                    query.orderBy(cb.asc(root.get(JpaUtils.getField(FiscalRegimeEntity.class, order))));
+                    query.orderBy(cb.asc(root.get(JpaUtils.getField(PerFiscalRegimeEntity.class, order))));
                 } else {
-                    query.orderBy(cb.desc(root.get(JpaUtils.getField(FiscalRegimeEntity.class, order))));
+                    query.orderBy(cb.desc(root.get(JpaUtils.getField(PerFiscalRegimeEntity.class, order))));
                 }
             }
 
             return p;
         };
 
-        List<? extends FiscalRegimeEntity> fiscalRegimeEntities = null;
+        List<? extends PerFiscalRegimeEntity> fiscalRegimeEntities = null;
         if (pagination != null) {
             PageRequest pr = new PageRequest(pagination.getPageNo() - 1, pagination.getItemsPerPage());
             fiscalRegimeEntities = detPersonFiscalRegimeRepository.findAll(spec, pr).getContent();
@@ -926,10 +926,10 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional(readOnly = true)
     public Long countFiscalRegime(Long personDetailId) {
-        Specification<FiscalRegimeEntity> spec = (root, query, cb) -> {
+        Specification<PerFiscalRegimeEntity> spec = (root, query, cb) -> {
             Predicate p = null;
             if (personDetailId != null) {
-                p = cb.equal(root.get(FiscalRegimeEntity.PERSON_DETAIL_ID), personDetailId);
+                p = cb.equal(root.get(PerFiscalRegimeEntity.PERSON_DETAIL_ID), personDetailId);
             }
             return p;
         };
@@ -939,9 +939,9 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional
     public boolean deleteFiscalRegime(Long idFicalRegime, Errors errTracking) {
-        FiscalRegimeEntity fiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
-        if (fiscalRegimeEntity != null) {
-            detPersonFiscalRegimeRepository.delete(fiscalRegimeEntity);
+        PerFiscalRegimeEntity perFiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
+        if (perFiscalRegimeEntity != null) {
+            detPersonFiscalRegimeRepository.delete(perFiscalRegimeEntity);
             return true;
         } else {
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);
@@ -952,17 +952,18 @@ public class PeopleManagementServiceImpl implements PeopleManagementService {
     @Override
     @Transactional
     public DetPersonFiscalRegimeDTO saveOrUpdateDetPeopleFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO, Errors errTracking) {
-        FiscalRegimeEntity fiscalRegimeEntityToSave = beaner.transform(detPersonFiscalRegimeDTO, FiscalRegimeEntity.class);
-        FiscalRegimeEntity fiscalRegimeSavedEntity = detPersonFiscalRegimeRepository.save(fiscalRegimeEntityToSave);
-        return beaner.transform(fiscalRegimeSavedEntity, DetPersonFiscalRegimeDTO.class);
+        PerFiscalRegimeEntity perFiscalRegimeEntityToSave = beaner.transform(detPersonFiscalRegimeDTO, PerFiscalRegimeEntity.class);
+        PerFiscalRegimeEntity perFiscalRegimeEntitySavedEntity = detPersonFiscalRegimeRepository.save(perFiscalRegimeEntityToSave);
+        return beaner.transform(perFiscalRegimeEntitySavedEntity, DetPersonFiscalRegimeDTO.class);
     }
+
 
     @Override
     @Transactional(readOnly = true)
     public DetPersonFiscalRegimeDTO getFiscalRegime(Long idFicalRegime, Errors errTracking) {
-        FiscalRegimeEntity fiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
-        if (fiscalRegimeEntity!=null) {
-            return beaner.transform(fiscalRegimeEntity, DetPersonFiscalRegimeDTO.class);
+        PerFiscalRegimeEntity perFiscalRegimeEntity = detPersonFiscalRegimeRepository.findOne(idFicalRegime);
+        if (perFiscalRegimeEntity!=null) {
+            return beaner.transform(perFiscalRegimeEntity, DetPersonFiscalRegimeDTO.class);
         }
         else {
             errTracking.reject(ErrorConstants.DB_ITEM_NOT_FOUND);

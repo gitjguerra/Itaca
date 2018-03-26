@@ -19,7 +19,7 @@ public class DetPersonFiscalRegimeDTO implements DetPersonFiscalRegime {
 
 	private Long personDetailId;
 
-	private FiscalRegimeAmountsDTO fiscalRegimeAmounts;
+	private Long fiscalRegimeAmounts;
 
 	private Long annuity;
 

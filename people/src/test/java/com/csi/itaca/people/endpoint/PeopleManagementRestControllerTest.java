@@ -153,9 +153,7 @@ public class PeopleManagementRestControllerTest {
         detPersonFiscalRegimeDTO = new DetPersonFiscalRegimeDTO();
         detPersonFiscalRegimeDTO.setId(1L);
         detPersonFiscalRegimeDTO.setPersonDetailId(1L);
-        FiscalRegimeAmountsDTO fiscalRegimeAmounts = new FiscalRegimeAmountsDTO();
-        fiscalRegimeAmounts.setId(100L);
-        detPersonFiscalRegimeDTO.setFiscalRegimeAmounts(fiscalRegimeAmounts);
+        detPersonFiscalRegimeDTO.setFiscalRegimeAmounts(2L);
         detPersonFiscalRegimeDTO.setAnnuity(2012L);
         detPersonFiscalRegimeDTO.setEffectDate(LocalDate.of(1972, 11, 22));
 
@@ -504,7 +502,7 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document(
                         "count-nationalities",
-                       requestParameters(parameterWithName(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM).description("The person detail id."))
+                        requestParameters(parameterWithName(PeopleManagementServiceProxy.PERSON_DETAIL_ID_PARAM).description("The person detail id."))
                 ));
     }
 
@@ -523,7 +521,7 @@ public class PeopleManagementRestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document(
                         "save-nationality",
-                    responseFields(nationalityFieldsDoc())
+                        responseFields(nationalityFieldsDoc())
                 ));
     }
 
@@ -546,7 +544,7 @@ public class PeopleManagementRestControllerTest {
     ////******* REGIME FISCAL TEST *********///////////
 
     /** Get Regime test. */
-      @Test
+    @Test
     public void getRegime() throws Exception {
 
         Mockito.when(service.getFiscalRegime(any(), any(Errors.class))).thenReturn(detPersonFiscalRegimeDTO);
@@ -560,18 +558,11 @@ public class PeopleManagementRestControllerTest {
                 .andDo(document(
                         "get-Regime",
                         responseFields(
-                                  fieldWithPath("id").description("The Regime Id")
+                                fieldWithPath("id").description("The Regime Id")
                                 , fieldWithPath("personDetailId").description("The ID associated with the Regime")
-                                , fieldWithPath("fiscalRegimeAmounts.id").description("The ID associated with th Regime Amounts")
+                                , fieldWithPath("fiscalRegimeAmounts").description("The ID associated with th Regime Amounts")
                                 , fieldWithPath("annuity").description("The Payment annuity.")
                                 , fieldWithPath("effectDate").description("Effective date of payment.")
-                                , fieldWithPath("fiscalRegimeAmounts.fiscalRegime").description("The ID associated from Regime Amounts Entity to Regime Entity.")
-                                , fieldWithPath("fiscalRegimeAmounts.taxes").description("The taxes of Regime.")
-                                , fieldWithPath("fiscalRegimeAmounts.retention").description("The retention of Regime.")
-                                , fieldWithPath("fiscalRegimeAmounts.startDate").description("Initial date of the payment period.")
-                                , fieldWithPath("fiscalRegimeAmounts.endDate").description("Final date of the payment period")
-
-
                         )
                 ));
 
@@ -612,12 +603,7 @@ public class PeopleManagementRestControllerTest {
         DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO2 = new DetPersonFiscalRegimeDTO();
         detPersonFiscalRegimeDTO2.setId(1L);
         detPersonFiscalRegimeDTO2.setPersonDetailId(1L);
-        FiscalRegimeAmountsDTO fiscalRegimeAmounts = new FiscalRegimeAmountsDTO();
-        fiscalRegimeAmounts.setId(100L);
-        fiscalRegimeAmounts.setTaxes(200L);
-        fiscalRegimeAmounts.setStartDate(LocalDate.of(1972, 11, 20));
-        fiscalRegimeAmounts.setEndDate(LocalDate.of(1972, 11, 21));
-        detPersonFiscalRegimeDTO2.setFiscalRegimeAmounts(fiscalRegimeAmounts);
+        detPersonFiscalRegimeDTO2.setFiscalRegimeAmounts(2L);
         detPersonFiscalRegimeDTO2.setAnnuity(2012L);
         detPersonFiscalRegimeDTO2.setEffectDate(LocalDate.of(1972, 11, 22));
 
@@ -638,14 +624,9 @@ public class PeopleManagementRestControllerTest {
         List<FieldDescriptor> fields = new ArrayList<>();
         fields.add(fieldWithPath(fieldPrefix+"id").description("The Regime Id."));
         fields.add(fieldWithPath(fieldPrefix+"personDetailId").description("The ID associated with the Regime."));
-        fields.add(fieldWithPath(fieldPrefix+"fiscalRegimeAmounts.id").description("The ID associated with th Regime Amounts."));
+        fields.add(fieldWithPath(fieldPrefix+"fiscalRegimeAmounts").description("The ID associated with th Regime Amounts."));
         fields.add(fieldWithPath(fieldPrefix+"annuity").description("The Payment annuity."));
         fields.add(fieldWithPath(fieldPrefix+"effectDate").description("Effective date of payment."));
-        fields.add(fieldWithPath(fieldPrefix+"fiscalRegimeAmounts.fiscalRegime").description("The ID associated from Regime Amounts Entity to Regime Entity.."));
-        fields.add(fieldWithPath("fiscalRegimeAmounts.taxes").description("The taxes of Regime."));
-        fields.add(fieldWithPath("fiscalRegimeAmounts.retention").description("The retention of Regime."));
-        fields.add(fieldWithPath("fiscalRegimeAmounts.startDate").description("Initial date of the payment period."));
-        fields.add(fieldWithPath("fiscalRegimeAmounts.endDate").description("Final date of the payment period"));
         return fields;
     }
     ////******* END REGIME FISCAL TEST *********////////
@@ -711,7 +692,7 @@ public class PeopleManagementRestControllerTest {
                                 , fieldWithPath("nombrevia").description("principal.")
                                 , fieldWithPath("numerovia").description("available.")
                                 , fieldWithPath("complementos").description("idBank.")
-                                                       )
+                        )
                 ));
     }
 
@@ -893,7 +874,7 @@ public class PeopleManagementRestControllerTest {
 
     /** Delete contact test. */
     @Test
-    public void getDeleteContact() throws Exception {
+    public void getDeleteContact() throws Exception  {
 
         Mockito.doNothing().when(service).deleteContact(any(), any(Errors.class));
 

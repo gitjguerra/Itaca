@@ -24,8 +24,6 @@ public interface PeopleManagementServiceProxy {
     String PERSON_DETAIL_ID_PARAM   = "personDetailId";
     String NATIONALITY_ID_PARAM  = "nationalityId";
     String FISCAL_REGIME_ID_PARAM  = "fiscalRegimeId";
-    String COUNTRY_ID = "country.id";
-    String BYDEFAULT = "bydefault";
 
 
     // End points for people...

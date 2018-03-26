@@ -15,19 +15,19 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "FIS_FISCAL_REGIME")
-public class FisFiscalRegimeEntity implements FiscalRegime{
+@Table(name = "PER_REGIME")
+public class PerRegimeEntity implements FiscalRegime{
 	
-	public static final String ID_FISCAL_REGIME = "id";
+	public static final String ID_REGIME = "id";
 
 	public static final String VALUE = "value";
 
 	public static final String COUNTRY_ID = "country";
 	
 	@Id
-	@Column(name="ID_FISCAL_REGIME")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SFIS_FISCAL_REGIME")
-	@SequenceGenerator(name = "SFIS_FISCAL_REGIME", sequenceName = "SFIS_FISCAL_REGIME", allocationSize = 1)
+	@Column(name="ID_REGIME")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SPER_REGIME")
+	@SequenceGenerator(name = "SPER_REGIME", sequenceName = "SPER_REGIME", allocationSize = 1)
 	private Long id;
 
 	@Column(name="VALUE")

@@ -14,20 +14,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 @Table(name = "PER_FISCAL_REGIME")
-public class FiscalRegimeEntity implements DetPersonFiscalRegime{
+public class PerFiscalRegimeEntity implements DetPersonFiscalRegime{
 	
-	public static final String ID_FISCAL_REGIME = "id";
+	public static final String ID_REGIME = "id";
 
 	public static final String PERSON_DETAIL_ID = "personDetailId";
 
-	public static final String ID_FISCAL_REGIME_AMOUNTS = "fiscalRegimeAmounts";
+	public static final String ID_REGIME_AMOUNTS = "fiscalRegimeAmounts";
 
 	public static final String ANNUITY = "annuity";
 
 	public static final String EFFECT_DATE = "effectDate";
 
 	@Id
-	@Column(name="ID_FISCAL_REGIME")
+	@Column(name="ID_REGIME")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_PER_FISCAL_REGIME")
 	@SequenceGenerator(name = "SEQ_PER_FISCAL_REGIME", sequenceName = "SEQ_PER_FISCAL_REGIME", allocationSize = 1)
 	private Long id;	
@@ -35,9 +35,8 @@ public class FiscalRegimeEntity implements DetPersonFiscalRegime{
 	@Column(name = "PERSON_DETAIL_ID")
 	private Long personDetailId;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_FISCAL_REGIME_AMOUNTS")
-	private FiscalRegimeAmountsEntity fiscalRegimeAmounts;
+	@Column(name = "ID_REGIME_AMOUNTS")
+	private Long fiscalRegimeAmounts;
 
 	@Column(name="ANNUITY")
 	private Long annuity;

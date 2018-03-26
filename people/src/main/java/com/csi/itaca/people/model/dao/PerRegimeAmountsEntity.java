@@ -15,12 +15,12 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "FIS_FISCAL_REGIME_AMOUNTS")
-public class FiscalRegimeAmountsEntity implements FiscalRegimeAmounts{
+@Table(name = "PER_REGIME_AMOUNTS")
+public class PerRegimeAmountsEntity implements FiscalRegimeAmounts{
 
-	public static final String ID_FISCAL_REGIME_AMOUNTS = "id";
+	public static final String ID_REGIME_AMOUNTS = "id";
 
-	public static final String ID_FISCAL_REGIME = "fiscalRegime";
+	public static final String ID_REGIME = "fiscalRegime";
 
 	public static final String TAXES = "taxes";
 
@@ -31,14 +31,14 @@ public class FiscalRegimeAmountsEntity implements FiscalRegimeAmounts{
 	public static final String ENDDATE = "endDate";
 
 	@Id
-	@Column(name="ID_FISCAL_REGIME_AMOUNTS")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SFIS_FISCAL_REGIME_AMOUNTS")
-	@SequenceGenerator(name = "SFIS_FISCAL_REGIME_AMOUNTS", sequenceName = "SFIS_FISCAL_REGIME_AMOUNTS", allocationSize = 1)
+	@Column(name="ID_REGIME_AMOUNTS")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SPER_REGIME_AMOUNTS")
+	@SequenceGenerator(name = "SPER_REGIME_AMOUNTS", sequenceName = "SPER_REGIME_AMOUNTS", allocationSize = 1)
 	private Long id;
-	
+
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_FISCAL_REGIME")
-	private FiscalRegimeEntity fiscalRegime;
+	@JoinColumn(name="ID_REGIME")
+	private PerFiscalRegimeEntity fiscalRegime;
 
 	@Column(name="TAXES")
 	private Long taxes;
