@@ -1,6 +1,7 @@
 
 plugins {
     id 'org.asciidoctor.convert' version '1.5.6'
+    id "com.shysteph.application-agent" version "1.0.18"
 }
 
 allprojects  {
