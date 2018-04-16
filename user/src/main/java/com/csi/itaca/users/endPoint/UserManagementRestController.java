@@ -184,7 +184,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
-    @RequestMapping(value = COUNT, method = RequestMethod.GET,
+    @RequestMapping(value = "/count", method = RequestMethod.GET,
                     consumes = {MediaType.APPLICATION_JSON_VALUE },
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity countUsers(@RequestBody(required=false) UserSearchFilterDTO userFilter) {

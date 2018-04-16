@@ -201,7 +201,7 @@ public class UserManagementRestControllerTest {
 
         UserFilterPaginationOrderDTO criteria = new UserFilterPaginationOrderDTO();
 
-        mockMvc.perform(get(UserManagementServiceProxy.LIST)
+        mockMvc.perform(get(UserManagementServiceProxy.LIST_USERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.asJsonString(criteria)))
                 .andDo(print())
@@ -230,23 +230,23 @@ public class UserManagementRestControllerTest {
     public void getUserTest() throws Exception {
 
         // get User 0
-        Mockito.when(service.getUser(Matchers.any(String.class), Matchers.any(Errors.class))).thenReturn(user);
-        mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
-                .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_ADMIN_USERNAME))
+        Mockito.when(service.getUserById(Matchers.any(Long.class), Matchers.any(Errors.class))).thenReturn(user);
+        mockMvc.perform(get(UserManagementServiceProxy.GET_USER+"/"+user.getId()))
                 .andDo(print())
-                .andExpect(jsonPath(JSON_USER_ID_FIELD,is(0)))
-                .andExpect(jsonPath(JSON_USERNAME_FIELD,is(TEST_ADMIN_USERNAME)))
+                .andExpect(jsonPath(JSON_USER_ID_FIELD,is(user.getId().intValue())))
+                .andExpect(jsonPath(JSON_USERNAME_FIELD,is(user.getUsername())))
+                .andExpect(jsonPath(JSON_FIRST_NAME_FIELD,is(user.getFirstName())))
+                .andExpect(jsonPath(JSON_LAST_NAME_FIELD,is(user.getLastName())))
                 .andExpect(status().isOk());
 
         // get User 1
-        Mockito.when(service.getUser(Matchers.any(String.class), Matchers.any(Errors.class))).thenReturn(user1);
-        mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
-                .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_USER1_USERNAME))
+        Mockito.when(service.getUserById(Matchers.any(Long.class), Matchers.any(Errors.class))).thenReturn(user1);
+        mockMvc.perform(get(UserManagementServiceProxy.GET_USER+"/"+user1.getId()))
                 .andDo(print())
-                .andExpect(jsonPath(JSON_USER_ID_FIELD,is(1)))
-                .andExpect(jsonPath(JSON_USERNAME_FIELD,is(TEST_USER1_USERNAME)))
-                .andExpect(jsonPath(JSON_FIRST_NAME_FIELD,is(TEST_USER1_FIRST_NAME)))
-                .andExpect(jsonPath(JSON_LAST_NAME_FIELD,is(TEST_USER1_LAST_NAME)))
+                .andExpect(jsonPath(JSON_USER_ID_FIELD,is(user1.getId().intValue())))
+                .andExpect(jsonPath(JSON_USERNAME_FIELD,is(user1.getUsername())))
+                .andExpect(jsonPath(JSON_FIRST_NAME_FIELD,is(user1.getFirstName())))
+                .andExpect(jsonPath(JSON_LAST_NAME_FIELD,is(user1.getLastName())))
                 .andExpect(status().isOk());
     }
 
@@ -259,15 +259,13 @@ public class UserManagementRestControllerTest {
          BeanPropertyBindingResult result = new BeanPropertyBindingResult("","");
          result.reject(ErrorConstants.VALIDATION_USER_NOT_FOUND);
          PowerMockito.whenNew(BeanPropertyBindingResult.class).withAnyArguments().thenReturn(result);
-         Mockito.when(service.getUser(Matchers.any(String.class), Matchers.any(Errors.class))).thenReturn(null);
+         Mockito.when(service.getUserById(Matchers.any(Long.class), Matchers.any(Errors.class))).thenReturn(null);
 
          // get User 100
-         mockMvc.perform(get(UserManagementServiceProxy.GET_USER)
-                .param(UserManagementServiceProxy.USER_NAME_PARAM, TEST_FAIL_USER100_USERNAME))
+         mockMvc.perform(get(UserManagementServiceProxy.GET_USER+"/100"))
                 .andDo(print())
                 .andExpect(jsonPath(JSON_ERROR_KEY_FIELD,is(ErrorConstants.VALIDATION_USER_NOT_FOUND)))
                 .andExpect(status().isBadRequest());
-
     }
 
 

@@ -22,8 +22,8 @@ public interface UserManagementServiceProxy {
     // end point URLs
     String ENTITY                   = "/user";
     String AUTH                     = ENTITY + "/auth";
-    String LIST                     = ENTITY + "/list";
-    String GET_USER                 = ENTITY + "/get";
+    String GET_USER                 = ENTITY + "";
+    String LIST_USERS               = ENTITY + "";
     String SAVE_USER                = ENTITY + "/save";
     String DELETE_USER              = ENTITY + "/delete";
     String CHANGE_PASSWORD          = ENTITY + "/changePassword";
