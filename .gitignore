@@ -20,3 +20,7 @@ target/
 *.ipr
 
 
+/.nb-gradle
+**/nbproject
+
+web/src/main/resources/config/application-dev\.yml

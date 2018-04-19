@@ -18,7 +18,7 @@ public class CardTypeEntity implements CardType{
 	public static final String LITERAL = "literal";
 	
 	@Id
-	@Column(name="ID_CARD_TYPE")
+	@Column(name="CARD_TYPE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_CARD_TYPE")
 	@SequenceGenerator(name = "SEQ_CARD_TYPE", sequenceName = "SEQ_CARD_TYPE", allocationSize = 1)
 	private Long id;

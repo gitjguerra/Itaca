@@ -48,5 +48,15 @@ public interface PeopleLookupService {
      */
     List<CardTypeDTO>  lookupCardTypes();
 
+    /**
+     * List of contacts.
+     * @return the contacts.
+     */
+    List<ContactDTO> lookupContacts();
 
+    //address  //AG
+    List<AddressFormat1DTO>  lookupAddresFormat1();
+
+    //Public Person  //AG
+    List<PublicPersonDTO>  lookupPublicPerson();
 }

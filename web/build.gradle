@@ -26,6 +26,30 @@ sourceSets {
 }
 
 configurations {
+  runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
+  all*.exclude group: "org.slf4j", module: "slf4j-log4j12"
+}
+
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'groovy'
+apply plugin: 'war'
+
+sourceSets {
+  main {
+    groovy {
+      srcDirs = ['src/main']
+    }
+  }
+
+  test {
+    groovy {
+      srcDirs = ['test/test']
+    }
+  }
+}
+
+configurations {
    runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
 }
 

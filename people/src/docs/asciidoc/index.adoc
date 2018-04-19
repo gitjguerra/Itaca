@@ -19,7 +19,29 @@ Retrieves a person associated with the supplied ID.
 ==== Request structure
 
 include::{snippets}/get-person/http-request.adoc[]
+=== Get person
 
+Retrieves a person associated with the supplied ID.
+
+==== Request structure
+
+include::{snippets}/get-person/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/get-person/request-parameters.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-person/curl-request.adoc[]
 ==== Request parameters
 
 include::{snippets}/get-person/request-parameters.adoc[]
@@ -533,6 +555,87 @@ include::{snippets}/lookup-relation-type/http-response.adoc[]
 include::{snippets}/lookup-relation-type/curl-request.adoc[]
 
 
+
+=== Count Nationalities
+
+==== Request structure
+
+include::{snippets}/count-nationalities/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/count-nationalities/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/count-nationalities/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-nationalities/curl-request.adoc[]
+
+
+=== Delete Nationalities
+
+==== Request structure
+
+include::{snippets}/delete-nationality/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/delete-nationality/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-nationality/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-nationality/curl-request.adoc[]
+
+
+=== Get Nationalities
+
+==== Request structure
+
+include::{snippets}/get-nationalities/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-nationalities/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-nationalities/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-nationalities/curl-request.adoc[]
+
+
+=== Save Nationalities
+
+Save a Nationality
+
+==== Request structure
+
+include::{snippets}/save-nationality/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-nationality/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-nationality/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-nationality/curl-request.adoc[]
+
+
+
+
 === lookup Bank
 
 ==== Request structure
@@ -730,3 +833,247 @@ include::{snippets}/get-Account/http-response.adoc[]
 
 include::{snippets}/get-Account/curl-request.adoc[]
 
+=== Lookup Address Format
+
+
+=== Count Regime
+
+==== Request structure
+
+include::{snippets}/count-regime/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/count-regime/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/count-regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-regime/curl-request.adoc[]
+
+
+=== Delete Regime
+
+==== Request structure
+
+include::{snippets}/delete-regime/http-request.adoc[]
+
+==== Request parameters
+
+include::{snippets}/delete-regime/request-parameters.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-regime/curl-request.adoc[]
+
+
+=== Get Regime
+
+==== Request structure
+
+include::{snippets}/get-Regime/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-Regime/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-Regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-Regime/curl-request.adoc[]
+
+
+=== Save Regime
+
+==== Request structure
+
+include::{snippets}/save-regime/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-regime/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-regime/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-regime/curl-request.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+==== Request structure
+
+include::{snippets}/lookup-address-format/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-address-format/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-address-format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-address-format/curl-request.adoc[]
+
+
+
+
+
+=== count Address Format
+
+==== Request structure
+
+include::{snippets}/count-Address-Format/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/count-Address-Format/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/count-Address-Format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/count-Address-Format/curl-request.adoc[]
+
+
+
+=== get Address Format
+
+==== Request structure
+
+include::{snippets}/get-AddresFormat1/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/get-AddresFormat1/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/get-AddresFormat1/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-AddresFormat1/curl-request.adoc[]
+
+
+
+
+=== save or update Address Format
+
+==== Request structure
+
+include::{snippets}/save-Address-Format/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-Address-Format/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-Address-Format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-Address-Format/curl-request.adoc[]
+
+=== lookup Public Person
+
+==== Request structure
+
+include::{snippets}/lookup-Public-Person/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/lookup-Public-Person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/lookup-Public-Person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/lookup-Public-Person/curl-request.adoc[]
+
+
+=== get Public Person
+
+==== Request structure
+
+include::{snippets}/GetPublic-Person/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/GetPublic-Person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/GetPublic-Person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/GetPublic-Person/curl-request.adoc[]
+
+=== Count Public Person
+
+==== Request structure
+
+include::{snippets}/Count-Public-person/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/Count-Public-persont/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/Count-Public-person/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/Count-Public-person/curl-request.adoc[]
+
+
+=== save or update Public Person
+
+==== Request structure
+
+include::{snippets}/save-Public-Person/http-request.adoc[]
+
+==== Response fields
+
+include::{snippets}/save-Public-Person/response-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/save-Address-Format/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/save-Public-Person/curl-request.adoc[]

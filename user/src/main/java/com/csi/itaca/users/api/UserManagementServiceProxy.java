@@ -22,8 +22,8 @@ public interface UserManagementServiceProxy {
     // end point URLs
     String ENTITY                   = "/user";
     String AUTH                     = ENTITY + "/auth";
-    String LIST                     = ENTITY + "/list";
-    String GET_USER                 = ENTITY + "/get";
+    String GET_USER                 = ENTITY + "";
+    String LIST_USERS               = ENTITY + "";
     String SAVE_USER                = ENTITY + "/save";
     String DELETE_USER              = ENTITY + "/delete";
     String CHANGE_PASSWORD          = ENTITY + "/changePassword";
@@ -42,28 +42,6 @@ public interface UserManagementServiceProxy {
     ResponseEntity<UserDTO> auth(String username, String password);
 
     /**
-     * Gets specific user.
-     * @param username the user to retrieve.
-     * @return the user
-     */
-    ResponseEntity<UserDTO> getUser(String username);
-
-    /**
-     * Deletes a user.
-     * @param username the username of the user to delete.
-     * @return ok response if successful.
-     */
-    ResponseEntity getDelete(String username);
-
-    /**
-     * Saves the user.
-     * @param user the user object to save.
-     * @param errTracking error tracking.
-     * @return ok response if successful.
-     */
-    ResponseEntity<UserDTO> getSave(UserDTO user, BindingResult errTracking);
-
-    /**
      * Changes the password for a given user
      * @param changePassword the password change details
      * @param errTracking error tracking
@@ -78,13 +56,6 @@ public interface UserManagementServiceProxy {
      * @return ok response if successful.
      */
     ResponseEntity updateUserPreferences(PersonalPreferencesDTO preferences, BindingResult result);
-
-    /**
-     * Returns a list of user based on the specified criteria.
-     * @param criteria search criteria.
-     * @return
-     */
-    ResponseEntity getUsers(UserFilterPaginationOrderDTO criteria);
 
     /**
      * Counts the number of users based on a given filer.

@@ -70,5 +70,5 @@ public interface User extends BaseModel {
 	 * Indicates if the user is blocked.
 	 * @return true if the user is blocked.
 	 */
-	boolean isBlocked();
+	boolean isBlockedUser();
 }

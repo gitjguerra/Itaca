@@ -20,6 +20,8 @@ import java.time.LocalDate;
 public class UserDTO extends BaseModelImpl implements User {
 
     private String username;
+    
+    private String password;
 
     private String firstName;
 
@@ -29,7 +31,7 @@ public class UserDTO extends BaseModelImpl implements User {
 
     private String description;
 
-    private UserLanguageDTO userLanguages;
+    private UserLanguageDTO userLanguage;
 
     private LocalDate companyStartDate;
 
@@ -37,7 +39,9 @@ public class UserDTO extends BaseModelImpl implements User {
 
     private String email;
 
-    private boolean blocked;
+    private boolean blockedUser;
 
     private LocalDate blockedDate;
+    
+    private boolean activeUser;
 }

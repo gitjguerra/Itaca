@@ -1,12 +1,14 @@
 package com.csi.itaca.people.service;
 
-import com.csi.itaca.people.model.dto.AccountDTO;
-import com.csi.itaca.people.model.dto.BankCardDTO;
-import com.csi.itaca.people.model.dto.PersonDTO;
-import com.csi.itaca.people.model.dto.PersonDetailDTO;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.AccountSearchFilter;
 import com.csi.itaca.people.model.filters.BankCardSearchFilter;
+import com.csi.itaca.people.model.filters.ContactSearchFilter;
+import com.csi.itaca.people.model.dto.*;
 import com.csi.itaca.people.model.filters.PeopleSearchFilter;
+import com.csi.itaca.tools.utils.jpa.Order;
+import com.csi.itaca.tools.utils.jpa.Pagination;
+import com.csi.itaca.people.model.filters.RelatedPersonSearchFilter;
 import org.springframework.validation.Errors;
 import java.util.List;
 
@@ -140,5 +142,143 @@ public interface PeopleManagementService {
      * @return the bank card if found otherwise null.
      */
     BankCardDTO getBankCard(Long id, Errors errTracking);
+
+    /**
+     * Counts the list of person relations based on the person id.
+     * @param idPersonDetail filter to apply
+     * @return the number of banks card.
+     */
+    Long countPersonRelations(Long idPersonDetail);
+
+    /**
+     * Delete the person associated to the provided ID
+     * @param relatedPersonId the id of the person to delete.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    void deleteRelatedPerson(Long relatedPersonId, Errors errTracking);
+
+    /**
+     * Saves or updates the provided account.
+     * @param relatedPersonToSaveOrUpdate the person to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    RelatedPersonDTO saveOrUpdateRelatedPerson(RelatedPersonDTO relatedPersonToSaveOrUpdate, Errors errTracking);
+
+    /**
+     * Get a person detail.
+     * @param idCode the ID of the person detail to retrieve.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return The person detail DTO, null if not found.
+     */
+    List<? extends PersonDetailDTO> findByPersonId(Long idCode, Errors errTracking);
+
+    /**
+     * Finds a list of  related person based on the supplied search criteria.
+     * @param criteria search criteria contains the  filter to apply pagination and order properties.
+     * @param errTracking error tracker. Will advise if person not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return a list of duplicate person details.
+     */
+    List<? extends RelatedPersonDTO> getRelatedPerson(RelatedPersonSearchFilter criteria, Errors errTracking);
+
+    /**
+     * Retrieves a specific contact.
+     * @param idContact the contact id.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return the contact if found otherwise null.
+     */
+    ContactDTO getContact(Long idContact, Errors errTracking);
+
+    /**
+     * Retrieves a specific contact.
+     * @param criteria the contact id.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return the contact if found otherwise null.
+     */
+   List<? extends ContactDTO>  getPersonContact(ContactSearchFilter criteria, Errors errTracking);
+
+    /**
+     * Delete the Contact associated to the Contact ID
+     * @param contactId the id of the Contact to delete.
+     * @param errTracking error tracker. Will advise if Contact not found.
+     *                    Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    void deleteContact(Long contactId, Errors errTracking);
+
+    /**
+     * the list of Contact based on the supplied search criteria.
+     * @param idPersonDetail filter to apply
+     * @return the number of Contact.
+     */
+    Long countContacts(Long idPersonDetail);
+
+    /**
+     * Saves or updates contact.
+     * @param contactToSaveOrUpdate the contact to save/update.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     */
+    ContactDTO saveOrUpdateContact(ContactDTO contactToSaveOrUpdate, Errors errTracking);
+
+    //address AG
+    AddressFormat1DTO getAddresformat1(Long id, Errors errTracking);
+
+    Long countAddresformat1(Long addressId);
+
+    AddressFormat1DTO saveOrUpdateAddresFotmat(AddressFormat1DTO addresFotmatToSaveOrUpdate, Errors errTracking);
+
+    void deleteaddresformat1(Long personId, Errors errTracking);
+
+    //person AG
+    PublicPersonDTO getPublicPerson(Long id, Errors errTracking);
+
+    Long counPublicPerson(Long publicpersonId);
+
+    PublicPersonDTO saveOrUpdatePublicPerson(PublicPersonDTO publicPersonFotmatToSaveOrUpdate, Errors errTracking);
+
+    void deletePublicPerson(Long publicpersonId, Errors errTracking);
+
+    /**
+     * Returns a count the number of Fiscal Regime detail items based on the supplied search criteria.
+     * @param personDetailId the filter to find Fiscal Regime.
+     * @return People Fiscal Regime details.
+     */
+    List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetailId);
+
+    /**
+     * Returns a count the number of Fiscal Regime detail items based on the supplied search criteria.
+     * @param personDetailId the filter to find Fiscal Regime.
+     * @return People Fiscal Regime details.
+   */
+    List<DetPersonFiscalRegimeDTO> getPeopleFiscalRegime(Long personDetailId, Pagination pagination, Order order);
+
+    /**
+     * Counts the list of Fiscal Regime based on the supplied search criteria.
+     * @param personDetailId filter to apply
+     * @return the number of accounts.
+     */
+    Long countFiscalRegime(Long personDetailId);
+
+    /**
+     * Deletes a Fiscal Regime together with associated details
+     * @param idFicalRegime the id of the Fiscal Regime to delete.
+     * @param errTracking error tracker. Please @see {@link com.csi.itaca.people.api.ErrorConstants}
+     * @return status ok response if the delete was successful.
+     */
+    boolean deleteFiscalRegime(Long idFicalRegime, Errors errTracking);
+    /**
+     * Saves or updates FiscalRegime.
+     * @param detPersonFiscalRegimeDTO the Fiscal Regime to save/update.
+     */
+    DetPersonFiscalRegimeDTO saveOrUpdateDetPeopleFiscalRegime(DetPersonFiscalRegimeDTO detPersonFiscalRegimeDTO, Errors errTracking);
+
+    /**
+     * Gets a fiscal regime.
+     * @param idFicalRegime the fiscal regime id.
+     * @return a response body containing the requested fiscal regime json object.
+     */
+    DetPersonFiscalRegimeDTO getFiscalRegime(Long idFicalRegime, Errors errTracking);
+
 
 }
