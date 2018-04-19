@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@127.0.0.1:1521:XE
-    username: itaca
-    password: itaca
+    url: jdbc:oracle:thin:@sigma01:1521:sigma01
+    username: BBOOTHE
+    password: BBOOTHE
 
 dbinstall:
   datasource:
-    url: jdbc:oracle:thin:@127.0.0.1:1521:XE
-    username: itaca
-    password: itaca
+    url: jdbc:oracle:thin:@sigma01:1521:sigma01
+    username: BBOOTHE
+    password: BBOOTHE
