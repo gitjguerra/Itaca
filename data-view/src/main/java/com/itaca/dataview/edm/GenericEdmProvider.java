@@ -19,7 +19,9 @@
 package com.itaca.dataview.edm;
 
 
-import dao.*;
+
+import com.itaca.dataview.model.dao.AllTabColsRepository;
+import com.itaca.dataview.service.EntityProvider;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.*;
