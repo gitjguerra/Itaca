@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@sigma01:1521:sigma01
-    username: BBOOTHE
-    password: BBOOTHE
+    url: jdbc:oracle:thin:@nvidia:1521:xe
+    username: ITACA
+    password: ITACA
 
 dbinstall:
   datasource:
