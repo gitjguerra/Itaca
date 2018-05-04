@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.itaca.dataview.edm;
+package com.csi.itaca.dataview.edm;
 
-import com.itaca.dataview.model.dao.AllTabColsRepository;
-import com.itaca.dataview.service.EntityProvider;
+import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
+import com.csi.itaca.dataview.service.EntityProvider;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;

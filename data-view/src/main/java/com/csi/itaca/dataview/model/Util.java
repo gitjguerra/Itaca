@@ -1,4 +1,4 @@
-package com.itaca.dataview.model;
+package com.csi.itaca.dataview.model;
 
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.Entity;

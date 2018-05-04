@@ -1,14 +1,13 @@
 /**
  * 
  */
-package com.itaca.dataview.controller;
+package com.csi.itaca.dataview.controller;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
 
-import com.itaca.dataview.exception.EdmException;
-import com.itaca.dataview.model.dao.AvailableTable;
+import com.csi.itaca.dataview.exception.EdmException;
+import com.csi.itaca.dataview.model.dao.AvailableTable;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -25,7 +24,6 @@ import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.ODataHandlerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,7 +44,6 @@ import java.util.List;
  *
  * @author itaca
  */
-@PropertySource("classpath:application-dev.yml")
 @RestController
 @RequestMapping("odata")
 public class DataViewController {

@@ -5,7 +5,7 @@ include ':web'
 include ':people'
 include ':config'
 include ':tools'
-include 'data-view'
+include ':data-view'
 
 project(':common').projectDir = "$rootDir/common" as File
 project(':user').projectDir = "$rootDir/user" as File

@@ -1,4 +1,4 @@
-package com.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.model.dao;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@PropertySource("classpath:application.yml")
 public class AvailableTable {
 
     /*   Solucion1 con multiples valores separados por comas

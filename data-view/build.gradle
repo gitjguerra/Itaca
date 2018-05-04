@@ -1,14 +1,8 @@
-group 'com.csi.itaca'
-version '0.0.1-SNAPSHOT'
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
+description = 'Data view'
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(':config')
+    compile project(':common')
+    compile project(':tools')
+    compile project(':web')
 }
