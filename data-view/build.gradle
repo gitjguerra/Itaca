@@ -1,8 +1,2 @@
 
 description = 'Data view'
-dependencies {
-    compile project(':config')
-    compile project(':common')
-    compile project(':tools')
-    compile project(':web')
-}
