@@ -1,4 +1,4 @@
-package com.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.model.dao;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;

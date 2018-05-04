@@ -1,4 +1,4 @@
-package com.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.model.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

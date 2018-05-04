@@ -1,4 +1,4 @@
-package com.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.model.dao;
 
 
 import java.io.Serializable;

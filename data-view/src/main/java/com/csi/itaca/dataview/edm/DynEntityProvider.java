@@ -1,13 +1,13 @@
 /**
  * 
  */
-package com.itaca.dataview.edm;
+package com.csi.itaca.dataview.edm;
 
 
-import com.itaca.dataview.model.dao.AllTabCols;
-import com.itaca.dataview.model.dao.AllTabColsRepository;
-import com.itaca.dataview.model.dao.FilaGenerico;
-import com.itaca.dataview.service.EntityProvider;
+import com.csi.itaca.dataview.model.dao.AllTabCols;
+import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
+import com.csi.itaca.dataview.model.dao.FilaGenerico;
+import com.csi.itaca.dataview.service.EntityProvider;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;

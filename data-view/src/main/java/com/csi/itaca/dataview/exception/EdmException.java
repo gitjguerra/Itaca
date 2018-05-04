@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.itaca.dataview.exception;
+package com.csi.itaca.dataview.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.itaca.dataview.service;
+package com.csi.itaca.dataview.service;
 
 
 import org.apache.olingo.commons.api.data.EntitySet;
