@@ -30,3 +30,12 @@ server:
 configurator:
   mode: classpath
   autoreload: false
+
+tableName:
+uiDisplayNameKey:
+uiDescriptionkey:
+foreignTables:
+createPermission:
+readPermission:
+updatePermission:
+deletePermission:
