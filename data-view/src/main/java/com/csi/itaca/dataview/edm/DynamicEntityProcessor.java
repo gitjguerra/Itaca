@@ -81,6 +81,8 @@ public class DynamicEntityProcessor implements EntityProcessor {
                     if (values.length() != 0) {
                         values.append(",");
                     }
+
+                    //TODO: The type should be determined from the column type in the DB.
                     if (StringUtils.isNumericSpace(value)) {
                         values.append(value);
                     }
