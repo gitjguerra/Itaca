@@ -1,8 +1,18 @@
+description = 'Data view mocdule'
 
-description = 'Data view'
+project.ext {
+// TODO: Upgrade to the latest version of OData. Latest version is "4.4.0" at the time of writing this.
+    odataVersion = '4.0.0-beta-02-RC01'
+}
+
 dependencies {
     compile project(':config')
     compile project(':common')
     compile project(':tools')
-    compile project(':web')
+
+    compile group: 'org.apache.olingo', name:'odata-server-api',  version:"${project.odataVersion}"
+    compile group: 'org.apache.olingo', name:'odata-server-core', version:"${project.odataVersion}"
+    compile group: 'org.apache.olingo', name:'odata-commons-api', version:"${project.odataVersion}"
+    compile group: 'org.apache.olingo', name:'odata-commons-core', version:"${project.odataVersion}"
+    compile group: 'org.apache.commons', name:'commons-dbcp2', version:'2.2.0'
 }
