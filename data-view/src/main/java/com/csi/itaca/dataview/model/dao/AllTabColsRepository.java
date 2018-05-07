@@ -32,7 +32,7 @@ public class AllTabColsRepository
     public List<AllTabCols> findAll() {
        return jdbcTemplate.query(
                 "SELECT COLUMN_ID , TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE " +
-                        " from all_tab_cols where owner='ITACA'" +
+                        " from all_tab_cols where" +
                        // " AND TABLE_NAME='PER_BANK' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",
                 (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
@@ -50,8 +50,8 @@ public class AllTabColsRepository
     public List<AllTabCols>findByTableName(String tablename) {
         return jdbcTemplate.query(
                 "SELECT COLUMN_ID, TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE " +
-                        " from all_tab_cols where owner='ITACA'" +
-                        " AND TABLE_NAME='"+tablename+"' " +
+                        " from all_tab_cols where" +
+                        " TABLE_NAME='"+tablename+"' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",
                 (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
                         rs.getString("TABLE_NAME"),
