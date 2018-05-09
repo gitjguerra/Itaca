@@ -32,7 +32,7 @@ public class AllTabColsRepository
     public List<AllTabCols> findAll() {
        return jdbcTemplate.query(
                 "SELECT COLUMN_ID , TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE " +
-                        " from all_tab_cols where owner='ITACA'" +
+                        " from all_tab_cols where" +
                        // " AND TABLE_NAME='PER_BANK' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",
                 (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
@@ -50,8 +50,8 @@ public class AllTabColsRepository
     public List<AllTabCols>findByTableName(String tablename) {
         return jdbcTemplate.query(
                 "SELECT COLUMN_ID, TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE " +
-                        " from all_tab_cols where owner='ITACA'" +
-                        " AND TABLE_NAME='"+tablename+"' " +
+                        " from all_tab_cols where" +
+                        " TABLE_NAME='"+tablename+"' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",
                 (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
                         rs.getString("TABLE_NAME"),
@@ -143,6 +143,21 @@ public class AllTabColsRepository
         return filagenerico;
     }
 
+    @Transactional(readOnly=true)
+    public List<FilaGenerico> findAllConstraints(String Tabla) {
+
+        String SQLStmt ="SELECT     UCC.COLUMN_NAME  "+
+                "FROM       user_constraints  UC , User_cons_columns UCC "+
+                "WHERE      UCC.OWNER = UCC.OWNER "+
+                " AND UCC.TABLE_NAME = UC.TABLE_NAME "+
+                " AND UCC.CONSTRAINT_NAME = UC.CONSTRAINT_NAME "+
+                " AND UC.CONSTRAINT_TYPE ='P' "+
+                " AND UC.STATUS ='ENABLED' "+
+                " AND UCC.table_name='"+Tabla+"' ";
+
+        return jdbcTemplate.query(SQLStmt,new DynRowMapper());
+
+    }
 
 
 }

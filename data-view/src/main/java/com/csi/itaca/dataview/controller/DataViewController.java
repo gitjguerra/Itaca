@@ -6,6 +6,7 @@ package com.csi.itaca.dataview.controller;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import com.csi.itaca.dataview.edm.DynamicEntityProcessor;
 import com.csi.itaca.dataview.exception.EdmException;
 import com.csi.itaca.dataview.model.dao.AvailableTable;
 import org.apache.log4j.Logger;
@@ -19,6 +20,7 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.ODataHandlerException;
@@ -68,6 +70,10 @@ public class DataViewController {
 	private EntityCollectionProcessor enityCollectionProcessor;
 
 	@Autowired
+	private EntityProcessor enityProcessor;
+
+
+	@Autowired
 	AvailableTable availableTable;
 
 	/**
@@ -96,6 +102,7 @@ public class DataViewController {
 
 			ODataHandler handler = new ODataHandler(odata, edm);
 			handler.register(enityCollectionProcessor);
+			handler.register(enityProcessor);
 
 			ODataResponse response = handler.process(createODataRequest(req,
 					split));
