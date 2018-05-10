@@ -143,6 +143,21 @@ public class AllTabColsRepository
         return filagenerico;
     }
 
+    @Transactional(readOnly=true)
+    public List<FilaGenerico> findAllConstraints(String Tabla) {
+
+        String SQLStmt ="SELECT     UCC.COLUMN_NAME  "+
+                "FROM       user_constraints  UC , User_cons_columns UCC "+
+                "WHERE      UCC.OWNER = UCC.OWNER "+
+                " AND UCC.TABLE_NAME = UC.TABLE_NAME "+
+                " AND UCC.CONSTRAINT_NAME = UC.CONSTRAINT_NAME "+
+                " AND UC.CONSTRAINT_TYPE ='P' "+
+                " AND UC.STATUS ='ENABLED' "+
+                " AND UCC.table_name='"+Tabla+"' ";
+
+        return jdbcTemplate.query(SQLStmt,new DynRowMapper());
+
+    }
 
 
 }

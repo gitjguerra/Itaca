@@ -1,5 +1,7 @@
 package com.csi.itaca.dataview.edm;
 
+import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
+import com.csi.itaca.dataview.model.dao.FilaGenerico;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -30,10 +32,11 @@ public class DynamicEntityProcessor implements EntityProcessor {
 
     private OData odata;
     private ServiceMetadata serviceMetadata;
-
+    private String paramURI;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
+    @Autowired
+    private AllTabColsRepository colsService;
     /** Logger */
     private static Logger log = Logger.getLogger(DynamicEntityProcessor.class);
 
@@ -103,13 +106,77 @@ public class DynamicEntityProcessor implements EntityProcessor {
     @Override
     public void updateEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException, SerializerException {
         log.info("update");
+        List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+        EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+        EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+        String fieldstoUpdate="";
+        paramURI = ((UriResourceEntitySet) resourcePaths.get(0)).getKeyPredicates().get(0).getText().toString();
+        InputStream requestInputStream = request.getBody();
 
+        StringBuffer fields = new StringBuffer();
+        StringBuffer values = new StringBuffer();
+        try {
+            JsonFactory jsonFactory = new JsonFactory();
+            JsonParser jsonParser = jsonFactory.createParser(requestInputStream);
+            // loop until token equal to "}"
+            while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = jsonParser.getCurrentName();
+                if (fieldName!=null) {
+                    jsonParser.nextToken();
+                    String value = jsonParser.getText();
+                    //TODO: The type should be determined from the column type in the DB.
+                    if (StringUtils.isNumericSpace(value)) {
+
+                    }else{
+                        value="'"+value+"'";
+                    }
+                    if(fieldstoUpdate.isEmpty()){
+                        fieldstoUpdate= fieldName+"="+value;
+                    }else{
+                        fieldstoUpdate= fieldstoUpdate+","+fieldName+"="+value;
+                    }
+
+                }
+            }
+        }
+        catch (Exception e) {
+            log.error("error updating entity"+e);
+        }
+        // Get the Primary columns to
+        int filas;
+        String columnName="";
+        List<FilaGenerico> gnericRow =  colsService.findAllConstraints(edmEntityType.getName().toString());
+
+        for(filas = 0; filas < gnericRow.size(); filas++) {
+            columnName = gnericRow.get(filas).getCampos().get(0).toString();
+        }
+
+
+        String sql = "UPDATE "+edmEntityType.getName()+" SET "+fieldstoUpdate+" WHERE "+ columnName +"="+paramURI;
+        jdbcTemplate.update(sql);
     }
 
     @Override
     public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException {
         log.info("delete");
+        EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+        EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
+        List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+        List<FilaGenerico> gnericRow =  colsService.findAllConstraints(edmEntityType.getName().toString());
+
+        paramURI = ((UriResourceEntitySet) resourcePaths.get(0)).getKeyPredicates().get(0).getText().toString();
+        int filas;
+        String columnName="";
+
+
+
+        for(filas = 0; filas < gnericRow.size(); filas++) {
+            columnName = gnericRow.get(filas).getCampos().get(0).toString();
+        }
+        //TODO: R.V. The paramURI  could be more than one row.
+        String sql = "DELETE "+edmEntityType.getName()+"  WHERE "+ columnName +"="+paramURI;
+        jdbcTemplate.update(sql);
     }
 
 

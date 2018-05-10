@@ -46,7 +46,7 @@ public class DynEntityProvider implements EntityProvider {
 	private static Logger logger = Logger.getLogger(DynEntityProvider.class);
 
 	// Service Namespace
-	public static final String NAMESPACE = "com.itaca.dataview";
+	public static final String NAMESPACE = "com.csi.itaca.dataview";
 
 	// EDM Container
 	public static final String CONTAINER_NAME = "Container";
