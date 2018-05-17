@@ -15,7 +15,7 @@ public class AvailableTable {
     private List<String> tableNames = new ArrayList<>();
     */
 
-    @Value("${tableName}")
+    @Value("#{'${tableName}'.split(',')}")
     private List<String> tableNames = new ArrayList<>();
 
     /*@Value("${tableMap}")

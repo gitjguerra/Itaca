@@ -21,6 +21,7 @@ package com.csi.itaca.dataview.edm;
 
 
 import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
+import com.csi.itaca.dataview.model.dao.AvailableTable;
 import com.csi.itaca.dataview.service.EntityProvider;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -40,11 +41,15 @@ public class GenericEdmProvider extends EdmProvider {
 
 	@Autowired
 	private ApplicationContext ctx;
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+
 	@Autowired
 	private AllTabColsRepository colsService;
-	private String recursoURI;
+
+	@Autowired
+	private AvailableTable configuration;
 
 	// Service Namespace
 	public static final String NAMESPACE = "com.itaca.dataview";
@@ -108,7 +113,6 @@ public class GenericEdmProvider extends EdmProvider {
 	@Override
 	public EntitySet getEntitySet(FullQualifiedName entityContainer,
 			String entitySetName) throws ODataException {
-		recursoURI =entitySetName;
 		EntitySet result = null;
 		Map<String, EntityProvider> entityProviders = getEntityProviders();
 
@@ -163,18 +167,28 @@ public class GenericEdmProvider extends EdmProvider {
 		return entityContainer;
 	}
 
+	/**
+	 * Gets all the available entities based on the table indicated in the configuration.
+	 * @return Map of all entities.
+	 */
 	public  Map<String, EntityProvider> getEntityProviders() {
+
+		List<String> configTableNames = configuration.getTableNames();
 		Map<String, EntityProvider> entityProviders = new HashMap<>();
 
-		DynEntityProvider dynEntityProvider = new DynEntityProvider();
+		for (String tableName: configTableNames) {
+			if (tableName!=null) {
+				tableName = tableName.trim();
+				if (!tableName.isEmpty()) {
+					DynEntityProvider dynEntityProvider = new DynEntityProvider();
+					dynEntityProvider.setResourceName(tableName);
+					dynEntityProvider.setJdbcTemplate(jdbcTemplate);
+					dynEntityProvider.setColsService(colsService);
+					entityProviders.put(tableName, dynEntityProvider);
+				}
+			}
+		}
 
-		dynEntityProvider.setResourceName(recursoURI);
-		dynEntityProvider.setJdbcTemplate(jdbcTemplate);
-		dynEntityProvider.setColsService(colsService);
-		entityProviders.put(recursoURI, dynEntityProvider);
-		/*dynEntityProvider = new DynEntityProvider();
-		dynEntityProvider.setResourceName( "Product");
-		entityProviders.put("Product", dynEntityProvider);*/
 	return entityProviders;
 	}
 
