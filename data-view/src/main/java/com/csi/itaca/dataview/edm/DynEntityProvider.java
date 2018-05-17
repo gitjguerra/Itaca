@@ -28,8 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -186,32 +188,32 @@ public class DynEntityProvider implements EntityProvider {
 
 			Entity row = new EntityImpl();
 			int numCol =0 ;
-			String typeCol="";
+			String typeCol;
 			while (numCol <ColsList.size()) {
 				typeCol=ColsList.get(numCol).getDATA_TYPE().toString();
 
 					if (typeCol.equals("NUMBER")){
 						logger.info("typeCol.equals == NUMBER" );
 						row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
-								ValueType.PRIMITIVE, (Long.valueOf(gnericRow.get(filas).getCampos().get(numCol).toString()))));
+								ValueType.PRIMITIVE, Long.valueOf(gnericRow.get(filas).getCampos().get(numCol).toString())));
 					}
-					if (typeCol.equals("VARCHAR2")){
+					else if (typeCol.equals("VARCHAR2")){
 						logger.info("typeCol.equals == VARCHAR2" );
 						row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
 								ValueType.PRIMITIVE, gnericRow.get(filas).getCampos().get(numCol)));
 					}
-					if (typeCol.equals("DATE")){
+					else if (typeCol.equals("DATE")){
 						logger.info("typeCol.equals == DATE" );
 						row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
-								ValueType.PRIMITIVE, gnericRow.get(filas).getCampos().get(numCol)));
+								ValueType.PRIMITIVE, parseDate (gnericRow.get(filas).getCampos().get(numCol))));
+
 					}
-					if (typeCol.equals("CHAR")){
+					else if (typeCol.equals("CHAR")){
 						logger.info(" typeCol.equals == CHAR" );
 							row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
 									ValueType.PRIMITIVE, gnericRow.get(filas).getCampos().get(numCol)));
 					}
-				logger.info(" gnericRow.get("+filas+").getCampos().get("+numCol+") "+ gnericRow.get(filas).getCampos().get(numCol));
-				typeCol="";
+				logger.debug(" gnericRow.get("+filas+").getCampos().get("+numCol+") "+ gnericRow.get(filas).getCampos().get(numCol));
 				numCol++;
 			}/* End While*/
 			entityList.add(row);
@@ -219,6 +221,16 @@ public class DynEntityProvider implements EntityProvider {
 
 		return entitySet;
 	}/*End EntitySet*/
+
+
+	private Date parseDate(Object dateStr) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr.toString());
+		}
+		catch(Exception e) {
+			return null;
+		}
+	}
 
 	@Override
 	public String getEntitySetName() {
