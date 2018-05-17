@@ -65,16 +65,16 @@ public class AllTabColsRepository
 
     }
     @Transactional(readOnly=true)
-    public List<FilaGenerico> findAllRows(String Cols, String tableName) {
+    public List<GenericRecord> findAllRows(String Cols, String tableName) {
         String SQLStmt ="SELECT " +Cols+" FROM " +tableName;
         return jdbcTemplate.query(SQLStmt,new DynRowMapper());
     }
 
 
-    public FilaGenerico create(final FilaGenerico filagenerico, String table, String setcampos, String where) {
-        String field1 = filagenerico.getCampos().get(1).toString();
-        String field2 = filagenerico.getCampos().get(1).toString();
-        String field3 = filagenerico.getCampos().get(1).toString();
+    public GenericRecord create(final GenericRecord filagenerico, String table, String setcampos, String where) {
+        String field1 = filagenerico.getFields().get(1).toString();
+        String field2 = filagenerico.getFields().get(1).toString();
+        String field3 = filagenerico.getFields().get(1).toString();
         final String InsertTableSQL = "INSERT  INTO" + table + " VALUES(?,?,?)";
 
         KeyHolder holder = new GeneratedKeyHolder();
@@ -83,20 +83,20 @@ public class AllTabColsRepository
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 try (PreparedStatement ps = connection.prepareStatement(InsertTableSQL, Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setString(1, filagenerico.getCampos().get(0).toString());
-                    ps.setString(2, filagenerico.getCampos().get(1).toString());
-                    ps.setString(3, filagenerico.getCampos().get(2).toString());
+                    ps.setString(1, filagenerico.getFields().get(0).toString());
+                    ps.setString(2, filagenerico.getFields().get(1).toString());
+                    ps.setString(3, filagenerico.getFields().get(2).toString());
                     return ps;
                 }
             }
         }, holder);
 
         Long createFilaGenericoId = holder.getKey().longValue();
-        filagenerico.setCampos(filagenerico.getCampos());
+        filagenerico.setFields(filagenerico.getFields());
         return filagenerico;
     }
 
-    public FilaGenerico update(final FilaGenerico filagenerico, String table, String setcampos, String where)
+    public GenericRecord update(final GenericRecord filagenerico, String table, String setcampos, String where)
     {
         final String updateTableSQL = "UPDATE  "+table+" SET BANK_COD= ? , BANK_NAME =?";
 
@@ -106,19 +106,19 @@ public class AllTabColsRepository
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 try (PreparedStatement ps = connection.prepareStatement(updateTableSQL, Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setString(1, filagenerico.getCampos().get(0).toString());
-                    ps.setString(2, filagenerico.getCampos().get(0).toString());
+                    ps.setString(1, filagenerico.getFields().get(0).toString());
+                    ps.setString(2, filagenerico.getFields().get(0).toString());
                     return ps;
                 }
             }
         }, holder);
 
         Long updateFilaGenericoId = holder.getKey().longValue();
-        filagenerico.setCampos(filagenerico.getCampos());
+        filagenerico.setFields(filagenerico.getFields());
         return filagenerico;
     }
 
-    public FilaGenerico delete(final FilaGenerico filagenerico, String table, String setcampos, String where)
+    public GenericRecord delete(final GenericRecord filagenerico, String table, String setcampos, String where)
     {
         final String deleteTableSQL = "DELETE  "+table+" SET BANK_COD= ? , BANK_NAME =?";
 
@@ -128,20 +128,20 @@ public class AllTabColsRepository
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 try (PreparedStatement ps = connection.prepareStatement(deleteTableSQL, Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setString(1, filagenerico.getCampos().get(0).toString());
-                    ps.setString(2, filagenerico.getCampos().get(0).toString());
+                    ps.setString(1, filagenerico.getFields().get(0).toString());
+                    ps.setString(2, filagenerico.getFields().get(0).toString());
                     return ps;
                 }
             }
         }, holder);
 
         Long daleteFilaGenericoId = holder.getKey().longValue();
-        filagenerico.setCampos(filagenerico.getCampos());
+        filagenerico.setFields(filagenerico.getFields());
         return filagenerico;
     }
 
     @Transactional(readOnly=true)
-    public List<FilaGenerico> findAllConstraints(String Tabla) {
+    public List<GenericRecord> findAllConstraints(String Tabla) {
 
         String SQLStmt ="SELECT     UCC.COLUMN_NAME  "+
                 "FROM       user_constraints  UC , User_cons_columns UCC "+

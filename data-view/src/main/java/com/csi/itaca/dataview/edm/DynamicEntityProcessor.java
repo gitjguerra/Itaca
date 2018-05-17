@@ -1,7 +1,7 @@
 package com.csi.itaca.dataview.edm;
 
 import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
-import com.csi.itaca.dataview.model.dao.FilaGenerico;
+import com.csi.itaca.dataview.model.dao.GenericRecord;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -145,10 +145,10 @@ public class DynamicEntityProcessor implements EntityProcessor {
         // Get the Primary columns to
         int filas;
         String columnName="";
-        List<FilaGenerico> gnericRow =  colsService.findAllConstraints(edmEntityType.getName().toString());
+        List<GenericRecord> gnericRow =  colsService.findAllConstraints(edmEntityType.getName().toString());
 
         for(filas = 0; filas < gnericRow.size(); filas++) {
-            columnName = gnericRow.get(filas).getCampos().get(0).toString();
+            columnName = gnericRow.get(filas).getFields().get(0).toString();
         }
 
 
@@ -163,7 +163,7 @@ public class DynamicEntityProcessor implements EntityProcessor {
         EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
         List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-        List<FilaGenerico> gnericRow =  colsService.findAllConstraints(edmEntityType.getName().toString());
+        List<GenericRecord> gnericRow =  colsService.findAllConstraints(edmEntityType.getName().toString());
 
         paramURI = ((UriResourceEntitySet) resourcePaths.get(0)).getKeyPredicates().get(0).getText().toString();
         int filas;
@@ -172,7 +172,7 @@ public class DynamicEntityProcessor implements EntityProcessor {
 
 
         for(filas = 0; filas < gnericRow.size(); filas++) {
-            columnName = gnericRow.get(filas).getCampos().get(0).toString();
+            columnName = gnericRow.get(filas).getFields().get(0).toString();
         }
         //TODO: R.V. The paramURI  could be more than one row.
         String sql = "DELETE "+edmEntityType.getName()+"  WHERE "+ columnName +"="+paramURI;

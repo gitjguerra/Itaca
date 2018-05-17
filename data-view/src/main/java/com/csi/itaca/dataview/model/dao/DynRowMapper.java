@@ -12,30 +12,19 @@ import java.sql.SQLException;
  *
  */
 @Component
-public class DynRowMapper implements RowMapper<FilaGenerico>
+public class DynRowMapper implements RowMapper<GenericRecord>
 {
     private static Logger logger = Logger.getLogger(DynRowMapper.class);
-    private int rsRow;
 
-    //logger.info(" Ingresa a DynRowMapper");
-    public FilaGenerico mapRow(ResultSet rs, int rowNum) throws SQLException {
-        FilaGenerico numFila = new FilaGenerico();
-          try {
-
-              int col;
-              logger.info(" rs.getMetaData().getColumnCount(): "+rs.getMetaData().getColumnCount());
-
-              for(col = 1; col <= rs.getMetaData().getColumnCount(); col++) {
-                   // logger.info(" Numero Columna : "+col);
-                  numFila.addData(rs.getString(col));
-                    //logger.info(" Valor Columna: "+rs.getString(col));
-              }
-
-              /*bank.setCBIC(rs.getString(5));*/
+    public GenericRecord mapRow(ResultSet rs, int rowNum) throws SQLException {
+        GenericRecord numFila = new GenericRecord();
+        try {
+            for(int col = 1; col <= rs.getMetaData().getColumnCount(); col++) {
+                numFila.addData(rs.getString(col));
+            }
             return numFila;
-        }catch(SQLException sqlEx){
-            logger.info("SQL Error: "+sqlEx);
-
+        } catch(SQLException sqlEx){
+            logger.error("SQL Error: "+sqlEx, sqlEx);
         }
         return numFila;
     }
