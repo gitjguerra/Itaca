@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Component
 public class GenericEdmProvider extends EdmProvider {
 
@@ -56,8 +57,8 @@ public class GenericEdmProvider extends EdmProvider {
 
 	// EDM Container
 	public static final String CONTAINER_NAME = "Container";
-	public static final FullQualifiedName CONTAINER = new FullQualifiedName(
-			NAMESPACE, CONTAINER_NAME);
+
+	public static final FullQualifiedName CONTAINER = new FullQualifiedName(NAMESPACE, CONTAINER_NAME);
 
 	@Override
 	public List<Schema> getSchemas() throws ODataException {
@@ -90,8 +91,7 @@ public class GenericEdmProvider extends EdmProvider {
 	}
 
 	@Override
-	public EntityType getEntityType(FullQualifiedName entityTypeName)
-			throws ODataException {
+	public EntityType getEntityType(FullQualifiedName entityTypeName) throws ODataException {
 
 		EntityType result = null;
 		Map<String, EntityProvider> entityProviders = getEntityProviders();
@@ -111,8 +111,7 @@ public class GenericEdmProvider extends EdmProvider {
 	}
 
 	@Override
-	public EntitySet getEntitySet(FullQualifiedName entityContainer,
-			String entitySetName) throws ODataException {
+	public EntitySet getEntitySet(FullQualifiedName entityContainer, String entitySetName) throws ODataException {
 		EntitySet result = null;
 		Map<String, EntityProvider> entityProviders = getEntityProviders();
 
@@ -155,14 +154,11 @@ public class GenericEdmProvider extends EdmProvider {
 			EntityProvider entityProvider = entityProviders.get(entity);
 			entitySets.add(getEntitySet(CONTAINER, entityProvider.getEntitySetName()));
 		}
-		
-		
 
 		// create EntityContainer
 		EntityContainer entityContainer = new EntityContainer();
 		entityContainer.setName(CONTAINER_NAME);
 		entityContainer.setEntitySets(entitySets);
-		
 
 		return entityContainer;
 	}
@@ -189,18 +185,14 @@ public class GenericEdmProvider extends EdmProvider {
 			}
 		}
 
-	return entityProviders;
+		return entityProviders;
 	}
 
 
 	@Override
-	public EntityContainerInfo getEntityContainerInfo(
-			FullQualifiedName entityContainerName) throws ODataException {
+	public EntityContainerInfo getEntityContainerInfo(FullQualifiedName entityContainerName) throws ODataException {
 
-		// This method is invoked when displaying the service document at e.g.
-		// http://localhost:8080/DemoService/DemoService.svc
-		if (entityContainerName == null
-				|| entityContainerName.equals(CONTAINER)) {
+		if (entityContainerName == null  || entityContainerName.equals(CONTAINER)) {
 			EntityContainerInfo entityContainerInfo = new EntityContainerInfo();
 			entityContainerInfo.setContainerName(CONTAINER);
 			return entityContainerInfo;
