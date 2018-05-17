@@ -41,10 +41,7 @@ import java.util.List;
 @Component
 public class DynEntityProvider implements EntityProvider {
 
-	/**
-	 * Logger
-
-	 */
+	/** Logger */
 	private static Logger logger = Logger.getLogger(DynEntityProvider.class);
 
 	// Service Namespace
@@ -52,15 +49,12 @@ public class DynEntityProvider implements EntityProvider {
 
 	// EDM Container
 	public static final String CONTAINER_NAME = "Container";
-	public static final FullQualifiedName CONTAINER = new FullQualifiedName(
-			NAMESPACE, CONTAINER_NAME);
+
+	public static final FullQualifiedName CONTAINER = new FullQualifiedName(NAMESPACE, CONTAINER_NAME);
 
 	// Entity Types Names
 	public String numberDelResouce;
 	public FullQualifiedName fullQualifiedName;
-
-	// Entity Set Names
-	//public static final String ES_ALL_TAB_COLS_NAME = "Tablas";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -72,12 +66,6 @@ public class DynEntityProvider implements EntityProvider {
     	this.numberDelResouce = numberDelResouce;
 		fullQualifiedName = new FullQualifiedName(NAMESPACE, numberDelResouce.toString());
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.rohitghatol.spring.odata.edm.providers.EntityProvider#getEntityType()
-	 */
 
 	@Override
 	public EntityType getEntityType() {
@@ -162,67 +150,64 @@ public class DynEntityProvider implements EntityProvider {
 	 * @return data of requested entity set
 	 */
 	private EntitySet getData(EdmEntitySet edmEntitySet) {
-		logger.info("getDataAllTabCols");
+
+		// Get the columns...
+		List<AllTabCols> colsList = colsService.findByTableName(numberDelResouce);
+		StringBuffer columns = new StringBuffer();
+		int colNum;
+		for(colNum = 0; colNum < colsList.size(); colNum++) {
+			if  (columns.length() == 0)
+				columns.append(colsList.get(colNum).getCOLUMN_NAME());
+			else {
+				columns.append(", ").append(colsList.get(colNum).getCOLUMN_NAME());
+			}
+		}
+		logger.debug("Table: "+numberDelResouce);
+		logger.debug("Columns: "+columns);
+		logger.debug("No of columns: "+colNum);
+
+
+		// Consultamos Base de datos pasando Tabla y Columnas como parametros
 		EntitySet entitySet = new EntitySetImpl();
 		List<Entity> entityList = entitySet.getEntities();
-		/*Consulta por nombre de tabla*/
-		List<AllTabCols> ColsList = colsService.findByTableName(numberDelResouce);
-		int colNum;
-		String Columnas ="";
+		List<FilaGenerico> gnericRow =  colsService.findAllRows(columns.toString(), numberDelResouce);
 
-			for(colNum= 0; colNum < ColsList.size(); colNum++) {
-				if  (Columnas=="")
-						Columnas =  ColsList.get(colNum).getCOLUMN_NAME();
-				else {
-					 Columnas = Columnas+", "+ ColsList.get(colNum).getCOLUMN_NAME();
-				}
-				logger.info("Columnas SQL: "+ColsList.get(colNum).getCOLUMN_NAME().toString());
-			}/*End For*/
-			logger.info("Conteo colNum: "+colNum);
-		// Consultamos Base de datos pasando Tabla y Columnas como parametros
-		List<FilaGenerico> gnericRow =  colsService.findAllRows(Columnas, numberDelResouce.toString());
-		int filas;
-		int Columns;
-		for(filas = 0; filas < gnericRow.size(); filas++) {
-			logger.info("************************************/ gnericRow.get("+filas+") /***********************************");
-
+		for(int record = 0; record < gnericRow.size(); record++) {
 			Entity row = new EntityImpl();
 			int numCol =0 ;
-			String typeCol;
-			while (numCol <ColsList.size()) {
-				typeCol=ColsList.get(numCol).getDATA_TYPE().toString();
+			while (numCol < colsList.size()) {
 
-					if (typeCol.equals("NUMBER")){
-						logger.info("typeCol.equals == NUMBER" );
-						row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
-								ValueType.PRIMITIVE, Long.valueOf(gnericRow.get(filas).getCampos().get(numCol).toString())));
-					}
-					else if (typeCol.equals("VARCHAR2")){
-						logger.info("typeCol.equals == VARCHAR2" );
-						row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
-								ValueType.PRIMITIVE, gnericRow.get(filas).getCampos().get(numCol)));
-					}
-					else if (typeCol.equals("DATE")){
-						logger.info("typeCol.equals == DATE" );
-						row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
-								ValueType.PRIMITIVE, parseDate (gnericRow.get(filas).getCampos().get(numCol))));
-
-					}
-					else if (typeCol.equals("CHAR")){
-						logger.info(" typeCol.equals == CHAR" );
-							row.addProperty(new PropertyImpl(null, ColsList.get(numCol).getCOLUMN_NAME(),
-									ValueType.PRIMITIVE, gnericRow.get(filas).getCampos().get(numCol)));
-					}
-				logger.debug(" gnericRow.get("+filas+").getCampos().get("+numCol+") "+ gnericRow.get(filas).getCampos().get(numCol));
+				String columnType = colsList.get(numCol).getDATA_TYPE();
+				if (columnType.equals("NUMBER")){
+					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
+							ValueType.PRIMITIVE, Long.valueOf(gnericRow.get(record).getCampos().get(numCol).toString())));
+				}
+				else if (columnType.equals("VARCHAR2")){
+					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
+							ValueType.PRIMITIVE, gnericRow.get(record).getCampos().get(numCol)));
+				}
+				else if (columnType.equals("DATE")){
+					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
+							ValueType.PRIMITIVE, parseDate (gnericRow.get(record).getCampos().get(numCol))));
+				}
+				else if (columnType.equals("CHAR")){
+					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
+								ValueType.PRIMITIVE, gnericRow.get(record).getCampos().get(numCol)));
+				}
+				logger.debug("gnericRow.get("+record+").getCampos().get("+numCol+") "+columnType+" "+ gnericRow.get(record).getCampos().get(numCol));
 				numCol++;
-			}/* End While*/
+			}
 			entityList.add(row);
-		}/* End For*/
+		}
 
 		return entitySet;
-	}/*End EntitySet*/
+	}
 
-
+	/**
+	 * Parse a date string.
+	 * @param dateStr date in string form.
+	 * @return standard java date object.
+	 */
 	private Date parseDate(Object dateStr) {
 		try {
 			return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr.toString());
@@ -234,18 +219,14 @@ public class DynEntityProvider implements EntityProvider {
 
 	@Override
 	public String getEntitySetName() {
-
-		logger.info("getEntitySetName allTabColskList");
-
-		//return ES_ALL_TAB_COLS_NAME;
 		return  numberDelResouce;
 	}
 
 	@Override
 	public FullQualifiedName getFullyQualifiedName() {
-
 		return fullQualifiedName;
 	}
+
 	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}

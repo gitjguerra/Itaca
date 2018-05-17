@@ -65,12 +65,9 @@ public class AllTabColsRepository
 
     }
     @Transactional(readOnly=true)
-    public List<FilaGenerico> findAllRows(String Cols, String Tabla) {
-
-        String SQLStmt ="SELECT " +Cols+" FROM " +Tabla+" WHERE 1=1";
+    public List<FilaGenerico> findAllRows(String Cols, String tableName) {
+        String SQLStmt ="SELECT " +Cols+" FROM " +tableName;
         return jdbcTemplate.query(SQLStmt,new DynRowMapper());
-
-   //return rows;
     }
 
 
