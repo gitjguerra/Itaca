@@ -130,10 +130,7 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 		for (String entity : entityProviders.keySet()) {
 			EntityProvider entityProvider = entityProviders.get(entity);
-			if (entityProvider
-					.getEntityType().getName()
-					
-					.equals(edmEntitySet.getEntityType().getName())) {
+			if (entityProvider.getEntityType().getName().equals(edmEntitySet.getEntityType().getName())) {
 				entitySet = entityProvider.getEntitySet(uriInfo);
 				break;
 			}

@@ -12,7 +12,6 @@ import java.sql.SQLException;
  * @author Rommel Vega
  *
  */
-@Component
 public class DynRowMapper implements RowMapper<GenericRecord>
 {
     private static Logger logger = Logger.getLogger(DynRowMapper.class);

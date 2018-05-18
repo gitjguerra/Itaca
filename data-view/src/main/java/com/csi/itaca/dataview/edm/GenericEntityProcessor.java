@@ -1,19 +1,28 @@
 package com.csi.itaca.dataview.edm;
 
+import com.csi.itaca.dataview.DataViewConfiguration;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
 import com.csi.itaca.dataview.model.GenericRecord;
+import com.csi.itaca.dataview.service.DynRowMapper;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
@@ -37,6 +46,8 @@ public class GenericEntityProcessor implements EntityProcessor {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private AllTabColsRepository colsService;
+    @Autowired
+    private DataViewConfiguration configuration;
     /** Logger */
     private static Logger log = Logger.getLogger(GenericEntityProcessor.class);
 
@@ -49,6 +60,37 @@ public class GenericEntityProcessor implements EntityProcessor {
     @Override
     public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat) throws ODataApplicationException, SerializerException {
         log.info("read");
+        EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+        EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+
+        List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+        String primaryKey = ((UriResourceEntitySet) resourcePaths.get(0)).getKeyPredicates().get(0).getText();
+        GenericEntityProvider genericEntityProvider = configuration.getEntityProvider(edmEntityType.getName(),jdbcTemplate, colsService);
+        String primaryKeyFieldName = genericEntityProvider.getEntityType().getKey().get(0).getPropertyName();
+        String sql = "SELECT "+genericEntityProvider.getColumnsCommaSeparated()+" FROM "+edmEntityType.getName()+" WHERE "+ primaryKeyFieldName +"="+primaryKey;
+
+        // Get the data
+        List<GenericRecord> shouldBeOnlyOneRecord = jdbcTemplate.query(sql,new DynRowMapper());
+
+        // prepare the response...
+        if (shouldBeOnlyOneRecord.size() == 1) {
+            shouldBeOnlyOneRecord.get(0);
+
+            ODataFormat format = ODataFormat.fromContentType(responseFormat);
+            ODataSerializer serializer = odata.createSerializer(format);
+
+            ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
+
+            EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextUrl).build();
+            InputStream serializedContent = serializer.entity(edmEntityType
+                                                              ,shouldBeOnlyOneRecord.get(0).getEntity(genericEntityProvider.getColumnDefinitionList())
+                                                              ,opts);
+
+            // Finally: configure the response object: set the body, headers and status code
+            response.setContent(serializedContent);
+            response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+            response.setHeader(HttpHeader.CONTENT_TYPE,responseFormat.toContentTypeString());
+        }
     }
 
     @Override

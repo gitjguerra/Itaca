@@ -7,13 +7,10 @@ import com.csi.itaca.dataview.service.EntityProvider;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.data.EntityImpl;
 import org.apache.olingo.commons.core.data.EntitySetImpl;
-import org.apache.olingo.commons.core.data.PropertyImpl;
 import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.Property;
 import org.apache.olingo.server.api.edm.provider.PropertyRef;
@@ -31,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author Rommel Vega
+ * @author Brian Boothe
  *
  */
 @Component
@@ -62,6 +59,46 @@ public class GenericEntityProvider implements EntityProvider {
     public void setResourceName(String tableName) {
     	this.tableName = tableName;
 		fullQualifiedName = new FullQualifiedName(NAMESPACE, tableName);
+	}
+
+
+	public List<ColumnDefinition> getColumnDefinitionList() {
+    	return colsService.findByTableName(tableName);
+	}
+
+	/**
+	 * Gets a comma separated list of fields in this table.
+	 * @return comma separated list of fields.
+	 */
+	public String getColumnsCommaSeparated() {
+		List<ColumnDefinition> colsList = colsService.findByTableName(tableName);
+		StringBuffer columns = new StringBuffer();
+		for(int colNum = 0; colNum < colsList.size(); colNum++) {
+			if  (columns.length() == 0)
+				columns.append(colsList.get(colNum).getCOLUMN_NAME());
+			else {
+				columns.append(", ").append(colsList.get(colNum).getCOLUMN_NAME());
+			}
+		}
+		return columns.toString();
+	}
+
+	/**
+	 * Gets a comma separated list of fields in this table.
+	 * @param colsList column definition list.
+	 * @return comma separated list of fields.
+	 */
+	public String getColumnsCommaSeparated(List<ColumnDefinition> colsList) {
+
+		StringBuffer columns = new StringBuffer();
+		for(int colNum = 0; colNum < colsList.size(); colNum++) {
+			if  (columns.length() == 0)
+				columns.append(colsList.get(colNum).getCOLUMN_NAME());
+			else {
+				columns.append(", ").append(colsList.get(colNum).getCOLUMN_NAME());
+			}
+		}
+		return columns.toString();
 	}
 
 	@Override
@@ -95,7 +132,7 @@ public class GenericEntityProvider implements EntityProvider {
 
 		// create PropertyRef for Key element
 		PropertyRef propertyRef = new PropertyRef();
-		logger.info("Table key: "+columnList.get(0).getName());
+		logger.debug("Table key: "+columnList.get(0).getName());
 		propertyRef.setPropertyName(columnList.get(0).getName());
 
 		// configure EntityType
@@ -154,31 +191,7 @@ public class GenericEntityProvider implements EntityProvider {
 		List<GenericRecord> genericRow =  colsService.findAllRows(columns.toString(), tableName);
 
 		for(int record = 0; record < genericRow.size(); record++) {
-			Entity row = new EntityImpl();
-			int numCol = 0;
-			while (numCol < colsList.size()) {
-
-				String columnType = colsList.get(numCol).getDATA_TYPE();
-				if (columnType.equals("NUMBER")){
-					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
-							ValueType.PRIMITIVE, Long.valueOf(genericRow.get(record).getFields().get(numCol).toString())));
-				}
-				else if (columnType.equals("VARCHAR2")){
-					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
-							ValueType.PRIMITIVE, genericRow.get(record).getFields().get(numCol)));
-				}
-				else if (columnType.equals("DATE")){
-					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
-							ValueType.PRIMITIVE, parseDate (genericRow.get(record).getFields().get(numCol))));
-				}
-				else if (columnType.equals("CHAR")){
-					row.addProperty(new PropertyImpl(null, colsList.get(numCol).getCOLUMN_NAME(),
-								ValueType.PRIMITIVE, genericRow.get(record).getFields().get(numCol)));
-				}
-				//logger.debug("gnericRow.get("+record+").getFields().get("+numCol+") "+columnType+" "+ gnericRow.get(record).getFields().get(numCol));
-				numCol++;
-			}
-			entityList.add(row);
+			entityList.add(genericRow.get(record).getEntity(colsList) );
 		}
 		logger.debug(genericRow.size() + " rows retrieved.");
 
