@@ -1,5 +1,7 @@
-package com.csi.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.service;
 
+import com.csi.itaca.dataview.model.ColumnDefinition;
+import com.csi.itaca.dataview.model.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -29,13 +31,13 @@ public class AllTabColsRepository
 
 
     @Transactional(readOnly=true)
-    public List<AllTabCols> findAll() {
+    public List<ColumnDefinition> findAll() {
        return jdbcTemplate.query(
                 "SELECT COLUMN_ID , TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE " +
                         " from all_tab_cols where" +
                        // " AND TABLE_NAME='PER_BANK' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",
-                (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
+                (rs, rowNum) -> new ColumnDefinition(rs.getLong( "COLUMN_ID"),
                                         rs.getString("TABLE_NAME"),
                                         rs.getString("COLUMN_NAME"),
                                         rs.getString("DATA_TYPE"),
@@ -47,13 +49,13 @@ public class AllTabColsRepository
     }
 
     @Transactional(readOnly=true)
-    public List<AllTabCols>findByTableName(String tablename) {
+    public List<ColumnDefinition>findByTableName(String tablename) {
         return jdbcTemplate.query(
                 "SELECT COLUMN_ID, TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE " +
                         " from all_tab_cols where" +
                         " TABLE_NAME='"+tablename+"' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",
-                (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
+                (rs, rowNum) -> new ColumnDefinition(rs.getLong( "COLUMN_ID"),
                         rs.getString("TABLE_NAME"),
                         rs.getString("COLUMN_NAME"),
                         rs.getString("DATA_TYPE"),

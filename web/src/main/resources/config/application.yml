@@ -31,7 +31,7 @@ configurator:
   mode: classpath
   autoreload: false
 
-tableName:
+tableName: PER_BANK, USR_USER
 uiDisplayNameKey:
 uiDescriptionkey:
 foreignTables:

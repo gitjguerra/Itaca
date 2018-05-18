@@ -1,14 +1,19 @@
-package com.csi.itaca.dataview.model.dao;
+package com.csi.itaca.dataview;
 
+import com.csi.itaca.dataview.edm.GenericEntityProvider;
+import com.csi.itaca.dataview.service.AllTabColsRepository;
+import com.csi.itaca.dataview.service.EntityProvider;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
-public class AvailableTable {
+public class DataViewConfiguration {
 
     /*   Solucion1 con multiples valores separados por comas
     @Value("#{'${Table.tableName}'.split(',')}")
@@ -41,6 +46,32 @@ public class AvailableTable {
 
     @Value("${deletePermission}")
     private List<String> deletePermission = new ArrayList<>();
+
+
+    /**
+     * Gets all the available entities based on the table indicated in the configuration.
+     * @return Map of all entities.
+     */
+    public Map<String, EntityProvider> getEntityProviders(JdbcTemplate jdbcTemplate, AllTabColsRepository colsService) {
+
+        List<String> configTableNames = getTableNames();
+        Map<String, EntityProvider> entityProviders = new HashMap<>();
+
+        for (String tableName: configTableNames) {
+            if (tableName!=null) {
+                tableName = tableName.trim();
+                if (!tableName.isEmpty()) {
+                    GenericEntityProvider genericEntityProvider = new GenericEntityProvider();
+                    genericEntityProvider.setResourceName(tableName);
+                    genericEntityProvider.setJdbcTemplate(jdbcTemplate);
+                    genericEntityProvider.setColsService(colsService);
+                    entityProviders.put(tableName, genericEntityProvider);
+                }
+            }
+        }
+
+        return entityProviders;
+    }
 
     public List<String> getTableNames() {
         return tableNames;

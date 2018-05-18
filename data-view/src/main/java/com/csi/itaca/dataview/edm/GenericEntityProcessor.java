@@ -1,7 +1,7 @@
 package com.csi.itaca.dataview.edm;
 
-import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
-import com.csi.itaca.dataview.model.dao.GenericRecord;
+import com.csi.itaca.dataview.service.AllTabColsRepository;
+import com.csi.itaca.dataview.model.GenericRecord;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Component
-public class DynamicEntityProcessor implements EntityProcessor {
+public class GenericEntityProcessor implements EntityProcessor {
 
     private OData odata;
     private ServiceMetadata serviceMetadata;
@@ -38,7 +38,7 @@ public class DynamicEntityProcessor implements EntityProcessor {
     @Autowired
     private AllTabColsRepository colsService;
     /** Logger */
-    private static Logger log = Logger.getLogger(DynamicEntityProcessor.class);
+    private static Logger log = Logger.getLogger(GenericEntityProcessor.class);
 
     @Override
     public void init(OData odata, ServiceMetadata serviceMetadata) {

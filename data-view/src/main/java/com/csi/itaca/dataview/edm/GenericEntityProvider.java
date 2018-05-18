@@ -1,11 +1,8 @@
-/**
- * 
- */
 package com.csi.itaca.dataview.edm;
 
-import com.csi.itaca.dataview.model.dao.AllTabCols;
-import com.csi.itaca.dataview.model.dao.AllTabColsRepository;
-import com.csi.itaca.dataview.model.dao.GenericRecord;
+import com.csi.itaca.dataview.model.ColumnDefinition;
+import com.csi.itaca.dataview.service.AllTabColsRepository;
+import com.csi.itaca.dataview.model.GenericRecord;
 import com.csi.itaca.dataview.service.EntityProvider;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.Entity;
@@ -38,10 +35,10 @@ import java.util.List;
  *
  */
 @Component
-public class DynEntityProvider implements EntityProvider {
+public class GenericEntityProvider implements EntityProvider {
 
 	/** Logger */
-	private static Logger logger = Logger.getLogger(DynEntityProvider.class);
+	private static Logger logger = Logger.getLogger(GenericEntityProvider.class);
 
 	// Service Namespace
 	public static final String NAMESPACE = "com.csi.itaca.dataview";
@@ -72,7 +69,7 @@ public class DynEntityProvider implements EntityProvider {
 
 		logger.debug(" getEntityType() Table name: "+ tableName);
 
-		List<AllTabCols> allColsList = colsService.findByTableName(tableName);
+		List<ColumnDefinition> allColsList = colsService.findByTableName(tableName);
 		List<Property> columnList =  new ArrayList <>();
 
 		for(int i=0; i<allColsList.size(); i++)
@@ -138,7 +135,7 @@ public class DynEntityProvider implements EntityProvider {
 		logger.debug("getData() Table: "+ tableName);
 
 		// Get all the columns for this entity ...
-		List<AllTabCols> colsList = colsService.findByTableName(tableName);
+		List<ColumnDefinition> colsList = colsService.findByTableName(tableName);
 		StringBuffer columns = new StringBuffer();
 		int colNum;
 		for(colNum = 0; colNum < colsList.size(); colNum++) {

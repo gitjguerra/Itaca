@@ -6,9 +6,8 @@ package com.csi.itaca.dataview.controller;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import com.csi.itaca.dataview.edm.DynamicEntityProcessor;
 import com.csi.itaca.dataview.exception.EdmException;
-import com.csi.itaca.dataview.model.dao.AvailableTable;
+import com.csi.itaca.dataview.DataViewConfiguration;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -74,7 +73,7 @@ public class DataViewController {
 
 
 	@Autowired
-	AvailableTable availableTable;
+	DataViewConfiguration dataViewConfiguration;
 
 	/**
 	 * Process.
@@ -85,14 +84,14 @@ public class DataViewController {
 	@RequestMapping(value = "*")
 	public ResponseEntity<String> process(HttpServletRequest req) {
 
-		System.out.println("TableName = " + availableTable.getTableNames());
-		System.out.println("uiDisplayNameKey = " + availableTable.getUiDisplayNameKey());
-		System.out.println("uiDescriptionkey = " + availableTable.getUiDescriptionkey());
-		System.out.println("foreignTables = " + availableTable.getForeignTables());
-		System.out.println("createPermission = " + availableTable.getCreatePermission());
-		System.out.println("readPermission = " + availableTable.getReadPermission());
-		System.out.println("updatePermission = " + availableTable.getUpdatePermission());
-		System.out.println("deletePermission = " + availableTable.getDeletePermission());
+		System.out.println("TableName = " + dataViewConfiguration.getTableNames());
+		System.out.println("uiDisplayNameKey = " + dataViewConfiguration.getUiDisplayNameKey());
+		System.out.println("uiDescriptionkey = " + dataViewConfiguration.getUiDescriptionkey());
+		System.out.println("foreignTables = " + dataViewConfiguration.getForeignTables());
+		System.out.println("createPermission = " + dataViewConfiguration.getCreatePermission());
+		System.out.println("readPermission = " + dataViewConfiguration.getReadPermission());
+		System.out.println("updatePermission = " + dataViewConfiguration.getUpdatePermission());
+		System.out.println("deletePermission = " + dataViewConfiguration.getDeletePermission());
 
 		try {
 

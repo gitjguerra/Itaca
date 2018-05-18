@@ -1,5 +1,6 @@
-package com.csi.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.service;
 
+import com.csi.itaca.dataview.model.GenericRecord;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;

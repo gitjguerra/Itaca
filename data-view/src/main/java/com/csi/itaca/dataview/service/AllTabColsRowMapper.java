@@ -1,5 +1,6 @@
-package com.csi.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.service;
 
+import com.csi.itaca.dataview.model.ColumnDefinition;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -12,13 +13,13 @@ import java.sql.SQLException;
  *
  */
 @Component
-public class AllTabColsRowMapper implements RowMapper<AllTabCols>
+public class AllTabColsRowMapper implements RowMapper<ColumnDefinition>
 {
 
     private static Logger logger = Logger.getLogger(AllTabColsRowMapper.class);
 
-    public AllTabCols mapRow(ResultSet rs, int rowNum) throws SQLException {
-        AllTabCols alltabcols = new AllTabCols();
+    public ColumnDefinition mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ColumnDefinition alltabcols = new ColumnDefinition();
           try {
               alltabcols.setCOLUMN_ID(rs.getLong( "COLUMN_ID"));
               alltabcols.setTABLE_NAME(rs.getString("TABLE_NAME"));

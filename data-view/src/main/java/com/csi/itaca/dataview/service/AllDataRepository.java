@@ -1,5 +1,6 @@
-package com.csi.itaca.dataview.model.dao;
+package com.csi.itaca.dataview.service;
 
+import com.csi.itaca.dataview.model.ColumnDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -25,8 +26,8 @@ public class AllDataRepository
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly=true)
-    public List<AllTabCols>  AllData(String NombreTabla){
-       // List<AllTabCols> allTabColskList = ColsService.findByTableName(NombreTabla);
+    public List<ColumnDefinition>  AllData(String NombreTabla){
+       // List<ColumnDefinition> allTabColskList = ColsService.findByTableName(NombreTabla);
         String sql= "SELECT * FROM "+NombreTabla+" ";
 
         List allTabColskList= jdbcTemplate.query(" "+
@@ -35,7 +36,7 @@ public class AllDataRepository
                         " AND TABLE_NAME='"+tablename+"' " +
                         " ORDER BY TABLE_NAME,COLUMN_ID ASC",*/
                 " "+sql,
-                (rs, rowNum) -> new AllTabCols(rs.getLong( "COLUMN_ID"),
+                (rs, rowNum) -> new ColumnDefinition(rs.getLong( "COLUMN_ID"),
                         rs.getString("TABLE_NAME"),
                         rs.getString("COLUMN_NAME"),
                         rs.getString("DATA_TYPE"),
@@ -56,7 +57,7 @@ public class AllDataRepository
         int columnCount = rsmd.getColumnCount();
 
         for( nColId  = 1 ; nColId <  columnCount ; nColId++){
-            AllTabCols column = new AllTabCols();
+            ColumnDefinition column = new ColumnDefinition();
             column.setCOLUMN_NAME(rsmd.getColumnName(nColId));
             column.setDATA_TYPE(rsmd.getColumnTypeName(nColId));
             column.setTABLE_NAME(rsmd.getTableName(nColId));
