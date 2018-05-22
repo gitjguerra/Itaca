@@ -2,7 +2,6 @@ package com.csi.itaca.dataview.model;
 
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -35,6 +34,7 @@ public class Util {
         return uriResource.getEntitySet();
     }
 
+    /*
     public static Entity findEntity(EdmEntityType edmEntityType, EntitySet rt_entitySet, List<UriParameter> keyParams)
             throws ODataApplicationException {
 
@@ -52,7 +52,7 @@ public class Util {
         }
 
         return null;
-    }
+    }*/
 
 
     public static boolean entityMatchesAllKeys(EdmEntityType edmEntityType, Entity rt_entity,  List<UriParameter> keyParams)

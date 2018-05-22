@@ -3,11 +3,12 @@ package com.csi.itaca.dataview.edm;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
 import com.csi.itaca.dataview.DataViewConfiguration;
 import com.csi.itaca.dataview.service.EntityProvider;
-import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.edm.provider.*;
+import org.apache.olingo.commons.api.edm.provider.*;
+import org.apache.olingo.commons.api.ex.ODataException;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,7 @@ import java.util.Map;
 
 
 @Component
-public class GenericEdmProvider extends EdmProvider {
-
-	@Autowired
-	private ApplicationContext ctx;
+public class GenericEdmProvider extends CsdlAbstractEdmProvider {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -40,16 +38,16 @@ public class GenericEdmProvider extends EdmProvider {
 	public static final FullQualifiedName CONTAINER = new FullQualifiedName(NAMESPACE, CONTAINER_NAME);
 
 	@Override
-	public List<Schema> getSchemas() throws ODataException {
+	public List<CsdlSchema> getSchemas() {
 
 		// create Schema
-		Schema schema = new Schema();
+		CsdlSchema schema = new CsdlSchema();
 		schema.setNamespace(NAMESPACE);
 
 		Map<String, EntityProvider> entityProviders = configuration.getEntityProviders(jdbcTemplate, colsService);
 
 		// add EntityTypes
-		List<EntityType> entityTypes = new ArrayList<EntityType>();
+		List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
 		for (String entity : entityProviders.keySet()) {
 
 			EntityProvider entityProvider = entityProviders.get(entity);
@@ -63,22 +61,22 @@ public class GenericEdmProvider extends EdmProvider {
 		schema.setEntityContainer(getEntityContainer());
 
 		// finally
-		List<Schema> schemas = new ArrayList<Schema>();
+		List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
 		schemas.add(schema);
 
 		return schemas;
 	}
 
 	@Override
-	public EntityType getEntityType(FullQualifiedName entityTypeName) throws ODataException {
+	public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) throws ODataException {
 
-		EntityType result = null;
+		CsdlEntityType result = null;
 		Map<String, EntityProvider> entityProviders = configuration.getEntityProviders(jdbcTemplate, colsService);
 
 		for (String entity : entityProviders.keySet()) {
 
 			EntityProvider entityProvider = entityProviders.get(entity);
-			EntityType entityType = entityProvider.getEntityType();
+			CsdlEntityType entityType = entityProvider.getEntityType();
 			if (entityType.getName().equals(entityTypeName.getName())) {
 				result = entityType;
 				break;
@@ -90,23 +88,21 @@ public class GenericEdmProvider extends EdmProvider {
 	}
 
 	@Override
-	public EntitySet getEntitySet(FullQualifiedName entityContainer, String entitySetName) throws ODataException {
-		EntitySet result = null;
+	public CsdlEntitySet getEntitySet(FullQualifiedName entityContainer, String entitySetName) {
+		CsdlEntitySet result = null;
+
 		Map<String, EntityProvider> entityProviders = configuration.getEntityProviders(jdbcTemplate, colsService);
-
 		for (String entity : entityProviders.keySet()) {
-
 			EntityProvider entityProvider = entityProviders.get(entity);
-			EntityType entityType = entityProvider.getEntityType();
 			if (entityProvider.getEntitySetName().equals(entitySetName)) {
-				result = new EntitySet();
+				result = new CsdlEntitySet();
 				result.setName(entityProvider.getEntitySetName());
 				result.setType(entityProvider.getFullyQualifiedName());
 				break;
 			}
 		}
-		return result;
 
+		return result;
 	}
 
 	/*
@@ -117,12 +113,11 @@ public class GenericEdmProvider extends EdmProvider {
 	 * ()
 	 */
 	@Override
-	public EntityContainer getEntityContainer() throws ODataException {
+	public CsdlEntityContainer getEntityContainer()  {
 
 		// create EntitySets
-		List<EntitySet> entitySets = new ArrayList<EntitySet>();
+		List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
 		
-		//Map<String, EntityProvider> entityProviders = ctx.getBeansOfType(EntityProvider.class);
 
 		Map<String, EntityProvider> entityProviders = configuration.getEntityProviders(jdbcTemplate, colsService);
 		/*Map<String, String> map = new HashMap<String, String>();
@@ -135,7 +130,7 @@ public class GenericEdmProvider extends EdmProvider {
 		}
 
 		// create EntityContainer
-		EntityContainer entityContainer = new EntityContainer();
+		CsdlEntityContainer entityContainer = new CsdlEntityContainer();
 		entityContainer.setName(CONTAINER_NAME);
 		entityContainer.setEntitySets(entitySets);
 
@@ -143,10 +138,10 @@ public class GenericEdmProvider extends EdmProvider {
 	}
 
 	@Override
-	public EntityContainerInfo getEntityContainerInfo(FullQualifiedName entityContainerName) throws ODataException {
+	public CsdlEntityContainerInfo getEntityContainerInfo(FullQualifiedName entityContainerName) throws ODataException {
 
 		if (entityContainerName == null  || entityContainerName.equals(CONTAINER)) {
-			EntityContainerInfo entityContainerInfo = new EntityContainerInfo();
+			CsdlEntityContainerInfo entityContainerInfo = new CsdlEntityContainerInfo();
 			entityContainerInfo.setContainerName(CONTAINER);
 			return entityContainerInfo;
 		}

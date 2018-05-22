@@ -1,8 +1,7 @@
 description = 'Data view mocdule'
 
 project.ext {
-// TODO: Upgrade to the latest version of OData. Latest version is "4.4.0" at the time of writing this.
-    odataVersion = '4.0.0-beta-02-RC01'
+    odataVersion = '4.4.0'
 }
 
 dependencies {

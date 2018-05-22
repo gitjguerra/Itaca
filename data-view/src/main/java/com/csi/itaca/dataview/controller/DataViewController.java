@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.csi.itaca.dataview.controller;
 
 import java.io.IOException;
@@ -9,19 +6,14 @@ import java.nio.charset.Charset;
 import com.csi.itaca.dataview.exception.EdmException;
 import com.csi.itaca.dataview.DataViewConfiguration;
 import org.apache.log4j.Logger;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edm.provider.EdmProvider;
-import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.ODataHandlerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -62,7 +55,7 @@ public class DataViewController {
 
 	/** The edm provider. */
 	@Autowired
-	private EdmProvider edmProvider;
+	private CsdlEdmProvider edmProvider;
 
 	/** The enity collection processor. */
 	@Autowired
@@ -82,7 +75,7 @@ public class DataViewController {
 	 * @return the response entity
 	 */
 	@RequestMapping(value = "*")
-	public ResponseEntity<String> process(HttpServletRequest req) {
+	public ResponseEntity<String> process(HttpServletRequest req, HttpServletResponse res) {
 
 		System.out.println("TableName = " + dataViewConfiguration.getTableNames());
 		System.out.println("uiDisplayNameKey = " + dataViewConfiguration.getUiDisplayNameKey());
@@ -96,23 +89,21 @@ public class DataViewController {
 		try {
 
 			OData odata = OData.newInstance();
-			ServiceMetadata edm = odata.createServiceMetadata(edmProvider,
-					new ArrayList<EdmxReference>());
+			ServiceMetadata edm = odata.createServiceMetadata(edmProvider,new ArrayList<EdmxReference>());
 
-			ODataHandler handler = new ODataHandler(odata, edm);
+			ODataHttpHandler handler = odata.createHandler(edm);
 			handler.register(enityCollectionProcessor);
 			handler.register(enityProcessor);
 
-			ODataResponse response = handler.process(createODataRequest(req,
-					split));
-			String responseStr = StreamUtils.copyToString(
-					response.getContent(), Charset.defaultCharset());
+			ODataResponse response = handler.process(createODataRequest(req,split));
+
+
+			String responseStr = StreamUtils.copyToString(response.getContent(), Charset.defaultCharset());
 			MultiValueMap<String, String> headers = new HttpHeaders();
-			for (String key : response.getHeaders().keySet()) {
-				headers.add(key, response.getHeaders().get(key).toString());
+			for (String key : response.getAllHeaders().keySet()) {
+				headers.add(key, response.getAllHeaders().get(key).toString().replace("[","").replace("]",""));
 			}
-			return new ResponseEntity<String>(responseStr, headers,
-					HttpStatus.valueOf(response.getStatusCode()));
+			return new ResponseEntity<>(responseStr, headers, HttpStatus.valueOf(response.getStatusCode()));
 		} catch (Exception ex) {
 			throw new EdmException();
 		}
@@ -122,17 +113,14 @@ public class DataViewController {
 	/**
 	 * Creates the o data request.
 	 *
-	 * @param httpRequest
-	 *            the http request
-	 * @param split
-	 *            the split
+	 * @param httpRequest the http request
+	 * @param split the split
 	 * @return the o data request
-	 * @throws ODataTranslatedException
+	 * @throws ODataHandlerException
 	 *             the o data translated exception
 	 */
-	private ODataRequest createODataRequest(
-			final HttpServletRequest httpRequest, final int split)
-			throws ODataTranslatedException {
+	private ODataRequest createODataRequest(final HttpServletRequest httpRequest, final int split)
+			throws ODataHandlerException {
 		try {
 
 			logger.info("createODataRequest");
@@ -146,7 +134,7 @@ public class DataViewController {
 
 			return odRequest;
 		} catch (final IOException e) {
-			throw new SerializerException("An I/O exception occurred.", e,
+			throw new ODataHandlerException("An I/O exception occurred.", e,
 					SerializerException.MessageKeys.IO_EXCEPTION);
 		}
 	}
@@ -158,12 +146,12 @@ public class DataViewController {
 	 *            the od request
 	 * @param httpRequest
 	 *            the http request
-	 * @throws ODataTranslatedException
+	 * @throws ODataHandlerException
 	 *             the o data translated exception
 	 */
 	private void extractMethod(final ODataRequest odRequest,
 							   final HttpServletRequest httpRequest)
-			throws ODataTranslatedException {
+			throws ODataHandlerException {
 		try {
 
 			logger.info("extractMethod");

@@ -10,20 +10,15 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
-import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.*;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -39,6 +34,9 @@ import java.util.Locale;
 @Component
 public class GenericEntityProcessor implements EntityProcessor {
 
+    /** Logger */
+    private static Logger log = Logger.getLogger(GenericEntityProcessor.class);
+
     private OData odata;
     private ServiceMetadata serviceMetadata;
     private String paramURI;
@@ -48,8 +46,6 @@ public class GenericEntityProcessor implements EntityProcessor {
     private AllTabColsRepository colsService;
     @Autowired
     private DataViewConfiguration configuration;
-    /** Logger */
-    private static Logger log = Logger.getLogger(GenericEntityProcessor.class);
 
     @Override
     public void init(OData odata, ServiceMetadata serviceMetadata) {
@@ -66,7 +62,7 @@ public class GenericEntityProcessor implements EntityProcessor {
         List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
         String primaryKey = ((UriResourceEntitySet) resourcePaths.get(0)).getKeyPredicates().get(0).getText();
         GenericEntityProvider genericEntityProvider = configuration.getEntityProvider(edmEntityType.getName(),jdbcTemplate, colsService);
-        String primaryKeyFieldName = genericEntityProvider.getEntityType().getKey().get(0).getPropertyName();
+        String primaryKeyFieldName = genericEntityProvider.getEntityType().getKey().get(0).getName();
         String sql = "SELECT "+genericEntityProvider.getColumnsCommaSeparated()+" FROM "+edmEntityType.getName()+" WHERE "+ primaryKeyFieldName +"="+primaryKey;
 
         // Get the data
@@ -76,20 +72,20 @@ public class GenericEntityProcessor implements EntityProcessor {
         if (shouldBeOnlyOneRecord.size() == 1) {
             shouldBeOnlyOneRecord.get(0);
 
-            ODataFormat format = ODataFormat.fromContentType(responseFormat);
-            ODataSerializer serializer = odata.createSerializer(format);
-
             ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
 
+            ODataSerializer serializer = odata.createSerializer(responseFormat);
+
+            final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
             EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextUrl).build();
-            InputStream serializedContent = serializer.entity(edmEntityType
-                                                              ,shouldBeOnlyOneRecord.get(0).getEntity(genericEntityProvider.getColumnDefinitionList())
-                                                              ,opts);
+
+            SerializerResult serializedContent = serializer.entity(serviceMetadata, edmEntityType,
+                        shouldBeOnlyOneRecord.get(0).getEntity(genericEntityProvider.getColumnDefinitionList()), opts);
 
             // Finally: configure the response object: set the body, headers and status code
-            response.setContent(serializedContent);
+            response.setContent(serializedContent.getContent());
             response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-            response.setHeader(HttpHeader.CONTENT_TYPE,responseFormat.toContentTypeString());
+            response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
         }
     }
 
