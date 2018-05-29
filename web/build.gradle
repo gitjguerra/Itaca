@@ -59,4 +59,5 @@ dependencies {
   compile project(':common')
   compile project(':user')
   compile project(':people')
+  compile project(':data-view')
 }

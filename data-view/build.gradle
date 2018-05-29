@@ -1,0 +1,17 @@
+description = 'Data view mocdule'
+
+project.ext {
+    odataVersion = '4.4.0'
+}
+
+dependencies {
+    compile project(':config')
+    compile project(':common')
+    compile project(':tools')
+
+    compile group: 'org.apache.olingo', name:'odata-server-api',  version:"${project.odataVersion}"
+    compile group: 'org.apache.olingo', name:'odata-server-core', version:"${project.odataVersion}"
+    compile group: 'org.apache.olingo', name:'odata-commons-api', version:"${project.odataVersion}"
+    compile group: 'org.apache.olingo', name:'odata-commons-core', version:"${project.odataVersion}"
+    compile group: 'org.apache.commons', name:'commons-dbcp2', version:'2.2.0'
+}

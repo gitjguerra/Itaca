@@ -1,0 +1,9 @@
+%syntax-version=1.0.0
+%project=itaca-user
+%uri=http://srvgit.srvcsi.com/Itaca/Core/tree/master/user
+
+add_profile_type 2018-05-25T08:45:43Z 'Brian <'bboothe@csi-ti.com'> # User profile type table
+add_user_profile [add_profile_type] 2018-05-25T08:53:35Z 'Brian <'bboothe@csi-ti.com'> # Create user profile table
+add_user_language 2018-05-25T08:56:20Z 'Brian <'bboothe@csi-ti.com'> # Create user language table
+add_user [add_user_language] 2018-05-25T08:58:32Z 'Brian <'bboothe@csi-ti.com'> # Create user table
+add_user_config [add_user_profile add_user] 2018-05-25T09:00:19Z 'Brian <'bboothe@csi-ti.com'> # Create user config table

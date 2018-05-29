@@ -1,6 +1,7 @@
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
-    id 'org.asciidoctor.convert' version '1.5.6'
+  id 'org.asciidoctor.convert' version '1.5.6'
 }
 
 allprojects  {
@@ -14,20 +15,115 @@ subprojects {
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
   tasks.withType(JavaCompile) {
-  	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
   }
 
+  project.ext {
+    springbootVersion = '1.5.11.RELEASE'
+  }
+
+  /* Deploys all the sql file to the DB if they have not already been deployed. */
+  task sqitchDBDeploy(type:Exec) {
+    workingDir './src/main/database'
+
+    if(workingDir.exists() ) {
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'sqitch deploy'
+      }
+      else {
+        commandLine './sqitch deploy'
+      }
+    }
+    else {
+      workingDir '.'
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'echo No DB.'
+      }
+      else {
+        commandLine './echo No DB.'
+      }
+    }
+
+  }
+
+  /* Removes all the data base objects by running all scripts in the revert directory*/
+  task sqitchDBRevert(type:Exec) {
+    workingDir './src/main/database'
+
+    if(workingDir.exists() ) {
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'sqitch revert -y'
+      }
+      else {
+        commandLine './sqitch revert -y'
+      }
+    }
+    else {
+      workingDir '.'
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'echo No DB.'
+      }
+      else {
+        commandLine './echo No DB.'
+      }
+    }
+  }
+
+  /** Bundles all the sql files for deployment on the server. All files are placed under ./bundle */
+  task sqitchDBBundle(type:Exec) {
+    workingDir './src/main/database'
+
+    if(workingDir.exists() ) {
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'sqitch bundle --dest-dir '+workingDir+'../../../../build/db-bundle'
+      }
+      else {
+        commandLine './sqitch bundle --dest-dir '+workingDir+'../../../../build/db-bundle'
+      }
+    }
+    else {
+      workingDir '.'
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'echo No DB scripts in '+project.name+' module!!!'
+      }
+      else {
+        commandLine './echo No DB scripts in '+project.name+' module!!!'
+      }
+    }
+  }
+
+  /* Zips up a DB release. */
+  task zipDBBundle(type: Zip) {
+    from './build/db-bundle'
+    include '*'
+    include '*/*'                 //to include contents of a folder present inside Reports directory
+    archiveName './build/db-bundle-'+project.name+'-'+project.version+'.zip'
+    destinationDir(file('.'))
+  }
+
+
+  /* Packages a DB release into a single zip file. */
+  task sqitchDBRelease {
+    doLast {
+      new File('./build/db-bundle').mkdir()
+      sqitchDBBundle.execute()
+      zipDBBundle.execute()
+    }
+
+  }
+
+
   ext {
-     snippetsDir = file('build/generated-snippets')
+    snippetsDir = file('build/generated-snippets')
   }
 
   test {
-      outputs.dir snippetsDir
+    outputs.dir snippetsDir
   }
 
   asciidoctor {
-      attributes 'snippets' : snippetsDir
-      dependsOn test
+    attributes 'snippets' : snippetsDir
+    dependsOn test
   }
 
   repositories {
@@ -39,19 +135,19 @@ subprojects {
   }
 
   dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version:'1.5.11.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.11.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version:'1.5.11.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version:"${project.springbootVersion}"
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:"${project.springbootVersion}"
+    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version:"${project.springbootVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version:'2.9.3'
     compile group: 'org.projectlombok', name: 'lombok', version:'1.16.20'
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.25'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.25'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version:'2.9.3'
     compile group: 'oracle', name: 'ojdbc', version:'7'
 
-    testCompile 'org.powermock:powermock-api-mockito:1.6.6'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.6'
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.5.11.RELEASE'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:"${project.springbootVersion}"
     testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version:'2.0.0.RELEASE'
+    testCompile group: 'org.powermock', name:'powermock-module-junit4', version:'1.6.6'
+    testCompile group: 'org.powermock', name:'powermock-api-mockito', version:'1.6.6'
 
     // Required java agent to correctly run the mock MVC tests under under Jenkins.
     testCompile group: 'edu.gmu.swe.phosphor', name: 'Phosphor', version: '0.0.3'

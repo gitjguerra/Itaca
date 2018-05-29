@@ -30,3 +30,12 @@ server:
 configurator:
   mode: classpath
   autoreload: false
+
+tableName: PER_BANK, USR_USER
+uiDisplayNameKey:
+uiDescriptionkey:
+foreignTables:
+createPermission:
+readPermission:
+updatePermission:
+deletePermission:
