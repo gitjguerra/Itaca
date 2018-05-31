@@ -1,3 +1,9 @@
+/*******************************************************************************
+ *
+ * Filter OData
+ * 31/05/2018
+ *
+******************************************************************************/
 package com.csi.itaca.dataview.service;
 
 import java.util.List;
@@ -9,7 +15,6 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -31,8 +36,6 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 
     @Override
     public Object visitMember(final Member member) throws ExpressionVisitException, ODataApplicationException {
-        // To keeps things simple, this tutorial allows only primitive properties.
-        // We have faith that the java type of Edm.Int32 is Integer
 
         final List<UriResource> uriResourceParts = member.getResourcePath().getUriResourceParts();
 
@@ -229,7 +232,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
         // To keep this tutorial small and simple, we implement only one method call
         if(methodCall == MethodKind.CONTAINS) {
             // "Contains" gets two parameters, both have to be of type String
-            // e.g. /Products?$filter=contains(Description, '1024 MB')
+            // e.g. /PER_BANK?$filter=contains(BANK_NAME, 'BBVA')
             //
             // First the method visistMember is called, which returns the current String value of the property.
             // After that the method visitLiteral is called with the string literal '1024 MB',

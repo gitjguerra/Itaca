@@ -90,7 +90,7 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 		// 2nd: fetch the data from backend for this requested EntitySetName // it has to be delivered as EntitySet object
 		EntityCollection entitySet = getData(edmEntitySet, uriInfo);
 
-		// 2nd and Half: Check if filter system query option is provided and apply the expression if necessary
+		// 3rd if necessary: Check if filter system query option is provided and apply the expression if necessary
 		FilterOption filterOption = uriInfo.getFilterOption();
 		if(filterOption != null) {
 			// Apply $filter system query option
@@ -127,12 +127,11 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 			}
 
 		}
-		//********************************************************************************
 
-		// 3rd: create a serializer based on the requested format (json)
+		// 4th: create a serializer based on the requested format (json)
 		ODataSerializer serializer = odata.createSerializer(responseFormat);
 
-		// 4th: Now serialize the content: transform from the EntitySet object to InputStream
+		// 5th: Now serialize the content: transform from the EntitySet object to InputStream
 		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
 
