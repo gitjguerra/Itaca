@@ -3,7 +3,9 @@ package com.csi.itaca.dataview.edm;
 import com.csi.itaca.dataview.DataViewConfiguration;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
 import com.csi.itaca.dataview.service.EntityProvider;
+import com.csi.itaca.dataview.service.FilterExpressionVisitor;
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -19,11 +21,16 @@ import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -82,6 +89,45 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 		// 2nd: fetch the data from backend for this requested EntitySetName // it has to be delivered as EntitySet object
 		EntityCollection entitySet = getData(edmEntitySet, uriInfo);
+
+		// 2nd and Half: Check if filter system query option is provided and apply the expression if necessary
+		FilterOption filterOption = uriInfo.getFilterOption();
+		if(filterOption != null) {
+			// Apply $filter system query option
+			List<Entity> entityList = entitySet.getEntities();
+			Iterator<Entity> entityIterator = entityList.iterator();
+
+			// Evaluate the expression for each entity
+			// If the expression is evaluated to "true", keep the entity otherwise remove it from the entityList
+			while (entityIterator.hasNext()) {
+				// To evaluate the the expression, create an instance of the Filter Expression Visitor and pass
+				// the current entity to the constructor
+				Entity currentEntity = entityIterator.next();
+				Expression filterExpression = filterOption.getExpression();
+				FilterExpressionVisitor expressionVisitor = new FilterExpressionVisitor(currentEntity);
+
+				// Start evaluating the expression
+				Object visitorResult = null;
+				try {
+					visitorResult = filterExpression.accept(expressionVisitor);
+				} catch (ExpressionVisitException e) {
+					e.printStackTrace();
+				}
+
+				// The result of the filter expression must be of type Edm.Boolean
+				if(visitorResult instanceof Boolean) {
+					if(!Boolean.TRUE.equals(visitorResult)) {
+						// The expression evaluated to false (or null), so we have to remove the currentEntity from entityList
+						entityIterator.remove();
+					}
+				} else {
+					throw new ODataApplicationException("A filter expression must evaulate to type Edm.Boolean",
+							HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
+				}
+			}
+
+		}
+		//********************************************************************************
 
 		// 3rd: create a serializer based on the requested format (json)
 		ODataSerializer serializer = odata.createSerializer(responseFormat);
