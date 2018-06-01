@@ -61,8 +61,8 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 
     @Override
     public Object visitLiteral(Literal literal) throws ExpressionVisitException, ODataApplicationException {
-        // To keep this tutorial simple, our filter expression visitor supports only Edm.Int32 and Edm.String
-        // In real world scenarios it can be difficult to guess the type of an literal.
+        // The filter expression visitor supports only Edm.Int32 and Edm.String
+        // In any scenarios it can be difficult to guess the type of an literal.
         // We can be sure, that the literal is a valid OData literal because the URI Parser checks
         // the lexicographical structure
 
