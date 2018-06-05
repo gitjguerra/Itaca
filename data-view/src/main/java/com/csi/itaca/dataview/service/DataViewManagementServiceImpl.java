@@ -102,15 +102,15 @@ public class DataViewManagementServiceImpl implements DataViewManagementService 
     @Override
     public void auditTransaction(AuditDTO dto) {
         AuditEntity auditEntity = new AuditEntity();
-        //auditEntity.setId(dto.getId());
+        //auditEntity.setId(dto.getId());    sequence on db
         auditEntity.setOperation(dto.getOperation());
         auditEntity.setSqlCommand(dto.getSqlCommand());
         auditEntity.setTimeStamp(dto.getTimeStamp());
         auditEntity.setUserName(dto.getUserName());
 
         repository.save(auditEntity);
-        entityManager.flush();
-        entityManager.clear();
+        //entityManager.flush();
+        //entityManager.clear();
     }
 
 }

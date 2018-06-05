@@ -92,6 +92,15 @@ public class DataViewController {
 		System.out.println("updatePermission = " + dataViewConfiguration.getUpdatePermission());
 		System.out.println("deletePermission = " + dataViewConfiguration.getDeletePermission());
 
+		//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+			AuditDTO dto = new AuditDTO();
+			dto.setOperation("INICIO");					//  * @param operation type operation (create, update, get or delete)
+			dto.setSqlCommand("Select * From YOU");		//  * @param sqlCommand sql transact the activity
+			dto.setTimeStamp(new Date());   			//  * @param timeStamp the time stamp th audit.
+			dto.setUserName("PRUEBA");					//  * @param userName the user produces activity
+			dataView.auditTransaction(dto);
+		//  </editor-fold>
+
 		try {
 
 			OData odata = OData.newInstance();
@@ -109,15 +118,6 @@ public class DataViewController {
 			for (String key : response.getAllHeaders().keySet()) {
 				headers.add(key, response.getAllHeaders().get(key).toString().replace("[","").replace("]",""));
 			}
-
-			//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
-				AuditDTO dto = new AuditDTO();
-				dto.setOperation("CREATE");
-				dto.setSqlCommand("Select * From YOU");
-				dto.setTimeStamp(new Date());
-				dto.setUserName("PRUEBA");
-				dataView.auditTransaction(dto);
-			//  </editor-fold>
 
 			return new ResponseEntity<>(responseStr, headers, HttpStatus.valueOf(response.getStatusCode()));
 		} catch (Exception ex) {
