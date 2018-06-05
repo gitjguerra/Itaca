@@ -26,7 +26,7 @@ public class AuditEntity implements Audit {
 	@Column(name="AUDIT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DAT_AUDIT_SEQ")
 	@SequenceGenerator(name = "DAT_AUDIT_SEQ", sequenceName = "DAT_AUDIT_SEQ", allocationSize = 1)
-	private long id;
+	private Long id;
 
 	@Column(name="AUDIT_TIMESTAMP")
 	private Date timeStamp;
@@ -38,6 +38,6 @@ public class AuditEntity implements Audit {
 	private String operation;
 
 	@Column(name="AUDIT_SQL_COMMAND")
-	private Long sqlCommand;
+	private String sqlCommand;
 
 }
