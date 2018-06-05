@@ -3,7 +3,7 @@
  * Filter OData
  * 31/05/2018
  *
-******************************************************************************/
+ ******************************************************************************/
 package com.csi.itaca.dataview.service;
 
 import java.util.List;
@@ -162,40 +162,45 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     private Object evaluateComparisonOperation(BinaryOperatorKind operator, Object left, Object right)
             throws ODataApplicationException {
 
+        // **** JG - commented because when there are any design problem with the db model not is posible compare two types diferent ***
         // All types in our tutorial supports all logical operations, but we have to make sure that the types are equals
-        if(left.getClass().equals(right.getClass()) && left instanceof Comparable) {
-            // Luckily all used types String, Boolean and also Integer support the interface Comparable
-            int result;
-            if(left instanceof Integer) {
-                result = ((Comparable<Integer>) (Integer)left).compareTo((Integer) right);
-            } else if(left instanceof String) {
-                result = ((Comparable<String>) (String)left).compareTo((String) right);
-            } else if(left instanceof Boolean) {
-                result = ((Comparable<Boolean>) (Boolean)left).compareTo((Boolean) right);
-            } else {
-                throw new ODataApplicationException("Class " + left.getClass().getCanonicalName() + " not expected",
-                        HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ENGLISH);
-            }
+        //if(left.getClass().equals(right.getClass()) && left instanceof Comparable) {
+        // Luckily all used types String, Boolean and also Integer support the interface Comparable
+        int result;
 
-            if (operator == BinaryOperatorKind.EQ) {
-                return result == 0;
-            } else if (operator == BinaryOperatorKind.NE) {
-                return result != 0;
-            } else if (operator == BinaryOperatorKind.GE) {
-                return result >= 0;
-            } else if (operator == BinaryOperatorKind.GT) {
-                return result > 0;
-            } else if (operator == BinaryOperatorKind.LE) {
-                return result <= 0;
-            } else {
-                // BinaryOperatorKind.LT
-                return result < 0;
-            }
-
+        if(left instanceof Long) {
+            result = ((Comparable<Long>) (Long)left).compareTo(Long.parseLong(right.toString()));
+        } else if(left instanceof Integer) {
+            result = ((Comparable<Integer>) (Integer)left).compareTo(Integer.parseInt(right.toString()));
+        } else if(left instanceof String) {
+            result = ((Comparable<String>) (String)left).compareTo(right.toString());
+        } else if(left instanceof Boolean) {
+            result = ((Comparable<Boolean>) (Boolean)left).compareTo((Boolean) right);
         } else {
-            throw new ODataApplicationException("Comparision needs two equal types",
-                    HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
+            throw new ODataApplicationException("Class " + left.getClass().getCanonicalName() + " not expected",
+                    HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ENGLISH);
         }
+
+        if (operator == BinaryOperatorKind.EQ) {
+            return result == 0;
+        } else if (operator == BinaryOperatorKind.NE) {
+            return result != 0;
+        } else if (operator == BinaryOperatorKind.GE) {
+            return result >= 0;
+        } else if (operator == BinaryOperatorKind.GT) {
+            return result > 0;
+        } else if (operator == BinaryOperatorKind.LE) {
+            return result <= 0;
+        } else {
+            // BinaryOperatorKind.LT
+            return result < 0;
+        }
+
+        //} else {
+        //    throw new ODataApplicationException("Comparision needs two equal types",
+        //            HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
+        //}
+
     }
 
     private Object evaluateArithmeticOperation(BinaryOperatorKind operator, Object left,
