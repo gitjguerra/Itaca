@@ -162,14 +162,18 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     private Object evaluateComparisonOperation(BinaryOperatorKind operator, Object left, Object right)
             throws ODataApplicationException {
 
+        // **** JG - commented because when there are any design problem with the db model not is posible compare two types diferent ***
         // All types in our tutorial supports all logical operations, but we have to make sure that the types are equals
-        if(left.getClass().equals(right.getClass()) && left instanceof Comparable) {
+        //if(left.getClass().equals(right.getClass()) && left instanceof Comparable) {
             // Luckily all used types String, Boolean and also Integer support the interface Comparable
             int result;
-            if(left instanceof Integer) {
-                result = ((Comparable<Integer>) (Integer)left).compareTo((Integer) right);
+
+            if(left instanceof Long) {
+                result = ((Comparable<Long>) (Long)left).compareTo(Long.parseLong(right.toString()));
+            } else if(left instanceof Integer) {
+                result = ((Comparable<Integer>) (Integer)left).compareTo(Integer.parseInt(right.toString()));
             } else if(left instanceof String) {
-                result = ((Comparable<String>) (String)left).compareTo((String) right);
+                result = ((Comparable<String>) (String)left).compareTo(right.toString());
             } else if(left instanceof Boolean) {
                 result = ((Comparable<Boolean>) (Boolean)left).compareTo((Boolean) right);
             } else {
@@ -192,10 +196,11 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
                 return result < 0;
             }
 
-        } else {
-            throw new ODataApplicationException("Comparision needs two equal types",
-                    HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
-        }
+        //} else {
+        //    throw new ODataApplicationException("Comparision needs two equal types",
+        //            HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
+        //}
+
     }
 
     private Object evaluateArithmeticOperation(BinaryOperatorKind operator, Object left,
