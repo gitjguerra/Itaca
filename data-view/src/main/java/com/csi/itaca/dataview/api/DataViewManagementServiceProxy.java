@@ -3,6 +3,7 @@ package com.csi.itaca.dataview.api;
 import com.csi.itaca.dataview.model.filters.AuditSearchFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 
 import java.util.Date;
 

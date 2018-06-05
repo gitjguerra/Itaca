@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 
 import com.csi.itaca.dataview.exception.EdmException;
 import com.csi.itaca.dataview.DataViewConfiguration;
+import com.csi.itaca.dataview.model.dto.AuditDTO;
+import com.csi.itaca.dataview.service.DataViewManagementServiceImpl;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -63,11 +66,13 @@ public class DataViewController {
 	private EntityCollectionProcessor enityCollectionProcessor;
 
 	@Autowired
-	private EntityProcessor enityProcessor;
-
+	private EntityProcessor entityProcessor;
 
 	@Autowired
 	DataViewConfiguration dataViewConfiguration;
+
+	@Autowired
+	DataViewManagementServiceImpl dataView;
 
 	/**
 	 * Process.
@@ -94,7 +99,7 @@ public class DataViewController {
 
 			ODataHttpHandler handler = odata.createHandler(edm);
 			handler.register(enityCollectionProcessor);
-			handler.register(enityProcessor);
+			handler.register(entityProcessor);
 
 			ODataResponse response = handler.process(createODataRequest(req,split));
 
@@ -104,6 +109,16 @@ public class DataViewController {
 			for (String key : response.getAllHeaders().keySet()) {
 				headers.add(key, response.getAllHeaders().get(key).toString().replace("[","").replace("]",""));
 			}
+
+			//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+				AuditDTO dto = new AuditDTO();
+				dto.setOperation("CREATE");
+				dto.setSqlCommand("Select * From YOU");
+				dto.setTimeStamp(new Date());
+				dto.setUserName("PRUEBA");
+				dataView.auditTransaction(dto);
+			//  </editor-fold>
+
 			return new ResponseEntity<>(responseStr, headers, HttpStatus.valueOf(response.getStatusCode()));
 		} catch (Exception ex) {
 			throw new EdmException();
