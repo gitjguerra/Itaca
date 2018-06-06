@@ -109,8 +109,6 @@ public class DataViewManagementServiceImpl implements DataViewManagementService 
         auditEntity.setUserName(dto.getUserName());
 
         repository.save(auditEntity);
-        //entityManager.flush();
-        //entityManager.clear();
     }
 
 }

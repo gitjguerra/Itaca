@@ -3,6 +3,7 @@ package com.csi.itaca.dataview.controller;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import com.csi.itaca.common.GlobalConstants;
 import com.csi.itaca.dataview.exception.EdmException;
 import com.csi.itaca.dataview.DataViewConfiguration;
 import com.csi.itaca.dataview.model.dto.AuditDTO;
@@ -94,10 +95,10 @@ public class DataViewController {
 
 		//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
 			AuditDTO dto = new AuditDTO();
-			dto.setOperation("INICIO");					//  * @param operation type operation (create, update, get or delete)
-			dto.setSqlCommand("Select * From YOU");		//  * @param sqlCommand sql transact the activity
-			dto.setTimeStamp(new Date());   			//  * @param timeStamp the time stamp th audit.
-			dto.setUserName("PRUEBA");					//  * @param userName the user produces activity
+			dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+			dto.setSqlCommand(GlobalConstants.EMPTY_PROCESS);	//  * @param sqlCommand sql transact the activity
+			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
 			dataView.auditTransaction(dto);
 		//  </editor-fold>
 
@@ -118,6 +119,15 @@ public class DataViewController {
 			for (String key : response.getAllHeaders().keySet()) {
 				headers.add(key, response.getAllHeaders().get(key).toString().replace("[","").replace("]",""));
 			}
+
+			//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+			dto = new AuditDTO();
+			dto.setOperation(GlobalConstants.FINAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+			dto.setSqlCommand(GlobalConstants.EMPTY_PROCESS);	//  * @param sqlCommand sql transact the activity
+			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+			dataView.auditTransaction(dto);
+			//  </editor-fold>
 
 			return new ResponseEntity<>(responseStr, headers, HttpStatus.valueOf(response.getStatusCode()));
 		} catch (Exception ex) {

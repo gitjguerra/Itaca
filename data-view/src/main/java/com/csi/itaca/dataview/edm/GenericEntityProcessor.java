@@ -1,5 +1,6 @@
 package com.csi.itaca.dataview.edm;
 
+import com.csi.itaca.common.GlobalConstants;
 import com.csi.itaca.dataview.DataViewConfiguration;
 import com.csi.itaca.dataview.model.dto.AuditDTO;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
@@ -49,6 +50,8 @@ public class GenericEntityProcessor implements EntityProcessor {
     private AllTabColsRepository colsService;
     @Autowired
     private DataViewConfiguration configuration;
+    @Autowired
+    DataViewManagementServiceImpl dataView;
 
     @Override
     public void init(OData odata, ServiceMetadata serviceMetadata) {
@@ -89,6 +92,16 @@ public class GenericEntityProcessor implements EntityProcessor {
             response.setContent(serializedContent.getContent());
             response.setStatusCode(HttpStatusCode.OK.getStatusCode());
             response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+                AuditDTO dto = new AuditDTO();
+                dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+                dto.setSqlCommand(GlobalConstants.READ_PROCESS);	//  * @param sqlCommand sql transact the activity
+                dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+                dataView.auditTransaction(dto);
+            //  </editor-fold>
+
         }
     }
 
@@ -135,6 +148,16 @@ public class GenericEntityProcessor implements EntityProcessor {
                     }
                 }
             }
+
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+                AuditDTO dto = new AuditDTO();
+                dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+                dto.setSqlCommand(GlobalConstants.CREATE_PROCESS);	//  * @param sqlCommand sql transact the activity
+                dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+                dataView.auditTransaction(dto);
+            //  </editor-fold>
+
         }
         catch (Exception e) {
             log.error("error creating entity"+e);
@@ -179,6 +202,16 @@ public class GenericEntityProcessor implements EntityProcessor {
 
                 }
             }
+
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+                AuditDTO dto = new AuditDTO();
+                dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+                dto.setSqlCommand(GlobalConstants.UPDATE_PROCESS);	//  * @param sqlCommand sql transact the activity
+                dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+                dataView.auditTransaction(dto);
+            //  </editor-fold>
+
         }
         catch (Exception e) {
             log.error("error updating entity"+e);
@@ -210,14 +243,22 @@ public class GenericEntityProcessor implements EntityProcessor {
         int filas;
         String columnName="";
 
-
-
         for(filas = 0; filas < gnericRow.size(); filas++) {
             columnName = gnericRow.get(filas).getFields().get(0).toString();
         }
         //TODO: R.V. The paramURI  could be more than one row.
         String sql = "DELETE "+edmEntityType.getName()+"  WHERE "+ columnName +"="+paramURI;
         jdbcTemplate.update(sql);
+
+        //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+            AuditDTO dto = new AuditDTO();
+            dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+            dto.setSqlCommand(GlobalConstants.DELETE_PROCESS);	//  * @param sqlCommand sql transact the activity
+            dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+            dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+            dataView.auditTransaction(dto);
+        //  </editor-fold>
+
     }
 
 
