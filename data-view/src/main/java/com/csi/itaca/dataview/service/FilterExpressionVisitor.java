@@ -195,7 +195,6 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
             // BinaryOperatorKind.LT
             return result < 0;
         }
-
         //} else {
         //    throw new ODataApplicationException("Comparision needs two equal types",
         //            HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
