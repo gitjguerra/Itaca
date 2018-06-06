@@ -95,8 +95,8 @@ public class GenericEntityProcessor implements EntityProcessor {
 
             //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
                 AuditDTO dto = new AuditDTO();
-                dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
-                dto.setSqlCommand(GlobalConstants.READ_PROCESS);	//  * @param sqlCommand sql transact the activity
+                dto.setOperation(GlobalConstants.READ_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+                dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
                 dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
                 // TODO: colocar el usuario actual
                 dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
@@ -149,17 +149,6 @@ public class GenericEntityProcessor implements EntityProcessor {
                     }
                 }
             }
-
-            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
-                AuditDTO dto = new AuditDTO();
-                dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
-                dto.setSqlCommand(GlobalConstants.CREATE_PROCESS);	//  * @param sqlCommand sql transact the activity
-                dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-                // TODO: colocar el usuario actual
-                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
-                dataView.auditTransaction(dto);
-            //  </editor-fold>
-
         }
         catch (Exception e) {
             log.error("error creating entity"+e);
@@ -167,6 +156,17 @@ public class GenericEntityProcessor implements EntityProcessor {
 
         String sql = "INSERT INTO "+edmEntityType.getName()+" ("+fields+") VALUES ("+values+")";
         jdbcTemplate.update(sql);
+
+        //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+            AuditDTO dto = new AuditDTO();
+            dto.setOperation(GlobalConstants.CREATE_PROCESS);	    //  * @param operation type operation (create, update, get or delete)
+            dto.setSqlCommand(sql);	                                //  * @param sqlCommand sql transact the activity
+            dto.setTimeStamp(new Date());   					    //  * @param timeStamp the time stamp th audit.
+            // TODO: colocar el usuario actual
+            dto.setUserName(GlobalConstants.DEFAULT_USER);		    //  * @param userName the user produces activity
+            dataView.auditTransaction(dto);
+        //  </editor-fold>
+
     }
 
     @Override
@@ -204,17 +204,6 @@ public class GenericEntityProcessor implements EntityProcessor {
 
                 }
             }
-
-            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
-                AuditDTO dto = new AuditDTO();
-                dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
-                dto.setSqlCommand(GlobalConstants.UPDATE_PROCESS);	//  * @param sqlCommand sql transact the activity
-                dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-                // TODO: colocar el usuario actual
-                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
-                dataView.auditTransaction(dto);
-            //  </editor-fold>
-
         }
         catch (Exception e) {
             log.error("error updating entity"+e);
@@ -231,6 +220,17 @@ public class GenericEntityProcessor implements EntityProcessor {
 
         String sql = "UPDATE "+edmEntityType.getName()+" SET "+fieldstoUpdate+" WHERE "+ columnName +"="+paramURI;
         jdbcTemplate.update(sql);
+
+        //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+            AuditDTO dto = new AuditDTO();
+            dto.setOperation(GlobalConstants.UPDATE_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+            dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
+            dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+            // TODO: colocar el usuario actual
+            dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+            dataView.auditTransaction(dto);
+        //  </editor-fold>
+
     }
 
     @Override
@@ -255,8 +255,8 @@ public class GenericEntityProcessor implements EntityProcessor {
 
         //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
             AuditDTO dto = new AuditDTO();
-            dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
-            dto.setSqlCommand(GlobalConstants.DELETE_PROCESS);	//  * @param sqlCommand sql transact the activity
+            dto.setOperation(GlobalConstants.DELETE_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+            dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
             dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
             // TODO: colocar el usuario actual
             dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
