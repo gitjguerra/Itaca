@@ -98,6 +98,7 @@ public class DataViewController {
 			dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
 			dto.setSqlCommand(GlobalConstants.EMPTY_PROCESS);	//  * @param sqlCommand sql transact the activity
 			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+			// TODO: colocar el usuario actual
 			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
 			dataView.auditTransaction(dto);
 		//  </editor-fold>
@@ -125,6 +126,7 @@ public class DataViewController {
 			dto.setOperation(GlobalConstants.FINAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
 			dto.setSqlCommand(GlobalConstants.EMPTY_PROCESS);	//  * @param sqlCommand sql transact the activity
 			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+			// TODO: colocar el usuario actual
 			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
 			dataView.auditTransaction(dto);
 			//  </editor-fold>

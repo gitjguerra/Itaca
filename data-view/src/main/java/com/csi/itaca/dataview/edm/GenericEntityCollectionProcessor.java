@@ -1,7 +1,10 @@
 package com.csi.itaca.dataview.edm;
 
+import com.csi.itaca.common.GlobalConstants;
 import com.csi.itaca.dataview.DataViewConfiguration;
+import com.csi.itaca.dataview.model.dto.AuditDTO;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
+import com.csi.itaca.dataview.service.DataViewManagementServiceImpl;
 import com.csi.itaca.dataview.service.EntityProvider;
 import com.csi.itaca.dataview.service.FilterExpressionVisitor;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -28,10 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The Class ProductEntityCollectionProcessor.
@@ -41,12 +41,12 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
 	@Autowired
 	private AllTabColsRepository colsService;
-
 	@Autowired
 	private DataViewConfiguration configuration;
+	@Autowired
+	DataViewManagementServiceImpl dataView;
 
 	/** The odata. */
 	private OData odata;
@@ -170,6 +170,17 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 				break;
 			}
 		}
+
+		//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+			AuditDTO dto = new AuditDTO();
+			dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
+			dto.setSqlCommand(GlobalConstants.READ_PROCESS);	//  * @param sqlCommand sql transact the activity
+			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+			// TODO: colocar el usuario actual
+			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+			dataView.auditTransaction(dto);
+		//  </editor-fold>
+
 		return entityCollection;
 	}
 

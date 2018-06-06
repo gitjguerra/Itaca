@@ -98,6 +98,7 @@ public class GenericEntityProcessor implements EntityProcessor {
                 dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
                 dto.setSqlCommand(GlobalConstants.READ_PROCESS);	//  * @param sqlCommand sql transact the activity
                 dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                // TODO: colocar el usuario actual
                 dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
                 dataView.auditTransaction(dto);
             //  </editor-fold>
@@ -154,6 +155,7 @@ public class GenericEntityProcessor implements EntityProcessor {
                 dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
                 dto.setSqlCommand(GlobalConstants.CREATE_PROCESS);	//  * @param sqlCommand sql transact the activity
                 dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                // TODO: colocar el usuario actual
                 dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
                 dataView.auditTransaction(dto);
             //  </editor-fold>
@@ -208,6 +210,7 @@ public class GenericEntityProcessor implements EntityProcessor {
                 dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
                 dto.setSqlCommand(GlobalConstants.UPDATE_PROCESS);	//  * @param sqlCommand sql transact the activity
                 dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                // TODO: colocar el usuario actual
                 dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
                 dataView.auditTransaction(dto);
             //  </editor-fold>
@@ -255,6 +258,7 @@ public class GenericEntityProcessor implements EntityProcessor {
             dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
             dto.setSqlCommand(GlobalConstants.DELETE_PROCESS);	//  * @param sqlCommand sql transact the activity
             dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+            // TODO: colocar el usuario actual
             dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
             dataView.auditTransaction(dto);
         //  </editor-fold>
