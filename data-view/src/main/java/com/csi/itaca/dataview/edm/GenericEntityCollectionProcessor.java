@@ -174,7 +174,7 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 		//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
 			AuditDTO dto = new AuditDTO();
 			dto.setOperation(GlobalConstants.READ_PROCESS);	//  * @param operation type operation (create, update, get or delete)
-			dto.setSqlCommand("Get data: " + uriInfo);	//  * @param sqlCommand sql transact the activity
+			dto.setSqlCommand("Get data: " + uriInfo.getUriResourceParts());	//  * @param sqlCommand sql transact the activity
 			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
 			// TODO: colocar el usuario actual
 			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
