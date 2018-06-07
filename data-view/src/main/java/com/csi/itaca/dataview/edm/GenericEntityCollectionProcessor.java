@@ -24,6 +24,7 @@ import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
@@ -129,6 +130,16 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 		}
 
+			// implement count
+			List<Entity> entityList = entitySet.getEntities();
+			CountOption countOption = uriInfo.getCountOption();
+			if (countOption != null) {
+				boolean isCount = countOption.getValue();
+				if(isCount){
+					entitySet.setCount(entityList.size());
+				}
+			}
+
 		// 4th: apply system query options
 		// Note: $select is handled by the lib, we only configure ContextURL + SerializerOptions
 		// for performance reasons, it might be necessary to implement the $select manually
@@ -152,9 +163,11 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 		EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
 				.contextURL(contextUrl)
 				.select(selectOption)
+				.count(countOption)
 				.id(id)
 				.build();
 
+		//SerializerResult serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
 		SerializerResult serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
 
 		// Finally: configure the response object: set the body, headers and status code
