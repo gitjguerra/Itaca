@@ -3,10 +3,8 @@ package com.csi.itaca.dataview.controller;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import com.csi.itaca.common.GlobalConstants;
 import com.csi.itaca.dataview.exception.EdmException;
 import com.csi.itaca.dataview.DataViewConfiguration;
-import com.csi.itaca.dataview.model.dto.AuditDTO;
 import com.csi.itaca.dataview.service.DataViewManagementServiceImpl;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
@@ -93,16 +91,6 @@ public class DataViewController {
 		System.out.println("updatePermission = " + dataViewConfiguration.getUpdatePermission());
 		System.out.println("deletePermission = " + dataViewConfiguration.getDeletePermission());
 
-		//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
-			AuditDTO dto = new AuditDTO();
-			dto.setOperation(GlobalConstants.INITIAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
-			dto.setSqlCommand(GlobalConstants.EMPTY_PROCESS);	//  * @param sqlCommand sql transact the activity
-			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-			// TODO: colocar el usuario actual
-			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
-			dataView.auditTransaction(dto);
-		//  </editor-fold>
-
 		try {
 
 			OData odata = OData.newInstance();
@@ -120,16 +108,6 @@ public class DataViewController {
 			for (String key : response.getAllHeaders().keySet()) {
 				headers.add(key, response.getAllHeaders().get(key).toString().replace("[","").replace("]",""));
 			}
-
-			//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
-			dto = new AuditDTO();
-			dto.setOperation(GlobalConstants.FINAL_ACTIVITY);	//  * @param operation type operation (create, update, get or delete)
-			dto.setSqlCommand(GlobalConstants.EMPTY_PROCESS);	//  * @param sqlCommand sql transact the activity
-			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-			// TODO: colocar el usuario actual
-			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
-			dataView.auditTransaction(dto);
-			//  </editor-fold>
 
 			return new ResponseEntity<>(responseStr, headers, HttpStatus.valueOf(response.getStatusCode()));
 		} catch (Exception ex) {
