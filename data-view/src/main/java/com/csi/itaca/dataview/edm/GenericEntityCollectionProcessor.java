@@ -12,6 +12,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -21,12 +22,11 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
-import org.apache.olingo.server.api.uri.UriInfo;
-import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.*;
 import org.apache.olingo.server.api.uri.queryoption.*;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
+import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -133,7 +133,51 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 		}
 
-			// implement $count
+		// implement $orderby
+		OrderByOption orderByOption = uriInfo.getOrderByOption();
+		if (orderByOption != null) {
+			List<OrderByItem> orderItemList = orderByOption.getOrders();
+			final OrderByItem orderByItem = orderItemList.get(0); // we support only one
+			Expression expression = orderByItem.getExpression();
+			if(expression instanceof Member){
+				UriInfoResource resourcePath = ((Member)expression).getResourcePath();
+				UriResource uriResource = resourcePath.getUriResourceParts().get(0);
+				if (uriResource instanceof UriResourcePrimitiveProperty) {
+					EdmProperty edmProperty = ((UriResourcePrimitiveProperty)uriResource).getProperty();
+					final String sortPropertyName = edmProperty.getName();
+
+					// do the sorting for the list of entities
+					Collections.sort(entityList, new Comparator<Entity>() {
+
+						// delegate the sorting to native sorter of Integer and String
+						public int compare(Entity entity1, Entity entity2) {
+							int compareResult = 0;
+
+							if(sortPropertyName.contains("ID")){
+								Integer integer1 = (Integer) entity1.getProperty(sortPropertyName).getValue();
+								Integer integer2 = (Integer) entity2.getProperty(sortPropertyName).getValue();
+
+								compareResult = integer1.compareTo(integer2);
+							}else{
+								String propertyValue1 = (String) entity1.getProperty(sortPropertyName).getValue();
+								String propertyValue2 = (String) entity2.getProperty(sortPropertyName).getValue();
+
+								compareResult = propertyValue1.compareTo(propertyValue2);
+							}
+
+							// if 'desc' is specified in the URI, change the order
+							if(orderByItem.isDescending()){
+								return - compareResult; // just reverse order
+							}
+
+							return compareResult;
+						}
+					});
+				}
+			}
+		}
+
+		// implement $count
 			CountOption countOption = uriInfo.getCountOption();
 			if (countOption != null) {
 				boolean isCount = countOption.getValue();
@@ -142,7 +186,7 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 				}
 			}
 
-			// handle $skip
+			// implement $skip
 			SkipOption skipOption = uriInfo.getSkipOption();
 			if (skipOption != null) {
 				int skipNumber = skipOption.getValue();
@@ -158,7 +202,7 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 				}
 			}
 
-			// handle $top
+			// implement $top
 			TopOption topOption = uriInfo.getTopOption();
 			if (topOption != null) {
 				int topNumber = topOption.getValue();
