@@ -25,6 +25,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,16 +129,32 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 		}
 
-		// 4th: create a serializer based on the requested format (json)
+		// 4th: apply system query options
+		// Note: $select is handled by the lib, we only configure ContextURL + SerializerOptions
+		// for performance reasons, it might be necessary to implement the $select manually
+		SelectOption selectOption = uriInfo.getSelectOption();
+		// and serialize the content: transform from the EntitySet object to InputStream
+		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+		// we need the property names of the $select, in order to build the context URL
+		String selectList = odata.createUriHelper().buildContextURLSelectList(edmEntityType,
+		null, selectOption);
+		ContextURL contextUrl = ContextURL.with()
+		.entitySet(edmEntitySet)
+		.selectList(selectList)
+		.build();
+
+		// 5th: create a serializer based on the requested format (json)
 		ODataSerializer serializer = odata.createSerializer(responseFormat);
 
-		// 5th: Now serialize the content: transform from the EntitySet object to InputStream
-		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
-
+		// 6th: Now serialize the content: transform from the EntitySet object to InputStream
+		// adding the selectOption to the serializerOpts will tell the lib to do the job
 		final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
-		EntityCollectionSerializerOptions opts =
-				EntityCollectionSerializerOptions.with().id(id).contextURL(contextUrl).build();
+		EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
+				.contextURL(contextUrl)
+				.select(selectOption)
+				.id(id)
+				.build();
+
 		SerializerResult serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
 
 		// Finally: configure the response object: set the body, headers and status code
