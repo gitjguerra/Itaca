@@ -24,9 +24,7 @@ import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
-import org.apache.olingo.server.api.uri.queryoption.CountOption;
-import org.apache.olingo.server.api.uri.queryoption.FilterOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.api.uri.queryoption.*;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,12 +90,17 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 		// 2nd: fetch the data from backend for this requested EntitySetName // it has to be delivered as EntitySet object
 		EntityCollection entitySet = getData(edmEntitySet, uriInfo);
 
+		// 2nd and Half: apply System Query Options
+		// modify the result set according to the query options, specified by the end user
+		List<Entity> entityList = entitySet.getEntities();
+		EntityCollection returnEntityCollection = new EntityCollection();
+
 		// 3rd if necessary: Check if filter system query option is provided and apply the expression if necessary
 		FilterOption filterOption = uriInfo.getFilterOption();
 		if(filterOption != null) {
 			// Apply $filter system query option
-			List<Entity> entityList = entitySet.getEntities();
-			Iterator<Entity> entityIterator = entityList.iterator();
+			List<Entity> entityListIterator = entitySet.getEntities();
+			Iterator<Entity> entityIterator = entityListIterator.iterator();
 
 			// Evaluate the expression for each entity
 			// If the expression is evaluated to "true", keep the entity otherwise remove it from the entityList
@@ -130,14 +133,47 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 		}
 
-			// implement count
-			List<Entity> entityList = entitySet.getEntities();
+			// implement $count
 			CountOption countOption = uriInfo.getCountOption();
 			if (countOption != null) {
 				boolean isCount = countOption.getValue();
 				if(isCount){
-					entitySet.setCount(entityList.size());
+					returnEntityCollection.setCount(entityList.size());
 				}
+			}
+
+			// handle $skip
+			SkipOption skipOption = uriInfo.getSkipOption();
+			if (skipOption != null) {
+				int skipNumber = skipOption.getValue();
+				if (skipNumber >= 0) {
+					if(skipNumber <= entityList.size()) {
+						entityList = entityList.subList(skipNumber, entityList.size());
+					} else {
+						// The client skipped all entities
+						entityList.clear();
+					}
+				} else {
+					throw new ODataApplicationException("Invalid value for $skip", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+				}
+			}
+
+			// handle $top
+			TopOption topOption = uriInfo.getTopOption();
+			if (topOption != null) {
+				int topNumber = topOption.getValue();
+				if (topNumber >= 0) {
+					if(topNumber <= entityList.size()) {
+						entityList = entityList.subList(0, topNumber);
+					}  // else the client has requested more entities than available => return what we have
+				} else {
+					throw new ODataApplicationException("Invalid value for $top", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+				}
+			}
+
+			// after applying the query options, create EntityCollection based on the reduced list
+			for(Entity entity : entityList){
+				returnEntityCollection.getEntities().add(entity);
 			}
 
 		// 4th: apply system query options
@@ -167,8 +203,12 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 				.id(id)
 				.build();
 
-		//SerializerResult serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
-		SerializerResult serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
+		SerializerResult serializedContent = null;
+		if(returnEntityCollection!=null){
+			serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, returnEntityCollection, opts);
+		}else{
+			serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
+		}
 
 		// Finally: configure the response object: set the body, headers and status code
 		response.setContent(serializedContent.getContent());
