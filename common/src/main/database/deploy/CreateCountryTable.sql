@@ -1,3 +1,6 @@
+-- Deploy itaca-common:CreateCountryTable to oracle
+
+
 ----------------- country table -----------------
 CREATE TABLE dir_country
   (
@@ -20,3 +23,11 @@ ALTER TABLE dir_country ADD CONSTRAINT dir_country_pk PRIMARY KEY ( country_id )
 -- Sequence
 CREATE SEQUENCE dir_country_seq START WITH 1 INCREMENT BY 1 MAXVALUE 9999999999 MINVALUE 1 NOCACHE ;
 ----------------- country table end -----------------
+
+
+INSERT INTO "DIR_COUNTRY" (COUNTRY_ID, ISO_CODE, NAME) VALUES ('1', 'ESP', 'Spain');
+INSERT INTO "DIR_COUNTRY" (COUNTRY_ID, ISO_CODE, NAME) VALUES ('2', 'COL', 'Colombia');
+INSERT INTO "DIR_COUNTRY" (COUNTRY_ID, ISO_CODE, NAME) VALUES ('3', 'CHL', 'Chile');
+INSERT INTO "DIR_COUNTRY" (COUNTRY_ID, ISO_CODE, NAME) VALUES ('4', 'UK', 'United Kingdom');
+
+commit;
