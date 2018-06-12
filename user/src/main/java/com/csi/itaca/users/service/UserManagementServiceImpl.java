@@ -24,6 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +39,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Service
-public class UserManagementServiceImpl implements UserManagementService {
+@Service(value = "userService")
+public class UserManagementServiceImpl implements UserManagementService, UserDetailsService {
 
    private static final Logger logger = LoggerFactory.getLogger(UserManagementServiceImpl.class);
 
@@ -302,5 +308,48 @@ public class UserManagementServiceImpl implements UserManagementService {
         };
         return spec;
     }
+
+    //****************************** TEST ************************************
+
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        User user = repository.findByUsername(userId);
+        if(user == null){
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), ((UserEntity) user).getPassword(), getAuthority());
+    }
+
+    private List<SimpleGrantedAuthority> getAuthority() {
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    }
+
+    public List<UserEntity> findAll() {
+        List<UserEntity> list = new ArrayList<>();
+        repository.findAll();
+        return list;
+    }
+
+    @Override
+    public void delete(long id) {
+        repository.delete(id);
+    }
+
+    @Override
+    public UserEntity save(UserEntity user) {
+        return repository.save(user);
+    }
+
+    /*
+    @Override
+    public UserDetails findByUsernameAuth(String username) throws UsernameNotFoundException {
+        User user = repository.findByUsername(username);
+        if(user == null){
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), ((UserEntity) user).getPassword(), null);
+    }
+    */
+
+    //****************************** TEST ************************************
 
 }
