@@ -132,8 +132,8 @@ public interface UserManagementService {
     // **********************  Test ************************
     void delete(long id);
 
-    List<User2> findAll();
+    List<UserEntity> findAll();
 
-    User2 save(User2 user);
+    UserEntity save(UserEntity user);
     // **********************  Test ************************
 }

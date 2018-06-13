@@ -328,33 +328,20 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
-    public List<User2> findAll() {
-        List<User2> list = new ArrayList<>();
-        userDao.findAll().iterator().forEachRemaining(list::add);
+    public List<UserEntity> findAll() {
+        List<UserEntity> list = new ArrayList<>();
+        repository.findAll();
         return list;
     }
 
     @Override
     public void delete(long id) {
-        userDao.delete(id);
+        repository.delete(id);
     }
 
     @Override
-    public User2 save(User2 user) {
-        return userDao.save(user);
+    public UserEntity save(UserEntity user) {
+        return repository.save(user);
     }
-
-    /*
-    @Override
-    public UserDetails findByUsernameAuth(String username) throws UsernameNotFoundException {
-        User user = repository.findByUsername(username);
-        if(user == null){
-            throw new UsernameNotFoundException("Invalid username or password.");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), ((UserEntity) user).getPassword(), null);
-    }
-    */
-
-    //****************************** TEST ************************************
 
 }

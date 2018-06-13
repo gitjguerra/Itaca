@@ -4,7 +4,6 @@ import com.csi.itaca.common.exception.ApiGlobalRestExceptionHandler;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.businessLogic.validators.ChangePasswordValidator;
-import com.csi.itaca.users.model.User2;
 import com.csi.itaca.users.model.dao.UserEntity;
 import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.filters.UserFilterPaginationOrderDTO;
@@ -196,12 +195,12 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     }
 
     @RequestMapping(value="/user2", method = RequestMethod.GET)
-    public List<User2> listUser(){
+    public List<UserEntity> listUser(){
         return userManagementService.findAll();
     }
 
     @RequestMapping(value = "/user2", method = RequestMethod.POST)
-    public User2 create(@RequestBody User2 user){
+    public UserEntity create(@RequestBody UserEntity user){
         return userManagementService.save(user);
     }
 
