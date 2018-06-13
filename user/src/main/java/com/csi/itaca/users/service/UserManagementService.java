@@ -129,11 +129,7 @@ public interface UserManagementService {
      */
     List<UserLanguageDTO> getUserLanguages();
 
-    // **********************  Test ************************
-    void delete(long id);
-
     List<UserEntity> findAll();
 
-    UserEntity save(UserEntity user);
-    // **********************  Test ************************
+    Long contar();
 }

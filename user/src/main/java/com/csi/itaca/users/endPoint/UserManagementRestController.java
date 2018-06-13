@@ -199,15 +199,8 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return userManagementService.findAll();
     }
 
-    @RequestMapping(value = "/user2", method = RequestMethod.POST)
-    public UserEntity create(@RequestBody UserEntity user){
-        return userManagementService.save(user);
+    @RequestMapping(value="/contar", method = RequestMethod.GET)
+    public Long contar(){
+        return userManagementService.contar();
     }
-
-    @RequestMapping(value = "/user2/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable(value = "id") Long id){
-        userManagementService.delete(id);
-        return "success";
-    }
-
 }

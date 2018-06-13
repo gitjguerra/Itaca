@@ -335,13 +335,9 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
     }
 
     @Override
-    public void delete(long id) {
-        repository.delete(id);
-    }
-
-    @Override
-    public UserEntity save(UserEntity user) {
-        return repository.save(user);
+    @Transactional(readOnly = true)
+    public Long contar() {
+        return repository.count();
     }
 
 }
