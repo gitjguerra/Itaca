@@ -9,7 +9,7 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 
 	UserEntity findByUsernameAndPassword(String username, String password);
 
+	UserEntity findById(Long id);
+
 	UserEntity findByUsername(String username);
-        
-        UserEntity findById(Long id);
 }

@@ -1,8 +1,10 @@
 package com.csi.itaca.users.model;
 
 import com.csi.itaca.common.model.BaseModel;
+import com.csi.itaca.users.model.dao.UserEntity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Represents a user than can that can log in to the system.
@@ -71,4 +73,5 @@ public interface User extends BaseModel {
 	 * @return true if the user is blocked.
 	 */
 	boolean isBlockedUser();
+
 }

@@ -4,6 +4,8 @@ import com.csi.itaca.common.exception.ApiGlobalRestExceptionHandler;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.businessLogic.validators.ChangePasswordValidator;
+import com.csi.itaca.users.model.User2;
+import com.csi.itaca.users.model.dao.UserEntity;
 import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.filters.UserFilterPaginationOrderDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
@@ -36,7 +38,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     /** The change password validator. */
     @Autowired
     private ChangePasswordValidator changePasswordValidator;
-    
+
     /**
      * getAllUsers will provide all users in chucks of (not implemented yet)
      * URL /user
@@ -192,4 +194,21 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         counts.setUserCount(userManagementService.countUsers(userFilter));
         return new ResponseEntity(counts, HttpStatus.OK);
     }
+
+    @RequestMapping(value="/user2", method = RequestMethod.GET)
+    public List<User2> listUser(){
+        return userManagementService.findAll();
+    }
+
+    @RequestMapping(value = "/user2", method = RequestMethod.POST)
+    public User2 create(@RequestBody User2 user){
+        return userManagementService.save(user);
+    }
+
+    @RequestMapping(value = "/user2/{id}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable(value = "id") Long id){
+        userManagementService.delete(id);
+        return "success";
+    }
+
 }

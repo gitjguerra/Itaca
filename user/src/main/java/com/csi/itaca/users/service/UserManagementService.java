@@ -2,7 +2,9 @@ package com.csi.itaca.users.service;
 
 import com.csi.itaca.tools.utils.jpa.Order;
 import com.csi.itaca.tools.utils.jpa.Pagination;
+import com.csi.itaca.users.model.User2;
 import com.csi.itaca.users.model.UserConfig;
+import com.csi.itaca.users.model.dao.UserEntity;
 import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
 import org.springframework.validation.Errors;
@@ -115,7 +117,6 @@ public interface UserManagementService {
      */
     List<UserDTO> getUsers(UserSearchFilterDTO userFilter, Pagination pagination, Order order);
 
-
     /**
      * Gets a list of users.
      * @return the specified page of users.
@@ -128,4 +129,11 @@ public interface UserManagementService {
      */
     List<UserLanguageDTO> getUserLanguages();
 
+    // **********************  Test ************************
+    void delete(long id);
+
+    List<User2> findAll();
+
+    User2 save(User2 user);
+    // **********************  Test ************************
 }
