@@ -27,6 +27,11 @@ server:
   port: 8081
   contextPath: /itaca
 
+security:
+   oauth2:
+      resource:
+         filter-order: 3
+
 configurator:
   mode: classpath
   autoreload: false

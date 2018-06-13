@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    private static final String RESOURCE_ID = "ITACA";
+    private static final String RESOURCE_ID = "itaca-application";
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
@@ -20,11 +20,20 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.
-                anonymous().disable()
-                .authorizeRequests()
-                .antMatchers("/**").access("hasRole('USER')")
-                .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
+        http
+                .headers().frameOptions().disable()
+                .and().authorizeRequests()
+                .antMatchers("/oauth/token", "/oauth/authorize**", "/public").permitAll()
+                .antMatchers("/user").access("hasRole('ADMIN')")
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler())
+                .and()
+                .formLogin() // if exist form  login
+                .permitAll()
+                .and()
+                .logout()    // if exist form or process logout
+                .permitAll();
     }
 
 }
