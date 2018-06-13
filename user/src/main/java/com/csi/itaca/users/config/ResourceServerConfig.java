@@ -20,6 +20,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        /*
+        *  here configure the security zone:
+        *           the resource /oauth/token is public and not security
+        *           the resource /user is private only for admin role
+        *           any resources in the itaca are in secure zone and need use the token
+        */
         http
                 .headers().frameOptions().disable()
                 .and().authorizeRequests()
