@@ -6,7 +6,6 @@ import com.csi.itaca.tools.utils.jpa.Pagination;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.businessLogic.UserManagementBusinessLogic;
-import com.csi.itaca.users.model.User2;
 import com.csi.itaca.users.model.UserConfig;
 import com.csi.itaca.users.model.dao.UserConfigEntity;
 import com.csi.itaca.users.model.dao.UserDao;
@@ -41,7 +40,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -315,7 +313,6 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
     }
 
     //****************************** TEST ************************************
-
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = repository.findByUsername(userId);
         if(user == null){
@@ -327,5 +324,6 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
     private List<SimpleGrantedAuthority> getAuthority() {
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
+    //****************************** TEST ************************************
 
 }

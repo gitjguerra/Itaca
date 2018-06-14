@@ -17,29 +17,29 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${security.config.jwt.client_secret}")
+    @Value("${security.jwt.client_secret}")
     private String CLIENT_SECRET;
-    @Value("${security.config.jwt.client_id}")
+    @Value("${security.jwt.client_id}")
     private String CLIENT_ID;
-    @Value("${security.config.jwt.grant_type_password}")
+    @Value("${security.jwt.grant_type_password}")
     private String GRANT_TYPE_PASSWORD;
-    @Value("${security.config.jwt.grant_type_password}")
+    @Value("${security.jwt.grant_type_password}")
     private String AUTHORIZATION_CODE;
-    @Value("${security.config.jwt.refresh_token}")
+    @Value("${security.jwt.refresh_token}")
     private String REFRESH_TOKEN;
-    @Value("${security.config.jwt.implicit}")
+    @Value("${security.jwt.implicit}")
     private String IMPLICIT;
-    @Value("${security.config.jwt.scope_read}")
+    @Value("${security.jwt.scope_read}")
     private String SCOPE_READ;
-    @Value("${security.config.jwt.scope_write}")
+    @Value("${security.jwt.scope_write}")
     private String SCOPE_WRITE;
-    @Value("${security.config.jwt.trust}")
+    @Value("${security.jwt.trust}")
     private String TRUST;
-    @Value("${security.config.jwt.signin_key}")
+    @Value("${security.jwt.signin_key}")
     private String SIGNIN_KEY;
-    @Value("${security.config.jwt.access_tokn_validity_seconds}")
+    @Value("${security.jwt.access_tokn_validity_seconds}")
     private int ACCESS_TOKEN_VALIDITY_SECONDS;
-    @Value("${security.config.jwt.frefresh_tokn_validity_seconds}")
+    @Value("${security.jwt.frefresh_tokn_validity_seconds}")
     private int FREFRESH_TOKEN_VALIDITY_SECONDS;
 
     @Autowired
