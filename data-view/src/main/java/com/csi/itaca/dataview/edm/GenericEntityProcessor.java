@@ -27,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +38,8 @@ public class GenericEntityProcessor implements EntityProcessor {
 
     /** Logger */
     private static Logger log = Logger.getLogger(GenericEntityProcessor.class);
+    private static final String JSON_OK = "{\"status\": \"successful\"}";
+    private static final String JSON_FAIL = "{\"status\": \"failure\"}";
 
     private OData odata;
     private ServiceMetadata serviceMetadata;
@@ -144,6 +148,7 @@ public class GenericEntityProcessor implements EntityProcessor {
     @Override
     public void updateEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, DeserializerException, SerializerException {
         log.info("update");
+        String result = JSON_OK;
         List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
         EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
         EdmEntityType edmEntityType = edmEntitySet.getEntityType();
@@ -179,6 +184,7 @@ public class GenericEntityProcessor implements EntityProcessor {
         }
         catch (Exception e) {
             log.error("error updating entity"+e);
+            result = JSON_FAIL;
         }
         // Get the Primary columns to
         int filas;
@@ -192,6 +198,13 @@ public class GenericEntityProcessor implements EntityProcessor {
 
         String sql = "UPDATE "+edmEntityType.getName()+" SET "+fieldstoUpdate+" WHERE "+ columnName +"="+paramURI;
         jdbcTemplate.update(sql);
+
+        // Finally: configure the response object: set the body, headers and status code
+        InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+        response.setContent(stream);
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+        response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+
     }
 
     @Override
