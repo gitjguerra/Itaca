@@ -4,7 +4,6 @@ import com.csi.itaca.common.exception.ApiGlobalRestExceptionHandler;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.users.api.UserManagementServiceProxy;
 import com.csi.itaca.users.businessLogic.validators.ChangePasswordValidator;
-import com.csi.itaca.users.model.dao.UserEntity;
 import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.filters.UserFilterPaginationOrderDTO;
 import com.csi.itaca.users.model.filters.UserSearchFilterDTO;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
@@ -185,6 +185,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/count", method = RequestMethod.GET,
                     consumes = {MediaType.APPLICATION_JSON_VALUE },
                     produces = { MediaType.APPLICATION_JSON_VALUE })

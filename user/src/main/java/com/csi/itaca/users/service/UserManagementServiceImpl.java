@@ -8,7 +8,6 @@ import com.csi.itaca.users.api.ErrorConstants;
 import com.csi.itaca.users.businessLogic.UserManagementBusinessLogic;
 import com.csi.itaca.users.model.UserConfig;
 import com.csi.itaca.users.model.dao.UserConfigEntity;
-import com.csi.itaca.users.model.dao.UserDao;
 import com.csi.itaca.users.model.dao.UserLanguageEntity;
 import com.csi.itaca.users.model.dto.*;
 import com.csi.itaca.users.model.dao.UserEntity;
@@ -63,9 +62,6 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
 
     @Autowired
     private Beaner beaner;
-
-    @Autowired
-    private UserDao userDao;
 
     @PersistenceContext
     private EntityManager entityManager;
