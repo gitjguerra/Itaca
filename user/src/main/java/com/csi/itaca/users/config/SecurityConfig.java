@@ -1,6 +1,7 @@
 package com.csi.itaca.users.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -24,7 +25,8 @@ import javax.annotation.Resource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    static final String SIGNIN_KEY = "as466gf";
+    @Value("${security.jwt.signin_key}")
+    private String SIGNIN_KEY;
 
     @Resource(name = "userService")
     private UserDetailsService userDetailsService;
