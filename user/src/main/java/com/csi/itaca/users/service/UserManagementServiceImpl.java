@@ -328,16 +328,4 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
-    public List<UserEntity> findAll() {
-        List<UserEntity> list = new ArrayList<>();
-        repository.findAll();
-        return list;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long contar() {
-        return repository.count();
-    }
-
 }

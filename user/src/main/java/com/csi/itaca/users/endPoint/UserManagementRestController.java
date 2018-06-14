@@ -194,13 +194,4 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return new ResponseEntity(counts, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/user2", method = RequestMethod.GET)
-    public List<UserEntity> listUser(){
-        return userManagementService.findAll();
-    }
-
-    @RequestMapping(value="/contar", method = RequestMethod.GET)
-    public Long contar(){
-        return userManagementService.contar();
-    }
 }

@@ -129,7 +129,4 @@ public interface UserManagementService {
      */
     List<UserLanguageDTO> getUserLanguages();
 
-    List<UserEntity> findAll();
-
-    Long contar();
 }
