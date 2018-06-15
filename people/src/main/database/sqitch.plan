@@ -1,0 +1,14 @@
+%syntax-version=1.0.0
+%project=itaca-people
+%uri=http://gitlab.csi-ti.com:91/Itaca/Core/tree/master/people
+
+CreateReferenceTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateReferenceTables table
+CreatePeopleCoreTables 2018-06-12T16:55:01Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreatePeopleCoreTables table
+CreateAddressFormatTables 2018-06-12T17:20:04Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateAddressFormatTables table
+CreateFiscalRegimeAmountTables 2018-06-12T17:25:02Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateFiscalRegimeAmountTables table
+CreateFiscalRegimeTables 2018-06-12T17:33:15Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateFiscalRegimeTables table
+CreateNationalityTables 2018-06-12T17:40:20Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateNationalityTables table
+CreatePeopleBankTables 2018-06-12T17:55:32Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreatePeopleBankTables table
+CreatePeopleContactTables 2018-06-12T18:05:04Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreatePeopleContactTables table
+CreatePeopleRelationsTables 2018-06-12T18:20:33Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreatePeopleRelationsTables table
+CreatePublicPerson 2018-06-12T18:15:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreatePublicPerson table
