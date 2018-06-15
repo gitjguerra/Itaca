@@ -23,4 +23,9 @@ target/
 /.nb-gradle
 **/nbproject
 
+### Personal ignore ###
+web/src/main/java/com/csi/itaca/ItacaApplication.java
+web/src/main/resources/config/application-dev.yml
+
+
 
