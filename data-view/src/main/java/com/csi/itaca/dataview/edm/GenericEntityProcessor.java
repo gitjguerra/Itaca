@@ -1,12 +1,16 @@
 package com.csi.itaca.dataview.edm;
 
+import com.csi.itaca.common.GlobalConstants;
 import com.csi.itaca.dataview.DataViewConfiguration;
+import com.csi.itaca.dataview.model.dto.AuditDTO;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
 import com.csi.itaca.dataview.model.GenericRecord;
+import com.csi.itaca.dataview.service.DataViewManagementServiceImpl;
 import com.csi.itaca.dataview.service.DynRowMapper;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import org.apache.catalina.connector.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -28,6 +32,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +52,8 @@ public class GenericEntityProcessor implements EntityProcessor {
     private AllTabColsRepository colsService;
     @Autowired
     private DataViewConfiguration configuration;
+    @Autowired
+    DataViewManagementServiceImpl dataView;
 
     @Override
     public void init(OData odata, ServiceMetadata serviceMetadata) {
@@ -86,6 +94,17 @@ public class GenericEntityProcessor implements EntityProcessor {
             response.setContent(serializedContent.getContent());
             response.setStatusCode(HttpStatusCode.OK.getStatusCode());
             response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+                AuditDTO dto = new AuditDTO();
+                dto.setOperation(GlobalConstants.READ_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+                dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
+                dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+                // TODO: colocar el usuario actual
+                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+                dataView.auditTransaction(dto);
+            //  </editor-fold>
+
         }
     }
 
@@ -137,8 +156,25 @@ public class GenericEntityProcessor implements EntityProcessor {
             log.error("error creating entity"+e);
         }
 
-        String sql = "INSERT INTO "+edmEntityType.getName()+" ("+fields+") VALUES ("+values+")";
-        jdbcTemplate.update(sql);
+        try{
+            String sql = "INSERT INTO "+edmEntityType.getName()+" ("+fields+") VALUES ("+values+")";
+            jdbcTemplate.update(sql);
+
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+                AuditDTO dto = new AuditDTO();
+                dto.setOperation(GlobalConstants.CREATE_PROCESS);	    //  * @param operation type operation (create, update, get or delete)
+                dto.setSqlCommand(sql);	                                //  * @param sqlCommand sql transact the activity
+                dto.setTimeStamp(new Date());   					    //  * @param timeStamp the time stamp th audit.
+                // TODO: colocar el usuario actual
+                dto.setUserName(GlobalConstants.DEFAULT_USER);		    //  * @param userName the user produces activity
+                dataView.auditTransaction(dto);
+            //  </editor-fold>
+
+            // if the operation is complete response Ok
+            response.setStatusCode(Response.SC_OK);
+        }catch(Exception e) {
+            log.error("Error ", e);
+        }
     }
 
     @Override
@@ -189,9 +225,27 @@ public class GenericEntityProcessor implements EntityProcessor {
             columnName = gnericRow.get(filas).getFields().get(0).toString();
         }
 
+        try{
+            String sql = "UPDATE "+edmEntityType.getName()+" SET "+fieldstoUpdate+" WHERE "+ columnName +"="+paramURI;
+            jdbcTemplate.update(sql);
 
-        String sql = "UPDATE "+edmEntityType.getName()+" SET "+fieldstoUpdate+" WHERE "+ columnName +"="+paramURI;
-        jdbcTemplate.update(sql);
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+            AuditDTO dto = new AuditDTO();
+            dto.setOperation(GlobalConstants.UPDATE_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+            dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
+            dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+            // TODO: colocar el usuario actual
+            dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+            dataView.auditTransaction(dto);
+            //  </editor-fold>
+
+            // if the operation is complete response Ok
+            response.setStatusCode(Response.SC_OK);
+        }catch(Exception e) {
+            log.error("Error ", e);
+        }
+
+
     }
 
     @Override
@@ -207,14 +261,31 @@ public class GenericEntityProcessor implements EntityProcessor {
         int filas;
         String columnName="";
 
-
-
         for(filas = 0; filas < gnericRow.size(); filas++) {
             columnName = gnericRow.get(filas).getFields().get(0).toString();
         }
-        //TODO: R.V. The paramURI  could be more than one row.
-        String sql = "DELETE "+edmEntityType.getName()+"  WHERE "+ columnName +"="+paramURI;
-        jdbcTemplate.update(sql);
+
+        try{
+            //TODO: R.V. The paramURI  could be more than one row.
+            String sql = "DELETE "+edmEntityType.getName()+"  WHERE "+ columnName +"="+paramURI;
+            jdbcTemplate.update(sql);
+
+            //  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+            AuditDTO dto = new AuditDTO();
+            dto.setOperation(GlobalConstants.DELETE_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+            dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
+            dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+            // TODO: colocar el usuario actual
+            dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+            dataView.auditTransaction(dto);
+            //  </editor-fold>
+
+            // if the operation is complete response Ok
+            response.setStatusCode(Response.SC_OK);
+        }catch(Exception e) {
+            log.error("Error ", e);
+        }
+
     }
 
 

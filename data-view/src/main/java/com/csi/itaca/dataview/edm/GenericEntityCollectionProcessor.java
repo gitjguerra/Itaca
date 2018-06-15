@@ -1,12 +1,18 @@
 package com.csi.itaca.dataview.edm;
 
+import com.csi.itaca.common.GlobalConstants;
 import com.csi.itaca.dataview.DataViewConfiguration;
+import com.csi.itaca.dataview.model.dto.AuditDTO;
 import com.csi.itaca.dataview.service.AllTabColsRepository;
+import com.csi.itaca.dataview.service.DataViewManagementServiceImpl;
 import com.csi.itaca.dataview.service.EntityProvider;
+import com.csi.itaca.dataview.service.FilterExpressionVisitor;
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -16,15 +22,16 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
-import org.apache.olingo.server.api.uri.UriInfo;
-import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.*;
+import org.apache.olingo.server.api.uri.queryoption.*;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
+import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The Class ProductEntityCollectionProcessor.
@@ -34,12 +41,12 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
 	@Autowired
 	private AllTabColsRepository colsService;
-
 	@Autowired
 	private DataViewConfiguration configuration;
+	@Autowired
+	DataViewManagementServiceImpl dataView;
 
 	/** The odata. */
 	private OData odata;
@@ -83,17 +90,169 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 		// 2nd: fetch the data from backend for this requested EntitySetName // it has to be delivered as EntitySet object
 		EntityCollection entitySet = getData(edmEntitySet, uriInfo);
 
-		// 3rd: create a serializer based on the requested format (json)
+		// 2nd and Half: apply System Query Options
+		// modify the result set according to the query options, specified by the end user
+		List<Entity> entityList = entitySet.getEntities();
+		EntityCollection returnEntityCollection = new EntityCollection();
+
+		// 3rd if necessary: Check if filter system query option is provided and apply the expression if necessary
+		FilterOption filterOption = uriInfo.getFilterOption();
+		if(filterOption != null) {
+			// Apply $filter system query option
+			List<Entity> entityListIterator = entitySet.getEntities();
+			Iterator<Entity> entityIterator = entityListIterator.iterator();
+
+			// Evaluate the expression for each entity
+			// If the expression is evaluated to "true", keep the entity otherwise remove it from the entityList
+			while (entityIterator.hasNext()) {
+				// To evaluate the the expression, create an instance of the Filter Expression Visitor and pass
+				// the current entity to the constructor
+				Entity currentEntity = entityIterator.next();
+				Expression filterExpression = filterOption.getExpression();
+				FilterExpressionVisitor expressionVisitor = new FilterExpressionVisitor(currentEntity);
+
+				// Start evaluating the expression
+				Object visitorResult = null;
+				try {
+					visitorResult = filterExpression.accept(expressionVisitor);
+				} catch (ExpressionVisitException e) {
+					e.printStackTrace();
+				}
+
+				// The result of the filter expression must be of type Edm.Boolean
+				if(visitorResult instanceof Boolean) {
+					if(!Boolean.TRUE.equals(visitorResult)) {
+						// The expression evaluated to false (or null), so we have to remove the currentEntity from entityList
+						entityIterator.remove();
+					}
+				} else {
+					throw new ODataApplicationException("A filter expression must evaulate to type Edm.Boolean",
+							HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
+				}
+			}
+
+		}
+
+		// implement $orderby
+		OrderByOption orderByOption = uriInfo.getOrderByOption();
+		if (orderByOption != null) {
+			List<OrderByItem> orderItemList = orderByOption.getOrders();
+			final OrderByItem orderByItem = orderItemList.get(0); // we support only one
+			Expression expression = orderByItem.getExpression();
+			if(expression instanceof Member){
+				UriInfoResource resourcePath = ((Member)expression).getResourcePath();
+				UriResource uriResource = resourcePath.getUriResourceParts().get(0);
+				if (uriResource instanceof UriResourcePrimitiveProperty) {
+					EdmProperty edmProperty = ((UriResourcePrimitiveProperty)uriResource).getProperty();
+					final String sortPropertyName = edmProperty.getName();
+
+					// do the sorting for the list of entities
+					Collections.sort(entityList, new Comparator<Entity>() {
+
+						// delegate the sorting to native sorter of Integer and String
+						public int compare(Entity entity1, Entity entity2) {
+							int compareResult = 0;
+
+							if(sortPropertyName.contains("ID")){
+								Integer integer1 = (Integer) entity1.getProperty(sortPropertyName).getValue();
+								Integer integer2 = (Integer) entity2.getProperty(sortPropertyName).getValue();
+
+								compareResult = integer1.compareTo(integer2);
+							}else{
+								String propertyValue1 = (String) entity1.getProperty(sortPropertyName).getValue();
+								String propertyValue2 = (String) entity2.getProperty(sortPropertyName).getValue();
+
+								compareResult = propertyValue1.compareTo(propertyValue2);
+							}
+
+							// if 'desc' is specified in the URI, change the order
+							if(orderByItem.isDescending()){
+								return - compareResult; // just reverse order
+							}
+
+							return compareResult;
+						}
+					});
+				}
+			}
+		}
+
+		// implement $count
+			CountOption countOption = uriInfo.getCountOption();
+			if (countOption != null) {
+				boolean isCount = countOption.getValue();
+				if(isCount){
+					returnEntityCollection.setCount(entityList.size());
+				}
+			}
+
+			// implement $skip
+			SkipOption skipOption = uriInfo.getSkipOption();
+			if (skipOption != null) {
+				int skipNumber = skipOption.getValue();
+				if (skipNumber >= 0) {
+					if(skipNumber <= entityList.size()) {
+						entityList = entityList.subList(skipNumber, entityList.size());
+					} else {
+						// The client skipped all entities
+						entityList.clear();
+					}
+				} else {
+					throw new ODataApplicationException("Invalid value for $skip", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+				}
+			}
+
+			// implement $top
+			TopOption topOption = uriInfo.getTopOption();
+			if (topOption != null) {
+				int topNumber = topOption.getValue();
+				if (topNumber >= 0) {
+					if(topNumber <= entityList.size()) {
+						entityList = entityList.subList(0, topNumber);
+					}  // else the client has requested more entities than available => return what we have
+				} else {
+					throw new ODataApplicationException("Invalid value for $top", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+				}
+			}
+
+			// after applying the query options, create EntityCollection based on the reduced list
+			for(Entity entity : entityList){
+				returnEntityCollection.getEntities().add(entity);
+			}
+
+		// 4th: apply system query options
+		// Note: $select is handled by the lib, we only configure ContextURL + SerializerOptions
+		// for performance reasons, it might be necessary to implement the $select manually
+		SelectOption selectOption = uriInfo.getSelectOption();
+		// and serialize the content: transform from the EntitySet object to InputStream
+		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+		// we need the property names of the $select, in order to build the context URL
+		String selectList = odata.createUriHelper().buildContextURLSelectList(edmEntityType,
+		null, selectOption);
+		ContextURL contextUrl = ContextURL.with()
+		.entitySet(edmEntitySet)
+		.selectList(selectList)
+		.build();
+
+		// 5th: create a serializer based on the requested format (json)
 		ODataSerializer serializer = odata.createSerializer(responseFormat);
 
-		// 4th: Now serialize the content: transform from the EntitySet object to InputStream
-		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
-
+		// 6th: Now serialize the content: transform from the EntitySet object to InputStream
+		// adding the selectOption to the serializerOpts will tell the lib to do the job
 		final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
-		EntityCollectionSerializerOptions opts =
-				EntityCollectionSerializerOptions.with().id(id).contextURL(contextUrl).build();
-		SerializerResult serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
+		EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
+				.contextURL(contextUrl)
+				.select(selectOption)
+				.count(countOption)
+				.id(id)
+				.build();
+
+		SerializerResult serializedContent = null;
+		if(returnEntityCollection!=null){
+			serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, returnEntityCollection, opts);
+		}else{
+			serializedContent = serializer.entityCollection(serviceMetadata, edmEntityType, entitySet, opts);
+		}
 
 		// Finally: configure the response object: set the body, headers and status code
 		response.setContent(serializedContent.getContent());
@@ -125,6 +284,17 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 				break;
 			}
 		}
+
+		//  <editor-fold defaultstate="collapsed" desc="*** Audit ***">
+			AuditDTO dto = new AuditDTO();
+			dto.setOperation(GlobalConstants.READ_PROCESS);	//  * @param operation type operation (create, update, get or delete)
+			dto.setSqlCommand("Get data: " + uriInfo.getUriResourceParts());	//  * @param sqlCommand sql transact the activity
+			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
+			// TODO: colocar el usuario actual
+			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+			dataView.auditTransaction(dto);
+		//  </editor-fold>
+
 		return entityCollection;
 	}
 

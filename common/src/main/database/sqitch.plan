@@ -1,5 +1,5 @@
 %syntax-version=1.0.0
 %project=itaca-common
-%uri=http://gitlab.csi-ti.com:91/Itaca/Core/tree/master/common
+%uri=http://srvgit.srvcsi.com/Itaca/Core/tree/master/common
 
 CreateCountryTable 2018-06-06T16:43:57Z 'Brian <'bboothe@csi-ti.com'> # Create the country table
