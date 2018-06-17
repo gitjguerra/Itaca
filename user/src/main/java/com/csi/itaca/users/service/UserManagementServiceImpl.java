@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,14 +40,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service(value = "userService")
 public class UserManagementServiceImpl implements UserManagementService, UserDetailsService {
 
-   private static final Logger logger = LoggerFactory.getLogger(UserManagementServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserManagementServiceImpl.class);
 
     @Autowired
     private UserRepository repository;
@@ -72,16 +71,15 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         UserEntity user = repository.findByUsernameAndPassword(username, password);
 
         if (user == null) {
-            logger.info("User ("+username+"). Login attempt failed - Invalid credentials.");
+            logger.info("User (" + username + "). Login attempt failed - Invalid credentials.");
             errTracking.reject(ErrorConstants.VALIDATION_INVALID_CREDENTIALS);
-        }
-        else if (!userManBusiness.isUserAuthorisedToLogOn(user)) {
-            logger.info("User ("+username+"). Login attempt failed - Not authorised.");
+        } else if (!userManBusiness.isUserAuthorisedToLogOn(user)) {
+            logger.info("User (" + username + "). Login attempt failed - Not authorised.");
             errTracking.reject(ErrorConstants.VALIDATION_USER_NOT_AUTHORISED);
         }
 
         if (!errTracking.hasErrors()) {
-            logger.info("User ("+username+"). Login successful.");
+            logger.info("User (" + username + "). Login successful.");
         }
         return beaner.transform(user, UserDTO.class);
     }
@@ -91,7 +89,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         User user = getUserEntity(username, errTracking);
         return beaner.transform(user, UserDTO.class);
     }
-    
+
     @Override
     public UserDTO getUserById(Long id, Errors errTracking) {
         User user = getUserEntity(id, errTracking);
@@ -106,7 +104,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         }
         return user;
     }
-    
+
     @Transactional(readOnly = true)
     private UserEntity getUserEntity(Long id, Errors errTracking) {
         UserEntity user = repository.findById(id);
@@ -115,32 +113,31 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         }
         return user;
     }
-    
+
     @Override
     @Transactional
     public UserDTO createUpdateUser(UserDTO userToSave, Errors errTracking) {
-        
+
         if (userToSave.isActiveUser()) {
-             userToSave.setCompanyEndDate(null);
+            userToSave.setCompanyEndDate(null);
         } else {
             userToSave.setCompanyEndDate(LocalDate.now());
             userToSave.setBlockedUser(true);
         }
         // TODO: better to implement a create user & update user methods.
         UserEntity userToSaveEntity = beaner.transform(userToSave, UserEntity.class);
-        
+
         if (userToSaveEntity.isBlockedUser()) {
-                userToSaveEntity.setBlockedDate(LocalDate.now());
+            userToSaveEntity.setBlockedDate(LocalDate.now());
         } else {
-                userToSaveEntity.setBlockedDate(null);
+            userToSaveEntity.setBlockedDate(null);
         }
-         
+
         if (userToSave.getId() == null) {
             // create
             userToSaveEntity.setCompanyStartDate(LocalDate.now());
             entityManager.persist(userToSaveEntity);
-        }
-        else {
+        } else {
             //update the entered fields
             userToSaveEntity.setUsername(userToSave.getUsername());
             userToSaveEntity.setFirstName(userToSave.getFirstName());
@@ -152,7 +149,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
             userToSaveEntity.setUserLanguage(userLanguageEntity);
             repository.save(userToSaveEntity);
         }
-        
+
         return beaner.transform(userToSaveEntity, UserDTO.class);
     }
 
@@ -163,7 +160,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
             repository.delete(user.getId());
         }
     }
-    
+
     @Override
     public void deleteUserById(Long id, Errors errTracking) {
         User user = getUserEntity(id, errTracking);
@@ -171,7 +168,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
             repository.delete(user.getId());
         }
     }
-    
+
     @Override
     @Transactional
     public Boolean changePassword(ChangePasswordDTO passwordChange, Errors errTracking) {
@@ -187,8 +184,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
             this.entityManager.createQuery(update).executeUpdate();
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -208,8 +204,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
             entityManager.createQuery(update).executeUpdate();
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -230,7 +225,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
 
         UserEntity user = getUserEntity(username, errTracking);
 
-        if (user!= null) {
+        if (user != null) {
             // where config.user_id = userId
             Specification<UserConfigEntity> spec = (root, query, cb) -> {
                 return cb.equal(root.get(UserConfigEntity.USER_TABLE).get(UserEntity.ID), user.getId());
@@ -260,7 +255,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
     @Override
     @Transactional(readOnly = true)
     public List<UserDTO> getUsers() {
-        return getUsers(null,null,null);
+        return getUsers(null, null, null);
     }
 
     @Override
@@ -275,8 +270,7 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         PageRequest pageRequest = JpaUtils.buildPageRequest(pagination);
         if (pageRequest != null) {
             usersResultList = repository.findAll(spec, pageRequest).getContent();
-        }
-        else {
+        } else {
             usersResultList = repository.findAll(spec);
         }
 
@@ -292,13 +286,14 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
 
     /**
      * Constructs a filter specification based on the supplied filter.
+     *
      * @param userFilter filter to apply.
      * @return Specification of the user filter.
      */
     private static Specification<UserEntity> buildUserFilterSpec(UserSearchFilterDTO userFilter) {
         Specification<UserEntity> spec = (root, query, cb) -> {
             Predicate p = null;
-            if (userFilter!=null) {
+            if (userFilter != null) {
                 p = cb.like(cb.lower(root.get(UserEntity.USERNAME)), "%" + userFilter.getUsername().toLowerCase() + "%");
                 p = cb.and(p, cb.like(cb.lower(root.get(UserEntity.DESCRIPTION)), "%" + userFilter.getDescription().toLowerCase() + "%"));
                 p = cb.and(p, cb.equal(root.get(UserEntity.BLOCKED), userFilter.getBlockedUser()));
@@ -308,18 +303,29 @@ public class UserManagementServiceImpl implements UserManagementService, UserDet
         return spec;
     }
 
-    //****************************** TEST ************************************
+    /**
+     * Service is used for take information of user for login (Role)
+     * @param userId
+     * @return new org.springframework.security.core.userdetails.User(user.getUsername(), ((UserEntity) user).getPassword(), ROLE_AUTHORITY)
+     * @throws UsernameNotFoundException
+     */
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = repository.findByUsername(userId);
         if(user == null){
             throw new UsernameNotFoundException("Invalid username or password.");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), ((UserEntity) user).getPassword(), getAuthority());
+        String ROLE = user.getRoleDesc();
+        List<SimpleGrantedAuthority> ROLE_AUTHORITY = Arrays.asList(new SimpleGrantedAuthority(ROLE));
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), ((UserEntity) user).getPassword(), ROLE_AUTHORITY);
     }
 
+    // ************* Deprecated ***********************
     private List<SimpleGrantedAuthority> getAuthority() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        // Extract the user role on the database
+        //*******************************************************************************
+        String ROLE = "ROLE_ADMIN"; //"ROLE_ADMIN"; //"ROLE_X";
+        return Arrays.asList(new SimpleGrantedAuthority(ROLE));
     }
-    //****************************** TEST ************************************
 
 }
