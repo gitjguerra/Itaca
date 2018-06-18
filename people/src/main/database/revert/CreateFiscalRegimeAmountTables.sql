@@ -1,0 +1,6 @@
+DROP TABLE  per_regime CASCADE CONSTRAINTS PURGE;
+DROP TABLE per_regime_amounts CASCADE CONSTRAINTS PURGE;
+
+
+DROP SEQUENCE sper_regime;
+DROP SEQUENCE sper_regime_amounts;
