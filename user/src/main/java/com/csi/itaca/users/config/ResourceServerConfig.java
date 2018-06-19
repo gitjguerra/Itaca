@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
 @Configuration
 @EnableResourceServer
@@ -14,6 +15,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Value("${security.oauth2.resource.resource_id}")
     private String RESOURCE_ID;
+
+    @Value("${security.enable-csrf}")
+    private boolean csrfEnabled;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
@@ -41,7 +45,15 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout()    // if exist form or process logout
-                .permitAll();
+                .permitAll()
+                .and().csrf().and().httpBasic().disable()
+                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class);
+
+        if(!csrfEnabled)
+        {
+            http.csrf().disable();
+        }
+
     }
 
 }

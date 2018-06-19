@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
 import javax.annotation.Resource;
 
@@ -27,6 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${security.jwt.signin_key}")
     private String SIGNIN_KEY;
+
+    @Value("${security.enable-csrf}")
+    private boolean csrfEnabled;
 
     @Resource(name = "userService")
     private UserDetailsService userDetailsService;
@@ -57,7 +61,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+                .permitAll()
+                .and().csrf().and().httpBasic().disable()
+                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class);
+
+        if(!csrfEnabled)
+        {
+            http.csrf().disable();
+        }
+
     }
 
     @Bean
