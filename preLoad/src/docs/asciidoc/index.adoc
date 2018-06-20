@@ -1,0 +1,10 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:docinfo: shared
+:toclevels: 4
+:sectlinks:
+
+= Itaca preLoad Management RESTful API Guide.
+
