@@ -1,0 +1,7 @@
+
+description = 'Load management module'
+dependencies {
+  compile project(':config')
+  compile project(':common')
+  compile project(':tools')
+}
