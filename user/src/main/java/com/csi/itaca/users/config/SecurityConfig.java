@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and().csrf().and().httpBasic().disable()
                 .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class);
-
+        
         if(!csrfEnabled)
         {
             http.csrf().disable();

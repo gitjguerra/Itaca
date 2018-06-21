@@ -28,6 +28,8 @@ import java.util.List;
  * RESTful interface for the user management service.
  */
 @RestController
+//@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/user")
 public class UserManagementRestController extends ItacaBaseRestController implements UserManagementServiceProxy {
 
