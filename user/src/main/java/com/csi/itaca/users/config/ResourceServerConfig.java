@@ -2,6 +2,7 @@ package com.csi.itaca.users.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -35,6 +36,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .headers().frameOptions().disable()
                 .and().authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() //agregado para prueba
                 .antMatchers("/oauth/token", "/oauth/authorize**", "/public").permitAll()
                 .antMatchers("/user").access("hasRole('ADMIN')")
                 .anyRequest().authenticated()
