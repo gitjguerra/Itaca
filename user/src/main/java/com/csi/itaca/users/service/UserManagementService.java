@@ -115,7 +115,6 @@ public interface UserManagementService {
      */
     List<UserDTO> getUsers(UserSearchFilterDTO userFilter, Pagination pagination, Order order);
 
-
     /**
      * Gets a list of users.
      * @return the specified page of users.

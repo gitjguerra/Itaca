@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     /** The change password validator. */
     @Autowired
     private ChangePasswordValidator changePasswordValidator;
-    
+
     /**
      * getAllUsers will provide all users in chucks of (not implemented yet)
      * URL /user
@@ -184,6 +185,7 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/count", method = RequestMethod.GET,
                     consumes = {MediaType.APPLICATION_JSON_VALUE },
                     produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -192,4 +194,5 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         counts.setUserCount(userManagementService.countUsers(userFilter));
         return new ResponseEntity(counts, HttpStatus.OK);
     }
+
 }

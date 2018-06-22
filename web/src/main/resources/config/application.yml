@@ -27,6 +27,25 @@ server:
   port: 8081
   contextPath: /itaca
 
+security:
+  jwt:
+    client_secret: $2a$04$e/c1/RfsWuThaWFCrcCuJeoyvwCV0URN/6Pn9ZFlrtIWaU/vj/BfG
+    client_id: itaca-client
+    grant_type_password: password
+    authorization_code: authorization_code
+    refresh_token: refresh_token
+    implicit: implicit
+    scope_read: scope_read
+    scope_write: scope_write
+    trust: trust
+    signin_key: as466gf
+    access_tokn_validity_seconds: 1200
+    frefresh_tokn_validity_seconds: 3600
+  oauth2:
+    resource:
+      filter-order: 3
+      resource_id: itaca-application
+
 configurator:
   mode: classpath
   autoreload: false
