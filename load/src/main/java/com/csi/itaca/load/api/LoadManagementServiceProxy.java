@@ -13,9 +13,8 @@ public interface LoadManagementServiceProxy {
 
     /**
      * Gets a load id process.
-     * @param id the person id.
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity getLoad(Long id);
+    void handle() throws Exception;
 
 }
