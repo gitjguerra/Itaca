@@ -11,7 +11,7 @@ public interface LoadManagementServiceProxy {
     // Parameters...
     String ID_PARAM                 = "id";
 
-    String ENTITY_LOAD                   = "/load";
+    String ENTITY_LOAD              = "/load";
     String LOAD                     = ENTITY_LOAD + "/launchjob";
 
     /**

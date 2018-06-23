@@ -9,7 +9,8 @@ import org.springframework.batch.item.ItemWriter;
 public class Writer implements ItemWriter<String> {
  
     Logger logger = LoggerFactory.getLogger(this.getClass());
-     
+
+    //TODO: Añadir acá la escritura en base de datos de los valores leídos
     @Override
     public void write(List<? extends String> messages) throws Exception {
         for(String msg : messages){

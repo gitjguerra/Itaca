@@ -9,7 +9,8 @@ import org.springframework.batch.item.UnexpectedInputException;
  
  
 public class Reader implements ItemReader<String>{
- 
+
+    //TODO: Añadir acá la lectura de archivos, es necesario discriminar por el type csv, xml, txt, excel
     private String[] messages = {"prueba itaca", "row1", "row2", "row3", "row4"};
      
     private int count=0;
