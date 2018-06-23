@@ -11,10 +11,13 @@ public interface LoadManagementServiceProxy {
     // Parameters...
     String ID_PARAM                 = "id";
 
+    String ENTITY_LOAD                   = "/load";
+    String LOAD                     = ENTITY_LOAD + "/launchjob";
+
     /**
      * Gets a load id process.
      * @return a response body containing the requested load json object.
      */
-    void handle() throws Exception;
+    ResponseEntity handle() throws Exception;
 
 }

@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableResourceServer
@@ -42,6 +43,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .logout()    // if exist form or process logout
                 .permitAll();
+
+        // *** Cookies for token ***
+        //http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        //http.sessionManagement().sessionFixation().newSession();
     }
 
 }
