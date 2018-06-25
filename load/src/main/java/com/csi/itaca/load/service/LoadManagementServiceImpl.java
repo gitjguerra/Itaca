@@ -21,13 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.util.Date;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -35,6 +33,7 @@ import java.util.Date;
 @Configuration
 public class LoadManagementServiceImpl implements LoadManagementService {
 
+    // the file are on application.yml --- this is correct ????
     @Value("${batch.process.csvFile}")
     private String CSV_FILE;
 
@@ -55,7 +54,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
 
-    // begin reader, writer, and processor
+    // begin reader, writer, and processor file
     public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
         FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
         reader.setResource(new ClassPathResource(CSV_FILE));
@@ -82,15 +81,15 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         csvPreloadWriter.setDataSource(dataSource);
         return csvPreloadWriter;
     }
-    // finish reader, writer, and processor
+    // finish reader, writer, and processor file
 
     @Override
     public Step csvFileToDatabaseStep() {
-        return stepBuilderFactory.get("csvFileToDatabaseStep")
+        return stepBuilderFactory.get("csvFileToDatabaseStep")     // Process for csv, for each file type there are one
                 .<PreloadDataDTO, PreloadDataDTO>chunk(1)
-                .reader(csvPreloadReader())
-                .processor(csvPreloadProcessor())
-                .writer(csvPreloadWriter())
+                .reader(csvPreloadReader())                        // Line/Row of the file
+                .processor(csvPreloadProcessor())                  // cvs processor for validate
+                .writer(csvPreloadWriter())                        // write to db process
                 .build();
     }
 
@@ -100,14 +99,21 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         // TODO: Process preload
             // Preparation:
             //  1.1 Get a list of row types associated to this load
-                    //???
+                    // Where take the data ????   example: load_process_id ???
+                        //select ld_preload_row_type.* from ld_load_process,
+                        //ld_preload_file, ld_preload_row_type where
+                        //ld_load_process = [above load_process_id]
+                        //ld_load_process.preload_definition_id = ld_preload_file.
+                        //preload_definition_id &
+                        //ld_preload_file.preload_file_id=ld_preload_row_type.preload_file
+
             // Process file:
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
             //  2.4. For each row in the file (loop):
-            //          a) Insert new row in to ld_preload_data table with row loaded from the file.
-            //          b) Determine row type. (find [found row type id])
+            //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
+            //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
             //              i. For each ld_preload_field_row_type found in preparation check identifier_column_no and identifier_value. When there is a match row type is found.
             //          c) Find all field definitions based on found row type found above:
             //              i. select * from ld_preload_field_definition where preload_row_type_id = [found row type id]
