@@ -10,6 +10,7 @@ public class PreloadProcessor implements ItemProcessor<PreloadDataDTO, PreloadDa
 
     private static final Logger log = LoggerFactory.getLogger(PreloadProcessor.class);
 
+    // TODO: Verified and validation business rules batch process
     @Override
     public PreloadDataDTO process(final PreloadDataDTO PreloadDataDTO) throws Exception {
         final Long preloadDataId = PreloadDataDTO.getPreloadDataId();

@@ -63,12 +63,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
 
     public JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter() {
-        JdbcBatchItemWriter<PreloadDataDTO> csvAnimeWriter = new JdbcBatchItemWriter<PreloadDataDTO>();
-        csvAnimeWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
-        csvAnimeWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
+        JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter = new JdbcBatchItemWriter<PreloadDataDTO>();
+        csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
+        csvPreloadWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
                 "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
-        csvAnimeWriter.setDataSource(dataSource);
-        return csvAnimeWriter;
+        csvPreloadWriter.setDataSource(dataSource);
+        return csvPreloadWriter;
     }
     // finish reader, writer, and processor
 
