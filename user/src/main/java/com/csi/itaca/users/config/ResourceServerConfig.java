@@ -36,7 +36,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .headers().frameOptions().disable()
                 .and().authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() //agregado para prueba
                 .antMatchers("/oauth/token", "/oauth/authorize**", "/public").permitAll()
                 .antMatchers("/user").access("hasRole('ADMIN')")
                 .anyRequest().authenticated()
