@@ -21,10 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+// **** temporary change for datasource of itaca ****
 import javax.sql.DataSource;
 
 @SuppressWarnings("unchecked")
@@ -34,8 +36,8 @@ import javax.sql.DataSource;
 public class LoadManagementServiceImpl implements LoadManagementService {
 
     // the file are on application.yml --- this is correct ????
-    @Value("${batch.process.csvFile}")
-    private String CSV_FILE;
+    @Value("${batch.process.file}")
+    private String LOAD_FILE;
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -49,15 +51,20 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    // **** temporary change for datasource of itaca ****
     @Autowired
     public DataSource dataSource;
 
+    final static String csvFileType     = "csvFileToDatabaseStep";
+    final static String txtFileType     = "txtFileToDatabaseStep";
+    final static String excelFileType   = "excelFileToDatabaseStep";
+    final static String xmlFileType     = "xmlFileToDatabaseStep";
     final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
 
     // begin reader, writer, and processor file
     public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
         FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
-        reader.setResource(new ClassPathResource(CSV_FILE));
+        reader.setResource(new ClassPathResource(LOAD_FILE));
         reader.setLineMapper(new DefaultLineMapper<PreloadDataDTO>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 setNames(new String[] { "preloadDataId", "loadFileId", "loadedSuccessfully", "rowType", "lineNumber", "dataCol1", "dataCol2", "dataCol3" });
@@ -78,23 +85,14 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
         csvPreloadWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
                 "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
+        // **** Change for Datasource of itaca ****
         csvPreloadWriter.setDataSource(dataSource);
         return csvPreloadWriter;
     }
     // finish reader, writer, and processor file
 
     @Override
-    public Step csvFileToDatabaseStep() {
-        return stepBuilderFactory.get("csvFileToDatabaseStep")     // Process for csv, for each file type there are one
-                .<PreloadDataDTO, PreloadDataDTO>chunk(1)
-                .reader(csvPreloadReader())                        // Line/Row of the file
-                .processor(csvPreloadProcessor())                  // cvs processor for validate
-                .writer(csvPreloadWriter())                        // write to db process
-                .build();
-    }
-
-    @Override
-    public String csvFileToDatabaseJob(JobCompletionNotificationListener listener) {
+    public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener) {
 
         // TODO: Process preload
             // Preparation:
@@ -111,7 +109,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-            //  2.4. For each row in the file (loop):
+                String fileType = "csv";    // ***** is temporary while we find out where to get the data *****
+        //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
             //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
             //              i. For each ld_preload_field_row_type found in preparation check identifier_column_no and identifier_value. When there is a match row type is found.
@@ -134,14 +133,38 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //      • 2.4.c) Stop the process if the lnd_load_process.user_load_cancel is not null.
             //      • 2.6) Set status code to -2 if preload completed with errors.
 
-        jobBuilderFactory.get("csvFileToDatabaseJob")
+        String typeJob = "";
+        Step typeStep = null;
+        switch(fileType){
+            case "csv":
+                typeJob = csvFileType;
+                typeStep = csvFileToDatabaseStep();
+                break;
+            case "txt":
+                typeJob = txtFileType;
+                typeStep = txtFileToDatabaseStep();
+                break;
+            case "excel":
+                typeJob = excelFileType;
+                typeStep = excelFileToDatabaseStep();
+                break;
+            case "xml":
+                typeJob = xmlFileType;
+                typeStep = xmlFileToDatabaseStep();
+                break;
+            default:
+                logger.error("*** unrecognized format ****");
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        jobBuilderFactory.get(typeJob)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(csvFileToDatabaseStep())
+                .flow(typeStep)
                 .end()
                 .build();
 
-            // Process post validation (Intra File & file to file):
+        // Process post validation (Intra File & file to file):
                 // ◦ Find all data rows where fields relate to other fields:
                 // ▪ Select ld_preload_data.* from ld_preload_data where ld_preload_data.row_type_id in = (
                     // ◦ Get a list of row types associated to this load:
@@ -152,6 +175,29 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                             //• Select ld_preload_data.* from ld_preload_data, ld_preload_field_definition where ld_preload_data.row_type = ld_preload_field_definition.preload_row_type_id & ld_preload_field_definition.preload_field_definition_id = << rel_field_definition_id>>
                             //• Load related definition(rel_field_definition_id):
                                 // Select * from ld_preload_field_definition where preload_field_definition_id = <<rel_field_definition_id>>
-        return "Done";
+        return HttpStatus.OK;
+    }
+
+    @Override
+    public Step csvFileToDatabaseStep() {
+        return stepBuilderFactory.get(csvFileType)     // Process for csv, for each file type there are one
+                .<PreloadDataDTO, PreloadDataDTO>chunk(1)
+                .reader(csvPreloadReader())                        // Line/Row of the file
+                .processor(csvPreloadProcessor())                  // cvs processor for validate
+                .writer(csvPreloadWriter())                        // write to db process
+                .build();
+    }
+
+    // TODO: process others file types
+    public Step txtFileToDatabaseStep() {
+        return null;
+    }
+    @Override
+    public Step excelFileToDatabaseStep() {
+        return null;
+    }
+    @Override
+    public Step xmlFileToDatabaseStep() {
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package com.csi.itaca.load.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
@@ -28,6 +29,14 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    private Date startTime, stopTime;
+
+    @Override
+    public void beforeJob(JobExecution jobExecution) {
+        startTime = new Date();
+        System.out.println("Job starts at :"+startTime);
+    }
+
     @Override
     public void afterJob(JobExecution jobExecution) {
         if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
@@ -46,6 +55,8 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                 log.info("Discovered <" + PreloadDataDTO + "> in the database.");
             }
 
+            stopTime = new Date();
+            System.out.println("Job stops at :"+stopTime);
         }
     }
 

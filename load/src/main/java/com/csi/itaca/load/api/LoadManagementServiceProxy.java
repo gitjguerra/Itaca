@@ -18,6 +18,6 @@ public interface LoadManagementServiceProxy {
      * Gets a load id process.
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity handle() throws Exception;
+    ResponseEntity preloadData() throws Exception;
 
 }
