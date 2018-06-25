@@ -7,6 +7,6 @@ public interface LoadManagementService {
 
     Step csvFileToDatabaseStep();
 
-    Job csvFileToDatabaseJob(JobCompletionNotificationListener listener);
+    String csvFileToDatabaseJob(JobCompletionNotificationListener listener);
 
 }

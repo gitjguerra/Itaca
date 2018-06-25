@@ -94,7 +94,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
 
     @Override
-    public Job csvFileToDatabaseJob(JobCompletionNotificationListener listener) {
+    public String csvFileToDatabaseJob(JobCompletionNotificationListener listener) {
 
         // TODO: Process preload
             // Preparation:
@@ -134,11 +134,24 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //      • 2.4.c) Stop the process if the lnd_load_process.user_load_cancel is not null.
             //      • 2.6) Set status code to -2 if preload completed with errors.
 
-        return jobBuilderFactory.get("csvFileToDatabaseJob")
+        jobBuilderFactory.get("csvFileToDatabaseJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(csvFileToDatabaseStep())
                 .end()
                 .build();
+
+            // Process post validation (Intra File & file to file):
+                // ◦ Find all data rows where fields relate to other fields:
+                // ▪ Select ld_preload_data.* from ld_preload_data where ld_preload_data.row_type_id in = (
+                    // ◦ Get a list of row types associated to this load:
+                    // ▪ select ld_preload_row_type.preload_row_type_id from ld_load_process, ld_preload_file, ld_preload_row_type where ld_load_process = [above load_process_id] ld_load_process.preload_definition_id = ld_preload_file. preload_definition_id & ld_preload_file.preload_file_id=ld_preload_row_type.preload_file)
+                // ◦ For each data row find all field definitions that using Intra file or file to file relationship:
+                    // ▪ Select ld_preload_field_definition.* from ld_preload_field_definition where preload_row_type_id = [row_type from data row] and (rel_type = 3 or rel_type = 1)
+                        //▪ For each field definition find all data rows that is using the ID from rel_field_definition_id field definition:
+                            //• Select ld_preload_data.* from ld_preload_data, ld_preload_field_definition where ld_preload_data.row_type = ld_preload_field_definition.preload_row_type_id & ld_preload_field_definition.preload_field_definition_id = << rel_field_definition_id>>
+                            //• Load related definition(rel_field_definition_id):
+                                // Select * from ld_preload_field_definition where preload_field_definition_id = <<rel_field_definition_id>>
+        return "Done";
     }
 }
