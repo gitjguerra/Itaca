@@ -4,7 +4,6 @@ import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
 import org.apache.log4j.Logger;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -19,6 +18,7 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+// TODO:  **** temporary change for datasource of itaca ****
 // **** temporary change for datasource of itaca ****
 import javax.sql.DataSource;
 
@@ -51,7 +53,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    // **** temporary change for datasource of itaca ****
+    // TODO:  **** temporary change for datasource of itaca ****
     @Autowired
     public DataSource dataSource;
 
@@ -85,6 +87,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
         csvPreloadWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
                 "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
+        // TODO:  **** temporary change for datasource of itaca ****
         // **** Change for Datasource of itaca ****
         csvPreloadWriter.setDataSource(dataSource);
         return csvPreloadWriter;
@@ -92,6 +95,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // finish reader, writer, and processor file
 
     @Override
+    @Bean
     public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener) {
 
         // TODO: Process preload
@@ -109,7 +113,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-                String fileType = "csv";    // ***** is temporary while we find out where to get the data *****
+                // TODO:  // ***** is temporary while we find out where to get the data *****
+                String fileType = "csv";
         //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
             //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****

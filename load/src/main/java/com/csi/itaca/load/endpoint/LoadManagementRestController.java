@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,19 +25,18 @@ import static com.csi.itaca.load.api.LoadManagementServiceProxy.ENTITY_LOAD;
 @RequestMapping(value = ENTITY_LOAD)
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
+    /*
     @Autowired
     JobLauncher jobLauncher;
-
     @Autowired
     Job job;
+    */
 
     @Autowired
     private LoadManagementService loadManagementService;
 
-    @RequestMapping("/")
-    public String welcome() {//Welcome page, non-rest
-        return "Welcome to RestTemplate Example.";
-    }
+    @Autowired
+    private JobCompletionNotificationListener jobCompletionNotificationListener;
 
     @Override
     @RequestMapping(value = LOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,11 +45,8 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         Logger logger = LoggerFactory.getLogger(this.getClass());
         try {
 
-            /*
-            JdbcTemplate jdbcTemplate;
-            JobCompletionNotificationListener listener = new JobCompletionNotificationListener(jdbcTemplate);
-            success = loadManagementService.fileToDatabaseJob(listener);
-            */
+            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener);
+
             /*
             JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
                     .toJobParameters();
