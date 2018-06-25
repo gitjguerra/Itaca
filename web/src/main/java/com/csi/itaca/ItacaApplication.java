@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
 @ServletComponentScan
@@ -26,7 +29,18 @@ public class ItacaApplication {
 	public Configurator configurator() {
 		return new ConfiguratorImpl();
 	}
-        
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedHeaders("Access-Control-Allow-Origin");
+                registry.addMapping("/**").allowedMethods("GET", "PUT", "POST", "GET", "OPTIONS");
+                registry.addMapping("/**").allowCredentials(true);
+            }
+        };
+    }
+
         @Bean
         public Filter CORSFilter() {
             return new CORSFilter();

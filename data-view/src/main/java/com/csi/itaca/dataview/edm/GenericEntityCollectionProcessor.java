@@ -29,6 +29,8 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -290,8 +292,8 @@ public class GenericEntityCollectionProcessor implements EntityCollectionProcess
 			dto.setOperation(GlobalConstants.READ_PROCESS);	//  * @param operation type operation (create, update, get or delete)
 			dto.setSqlCommand("Get data: " + uriInfo.getUriResourceParts());	//  * @param sqlCommand sql transact the activity
 			dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-			// TODO: colocar el usuario actual
-			dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+			String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			dto.setUserName(user);		//  * @param userName the user produces activity
 			dataView.auditTransaction(dto);
 		//  </editor-fold>
 

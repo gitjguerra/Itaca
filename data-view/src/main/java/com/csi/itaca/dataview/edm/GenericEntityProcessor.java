@@ -29,12 +29,13 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -104,8 +105,8 @@ public class GenericEntityProcessor implements EntityProcessor {
                 dto.setOperation(GlobalConstants.READ_PROCESS);	//  * @param operation type operation (create, update, get or delete)
                 dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
                 dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-                // TODO: colocar el usuario actual
-                dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+                String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                dto.setUserName(user);		//  * @param userName the user produces activity
                 dataView.auditTransaction(dto);
             //  </editor-fold>
 
@@ -169,8 +170,8 @@ public class GenericEntityProcessor implements EntityProcessor {
                 dto.setOperation(GlobalConstants.CREATE_PROCESS);	    //  * @param operation type operation (create, update, get or delete)
                 dto.setSqlCommand(sql);	                                //  * @param sqlCommand sql transact the activity
                 dto.setTimeStamp(new Date());   					    //  * @param timeStamp the time stamp th audit.
-                // TODO: colocar el usuario actual
-                dto.setUserName(GlobalConstants.DEFAULT_USER);		    //  * @param userName the user produces activity
+                String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                dto.setUserName(user);		//  * @param userName the user produces activity
                 dataView.auditTransaction(dto);
             //  </editor-fold>
 
@@ -240,8 +241,8 @@ public class GenericEntityProcessor implements EntityProcessor {
             dto.setOperation(GlobalConstants.UPDATE_PROCESS);	//  * @param operation type operation (create, update, get or delete)
             dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
             dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-            // TODO: colocar el usuario actual
-            dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+            String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            dto.setUserName(user);		//  * @param userName the user produces activity
             dataView.auditTransaction(dto);
             //  </editor-fold>
 
@@ -282,8 +283,8 @@ public class GenericEntityProcessor implements EntityProcessor {
             dto.setOperation(GlobalConstants.DELETE_PROCESS);	//  * @param operation type operation (create, update, get or delete)
             dto.setSqlCommand(sql);	//  * @param sqlCommand sql transact the activity
             dto.setTimeStamp(new Date());   					//  * @param timeStamp the time stamp th audit.
-            // TODO: colocar el usuario actual
-            dto.setUserName(GlobalConstants.DEFAULT_USER);		//  * @param userName the user produces activity
+            String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            dto.setUserName(user);		//  * @param userName the user produces activity
             dataView.auditTransaction(dto);
             //  </editor-fold>
 
