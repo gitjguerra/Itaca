@@ -1,9 +1,8 @@
 package com.csi.itaca.load.model.dto;
 
-import com.csi.itaca.load.model.PreloaData;
+import com.csi.itaca.load.model.PreloadData;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -14,7 +13,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Robert on 19/06/2018.
  */
-public class PreloadDataDTO implements PreloaData {
+public class PreloadDataDTO implements PreloadData {
 
     private Long preloadDataId;
 

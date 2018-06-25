@@ -16,6 +16,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 @Configuration
 public class LoadManagementServiceImpl implements LoadManagementService {
+
+    @Value("${batch.process.csvFile}")
+    private String CSV_FILE;
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -42,7 +46,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // begin reader, writer, and processor
     public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
         FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
-        reader.setResource(new ClassPathResource("itaca_example.csv"));
+        reader.setResource(new ClassPathResource(CSV_FILE));
         reader.setLineMapper(new DefaultLineMapper<PreloadDataDTO>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 setNames(new String[] { "preloadDataId", "loadFileId", "loadedSuccessfully", "rowType", "lineNumber", "dataCol1", "dataCol2", "dataCol3" });
@@ -61,7 +65,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     public JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter() {
         JdbcBatchItemWriter<PreloadDataDTO> csvAnimeWriter = new JdbcBatchItemWriter<PreloadDataDTO>();
         csvAnimeWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
-        csvAnimeWriter.setSql("INSERT INTO animes (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
+        csvAnimeWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
                 "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
         csvAnimeWriter.setDataSource(dataSource);
         return csvAnimeWriter;

@@ -50,6 +50,10 @@ configurator:
   mode: classpath
   autoreload: false
 
+batch:
+  process:
+    csvFile: itaca_example.csv
+
 tableName: PROJECTS, DIR_COUNTRY
 uiDisplayNameKey:
 uiDescriptionkey:
