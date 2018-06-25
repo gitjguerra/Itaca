@@ -1,6 +1,8 @@
 package com.csi.itaca.load.service;
 
+import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.repository.LoadFileRepository;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,9 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import java.util.Date;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -37,6 +43,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
+
+    @Autowired
+    private LoadFileRepository loadFileRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public DataSource dataSource;
@@ -88,11 +100,11 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         // TODO: Process preload
             // Preparation:
             //  1.1 Get a list of row types associated to this load
-
+                    //???
             // Process file:
-            //  2.1. Set ld_load_file.preload_start_time to the current time.
-            //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.
-            //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT)
+            //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
+            //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
+            //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
             //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.
             //          b) Determine row type. (find [found row type id])
