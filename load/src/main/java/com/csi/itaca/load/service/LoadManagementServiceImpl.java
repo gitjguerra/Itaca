@@ -42,7 +42,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // begin reader, writer, and processor
     public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
         FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
-        reader.setResource(new ClassPathResource("animescsv.csv"));
+        reader.setResource(new ClassPathResource("itaca_example.csv"));
         reader.setLineMapper(new DefaultLineMapper<PreloadDataDTO>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 setNames(new String[] { "preloadDataId", "loadFileId", "loadedSuccessfully", "rowType", "lineNumber", "dataCol1", "dataCol2", "dataCol3" });
