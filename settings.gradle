@@ -17,4 +17,6 @@ project(':tools').projectDir = "$rootDir/tools" as File
 project(':data-view').projectDir = "$rootDir/data-view" as File
 project(':preLoad').projectDir = "$rootDir/preLoad" as File
 include 'load'
+include 'userLoad'
+findProject(':userLoad')?.name = 'UserLoad'
 

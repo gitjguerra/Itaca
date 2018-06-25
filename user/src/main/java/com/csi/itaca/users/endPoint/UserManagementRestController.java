@@ -19,6 +19,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
+import com.csi.itaca.users.model.dto.MessageDTO;
+
 
 /**
  * RESTful interface for the user management service.
@@ -37,6 +39,13 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     /** The change password validator. */
     @Autowired
     private ChangePasswordValidator changePasswordValidator;
+
+    @RequestMapping("/hello/{player}")
+    public MessageDTO message(@PathVariable String player) {//REST Endpoint.
+
+        MessageDTO msg = new MessageDTO(player, "Hello " + player);
+        return msg;
+    }
 
     /**
      * getAllUsers will provide all users in chucks of (not implemented yet)
