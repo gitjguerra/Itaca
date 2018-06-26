@@ -50,11 +50,7 @@ configurator:
   mode: classpath
   autoreload: false
 
-batch:
-  process:
-    csvFile: itaca_example.csv
-
-tableName: PROJECTS, DIR_COUNTRY
+tableName: PROJECTS, DIR_COUNTRY, PER_BANK
 uiDisplayNameKey:
 uiDescriptionkey:
 foreignTables:

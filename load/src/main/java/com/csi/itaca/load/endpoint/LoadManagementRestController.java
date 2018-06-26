@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.csi.itaca.load.api.LoadManagementServiceProxy.ENTITY_LOAD;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 
 @SuppressWarnings("unchecked")
 @RestController
-@RequestMapping(value = ENTITY_LOAD)
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
     /*

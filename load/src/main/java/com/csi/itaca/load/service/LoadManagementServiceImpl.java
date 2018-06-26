@@ -37,10 +37,6 @@ import javax.sql.DataSource;
 @Configuration
 public class LoadManagementServiceImpl implements LoadManagementService {
 
-    // the file are on application.yml --- this is correct ????
-    @Value("${batch.process.file}")
-    private String LOAD_FILE;
-
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
 
@@ -66,7 +62,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // begin reader, writer, and processor file
     public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
         FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
-        reader.setResource(new ClassPathResource(LOAD_FILE));
+        reader.setResource(new ClassPathResource("itaca_example.csv"));
         reader.setLineMapper(new DefaultLineMapper<PreloadDataDTO>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 setNames(new String[] { "preloadDataId", "loadFileId", "loadedSuccessfully", "rowType", "lineNumber", "dataCol1", "dataCol2", "dataCol3" });
@@ -100,6 +96,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
         // TODO: Process preload
             // Preparation:
+
+                // ***** UPLOAD done previously *****
+
             //  1.1 Get a list of row types associated to this load
                     // Where take the data ????   example: load_process_id ???
         

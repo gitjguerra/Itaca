@@ -6,7 +6,7 @@ include ':people'
 include ':config'
 include ':tools'
 include ':data-view'
-include ':preLoad'
+include ':load'
 
 project(':common').projectDir = "$rootDir/common" as File
 project(':user').projectDir = "$rootDir/user" as File
@@ -15,8 +15,5 @@ project(':people').projectDir = "$rootDir/people" as File
 project(':config').projectDir = "$rootDir/config" as File
 project(':tools').projectDir = "$rootDir/tools" as File
 project(':data-view').projectDir = "$rootDir/data-view" as File
-project(':preLoad').projectDir = "$rootDir/preLoad" as File
-include 'load'
-include 'userLoad'
-findProject(':userLoad')?.name = 'UserLoad'
+project(':load').projectDir = "$rootDir/load" as File
 
