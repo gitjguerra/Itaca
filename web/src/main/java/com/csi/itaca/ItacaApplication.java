@@ -2,7 +2,6 @@ package com.csi.itaca;
 
 import com.csi.itaca.config.model.Configurator;
 import com.csi.itaca.config.tools.ConfiguratorImpl;
-import config.modules.CORSFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,22 +28,6 @@ public class ItacaApplication {
 	public Configurator configurator() {
 		return new ConfiguratorImpl();
 	}
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedHeaders("Access-Control-Allow-Origin");
-                registry.addMapping("/**").allowedMethods("GET", "PUT", "POST", "GET", "OPTIONS");
-                registry.addMapping("/**").allowCredentials(true);
-            }
-        };
-    }
-
-        @Bean
-        public Filter CORSFilter() {
-            return new CORSFilter();
-        }
 
     @PostConstruct
     private void registerModules() {
