@@ -94,20 +94,20 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
     // finish reader, writer, and processor file
 
-    @Override
     @Bean
+    @Override
     public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener) {
 
         // TODO: Process preload
             // Preparation:
             //  1.1 Get a list of row types associated to this load
                     // Where take the data ????   example: load_process_id ???
+        
                         //select ld_preload_row_type.* from ld_load_process,
-                        //ld_preload_file, ld_preload_row_type where
-                        //ld_load_process = [above load_process_id]
-                        //ld_load_process.preload_definition_id = ld_preload_file.
-                        //preload_definition_id &
-                        //ld_preload_file.preload_file_id=ld_preload_row_type.preload_file
+                        //ld_preload_file, ld_preload_row_type
+                        //WHERE ld_load_process.LOAD_PROCESS_ID = 1
+                        //AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id
+                        //AND ld_preload_file.preload_file_id = ld_preload_row_type.PRELOAD_FILE_ID
 
             // Process file:
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
