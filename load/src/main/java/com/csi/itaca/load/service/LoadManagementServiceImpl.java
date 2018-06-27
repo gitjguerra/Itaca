@@ -74,10 +74,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
 
     @Override
-    public Resource loadFile(String filename, Path rootLocation) {
+    public Resource loadFile(File file) {
         try {
-            Path file = rootLocation.resolve(filename);
-            Resource resource = new UrlResource(file.toUri());
+            Resource resource = new UrlResource(file.toURI());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
@@ -134,7 +133,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // finish reader, writer, and processor file
 
     @Override
-    public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation) {
+    public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener, File file) {
 
         // TODO: Process preload
             // Preparation:
@@ -154,7 +153,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-                String fileType = getFileExtension(rootLocation.getFileName().toFile());
+                String fileType = getFileExtension(file);
         //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
             //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****

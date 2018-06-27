@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
     private final String fileUploadDirectory = "C:\\temp";
+    private final File fileUpload = new File("C:\\temp\\prueba_load.csv");
     private final Path rootLocation = Paths.get(fileUploadDirectory);
 
     final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(LoadManagementRestController.class);
@@ -82,7 +84,8 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @RequestMapping(value = LOAD_GET_FILE_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-        Resource file = loadManagementService.loadFile(filename, rootLocation);
+        File origin_file = new File(fileUpload.toString());
+        Resource file = loadManagementService.loadFile(origin_file);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .body(file);
@@ -95,7 +98,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         Logger logger = LoggerFactory.getLogger(this.getClass());
         try {
 
-            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation);
+            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, fileUpload);
 
             /*
             JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
