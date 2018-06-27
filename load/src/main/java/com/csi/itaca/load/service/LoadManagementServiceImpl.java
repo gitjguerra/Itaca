@@ -2,6 +2,7 @@ package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
+import com.csi.itaca.load.utils.Constants;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -21,6 +22,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +39,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Date;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -54,6 +61,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    public Constants constants;
+
     // TODO:  **** temporary change for datasource of itaca ****
     @Autowired
     public DataSource dataSource;
@@ -63,11 +73,41 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     private final static String excelFileType   = "excelFileToDatabaseStep";
     private final static String xmlFileType     = "xmlFileToDatabaseStep";
     private final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
+    private String query = "";
+
+    private void createBatchProcess(String name, long size, String checksum, java.sql.Date preload_star_time, java.sql.Date loadStartTime, String status_code, String status_message) {
+        // Create a LD_LOAD_PROCESS
+        query = "INSERT INTO ITACA.LD_LOAD_PROCESS (USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(0, 0, '', 0);";
+
+        // Create a LD_LOAD_FILE
+        query = "INSERT INTO ITACA.LD_LOAD_FILE (FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?);";
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        // Armored with prepare statament to avoid hacker attacks
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, name);
+                statement.setLong(2, size);
+                statement.setString(3, checksum);
+                statement.setDate(4, preload_star_time);
+                statement.setDate(5, loadStartTime);
+                statement.setString(6, status_code);
+                statement.setString(7, status_message);
+                return statement;
+            }
+        });
+    }
 
     @Override
     public void store(MultipartFile file, Path rootLocation) {
         try {
             Files.copy(file.getInputStream(), rootLocation.resolve(file.getOriginalFilename()));
+
+            Date date = new Date();
+            long time = date.getTime();
+
+            // create batch process
+            createBatchProcess(file.getName(), file.getSize(), "", new java.sql.Date(date.getTime()), new java.sql.Date(date.getTime()), constants.getUploadingInProgress(), "Upload process");
         } catch (Exception e) {
             throw new RuntimeException("FAIL!");
         }
