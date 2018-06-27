@@ -31,11 +31,11 @@ import javax.persistence.PersistenceContext;
 // TODO:  **** temporary change for datasource of itaca ****
 // **** temporary change for datasource of itaca ****
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.commons.io.FilenameUtils;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -133,7 +133,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
     // finish reader, writer, and processor file
 
-    @Bean
     @Override
     public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation) {
 
@@ -155,7 +154,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-                String extension = FilenameUtils.getExtension(rootLocation.getFileName().toString());
+                String fileType = getFileExtension(rootLocation.getFileName().toFile());
         //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
             //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
@@ -181,7 +180,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
         String typeJob = "";
         Step typeStep = null;
-        switch(extension){
+        switch(fileType){
             case "csv":
                 typeJob = csvFileType;
                 typeStep = csvFileToDatabaseStep();
@@ -245,5 +244,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Override
     public Step xmlFileToDatabaseStep() {
         return null;
+    }
+
+    private static String getFileExtension(File file) {
+        String fileName = file.getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+            return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
     }
 }

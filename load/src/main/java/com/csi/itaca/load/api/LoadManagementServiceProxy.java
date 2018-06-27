@@ -16,6 +16,7 @@ public interface LoadManagementServiceProxy {
     String LOAD_FILE                = ENTITY_LOAD + "/upload";
     String LOAD_GET_FILE            = ENTITY_LOAD + "/getallfiles";
     String LOAD_GET_FILE_ID         = ENTITY_LOAD + "/files/{filename:.+}";
+
     /**
      * Gets a load id process.
      * @return a response body containing the requested load json object.

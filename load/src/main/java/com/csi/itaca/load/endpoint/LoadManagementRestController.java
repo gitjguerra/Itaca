@@ -85,7 +85,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
                 .body(file);
     }
 
-    @Override
+    //@Override
     @RequestMapping(value = LOAD_DATA_PRELOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity preloadData() throws Exception {
         HttpStatus success = null;
