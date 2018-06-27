@@ -24,6 +24,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,12 +77,28 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     private String query = "";
 
     private void createBatchProcess(String name, long size, String checksum, java.sql.Date preload_star_time, java.sql.Date loadStartTime, String status_code, String status_message) {
+
+        //TODO: agregar el id de la definicion
+        Long preload_definition_id = 1L;
+
+        String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
         // Create a LD_LOAD_PROCESS
-        query = "INSERT INTO ITACA.LD_LOAD_PROCESS (USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(0, 0, '', 0);";
+        query = "INSERT INTO ITACA.LD_LOAD_PROCESS (USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?);";
+        // Armored with prepare statament to avoid hacker attacks
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, user);
+                statement.setDate(2, preload_star_time);
+                statement.setLong(3, preload_definition_id);
+                return statement;
+            }
+        });
 
         // Create a LD_LOAD_FILE
         query = "INSERT INTO ITACA.LD_LOAD_FILE (FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?);";
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         // Armored with prepare statament to avoid hacker attacks
         jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -108,6 +125,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
             // create batch process
             createBatchProcess(file.getName(), file.getSize(), "", new java.sql.Date(date.getTime()), new java.sql.Date(date.getTime()), constants.getUploadingInProgress(), "Upload process");
+
         } catch (Exception e) {
             throw new RuntimeException("FAIL!");
         }

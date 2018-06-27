@@ -1,8 +1,10 @@
 package com.csi.itaca.load.utils;
 
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
+@Component
 public class Constants {
 
     private static final String LOAD_COMPLETED_WITH_ERRORS = "-3";
