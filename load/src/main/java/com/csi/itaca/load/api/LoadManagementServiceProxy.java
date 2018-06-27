@@ -1,6 +1,11 @@
 package com.csi.itaca.load.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+
+import java.util.List;
 
 /**
  * Load core management service proxy interface.
@@ -16,6 +21,24 @@ public interface LoadManagementServiceProxy {
     String LOAD_FILE                = ENTITY_LOAD + "/upload";
     String LOAD_GET_FILE            = ENTITY_LOAD + "/getallfiles";
     String LOAD_GET_FILE_ID         = ENTITY_LOAD + "/files/{filename:.+}";
+
+    /**
+     * Upload process.
+     * @return a response body containing the requested load json object.
+     */
+    ResponseEntity<String> handleFileUpload(MultipartFile file);
+
+    /**
+     * Gets a file upload.
+     * @return a response body containing the requested load json object.
+     */
+    ResponseEntity<List<String>> getListFiles(Model model);
+
+    /**
+     * Gets a file upload by filename.
+     * @return a response body containing the requested load json object.
+     */
+    ResponseEntity<Resource> getFile(String filename);
 
     /**
      * Gets a load id process.

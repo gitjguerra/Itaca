@@ -50,6 +50,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @Autowired
     private JobCompletionNotificationListener jobCompletionNotificationListener;
 
+    @Override
     @RequestMapping(value = LOAD_FILE, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
         String message = "";
@@ -66,6 +67,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         }
     }
 
+    @Override
     @RequestMapping(value = LOAD_GET_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getListFiles(Model model) {
         List<String> fileNames = files
@@ -76,6 +78,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         return ResponseEntity.ok().body(fileNames);
     }
 
+    @Override
     @RequestMapping(value = LOAD_GET_FILE_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
@@ -85,7 +88,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
                 .body(file);
     }
 
-    //@Override
+    @Override
     @RequestMapping(value = LOAD_DATA_PRELOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity preloadData() throws Exception {
         HttpStatus success = null;
