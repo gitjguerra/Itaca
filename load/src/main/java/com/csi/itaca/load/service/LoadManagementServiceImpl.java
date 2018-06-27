@@ -17,10 +17,10 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -34,8 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-// TODO:  **** temporary change for datasource of itaca ****
-// **** temporary change for datasource of itaca ****
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +65,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Autowired
     public Constants constants;
 
-    // TODO:  **** temporary change for datasource of itaca ****
+    // TODO:  **** temporary change for datasource of itaca JPA or not ??? ****
     @Autowired
     public DataSource dataSource;
 
@@ -78,19 +76,22 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     private final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
     private String query = "";
 
-    private void createBatchProcess(String name, long size, String checksum, java.sql.Date preload_star_time, java.sql.Date loadStartTime, String status_code, String status_message) {
+    private boolean createBatchProcess(MultipartFile file, String checksum, java.sql.Date preload_star_time, java.sql.Date loadStartTime, String status_code, String status_message) {
 
+        boolean exito = true;
         String user = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        String fileType = getFileExtension((File)file);
 
-        //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_DEFINITION ***">
+        try{
+            //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_DEFINITION ***">
             KeyHolder keyHolder = new GeneratedKeyHolder();
-            query = "INSERT INTO LD_PRELOAD_DEFINITION (NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING, AUTO_ENABLED) VALUES(?, ?, ?, ?, ?, ?, ?, ?,?);";
+            query = "INSERT INTO LD_PRELOAD_DEFINITION (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING) values (ld_preload_definition_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?)";
             // Armored with prepare statament to avoid hacker attacks
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query, new String[] {"PRELOAD_DEFINITION_ID"});
-                    statement.setString(1, name);
+                    statement.setString(1, file.getName());
                     statement.setString(2, "DEFINITION FILE");
                     statement.setString(3, "MAX_PRELOAD_LOW_ERRORS");
                     statement.setString(4, "MAX_PRELOAD_MEDIUM_ERRORS");
@@ -98,16 +99,15 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                     statement.setString(6, "LOAD_IF_PRELOAD_OK");
                     statement.setString(7, "AUTO_LOAD_DIRECTORY");
                     statement.setString(8, "AUTO_CRON_SCHEDULING");
-                    statement.setString(9, "AUTO_ENABLED");
                     return statement;
                 }
             },keyHolder);
 
             // Identificador del registro insertado en definitions
             Long preload_definition_id = keyHolder.getKey().longValue();
-        //  </editor-fold>
+            //  </editor-fold>
 
-        //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FILE ***">
+            //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FILE ***">
             keyHolder = new GeneratedKeyHolder();
             query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION, FILENAME_FORMAT_REGEX) VALUES(?, ?, ?, ?);";
             // Armored with prepare statament to avoid hacker attacks
@@ -115,7 +115,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query, new String[] {"PRELOAD_FILE_ID"});
                     statement.setLong(1, preload_definition_id);
-                    statement.setString(2, name);
+                    statement.setString(2, file.getName());
                     statement.setString(3, "DEFINITION FILE");
                     statement.setString(4, "");
                     return statement;
@@ -124,17 +124,17 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
             // Identificador del registro insertado en preload_file
             Long preload_file_id = keyHolder.getKey().longValue();
-        //  </editor-fold>
+            //  </editor-fold>
 
-        //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_ROW_TYPE ***">
+            //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_ROW_TYPE ***">
             keyHolder = new GeneratedKeyHolder();
-        query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?, ?);";
+            query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?, ?);";
             // Armored with prepare statament to avoid hacker attacks
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query, new String[] {"PRELOAD_ROW_TYPE_ID"});
                     statement.setLong(1, preload_file_id);
-                    statement.setString(2, name);
+                    statement.setString(2, file.getName());
                     statement.setString(3, "PRELOAD FILE");
                     statement.setLong(4, 1L);
                     statement.setString(5, "IDENTIFIER_VALUE");
@@ -144,79 +144,110 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
             // Identificador del registro insertado en preload_row_type
             Long preload_row_type_id = keyHolder.getKey().longValue();
-        //  </editor-fold>
+            //  </editor-fold>
 
-        //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FIELD_DEFINITION ***">
-        query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FIELD_DEFINITION ***">
+            query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             // Armored with prepare statament to avoid hacker attacks
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setLong(1, preload_row_type_id);
                     statement.setLong(2, 1L);
-                    statement.setString(3, name);
+                    statement.setString(3, file.getName());
                     statement.setString(4, "PRELOAD FIELD DEFINITION");
                     statement.setString(5, "PRELOAD FIELD TYPE");
-                    // TODO: PRELOAD_FIELD_TYPE_ID  de donde sale ???
-                    statement.setLong(6, 1L);
+                    // find file Type
+                    Long fileTypeId = findFileType(fileType);
+                    statement.setLong(6, fileTypeId);
                     statement.setString(7, "REGEX");
                     statement.setString(8, "REQUIRED");
                     statement.setLong(9, 1L);
-                    // TODO: REL_FIELD_DEFINITION_ID  de donde sale ???
+
+                    // find file definition   ***  How take a relation ****         ?????
+                    //Long relFileDefinitionId = findRelFileDefinition(fileType);
                     statement.setLong(9, 1L);
+
                     statement.setString(7, "REL_DB_TABLE_NAME");
                     statement.setString(8, "REL_DB_FIELD_NAME");
                     statement.setLong(9, 0);
                     return statement;
                 }
             });
-        //  </editor-fold>
+            //  </editor-fold>
 
+            //TODO: ***** IMPLEMENTACION DE LOAD PROCESS *****
+            //  <editor-fold defaultstate="collapsed" desc="*** Create a LOAD PROCESS ***">
+            /*
+            // Create a LD_LOAD_PROCESS
+            query = "INSERT INTO LD_LOAD_PROCESS (USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?);";
+            // Armored with prepare statament to avoid hacker attacks
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, user);
+                    statement.setDate(2, preload_star_time);
+                    statement.setLong(3, preload_definition_id);
+                    return statement;
+                }
+            });
+            // Create a LD_LOAD_FILE
+            query = "INSERT INTO LD_LOAD_FILE (FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?);";
+            // Armored with prepare statament to avoid hacker attacks
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, name);
+                    statement.setLong(2, size);
+                    statement.setString(3, checksum);
+                    statement.setDate(4, preload_star_time);
+                    statement.setDate(5, loadStartTime);
+                    statement.setString(6, status_code);
+                    statement.setString(7, status_message);
+                    return statement;
+                }
+            });
+            */
+            //  </editor-fold>
+        }catch(Exception e){
+            logger.error("fail");
+            exito = false;
+        }
 
-        //TODO: ***** IMPLEMENTACION DE LOAD PROCESS *****
-        /*
-        // Create a LD_LOAD_PROCESS
-        query = "INSERT INTO LD_LOAD_PROCESS (USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?);";
-        // Armored with prepare statament to avoid hacker attacks
-        jdbcTemplate.update(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1, user);
-                statement.setDate(2, preload_star_time);
-                statement.setLong(3, preload_definition_id);
-                return statement;
+        return exito;
+    }
+
+    // find File_Type_Id
+    private Long findFileType(String fileType) {
+        Long id = 0L;
+        try {
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            String sql = "SELECT id FROM LD_PRELOAD_FIELD_TYPE WHERE name ='"+ fileType + "'";
+            id = jdbcTemplate.queryForObject(sql, Long.class);
+        }
+        catch (EmptyResultDataAccessException e) {
+            if(logger.isDebugEnabled()){
+                logger.debug(e);
             }
-        });
-        // Create a LD_LOAD_FILE
-        query = "INSERT INTO LD_LOAD_FILE (FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?);";
-        // Armored with prepare statament to avoid hacker attacks
-        jdbcTemplate.update(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1, name);
-                statement.setLong(2, size);
-                statement.setString(3, checksum);
-                statement.setDate(4, preload_star_time);
-                statement.setDate(5, loadStartTime);
-                statement.setString(6, status_code);
-                statement.setString(7, status_message);
-                return statement;
-            }
-        });
-        */
+            return 0L;
+        }
+        return id;
     }
 
     @Override
     public void store(MultipartFile file, Path rootLocation) {
         try {
-            Files.copy(file.getInputStream(), rootLocation.resolve(file.getOriginalFilename()));
-
+            boolean exito = true;
             Date date = new Date();
             long time = date.getTime();
-
             // create batch process
-            createBatchProcess(file.getName(), file.getSize(), "", new java.sql.Date(date.getTime()), new java.sql.Date(date.getTime()), constants.getUploadingInProgress(), "Upload process");
+            exito = createBatchProcess(file, "", new java.sql.Date(date.getTime()), new java.sql.Date(date.getTime()), constants.getUploadingInProgress(), "Upload process");
 
+            if(exito){
+                Files.copy(file.getInputStream(), rootLocation.resolve(file.getOriginalFilename()));
+            }else{
+                logger.info("Upload file not complete");
+            }
         } catch (Exception e) {
             throw new RuntimeException("FAIL!");
         }
@@ -302,7 +333,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-                String fileType = getFileExtension(file);
+        String fileType = getFileExtension(file);
         //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
             //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
