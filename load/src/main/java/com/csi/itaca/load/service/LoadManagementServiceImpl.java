@@ -1,6 +1,5 @@
 package com.csi.itaca.load.service;
 
-import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
 import org.apache.log4j.Logger;
@@ -17,12 +16,14 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,11 +31,15 @@ import javax.persistence.PersistenceContext;
 // TODO:  **** temporary change for datasource of itaca ****
 // **** temporary change for datasource of itaca ****
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.apache.commons.io.FilenameUtils;
 
 @SuppressWarnings("unchecked")
 @Service
 @EnableBatchProcessing
-@Configuration
 public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
@@ -53,11 +58,49 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Autowired
     public DataSource dataSource;
 
-    final static String csvFileType     = "csvFileToDatabaseStep";
-    final static String txtFileType     = "txtFileToDatabaseStep";
-    final static String excelFileType   = "excelFileToDatabaseStep";
-    final static String xmlFileType     = "xmlFileToDatabaseStep";
-    final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
+    private final static String csvFileType     = "csvFileToDatabaseStep";
+    private final static String txtFileType     = "txtFileToDatabaseStep";
+    private final static String excelFileType   = "excelFileToDatabaseStep";
+    private final static String xmlFileType     = "xmlFileToDatabaseStep";
+    private final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
+
+    @Override
+    public void store(MultipartFile file, Path rootLocation) {
+        try {
+            Files.copy(file.getInputStream(), rootLocation.resolve(file.getOriginalFilename()));
+        } catch (Exception e) {
+            throw new RuntimeException("FAIL!");
+        }
+    }
+
+    @Override
+    public Resource loadFile(String filename, Path rootLocation) {
+        try {
+            Path file = rootLocation.resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("FAIL!");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("FAIL!");
+        }
+    }
+
+    @Override
+    public void deleteAll(Path rootLocation) {
+        FileSystemUtils.deleteRecursively(rootLocation.toFile());
+    }
+
+    @Override
+    public void init(Path rootLocation) {
+        try {
+            Files.createDirectory(rootLocation);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not initialize storage!");
+        }
+    }
 
     // begin reader, writer, and processor file
     public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
@@ -92,7 +135,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Bean
     @Override
-    public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener) {
+    public HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation) {
 
         // TODO: Process preload
             // Preparation:
@@ -112,8 +155,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
             //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
             //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-                // TODO:  // ***** is temporary while we find out where to get the data *****
-                String fileType = "csv";
+                String extension = FilenameUtils.getExtension(rootLocation.getFileName().toString());
         //  2.4. For each row in the file (loop):
             //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
             //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
@@ -139,7 +181,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
         String typeJob = "";
         Step typeStep = null;
-        switch(fileType){
+        switch(extension){
             case "csv":
                 typeJob = csvFileType;
                 typeStep = csvFileToDatabaseStep();

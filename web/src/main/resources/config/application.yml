@@ -50,6 +50,9 @@ configurator:
   mode: classpath
   autoreload: false
 
+batch:
+   fileUploadDirectory: "C:\temp"
+
 tableName: PROJECTS, DIR_COUNTRY, PER_BANK
 uiDisplayNameKey:
 uiDescriptionkey:
