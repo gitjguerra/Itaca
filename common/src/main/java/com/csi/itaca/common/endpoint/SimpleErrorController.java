@@ -1,19 +1,18 @@
 package com.csi.itaca.common.endpoint;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.context.request.WebRequest;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/error")
+@ConditionalOnClass(ErrorController.class)
 public class SimpleErrorController implements ErrorController {
 
     private final ErrorAttributes errorAttributes;
@@ -30,7 +29,7 @@ public class SimpleErrorController implements ErrorController {
     }
 
     @RequestMapping
-    public Map<String, Object> error(HttpServletRequest aRequest){
+    public Map<String, Object> error(WebRequest aRequest){
         Map<String, Object> body = getErrorAttributes(aRequest,getTraceParameter(aRequest));
         String trace = (String) body.get("trace");
         if(trace != null){
@@ -40,7 +39,7 @@ public class SimpleErrorController implements ErrorController {
         return body;
     }
 
-    private boolean getTraceParameter(HttpServletRequest request) {
+    private boolean getTraceParameter(WebRequest request) {
         String parameter = request.getParameter("trace");
         if (parameter == null) {
             return false;
@@ -48,8 +47,7 @@ public class SimpleErrorController implements ErrorController {
         return !"false".equals(parameter.toLowerCase());
     }
 
-    private Map<String, Object> getErrorAttributes(HttpServletRequest aRequest, boolean includeStackTrace) {
-        RequestAttributes requestAttributes = new ServletRequestAttributes(aRequest);
-        return errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
+    private Map<String, Object> getErrorAttributes(WebRequest aRequest, boolean includeStackTrace) {
+        return errorAttributes.getErrorAttributes(aRequest, includeStackTrace);
     }
 }

@@ -19,7 +19,7 @@ subprojects {
   }
 
   project.ext {
-    springbootVersion = '1.5.11.RELEASE'
+    springbootVersion = '1.5.14.RELEASE'
   }
 
   /* Deploys all the sql file to the DB if they have not already been deployed. */
