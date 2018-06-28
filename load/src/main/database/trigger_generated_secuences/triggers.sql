@@ -23,5 +23,5 @@ create trigger LD_PRELOAD_FIELD_DEF_trigger
 before insert on LD_PRELOAD_FIELD_DEFINITION
 for each row
 begin
-    select LD_PRELOAD_FIELD_DEF_SEQ.nextval into :new.LD_PRELOAD_FIELD_DEF_ID from dual;
+    select LD_PRELOAD_FIELD_DEF_SEQ.nextval into :new.LD_PRELOAD_FIELD_DEFINITION_ID from dual;
 end;
