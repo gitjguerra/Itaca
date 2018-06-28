@@ -17,7 +17,7 @@ public interface LoadManagementService {
     void init(Path rootLocation);
 
     // Job of batch process
-    HttpStatus fileToDatabaseJob(JobCompletionNotificationListener listener, File file);
+    boolean fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file);
     // Steps of batch process
     Step csvFileToDatabaseStep();
     Step txtFileToDatabaseStep();
