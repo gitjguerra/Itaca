@@ -21,6 +21,11 @@ public class Constants {
     private static final String LOADING_IN_PROGRESS_WITH_ERRORS = "301";
     private static final String LOAD_SUCCESSFUL = "302";
     private static final String LOAD__USER_CANCELLED = "303";
+    private static final String EMPTY = "";
+
+    private static final String ERROR_SEVERITY_LOW = "1";
+    private static final String ERROR_SEVERITY_MEDIUM = "2";
+    private static final String ERROR_SEVERITY_HIGH = "3";
 
     public static String getLoadCompletedWithErrors() {
         return LOAD_COMPLETED_WITH_ERRORS;
@@ -74,7 +79,16 @@ public class Constants {
         return LOAD_SUCCESSFUL;
     }
 
-    public static String getLoad_userCancelled() {
-        return LOAD__USER_CANCELLED;
+    public static String getErrorSeverityLow() {
+        return ERROR_SEVERITY_LOW;
     }
+
+    public static String getErrorSeverityMedium() {
+        return ERROR_SEVERITY_MEDIUM;
+    }
+
+    public static String getErrorSeverityHigh() {
+        return ERROR_SEVERITY_HIGH;
+    }
+
 }
