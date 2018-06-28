@@ -3,6 +3,7 @@ CREATE TABLE LD_PRELOAD_DATA
   PRELOAD_DATA_ID      NUMBER                   NOT NULL,
   LOAD_FILE_ID         NUMBER,
   LOADED_SUCCESSFULLY  VARCHAR2(1 BYTE),
+  created_timestamp    DATE,
   ROW_TYPE             NUMBER,
   LINE_NUMBER          NUMBER,
   DATA_COL1            VARCHAR2(1024 BYTE),
