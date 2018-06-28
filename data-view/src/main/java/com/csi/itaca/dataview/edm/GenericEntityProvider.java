@@ -110,16 +110,16 @@ public class GenericEntityProvider implements EntityProvider {
 		{
 			String typeCol=allColsList.get(i).getDATA_TYPE();
 			if (typeCol.equals("NUMBER")){
-				columnList.add(new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName().getName()));
+				columnList.add(new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName().getName()).setMaxLength(allColsList.get(i).getDATA_LENGTH().intValue()).setPrecision(allColsList.get(i).getDATA_PRECISION().intValue()));
 			}
 			else if (typeCol.equals("VARCHAR2")){
-				columnList.add( new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().getName()));
+				columnList.add( new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().getName()).setMaxLength(allColsList.get(i).getDATA_LENGTH().intValue()));
 			}
 			else if (typeCol.equals("DATE")){
 				columnList.add( new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.Date.getFullQualifiedName().getName()));
 			}
 			else if (typeCol.equals("CHAR")){
-				columnList.add( new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().getName()));
+				columnList.add( new CsdlProperty().setName(allColsList.get(i).getCOLUMN_NAME()).setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().getName()).setMaxLength(allColsList.get(i).getDATA_LENGTH().intValue()));
 			}
 		}
 
