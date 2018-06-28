@@ -184,7 +184,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_DEFINITION ***">
                 KeyHolder keyHolder = new GeneratedKeyHolder();
-                query = "INSERT INTO LD_PRELOAD_DEFINITION (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING, AUTO_ENABLED) values (ld_preload_definition_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, utl_raw.cast_to_raw('" + file.getName() + "'))";
+                query = "INSERT INTO LD_PRELOAD_DEFINITION (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING, AUTO_ENABLED) values (ld_preload_definition_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 // Armored with prepare statament to avoid hacker attacks
                 jdbcTemplate.update(new PreparedStatementCreator() {
                     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -197,6 +197,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                         statement.setString(6, "LOAD_IF_PRELOAD_OK");
                         statement.setString(7, "AUTO_LOAD_DIRECTORY");
                         statement.setString(8, "AUTO_CRON_SCHEDULING");
+                        statement.setString(9, Constants.getEMPTY());
                         return statement;
                     }
                 }, keyHolder);

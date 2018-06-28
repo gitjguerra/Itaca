@@ -91,4 +91,11 @@ public class Constants {
         return ERROR_SEVERITY_HIGH;
     }
 
+    public static String getLoad_userCancelled() {
+        return LOAD__USER_CANCELLED;
+    }
+
+    public static String getEMPTY() {
+        return EMPTY;
+    }
 }
