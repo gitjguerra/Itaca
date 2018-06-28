@@ -41,13 +41,16 @@ import javax.persistence.PersistenceContext;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 
 @SuppressWarnings("unchecked")
@@ -89,11 +92,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Override
     public void store(MultipartFile multi, Path rootLocation) {
+        File file = null;
         try {
             boolean exito = true;
             Date date = new Date();
             long time = date.getTime();
-            File file = multipartToFile(multi, multi.getOriginalFilename());
+            file = multipartToFile(multi, multi.getOriginalFilename());
 
             // validate file extension
             exito = validateFileExt((File) file);
@@ -101,8 +105,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             if(exito){
                 Files.copy(multi.getInputStream(), rootLocation.resolve(multi.getOriginalFilename()));
 
-                // initial batch process
-                exito = fileToDatabaseJob(jobCompletionNotificationListener, (File) file);
             }else{
                 logger.info("process fail because the file not have a valid format");
             }
@@ -110,6 +112,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         } catch (Exception e) {
             throw new RuntimeException("FAIL!");
         }
+        // initial batch process
+        boolean exito = fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, (File) file);
     }
 
     @Override
@@ -172,10 +176,10 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // finish reader, writer, and processor file
 
     @Override
-    public boolean fileToDatabaseJob(JobCompletionNotificationListener listener, File file) {
+    public boolean fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file) {
 
         // TODO: Process preload
-        boolean exito = true;
+        boolean exito = false;
         String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         String fileType = getFileExtension((File) file);
@@ -183,55 +187,46 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         try {
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_DEFINITION ***">
-                KeyHolder keyHolder = new GeneratedKeyHolder();
-                query = "INSERT INTO LD_PRELOAD_DEFINITION (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING, AUTO_ENABLED) values (ld_preload_definition_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                // Armored with prepare statament to avoid hacker attacks
+                query = "INSERT INTO LD_PRELOAD_DEFINITION (NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING) values (?, ?, ?, ?, ?, ?, ?, ?)";
                 jdbcTemplate.update(new PreparedStatementCreator() {
-                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                        PreparedStatement statement = connection.prepareStatement(query, new String[]{"PRELOAD_DEFINITION_ID"});
-                        statement.setString(1, file.getName());
-                        statement.setString(2, "DEFINITION FILE");
-                        statement.setLong(3, 1);
-                        statement.setLong(4, 1);
-                        statement.setLong(5, 1);
-                        statement.setString(6, "LOAD_IF_PRELOAD_OK");
-                        statement.setString(7, "AUTO_LOAD_DIRECTORY");
-                        statement.setString(8, "AUTO_CRON_SCHEDULING");
-                        statement.setString(9, Constants.getEMPTY());
-                        return statement;
-                    }
-                }, keyHolder);
-
-                // Identificador del registro insertado en definitions
-                Long preload_definition_id = keyHolder.getKey().longValue();
+                            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                                PreparedStatement statement = connection.prepareStatement(query);
+                                statement.setString(1, file.getName());
+                                statement.setString(2, "DEFINITION FILE");
+                                statement.setLong(3, 1);
+                                statement.setLong(4, 1);
+                                statement.setLong(5, 1);
+                                statement.setString(6, "LOAD_IF_PRELOAD_OK");
+                                statement.setString(7, "AUTO_LOAD_DIRECTORY");
+                                statement.setString(8, "AUTO_CRON_SCHEDULING");
+                                return statement;
+                            }
+                        });
+                // Identificador del registro insertado en preload_file
+            final Long preload_definition_id = findInsertId("LD_PRELOAD_DEFINITION", "PRELOAD_DEFINITION_ID", "name", file.getName());
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FILE ***">
-            keyHolder = new GeneratedKeyHolder();
-            query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION, FILENAME_FORMAT_REGEX) VALUES(?, ?, ?, ?);";
-            // Armored with prepare statament to avoid hacker attacks
+            query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION) VALUES(?, ?, ?);";
             jdbcTemplate.update(new PreparedStatementCreator() {
-                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement statement = connection.prepareStatement(query, new String[]{"PRELOAD_FILE_ID"});
-                    statement.setLong(1, preload_definition_id);
-                    statement.setString(2, file.getName());
-                    statement.setString(3, "DEFINITION FILE");
-                    statement.setString(4, "");
-                    return statement;
-                }
-            }, keyHolder);
+                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                        PreparedStatement statement = connection.prepareStatement(query);
+                        statement.setLong(1, preload_definition_id);
+                        statement.setString(2, file.getName());
+                        statement.setString(3, "PRELOAD FILE");
+                        return statement;
+                    }
+                });
 
             // Identificador del registro insertado en preload_file
-            Long preload_file_id = keyHolder.getKey().longValue();
+            final Long preload_file_id = findInsertId("LD_PRELOAD_FILE", "PRELOAD_FILE_ID", "name", file.getName());
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_ROW_TYPE ***">
-            keyHolder = new GeneratedKeyHolder();
-            query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?, ?);";
-            // Armored with prepare statament to avoid hacker attacks
+            query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?);";
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement statement = connection.prepareStatement(query, new String[]{"PRELOAD_ROW_TYPE_ID"});
+                    PreparedStatement statement = connection.prepareStatement(query);
                     statement.setLong(1, preload_file_id);
                     statement.setString(2, file.getName());
                     statement.setString(3, "PRELOAD FILE");
@@ -239,15 +234,14 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                     statement.setString(5, "IDENTIFIER_VALUE");
                     return statement;
                 }
-            }, keyHolder);
+            });
 
             // Identificador del registro insertado en preload_row_type
-            Long preload_row_type_id = keyHolder.getKey().longValue();
+            final Long preload_row_type_id = findInsertId("LD_PRELOAD_ROW_TYPE", "PRELOAD_ROW_TYPE_ID", "name", file.getName());
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FIELD_DEFINITION ***">
             query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-            // Armored with prepare statament to avoid hacker attacks
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query);
@@ -280,7 +274,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         /*
         // Create a LD_LOAD_PROCESS
         query = "INSERT INTO LD_LOAD_PROCESS (USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?);";
-        // Armored with prepare statament to avoid hacker attacks
         jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -368,7 +361,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                     break;
                 default:
                     logger.error("*** unrecognized format ****");
-                    return false;
+                    return exito;
             }
 
             jobBuilderFactory.get(typeJob)
@@ -389,12 +382,11 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //• Select ld_preload_data.* from ld_preload_data, ld_preload_field_definition where ld_preload_data.row_type = ld_preload_field_definition.preload_row_type_id & ld_preload_field_definition.preload_field_definition_id = << rel_field_definition_id>>
             //• Load related definition(rel_field_definition_id):
             // Select * from ld_preload_field_definition where preload_field_definition_id = <<rel_field_definition_id>>
-            return exito;
 
         } catch (Exception e) {
             logger.error("fail");
+            return exito;
         }
-
         return true;
     }
 
@@ -455,4 +447,21 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             return true;
         }
     }
+
+    public Long findInsertId(String tableName, String fieldIdName, String whereField, String whereValue){
+        Long id = 0L;
+        try {
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            String sql = "SELECT " + fieldIdName + " FROM " + tableName + " WHERE " + whereField + " ='"+ whereValue + "'";
+            id = jdbcTemplate.queryForObject(sql, Long.class);
+        }
+        catch (EmptyResultDataAccessException e) {
+            if(logger.isDebugEnabled()){
+                logger.debug(e);
+            }
+            return 0L;
+        }
+        return id;
+    }
+
 }

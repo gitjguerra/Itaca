@@ -98,7 +98,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         Logger logger = LoggerFactory.getLogger(this.getClass());
         try {
 
-            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, fileUpload);
+            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, fileUpload);
 
             /*
             JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
