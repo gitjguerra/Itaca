@@ -9,6 +9,6 @@ CreateLdPreloadRowTypeTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.
 CreateLdPreloadFieldTypeTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdPreloadFieldTypeTables table
 CreateLdPreloadFieldDefinitionTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdPreloadFieldDefinitionTables table
 CreateLdPreloadDataTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdPreloadDataTables table
-CreateLdLoadFileTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdLoadFileTables table
 CreateLdLoadProcessTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdLoadProcessTables table
+CreateLdLoadFileTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdLoadFileTables table
 CreateLdErrorFieldTables 2018-06-12T16:43:57Z 'Arturo <'arturo.garcia@itaca.tech'> # Create the CreateLdErrorFieldTables table
