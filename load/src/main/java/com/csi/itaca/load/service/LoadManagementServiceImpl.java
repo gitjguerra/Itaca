@@ -2,9 +2,11 @@ package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.model.PreloadDefinition;
 import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
+import com.csi.itaca.load.model.dao.PreloadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
+import com.csi.itaca.load.repository.PreloadFileRepository;
 import com.csi.itaca.load.utils.Constants;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Step;
@@ -59,6 +61,9 @@ import java.util.Date;
 public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
     public JobBuilderFactory jobBuilderFactory;
 
     @Autowired
@@ -68,7 +73,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     private JobCompletionNotificationListener jobCompletionNotificationListener;
 
     @Autowired
-    private PreloadDefinitionRepository preloadDefRepository;
+    private PreloadFileRepository preloadFileRepository;
 
     @Autowired
     public Constants constants;
@@ -207,23 +212,36 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FILE ***">
-            query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION) VALUES(?, ?, ?);";
+
+                //update the entered fields
+                PreloadFileEntity fileEntity = new PreloadFileEntity();
+                fileEntity.setPreloadDefinitionId(preload_definition_id);
+                fileEntity.setName(file.getName());
+                fileEntity.setDescription("Preload File");
+                preloadFileRepository.save(fileEntity);
+
+                // Use With Transaction
+                //entityManager.flush();
+                //entityManager.clear();
+
+            /*
+            query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION) VALUES(?, ?, ?)";
             jdbcTemplate.update(new PreparedStatementCreator() {
                     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                         PreparedStatement statement = connection.prepareStatement(query);
-                        statement.setLong(1, preload_definition_id);
+                        statement.setLong(1, 19L);
                         statement.setString(2, file.getName());
                         statement.setString(3, "PRELOAD FILE");
                         return statement;
                     }
                 });
-
+            */
             // Identificador del registro insertado en preload_file
             final Long preload_file_id = findInsertId("LD_PRELOAD_FILE", "PRELOAD_FILE_ID", "name", file.getName());
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_ROW_TYPE ***">
-            query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?);";
+            query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?, ?)";
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query);
@@ -241,7 +259,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FIELD_DEFINITION ***">
-            query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement statement = connection.prepareStatement(query);
@@ -259,11 +277,10 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
                     // find file definition   ***  How take a relation ****         ?????
                     //Long relFileDefinitionId = findRelFileDefinition(fileType);
-                    statement.setLong(9, 1L);
+                    statement.setLong(10, 1L);
 
-                    statement.setString(7, "REL_DB_TABLE_NAME");
-                    statement.setString(8, "REL_DB_FIELD_NAME");
-                    statement.setLong(9, 0);
+                    statement.setString(11, "REL_DB_TABLE_NAME");
+                    statement.setString(12, "REL_DB_FIELD_NAME");
                     return statement;
                 }
             });

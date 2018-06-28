@@ -34,10 +34,8 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
 
     @Id
     @Column(name="PRELOAD_FIELD_DEFINITION_ID")
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_PRELOAD_FIELD_DEFINITION")
-    @SequenceGenerator(name = "SEQ_LD_PRELOAD_FIELD_DEFINITION", sequenceName = "SEQ_LD_PRELOAD_FIELD_DEFINITION", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "LD_PRELOAD_FIELD_DEF_SEQ")
+    @SequenceGenerator(name = "LD_PRELOAD_FIELD_DEF_SEQ", sequenceName = "LD_PRELOAD_FIELD_DEF_SEQ", allocationSize = 1)
     private Long preloadFieldDefinitionId;
 
     @Column(name="PRELOAD_ROW_TYPE_ID")
