@@ -1,4 +1,5 @@
-description = 'File preload module'
+
+description = 'People management module'
 dependencies {
     compile project(':config')
     compile project(':common')
