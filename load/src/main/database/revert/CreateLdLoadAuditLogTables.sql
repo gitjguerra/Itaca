@@ -1,0 +1,4 @@
+-- Revert itaca-load:CreateLdLoadAuditLog from oracle
+-- XXX Add DDLs here.
+DROP SEQUENCE LD_LOAD_AUDIT_LOG_seq;
+DROP TABLE LD_LOAD_AUDIT_LOG CASCADE CONSTRAINTS PURGE;

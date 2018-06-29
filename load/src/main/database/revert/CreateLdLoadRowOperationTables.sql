@@ -1,0 +1,4 @@
+-- Revert itaca-load:CreateLdLoadRowOperation from oracle
+-- XXX Add DDLs here.
+DROP SEQUENCE LD_LOAD_ROW_OPERATION_seq;
+DROP TABLE LD_LOAD_ROW_OPERATION CASCADE CONSTRAINTS PURGE;
