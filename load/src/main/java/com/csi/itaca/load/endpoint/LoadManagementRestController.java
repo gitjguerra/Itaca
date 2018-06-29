@@ -25,6 +25,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,8 +59,13 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         String message = "";
         try {
 
+            //Multiple files
+            //Iterator i = files.iterator();
+            //while (i.hasNext()) {
+            //MultipartFile fileToLoad = (MultipartFile) i.next();
             loadManagementService.store(file, rootLocation);
             files.add(file.getOriginalFilename());
+            //}
 
             message = "You successfully uploaded " + file.getOriginalFilename() + "!";
             return ResponseEntity.status(HttpStatus.OK).body(message);

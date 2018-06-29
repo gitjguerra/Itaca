@@ -2,10 +2,13 @@ package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.model.PreloadDefinition;
 import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
+import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
+import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFileRepository;
 import com.csi.itaca.load.utils.Constants;
 import org.apache.log4j.Logger;
@@ -74,6 +77,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
     private PreloadFileRepository preloadFileRepository;
+
+    @Autowired
+    private PreloadFieldDefinitionRepository fieldDefinitionRepository;
 
     @Autowired
     public Constants constants;
@@ -150,27 +156,43 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
 
     // begin reader, writer, and processor file
-    public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
-        FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
-        reader.setResource(new ClassPathResource("itaca_example.csv"));
-        reader.setLineMapper(new DefaultLineMapper<PreloadDataDTO>() {{
+    public FlatFileItemReader<PreloadFieldDefinitionDTO> csvPreloadReader() {
+        FlatFileItemReader<PreloadFieldDefinitionDTO> reader = new FlatFileItemReader<PreloadFieldDefinitionDTO>();
+        reader.setResource(new ClassPathResource("prueba_load.csv"));
+        reader.setLineMapper(new DefaultLineMapper<PreloadFieldDefinitionDTO>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
-                setNames(new String[] { "preloadDataId", "loadFileId", "loadedSuccessfully", "rowType", "lineNumber", "dataCol1", "dataCol2", "dataCol3" });
+                setNames(new String[] { "preloadFieldDefinitionId", "preloadRowTypeId", "columnNo", "name", "description", "preloadFieldTypeId", "regex", "required", "relType", "relFieldDefinitionId", "relDbTableName", "relDbFieldName", "errorSeverity"});
+                /*
+                PreloadFieldDefinitionEntity preloadFieldDefinitionEntity = new PreloadFieldDefinitionEntity();
+                preloadFieldDefinitionEntity.setPreloadFieldTypeId();
+                preloadFieldDefinitionEntity.setPreloadRowTypeId(preload_row_type_id);
+                preloadFieldDefinitionEntity.setName();
+                preloadFieldDefinitionEntity.setDescription();
+                preloadFieldDefinitionEntity.setRegex();
+                preloadFieldDefinitionEntity.setRelType();
+                preloadFieldDefinitionEntity.setRelDbTableName();
+                preloadFieldDefinitionEntity.setRelFieldDefinitionId();
+                preloadFieldDefinitionEntity.setRelDbFieldName();
+                preloadFieldDefinitionEntity.setColumnNo();
+                preloadFieldDefinitionEntity.setRequired();
+                preloadFieldDefinitionEntity.setErrorSeverity();
+                fieldDefinitionRepository.save(preloadFieldDefinitionEntity);
+                */
             }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<PreloadDataDTO>() {{
-                setTargetType(PreloadDataDTO.class);
+            setFieldSetMapper(new BeanWrapperFieldSetMapper<PreloadFieldDefinitionDTO>() {{
+                setTargetType(PreloadFieldDefinitionDTO.class);
             }});
         }});
         return reader;
     }
 
-    public ItemProcessor<PreloadDataDTO, PreloadDataDTO> csvPreloadProcessor() {
+    public ItemProcessor<PreloadFieldDefinitionDTO, PreloadFieldDefinitionDTO> csvPreloadProcessor() {
         return new PreloadProcessor();
     }
 
-    public JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter() {
-        JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter = new JdbcBatchItemWriter<PreloadDataDTO>();
-        csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
+    public JdbcBatchItemWriter<PreloadFieldDefinitionDTO> csvPreloadWriter() {
+        JdbcBatchItemWriter<PreloadFieldDefinitionDTO> csvPreloadWriter = new JdbcBatchItemWriter<PreloadFieldDefinitionDTO>();
+        csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadFieldDefinitionDTO>());
         csvPreloadWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
                 "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
         // TODO:  **** temporary change for datasource of itaca ****
@@ -192,37 +214,37 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         try {
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_DEFINITION ***">
-                query = "INSERT INTO LD_PRELOAD_DEFINITION (NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING) values (?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbcTemplate.update(new PreparedStatementCreator() {
-                            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                                PreparedStatement statement = connection.prepareStatement(query);
-                                statement.setString(1, file.getName());
-                                statement.setString(2, "DEFINITION FILE");
-                                statement.setLong(3, 1);
-                                statement.setLong(4, 1);
-                                statement.setLong(5, 1);
-                                statement.setString(6, "LOAD_IF_PRELOAD_OK");
-                                statement.setString(7, "AUTO_LOAD_DIRECTORY");
-                                statement.setString(8, "AUTO_CRON_SCHEDULING");
-                                return statement;
-                            }
-                        });
-                // Identificador del registro insertado en preload_file
+            query = "INSERT INTO LD_PRELOAD_DEFINITION (NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, file.getName());
+                    statement.setString(2, "DEFINITION FILE");
+                    statement.setLong(3, 1);
+                    statement.setLong(4, 1);
+                    statement.setLong(5, 1);
+                    statement.setString(6, "LOAD_IF_PRELOAD_OK");
+                    statement.setString(7, "AUTO_LOAD_DIRECTORY");
+                    statement.setString(8, "AUTO_CRON_SCHEDULING");
+                    return statement;
+                }
+            });
+            // Identificador del registro insertado en preload_file
             final Long preload_definition_id = findInsertId("LD_PRELOAD_DEFINITION", "PRELOAD_DEFINITION_ID", "name", file.getName());
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FILE ***">
 
-                //update the entered fields
-                PreloadFileEntity fileEntity = new PreloadFileEntity();
-                fileEntity.setPreloadDefinitionId(preload_definition_id);
-                fileEntity.setName(file.getName());
-                fileEntity.setDescription("Preload File");
-                preloadFileRepository.save(fileEntity);
+            //update the entered fields
+            PreloadFileEntity fileEntity = new PreloadFileEntity();
+            fileEntity.setPreloadDefinitionId(preload_definition_id);
+            fileEntity.setName(file.getName());
+            fileEntity.setDescription("Preload File");
+            preloadFileRepository.save(fileEntity);
 
-                // Use With Transaction
-                //entityManager.flush();
-                //entityManager.clear();
+            // Use With Transaction
+            //entityManager.flush();
+            //entityManager.clear();
 
             /*
             query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION) VALUES(?, ?, ?)";
@@ -258,33 +280,135 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             final Long preload_row_type_id = findInsertId("LD_PRELOAD_ROW_TYPE", "PRELOAD_ROW_TYPE_ID", "name", file.getName());
             //  </editor-fold>
 
+
+
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FIELD_DEFINITION ***">
-            query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement statement = connection.prepareStatement(query);
-                    statement.setLong(1, preload_row_type_id);
-                    statement.setLong(2, 1L);
-                    statement.setString(3, file.getName());
-                    statement.setString(4, "PRELOAD FIELD DEFINITION");
-                    statement.setString(5, "PRELOAD FIELD TYPE");
-                    // find file Type
-                    Long fileTypeId = findFileType(fileType);
-                    statement.setLong(6, fileTypeId);
-                    statement.setString(7, "REGEX");
-                    statement.setString(8, "REQUIRED");
-                    statement.setLong(9, 1L);
 
-                    // find file definition   ***  How take a relation ****         ?????
-                    //Long relFileDefinitionId = findRelFileDefinition(fileType);
-                    statement.setLong(10, 1L);
+                /*
+                PreloadFieldDefinitionEntity preloadFieldDefinitionEntity = new PreloadFieldDefinitionEntity();
+                preloadFieldDefinitionEntity.setPreloadFieldTypeId();
+                preloadFieldDefinitionEntity.setPreloadRowTypeId(preload_row_type_id);
+                preloadFieldDefinitionEntity.setName();
+                preloadFieldDefinitionEntity.setDescription();
+                preloadFieldDefinitionEntity.setRegex();
+                preloadFieldDefinitionEntity.setRelType();
+                preloadFieldDefinitionEntity.setRelDbTableName();
+                preloadFieldDefinitionEntity.setRelFieldDefinitionId();
+                preloadFieldDefinitionEntity.setRelDbFieldName();
+                preloadFieldDefinitionEntity.setColumnNo();
+                preloadFieldDefinitionEntity.setRequired();
+                preloadFieldDefinitionEntity.setErrorSeverity();
+                fieldDefinitionRepository.save(preloadFieldDefinitionEntity);
 
-                    statement.setString(11, "REL_DB_TABLE_NAME");
-                    statement.setString(12, "REL_DB_FIELD_NAME");
-                    return statement;
-                }
-            });
+                query = "INSERT INTO LD_PRELOAD_FIELD_DEFINITION (PRELOAD_ROW_TYPE_ID, COLUMN_NO, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                jdbcTemplate.update(new PreparedStatementCreator() {
+                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                        PreparedStatement statement = connection.prepareStatement(query);
+                        statement.setLong(1, preload_row_type_id);
+                        statement.setLong(2, 1L);
+                        statement.setString(3, file.getName());
+                        statement.setString(4, "PRELOAD FIELD DEFINITION");
+                        statement.setString(5, "PRELOAD FIELD TYPE");
+                        // find file Type
+                        Long fileTypeId = findFileType(fileType);
+                        statement.setLong(6, fileTypeId);
+                        statement.setString(7, "REGEX");
+                        statement.setString(8, "REQUIRED");
+                        statement.setLong(9, 1L);
+
+                        // find file definition   ***  How take a relation ****         ?????
+                        //Long relFileDefinitionId = findRelFileDefinition(fileType);
+                        statement.setLong(10, 1L);
+
+                        statement.setString(11, "REL_DB_TABLE_NAME");
+                        statement.setString(12, "REL_DB_FIELD_NAME");
+                        return statement;
+                    }
+                });
+                */
             //  </editor-fold>
+
+            String typeJob = "";
+            Step typeStep = null;
+            switch (fileType) {
+                case "csv":
+                    typeJob = csvFileType;
+                    typeStep = csvFileToDatabaseStep();
+                    break;
+                case "txt":
+                    typeJob = txtFileType;
+                    typeStep = txtFileToDatabaseStep();
+                    break;
+                case "excel":
+                    typeJob = excelFileType;
+                    typeStep = excelFileToDatabaseStep();
+                    break;
+                case "xml":
+                    typeJob = xmlFileType;
+                    typeStep = xmlFileToDatabaseStep();
+                    break;
+                default:
+                    logger.error("*** unrecognized format ****");
+                    return exito;
+            }
+
+            jobBuilderFactory.get(typeJob)
+                    .incrementer(new RunIdIncrementer())
+                    .listener(listener)
+                    .flow(typeStep)
+                    .end()
+                    .build();
+
+            //  1.1 Get a list of row types associated to this load
+
+            //select ld_preload_row_type.* from ld_load_process,
+            //ld_preload_file, ld_preload_row_type
+            //WHERE ld_load_process.LOAD_PROCESS_ID = 1
+            //AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id
+            //AND ld_preload_file.preload_file_id = ld_preload_row_type.PRELOAD_FILE_ID
+
+            // Process file:
+            //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
+            //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
+            //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
+            //String fileType = getFileExtension(file);
+            //  2.4. For each row in the file (loop):
+            //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
+            //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
+            //              i. For each ld_preload_field_row_type found in preparation check identifier_column_no and identifier_value. When there is a match row type is found.
+            //          c) Find all field definitions based on found row type found above:
+            //              i. select * from ld_preload_field_definition where preload_row_type_id = [found row type id]
+            //              ii. Validate field content: For each ld_preload_field_definition perform validation based on preload_field_type_id, regex & required.
+            //              iii. Validate relation (file to database): For each rel_type = 2 or 3 look up
+            //                  rel_db_table_name and rel_db_field_name. For example: Select * from
+            //                  <<rel_db_table_name>> where <<rel_db_field_name>>=
+            //                  <<field value from file>> AND ROWNUM = 1
+            //          d) Check if the user has cancelled the load operation (ld_load_process.username_load_cancel).
+            //  2.5. Global file validation
+            //          a) Totals: To be considered
+            //  2.6. Sets ld_load_file.status_code to 202 indicating successful preload without errors.
+            //  2.7. Set ld_load_file.preload_end_time to the current time.
+
+            // Alternate paths
+            //      • 2.3) Upon failure to determine file indicate error in status_message in lnd_load_file table.
+            //      • 2.3.a.ii) Upon validation failure create entry in lnd_error_fields table.
+            //      • 2.4.c) Stop the process if the lnd_load_process.user_load_cancel is not null.
+            //      • 2.6) Set status code to -2 if preload completed with errors.
+
+            // SPRINT BATCH
+
+            // Process post validation (Intra File & file to file):
+            // ◦ Find all data rows where fields relate to other fields:
+            // ▪ Select ld_preload_data.* from ld_preload_data where ld_preload_data.row_type_id in = (
+            // ◦ Get a list of row types associated to this load:
+            // ▪ select ld_preload_row_type.preload_row_type_id from ld_load_process, ld_preload_file, ld_preload_row_type where ld_load_process = [above load_process_id] ld_load_process.preload_definition_id = ld_preload_file. preload_definition_id & ld_preload_file.preload_file_id=ld_preload_row_type.preload_file)
+            // ◦ For each data row find all field definitions that using Intra file or file to file relationship:
+            // ▪ Select ld_preload_field_definition.* from ld_preload_field_definition where preload_row_type_id = [row_type from data row] and (rel_type = 3 or rel_type = 1)
+            //▪ For each field definition find all data rows that is using the ID from rel_field_definition_id field definition:
+            //• Select ld_preload_data.* from ld_preload_data, ld_preload_field_definition where ld_preload_data.row_type = ld_preload_field_definition.preload_row_type_id & ld_preload_field_definition.preload_field_definition_id = << rel_field_definition_id>>
+            //• Load related definition(rel_field_definition_id):
+            // Select * from ld_preload_field_definition where preload_field_definition_id = <<rel_field_definition_id>>
+
 
             //TODO: ***** IMPLEMENTACION DE LOAD PROCESS *****
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LOAD PROCESS ***">
@@ -320,86 +444,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  </editor-fold>
 
 
-            //  1.1 Get a list of row types associated to this load
-            // Where take the data ????   example: load_process_id ???
-
-            //select ld_preload_row_type.* from ld_load_process,
-            //ld_preload_file, ld_preload_row_type
-            //WHERE ld_load_process.LOAD_PROCESS_ID = 1
-            //AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id
-            //AND ld_preload_file.preload_file_id = ld_preload_row_type.PRELOAD_FILE_ID
-
-            // Process file:
-            //  2.1. Set ld_load_file.preload_start_time to the current time.  OK
-            //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.  OK
-            //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT) Only csv, while.
-                        //String fileType = getFileExtension(file);
-            //  2.4. For each row in the file (loop):
-            //          a) Insert new row in to ld_preload_data table with row loaded from the file.    ***** That is done for the csvPreloadWriter *****
-            //          b) Determine row type. (find [found row type id])     ***** That is done with the filename ???? *****
-            //              i. For each ld_preload_field_row_type found in preparation check identifier_column_no and identifier_value. When there is a match row type is found.
-            //          c) Find all field definitions based on found row type found above:
-            //              i. select * from ld_preload_field_definition where preload_row_type_id = [found row type id]
-            //              ii. Validate field content: For each ld_preload_field_definition perform validation based on preload_field_type_id, regex & required.
-            //              iii. Validate relation (file to database): For each rel_type = 2 or 3 look up
-            //                  rel_db_table_name and rel_db_field_name. For example: Select * from
-            //                  <<rel_db_table_name>> where <<rel_db_field_name>>=
-            //                  <<field value from file>> AND ROWNUM = 1
-            //          d) Check if the user has cancelled the load operation (ld_load_process.username_load_cancel).
-            //  2.5. Global file validation
-            //          a) Totals: To be considered
-            //  2.6. Sets ld_load_file.status_code to 202 indicating successful preload without errors.
-            //  2.7. Set ld_load_file.preload_end_time to the current time.
-
-            // Alternate paths
-            //      • 2.3) Upon failure to determine file indicate error in status_message in lnd_load_file table.
-            //      • 2.3.a.ii) Upon validation failure create entry in lnd_error_fields table.
-            //      • 2.4.c) Stop the process if the lnd_load_process.user_load_cancel is not null.
-            //      • 2.6) Set status code to -2 if preload completed with errors.
-
-            String typeJob = "";
-            Step typeStep = null;
-            switch (fileType) {
-                case "csv":
-                    typeJob = csvFileType;
-                    typeStep = csvFileToDatabaseStep();
-                    break;
-                case "txt":
-                    typeJob = txtFileType;
-                    typeStep = txtFileToDatabaseStep();
-                    break;
-                case "excel":
-                    typeJob = excelFileType;
-                    typeStep = excelFileToDatabaseStep();
-                    break;
-                case "xml":
-                    typeJob = xmlFileType;
-                    typeStep = xmlFileToDatabaseStep();
-                    break;
-                default:
-                    logger.error("*** unrecognized format ****");
-                    return exito;
-            }
-
-            jobBuilderFactory.get(typeJob)
-                    .incrementer(new RunIdIncrementer())
-                    .listener(listener)
-                    .flow(typeStep)
-                    .end()
-                    .build();
-
-            // Process post validation (Intra File & file to file):
-            // ◦ Find all data rows where fields relate to other fields:
-            // ▪ Select ld_preload_data.* from ld_preload_data where ld_preload_data.row_type_id in = (
-            // ◦ Get a list of row types associated to this load:
-            // ▪ select ld_preload_row_type.preload_row_type_id from ld_load_process, ld_preload_file, ld_preload_row_type where ld_load_process = [above load_process_id] ld_load_process.preload_definition_id = ld_preload_file. preload_definition_id & ld_preload_file.preload_file_id=ld_preload_row_type.preload_file)
-            // ◦ For each data row find all field definitions that using Intra file or file to file relationship:
-            // ▪ Select ld_preload_field_definition.* from ld_preload_field_definition where preload_row_type_id = [row_type from data row] and (rel_type = 3 or rel_type = 1)
-            //▪ For each field definition find all data rows that is using the ID from rel_field_definition_id field definition:
-            //• Select ld_preload_data.* from ld_preload_data, ld_preload_field_definition where ld_preload_data.row_type = ld_preload_field_definition.preload_row_type_id & ld_preload_field_definition.preload_field_definition_id = << rel_field_definition_id>>
-            //• Load related definition(rel_field_definition_id):
-            // Select * from ld_preload_field_definition where preload_field_definition_id = <<rel_field_definition_id>>
-
         } catch (Exception e) {
             logger.error("fail");
             return exito;
@@ -410,7 +454,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Override
     public Step csvFileToDatabaseStep() {
         return stepBuilderFactory.get(csvFileType)     // Process for csv, for each file type there are one
-                .<PreloadDataDTO, PreloadDataDTO>chunk(1)
+                .<PreloadFieldDefinitionDTO, PreloadFieldDefinitionDTO>chunk(1)
                 .reader(csvPreloadReader())                        // Line/Row of the file
                 .processor(csvPreloadProcessor())                  // cvs processor for validate
                 .writer(csvPreloadWriter())                        // write to db process
