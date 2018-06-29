@@ -32,10 +32,8 @@ public class PreloadDefinitionEntity implements PreloadDefinition{
 
     @Id
     @Column(name="PRELOAD_DEFINITION_ID")
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_PRELOAD_DEFINITION")
-    @SequenceGenerator(name = "SEQ_LD_PRELOAD_DEFINITION", sequenceName = "SEQ_LD_PRELOAD_DEFINITION", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "LD_PRELOAD_DEFINITION_SEQ")
+    @SequenceGenerator(name = "LD_PRELOAD_DEFINITION_SEQ", sequenceName = "LD_PRELOAD_DEFINITION_SEQ", allocationSize = 1)
     private Long preloadDefinitionId;
 
     @Column(name="NAME")

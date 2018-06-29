@@ -29,10 +29,8 @@ public class PreloadRowTypeEntity implements PreloadRowType {
 
     @Id
     @Column(name="PRELOAD_ROW_TYPE_ID")
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_PRELOAD_ROW_TYPE")
-    @SequenceGenerator(name = "SEQ_LD_PRELOAD_ROW_TYPE", sequenceName = "SEQ_LD_PRELOAD_ROW_TYPE", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "LD_PRELOAD_ROW_TYPE_SEQ")
+    @SequenceGenerator(name = "LD_PRELOAD_ROW_TYPE_SEQ", sequenceName = "LD_PRELOAD_ROW_TYPE_SEQ", allocationSize = 1)
     private Long preloadRowTypeId;
 
     @Column(name="PRELOAD_FILE_ID")
