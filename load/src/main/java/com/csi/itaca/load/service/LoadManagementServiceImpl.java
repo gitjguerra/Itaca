@@ -5,6 +5,7 @@ import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
@@ -155,12 +156,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     }
 
     // begin reader, writer, and processor file
-    public FlatFileItemReader<PreloadDataDTO> csvPreloadReader() {
-        FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<PreloadDataDTO>();
+    public FlatFileItemReader<PreloadFieldDefinitionDTO> csvPreloadReader() {
+        FlatFileItemReader<PreloadFieldDefinitionDTO> reader = new FlatFileItemReader<PreloadFieldDefinitionDTO>();
         reader.setResource(new ClassPathResource("prueba_load.csv"));
-        reader.setLineMapper(new DefaultLineMapper<PreloadDataDTO>() {{
+        reader.setLineMapper(new DefaultLineMapper<PreloadFieldDefinitionDTO>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
-                setNames(new String[] { "preloadDataId", "loadFileId", "loadedSuccessfully", "rowType", "lineNumber", "dataCol1", "dataCol2", "dataCol3" });
+                setNames(new String[] { "preloadFieldDefinitionId", "preloadRowTypeId", "columnNo", "name", "description", "preloadFieldTypeId", "regex", "required", "relType", "relFieldDefinitionId", "relDbTableName", "relDbFieldName", "errorSeverity"});
                 /*
                 PreloadFieldDefinitionEntity preloadFieldDefinitionEntity = new PreloadFieldDefinitionEntity();
                 preloadFieldDefinitionEntity.setPreloadFieldTypeId();
@@ -178,20 +179,20 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                 fieldDefinitionRepository.save(preloadFieldDefinitionEntity);
                 */
             }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<PreloadDataDTO>() {{
-                setTargetType(PreloadDataDTO.class);
+            setFieldSetMapper(new BeanWrapperFieldSetMapper<PreloadFieldDefinitionDTO>() {{
+                setTargetType(PreloadFieldDefinitionDTO.class);
             }});
         }});
         return reader;
     }
 
-    public ItemProcessor<PreloadDataDTO, PreloadDataDTO> csvPreloadProcessor() {
+    public ItemProcessor<PreloadFieldDefinitionDTO, PreloadFieldDefinitionDTO> csvPreloadProcessor() {
         return new PreloadProcessor();
     }
 
-    public JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter() {
-        JdbcBatchItemWriter<PreloadDataDTO> csvPreloadWriter = new JdbcBatchItemWriter<PreloadDataDTO>();
-        csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadDataDTO>());
+    public JdbcBatchItemWriter<PreloadFieldDefinitionDTO> csvPreloadWriter() {
+        JdbcBatchItemWriter<PreloadFieldDefinitionDTO> csvPreloadWriter = new JdbcBatchItemWriter<PreloadFieldDefinitionDTO>();
+        csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadFieldDefinitionDTO>());
         csvPreloadWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
                 "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
         // TODO:  **** temporary change for datasource of itaca ****
@@ -453,7 +454,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Override
     public Step csvFileToDatabaseStep() {
         return stepBuilderFactory.get(csvFileType)     // Process for csv, for each file type there are one
-                .<PreloadDataDTO, PreloadDataDTO>chunk(1)
+                .<PreloadFieldDefinitionDTO, PreloadFieldDefinitionDTO>chunk(1)
                 .reader(csvPreloadReader())                        // Line/Row of the file
                 .processor(csvPreloadProcessor())                  // cvs processor for validate
                 .writer(csvPreloadWriter())                        // write to db process
