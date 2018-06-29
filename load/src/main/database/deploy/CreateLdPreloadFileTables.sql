@@ -1,11 +1,13 @@
 CREATE TABLE LD_PRELOAD_FILE
 (
-  PRELOAD_FILE_ID        NUMBER                 NOT NULL,
+  PRELOAD_FILE_ID        NUMBER            NOT NULL,
   PRELOAD_DEFINITION_ID  NUMBER,
-  NAME                   VARCHAR2(50 BYTE)      NOT NULL,
-  DESCRIPTION            VARCHAR2(255 BYTE),
-  FILENAME_FORMAT_REGEX  VARCHAR2(100 BYTE),
-  field_separator        VARCHAR2(10 BYTE)
+  NAME                   VARCHAR2(50)      NOT NULL,
+  DESCRIPTION            VARCHAR2(255),
+  FILENAME_FORMAT_REGEX  VARCHAR2(100),
+  file_type              VARCHAR2(10),
+  field_separator        VARCHAR2(10),
+  file_load_order        NUMBER
 )
 TABLESPACE LOAD LOGGING;
 
@@ -22,7 +24,11 @@ COMMENT ON COLUMN LD_PRELOAD_FILE.DESCRIPTION IS 'Description of this item';
 
 COMMENT ON COLUMN LD_PRELOAD_FILE.FILENAME_FORMAT_REGEX IS 'Regular expression for the filename format';
 
+COMMENT ON COLUMN LD_PRELOAD_FILE.file_type IS 'CVS, Excel or TXT.';
+
 COMMENT ON COLUMN LD_PRELOAD_FILE.field_separator IS 'The separator for the fields in the file.';
+
+COMMENT ON COLUMN LD_PRELOAD_FILE.file_load_order IS 'Order in which the files will the preloaded / loaded.';
 
 
 CREATE UNIQUE INDEX LD_PRELOAD_FILE_PK ON LD_PRELOAD_FILE(PRELOAD_FILE_ID);
