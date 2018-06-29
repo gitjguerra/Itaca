@@ -28,8 +28,10 @@ public class PreloadFileEntity implements PreloadFile{
 
     @Id
     @Column(name="PRELOAD_FILE_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "LD_PRELOAD_FILE_SEQ")
-    @SequenceGenerator(name = "LD_PRELOAD_FILE_SEQ", sequenceName = "LD_PRELOAD_FILE_SEQ", allocationSize = 1)
+    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_PRELOAD_FILE")
+    @SequenceGenerator(name = "SEQ_LD_PRELOAD_FILE", sequenceName = "SEQ_LD_PRELOAD_FILE", allocationSize = 1)
+    */
     private Long preloadFileId;
 
     @Column(name="PRELOAD_DEFINITION_ID")

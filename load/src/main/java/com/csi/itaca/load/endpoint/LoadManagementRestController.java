@@ -25,7 +25,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,18 +53,64 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     private JobCompletionNotificationListener jobCompletionNotificationListener;
 
     @Override
-    public ResponseEntity<List<String>> Create(Model model) {
-        return null;
+    @RequestMapping(value = LOAD_FILE, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        String message = "";
+        try {
+
+            loadManagementService.store(file, rootLocation);
+            files.add(file.getOriginalFilename());
+
+            message = "You successfully uploaded " + file.getOriginalFilename() + "!";
+            return ResponseEntity.status(HttpStatus.OK).body(message);
+        } catch (Exception e) {
+            message = "FAIL to upload " + file.getOriginalFilename() + "!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+        }
     }
 
     @Override
-    public ResponseEntity<List<String>> startOrContinueLoad(Model model) {
-        return null;
+    @RequestMapping(value = LOAD_GET_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getListFiles(Model model) {
+        List<String> fileNames = files
+                .stream().map(fileName -> MvcUriComponentsBuilder
+                        .fromMethodName(LoadManagementRestController.class, "getFile", fileName).build().toString())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(fileNames);
     }
 
     @Override
-    public ResponseEntity<List<String>> cancelLoad(Model model) {
-        return null;
+    @RequestMapping(value = LOAD_GET_FILE_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        File origin_file = new File(fileUpload.toString());
+        Resource file = loadManagementService.loadFile(origin_file);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .body(file);
+    }
+
+    @Override
+    @RequestMapping(value = LOAD_DATA_PRELOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity preloadData() throws Exception {
+        HttpStatus success = null;
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        try {
+
+            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, fileUpload);
+
+            /*
+            JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            jobLauncher.run(fileToDatabaseJob, jobParameters);
+            */
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
