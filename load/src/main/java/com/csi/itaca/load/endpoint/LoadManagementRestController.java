@@ -113,4 +113,19 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<List<String>> Create(Model model) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<String>> startOrContinueLoad(Model model) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<String>> cancelLoad(Model model) {
+        return null;
+    }
+
 }
