@@ -7,6 +7,7 @@ include ':config'
 include ':tools'
 include ':data-view'
 include ':load'
+include ':preload'
 
 project(':common').projectDir = "$rootDir/common" as File
 project(':user').projectDir = "$rootDir/user" as File
@@ -16,4 +17,5 @@ project(':config').projectDir = "$rootDir/config" as File
 project(':tools').projectDir = "$rootDir/tools" as File
 project(':data-view').projectDir = "$rootDir/data-view" as File
 project(':load').projectDir = "$rootDir/load" as File
+project(':preload').projectDir = "$rootDir/preload" as File
 
