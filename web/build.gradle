@@ -61,5 +61,4 @@ dependencies {
   compile project(':people')
   compile project(':data-view')
   compile project(':load')
-  compile project(':preload')
 }

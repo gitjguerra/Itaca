@@ -214,37 +214,37 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         try {
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_DEFINITION ***">
-                query = "INSERT INTO LD_PRELOAD_DEFINITION (NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING) values (?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbcTemplate.update(new PreparedStatementCreator() {
-                            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                                PreparedStatement statement = connection.prepareStatement(query);
-                                statement.setString(1, file.getName());
-                                statement.setString(2, "DEFINITION FILE");
-                                statement.setLong(3, 1);
-                                statement.setLong(4, 1);
-                                statement.setLong(5, 1);
-                                statement.setString(6, "LOAD_IF_PRELOAD_OK");
-                                statement.setString(7, "AUTO_LOAD_DIRECTORY");
-                                statement.setString(8, "AUTO_CRON_SCHEDULING");
-                                return statement;
-                            }
-                        });
-                // Identificador del registro insertado en preload_file
+            query = "INSERT INTO LD_PRELOAD_DEFINITION (NAME, DESCRIPTION, MAX_PRELOAD_LOW_ERRORS, MAX_PRELOAD_MEDIUM_ERRORS, MAX_PRELOAD_HIGH_ERRORS, LOAD_IF_PRELOAD_OK, AUTO_LOAD_DIRECTORY, AUTO_CRON_SCHEDULING) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, file.getName());
+                    statement.setString(2, "DEFINITION FILE");
+                    statement.setLong(3, 1);
+                    statement.setLong(4, 1);
+                    statement.setLong(5, 1);
+                    statement.setString(6, "LOAD_IF_PRELOAD_OK");
+                    statement.setString(7, "AUTO_LOAD_DIRECTORY");
+                    statement.setString(8, "AUTO_CRON_SCHEDULING");
+                    return statement;
+                }
+            });
+            // Identificador del registro insertado en preload_file
             final Long preload_definition_id = findInsertId("LD_PRELOAD_DEFINITION", "PRELOAD_DEFINITION_ID", "name", file.getName());
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_FILE ***">
 
-                //update the entered fields
-                PreloadFileEntity fileEntity = new PreloadFileEntity();
-                fileEntity.setPreloadDefinitionId(preload_definition_id);
-                fileEntity.setName(file.getName());
-                fileEntity.setDescription("Preload File");
-                preloadFileRepository.save(fileEntity);
+            //update the entered fields
+            PreloadFileEntity fileEntity = new PreloadFileEntity();
+            fileEntity.setPreloadDefinitionId(preload_definition_id);
+            fileEntity.setName(file.getName());
+            fileEntity.setDescription("Preload File");
+            preloadFileRepository.save(fileEntity);
 
-                // Use With Transaction
-                //entityManager.flush();
-                //entityManager.clear();
+            // Use With Transaction
+            //entityManager.flush();
+            //entityManager.clear();
 
             /*
             query = "INSERT INTO LD_PRELOAD_FILE (PRELOAD_DEFINITION_ID, NAME, DESCRIPTION) VALUES(?, ?, ?)";
@@ -263,21 +263,21 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //  </editor-fold>
 
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LD_PRELOAD_ROW_TYPE ***">
-                query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?, ?)";
-                jdbcTemplate.update(new PreparedStatementCreator() {
-                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                        PreparedStatement statement = connection.prepareStatement(query);
-                        statement.setLong(1, preload_file_id);
-                        statement.setString(2, file.getName());
-                        statement.setString(3, "PRELOAD FILE");
-                        statement.setLong(4, 1L);
-                        statement.setString(5, "IDENTIFIER_VALUE");
-                        return statement;
-                    }
-                });
+            query = "INSERT INTO LD_PRELOAD_ROW_TYPE (PRELOAD_FILE_ID, NAME, DESCRIPTION, IDENTIFIER_COLUMN_NO, IDENTIFIER_VALUE) VALUES(?, ?, ?, ?, ?)";
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setLong(1, preload_file_id);
+                    statement.setString(2, file.getName());
+                    statement.setString(3, "PRELOAD FILE");
+                    statement.setLong(4, 1L);
+                    statement.setString(5, "IDENTIFIER_VALUE");
+                    return statement;
+                }
+            });
 
-                // Identificador del registro insertado en preload_row_type
-                final Long preload_row_type_id = findInsertId("LD_PRELOAD_ROW_TYPE", "PRELOAD_ROW_TYPE_ID", "name", file.getName());
+            // Identificador del registro insertado en preload_row_type
+            final Long preload_row_type_id = findInsertId("LD_PRELOAD_ROW_TYPE", "PRELOAD_ROW_TYPE_ID", "name", file.getName());
             //  </editor-fold>
 
 
@@ -395,7 +395,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             //      • 2.4.c) Stop the process if the lnd_load_process.user_load_cancel is not null.
             //      • 2.6) Set status code to -2 if preload completed with errors.
 
-        // SPRINT BATCH
+            // SPRINT BATCH
 
             // Process post validation (Intra File & file to file):
             // ◦ Find all data rows where fields relate to other fields:

@@ -46,7 +46,7 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
 
     public PreloadFieldDefinitionDTO(Long preloadFieldDefinitionId,Long preloadRowTypeId,Long columnNo,String name,
                                      String description,Long preloadFieldTypeId,String regex,String required,Long relType
-                                     ,Long relFieldDefinitionId,String relDbTableName,String relDbFieldName,Long errorSeverity) {
+            ,Long relFieldDefinitionId,String relDbTableName,String relDbFieldName,Long errorSeverity) {
         this.preloadFieldDefinitionId = preloadFieldDefinitionId;
         this.preloadRowTypeId = preloadRowTypeId;
         this.columnNo = columnNo;
