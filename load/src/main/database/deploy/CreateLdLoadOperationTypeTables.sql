@@ -24,3 +24,9 @@ comment on column LD_LOAD_OPERATION_TYPE.DESCRIPTION is 'Description of the oper
 CREATE SEQUENCE ld_load_operation_type_seq START WITH 1 INCREMENT BY 1 MAXVALUE 9999999999 MINVALUE 1 NOCACHE
 
 /
+
+--Preloaded data
+
+Insert into LD_LOAD_OPERATION_TYPE (LOAD_OPERATION_TYPE_ID,NAME,DESCRIPTION) values ('1','Insert or Update','Operation type to handle insert or updates')
+
+/
