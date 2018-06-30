@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,6 +57,9 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
     @Autowired
     private LoadManagementService loadManagementService;
+
+    @Autowired
+    public DataSource dataSource;
 
     @Override
     @RequestMapping(value = LOAD_FILE, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
