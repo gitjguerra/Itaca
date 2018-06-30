@@ -3,7 +3,6 @@ package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.domain.DataIn;
 import com.csi.itaca.load.domain.DataOut;
-import com.csi.itaca.load.model.PreloadItemProcessor;
 import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
@@ -60,11 +59,37 @@ public class JobBatchConfiguration {
     @Autowired
     private PreloadDefinitionRepository preloadDefinitionRepository;
 
+    @Bean
+    public ItemReader<DataIn> reader(DataSource dataSource) {
+        JdbcCursorItemReader reader = new JdbcCursorItemReader();
+        reader.setDataSource(dataSource);
+        reader.setRowMapper(new CustomRowMapper());
+        reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
+        return reader;
+    }
+    @Bean
+    public ItemProcessor<DataIn, DataOut> processor() {
+        return new ItemProcessor<DataIn, DataOut>() {
+            @Override
+            public DataOut process(DataIn dataIn) throws Exception {
+                DataOut dataOut = new DataOut();
+                dataOut.setNAME("CAMBIO1");
+                dataOut.setDESCRIPTION("CAMBIO2");
+                return dataOut;
+            }
+        };
+    }
+    @Bean
+    public JdbcBatchItemWriter<DataOut> writer(DataSource dataSource){
+        JdbcBatchItemWriter<DataOut> writer = new JdbcBatchItemWriter<DataOut>();
+        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<DataOut>());
+        writer.setSql("INSERT INTO ANIMES(id, title, description) VALUES (:Id, :name, :description)");
+        writer.setDataSource(dataSource);
+        return writer;
+    }
+
     /*
-
-    *******************  Reader, Processor y writer del primer STEP ******************
-
-     */
+    ************************ leer de la bd como un reader
     @Bean
     public FlatFileItemReader<TestReaderDTO> preloadDefinitionReader() {
         FlatFileItemReader < TestReaderDTO > reader = new FlatFileItemReader < TestReaderDTO > ();
@@ -89,32 +114,6 @@ public class JobBatchConfiguration {
         });
         return reader;
     }
-
-    @Bean
-    public PreloadItemProcessor processor(){
-        return new PreloadItemProcessor();
-    }
-    @Bean
-    public JdbcBatchItemWriter<TestReaderDTO> writer(DataSource dataSource){
-        JdbcBatchItemWriter<TestReaderDTO> writer = new JdbcBatchItemWriter<TestReaderDTO>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<TestReaderDTO>());
-        writer.setSql("INSERT INTO ANIMES(id, title, description) VALUES (:Id, :name, :description)");
-        writer.setDataSource(dataSource);
-
-        return writer;
-    }
-    /*
-
-     *******************  Reader, Processor y writer del primer STEP ******************
-
-     */
-
-
-
-
-    /*
-
-    ************************** leer de la bd como un reader *************************
     @Bean
     public ItemReader<DataIn> preloadDefinitionReader(DataSource dataSource) {
         JdbcCursorItemReader reader = new JdbcCursorItemReader();
@@ -124,11 +123,12 @@ public class JobBatchConfiguration {
         return reader;
     }
     @Bean
-    public ItemProcessor<DataIn, DataOut> processor() {
+    public ItemProcessor<DataIn, DataOut> processorDTO() {
         return new ItemProcessor<DataIn, DataOut>() {
             @Override
             public DataOut process(DataIn dataIn) throws Exception {
                 DataOut dataOut = new DataOut();
+                dataOut.setPRELOAD_FIELD_DEFINITION_ID("1");
                 dataOut.setNAME("CAMBIO1");
                 dataOut.setDESCRIPTION("CAMBIO2");
                 return dataOut;
@@ -136,7 +136,7 @@ public class JobBatchConfiguration {
         };
     }
     @Bean
-    public ItemWriter<DataOut> writer() {
+    public ItemWriter<DataOut> writer2() {
 
         FlatFileItemWriter<DataOut> writer = new FlatFileItemWriter<>();
 
@@ -166,8 +166,16 @@ public class JobBatchConfiguration {
         });
         return writer;
     }
-    */
+    @Bean
+    public JdbcBatchItemWriter<TestReaderDTO> writer(DataSource dataSource){
+        JdbcBatchItemWriter<TestReaderDTO> writer = new JdbcBatchItemWriter<TestReaderDTO>();
+        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<TestReaderDTO>());
+        writer.setSql("INSERT INTO ANIMES(id, title, description) VALUES (:Id, :name, :description)");
+        writer.setDataSource(dataSource);
 
+        return writer;
+    }
+    */
 
     @Bean
     public Job sqlExecuteJob(JobBuilderFactory jobs, @Qualifier("preloadDefinitionStep") Step step_preload_def, @Qualifier("preloadFileStep") Step step_preload_file, @Qualifier("preloadRowTypeStep") Step step_preload_row_type, @Qualifier("preloadFieldDefStep") Step step_preload_field_def, JobExecutionListener listener) {
@@ -324,24 +332,22 @@ public class JobBatchConfiguration {
                 .build();
 
         return job;
+
+
     }
 
     @Qualifier("preloadDefinitionStep")
     @Bean
-    public Step preloadDefinitionStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<TestReaderDTO> preloadDefinitionReader,
-                      ItemWriter<DataOut> writer, ItemProcessor<TestReaderDTO, DataOut> processorDTO) {
+    public Step preloadDefinitionStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> reader,
+                                      JdbcBatchItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
 
         return stepBuilderFactory.get("preloadDefinitionStep")
-                .<TestReaderDTO, DataOut> chunk(100)
-                .reader(preloadDefinitionReader)
-                .processor(processorDTO)
+                .<DataIn, DataOut> chunk(100)
+                .reader(reader)
+                .processor(processor)
                 .writer(writer)
                 .build();
     }
-
-    /*
-
-    ************************ PASOS SIGUIENTES ***********************
 
     @Qualifier("preloadFileStep")
     @Bean
@@ -350,9 +356,9 @@ public class JobBatchConfiguration {
 
         return stepBuilderFactory.get("preloadFileStep")
                 .<DataIn, DataOut> chunk(100)
-                .reader(preloadFileReader)
-                .processor(processorFile)
-                .writer(writerFile)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
                 .build();
     }
 
@@ -363,9 +369,9 @@ public class JobBatchConfiguration {
 
         return stepBuilderFactory.get("preloadRowTypeStep")
                 .<DataIn, DataOut> chunk(100)
-                .reader(readerRowType)
-                .processor(processorRowType)
-                .writer(writerRowType)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
                 .build();
     }
 
@@ -376,12 +382,11 @@ public class JobBatchConfiguration {
 
         return stepBuilderFactory.get("preloadFieldDefStep")
                 .<DataIn, DataOut> chunk(100)
-                .reader(readerFieldDef)
-                .processor(processorFieldDef)
-                .writer(writerFieldDef)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
                 .build();
     }
-    */
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
