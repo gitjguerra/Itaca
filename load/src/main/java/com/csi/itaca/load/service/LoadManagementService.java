@@ -1,8 +1,8 @@
 package com.csi.itaca.load.service;
 
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,7 +17,8 @@ public interface LoadManagementService {
     void init(Path rootLocation);
 
     // Job of batch process
-    boolean fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file);
+    //boolean fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file);
+    Job fileToDatabaseJob();
     // Steps of batch process
     Step csvFileToDatabaseStep();
     Step txtFileToDatabaseStep();

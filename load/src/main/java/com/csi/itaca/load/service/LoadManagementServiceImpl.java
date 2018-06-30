@@ -1,79 +1,39 @@
 package com.csi.itaca.load.service;
 
-import com.csi.itaca.load.model.PreloadDefinition;
-import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
-import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
-import com.csi.itaca.load.model.dao.PreloadFileEntity;
-import com.csi.itaca.load.model.dto.PreloadDataDTO;
-import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
-import com.csi.itaca.load.repository.LoadFileRepository;
-import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFileRepository;
 import com.csi.itaca.load.utils.Constants;
 import org.apache.log4j.Logger;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 
 @SuppressWarnings("unchecked")
 @Service
-@EnableBatchProcessing
 public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    public JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
-    public StepBuilderFactory stepBuilderFactory;
-
-    @Autowired
-    private JobCompletionNotificationListener jobCompletionNotificationListener;
 
     @Autowired
     private PreloadFileRepository preloadFileRepository;
@@ -123,8 +83,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         } catch (Exception e) {
             throw new RuntimeException("FAIL!");
         }
+
         // initial batch process
-        boolean exito = fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, (File) file);
+        //boolean exito = fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, (File) file);
     }
 
     @Override
@@ -155,56 +116,10 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         }
     }
 
-    // begin reader, writer, and processor file
-    public FlatFileItemReader<PreloadFieldDefinitionDTO> csvPreloadReader() {
-        FlatFileItemReader<PreloadFieldDefinitionDTO> reader = new FlatFileItemReader<PreloadFieldDefinitionDTO>();
-        reader.setResource(new ClassPathResource("prueba_load.csv"));
-        reader.setLineMapper(new DefaultLineMapper<PreloadFieldDefinitionDTO>() {{
-            setLineTokenizer(new DelimitedLineTokenizer() {{
-                setNames(new String[] { "preloadFieldDefinitionId", "preloadRowTypeId", "columnNo", "name", "description", "preloadFieldTypeId", "regex", "required", "relType", "relFieldDefinitionId", "relDbTableName", "relDbFieldName", "errorSeverity"});
-                /*
-                PreloadFieldDefinitionEntity preloadFieldDefinitionEntity = new PreloadFieldDefinitionEntity();
-                preloadFieldDefinitionEntity.setPreloadFieldTypeId();
-                preloadFieldDefinitionEntity.setPreloadRowTypeId(preload_row_type_id);
-                preloadFieldDefinitionEntity.setName();
-                preloadFieldDefinitionEntity.setDescription();
-                preloadFieldDefinitionEntity.setRegex();
-                preloadFieldDefinitionEntity.setRelType();
-                preloadFieldDefinitionEntity.setRelDbTableName();
-                preloadFieldDefinitionEntity.setRelFieldDefinitionId();
-                preloadFieldDefinitionEntity.setRelDbFieldName();
-                preloadFieldDefinitionEntity.setColumnNo();
-                preloadFieldDefinitionEntity.setRequired();
-                preloadFieldDefinitionEntity.setErrorSeverity();
-                fieldDefinitionRepository.save(preloadFieldDefinitionEntity);
-                */
-            }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<PreloadFieldDefinitionDTO>() {{
-                setTargetType(PreloadFieldDefinitionDTO.class);
-            }});
-        }});
-        return reader;
-    }
-
-    public ItemProcessor<PreloadFieldDefinitionDTO, PreloadFieldDefinitionDTO> csvPreloadProcessor() {
-        return new PreloadProcessor();
-    }
-
-    public JdbcBatchItemWriter<PreloadFieldDefinitionDTO> csvPreloadWriter() {
-        JdbcBatchItemWriter<PreloadFieldDefinitionDTO> csvPreloadWriter = new JdbcBatchItemWriter<PreloadFieldDefinitionDTO>();
-        csvPreloadWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<PreloadFieldDefinitionDTO>());
-        csvPreloadWriter.setSql("INSERT INTO LD_PRELOAD_DATA (preloadDataId, loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3) " +
-                "VALUES (:preloadDataId, :loadFileId, :loadedSuccessfully, :rowType, :lineNumber, :dataCol1, :dataCol2, :dataCol3)");
-        // TODO:  **** temporary change for datasource of itaca ****
-        // **** Change for Datasource of itaca ****
-        csvPreloadWriter.setDataSource(dataSource);
-        return csvPreloadWriter;
-    }
-    // finish reader, writer, and processor file
-
     @Override
-    public boolean fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file) {
+    public Job fileToDatabaseJob() {
 
+        /*
         // TODO: Process preload
         boolean exito = false;
         String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -258,6 +173,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                     }
                 });
             */
+
+        /*
             // Identificador del registro insertado en preload_file
             final Long preload_file_id = findInsertId("LD_PRELOAD_FILE", "PRELOAD_FILE_ID", "name", file.getName());
             //  </editor-fold>
@@ -328,6 +245,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                 */
             //  </editor-fold>
 
+        /*
             String typeJob = "";
             Step typeStep = null;
             switch (fileType) {
@@ -410,6 +328,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             // Select * from ld_preload_field_definition where preload_field_definition_id = <<rel_field_definition_id>>
 
 
+            //JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
+            //jobLauncher.run(processJob, jobParameters);
+            //return "Batch job has been invoked";
+
+
+
             //TODO: ***** IMPLEMENTACION DE LOAD PROCESS *****
             //  <editor-fold defaultstate="collapsed" desc="*** Create a LOAD PROCESS ***">
         /*
@@ -443,22 +367,18 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         */
             //  </editor-fold>
 
-
+        /*
         } catch (Exception e) {
             logger.error("fail");
             return exito;
         }
-        return true;
+        */
+        return null;
     }
 
     @Override
     public Step csvFileToDatabaseStep() {
-        return stepBuilderFactory.get(csvFileType)     // Process for csv, for each file type there are one
-                .<PreloadFieldDefinitionDTO, PreloadFieldDefinitionDTO>chunk(1)
-                .reader(csvPreloadReader())                        // Line/Row of the file
-                .processor(csvPreloadProcessor())                  // cvs processor for validate
-                .writer(csvPreloadWriter())                        // write to db process
-                .build();
+        return null;
     }
 
     // TODO: process others file types

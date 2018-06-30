@@ -8,8 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
+@EnableBatchProcessing
 @RestController
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
@@ -40,18 +45,17 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(LoadManagementRestController.class);
     List<String> files = new ArrayList<String>();
 
-    /*
+    //@Autowired
+    //private JobCompletionNotificationListener jobCompletionNotificationListener;
+
     @Autowired
     JobLauncher jobLauncher;
+
     @Autowired
     Job job;
-    */
 
     @Autowired
     private LoadManagementService loadManagementService;
-
-    @Autowired
-    private JobCompletionNotificationListener jobCompletionNotificationListener;
 
     @Override
     @RequestMapping(value = LOAD_FILE, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -65,6 +69,13 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
             //MultipartFile fileToLoad = (MultipartFile) i.next();
             loadManagementService.store(file, rootLocation);
             files.add(file.getOriginalFilename());
+
+            jobLauncher.run(job, new JobParameters());
+
+            //JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
+            //jobLauncher.run(job, jobParameters);
+            //logger.info("Batch job has been invoked");
+
             //}
 
             message = "You successfully uploaded " + file.getOriginalFilename() + "!";
@@ -104,13 +115,14 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         Logger logger = LoggerFactory.getLogger(this.getClass());
         try {
 
-            success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, fileUpload);
+            //success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, fileUpload);
+            Job job = loadManagementService.fileToDatabaseJob();
 
-            /*
+
             JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
                     .toJobParameters();
-            jobLauncher.run(fileToDatabaseJob, jobParameters);
-            */
+            jobLauncher.run(job, jobParameters);
+
         } catch (Exception e) {
             logger.info(e.getMessage());
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
