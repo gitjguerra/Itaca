@@ -4,6 +4,7 @@ import com.csi.itaca.load.domain.DataIn;
 import com.csi.itaca.load.domain.DataOut;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFileRepository;
+import com.csi.itaca.load.service.CustomRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -14,8 +15,10 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -51,7 +54,16 @@ public class JobBatchConfiguration {
     }
 
     @Bean
-    public FlatFileItemReader < DataIn > reader() {
+    public ItemReader<DataIn> reader(DataSource dataSource) {
+        // Reader JDBC
+        JdbcCursorItemReader reader = new JdbcCursorItemReader();
+        reader.setDataSource(dataSource);
+        reader.setRowMapper(new CustomRowMapper());
+        reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
+        return reader;
+    }
+    @Bean
+    public FlatFileItemReader < DataIn > importReader() {
         // Reader file
         FlatFileItemReader < DataIn > reader = new FlatFileItemReader < DataIn > ();
 
@@ -278,7 +290,7 @@ public class JobBatchConfiguration {
                 .build();
     }
 
-    /* ****************** Others STEPS - Habilitar al culminar paso 1  - *************************
+    /* ****************** Others STEPS - Habilitar al culminar paso 1  - ************************* */
     // PASO 2
     @Qualifier("preloadFileStep")
     @Bean
@@ -309,7 +321,7 @@ public class JobBatchConfiguration {
     @Qualifier("preloadFieldDefStep")
     @Bean
     public Step preloadFieldDefStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
-                      ItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
+                                    ItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
 
         return stepBuilderFactory.get("preloadFieldDefStep")
                 .<DataIn, DataOut> chunk(100)
