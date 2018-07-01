@@ -35,6 +35,7 @@ import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -60,11 +61,35 @@ public class JobBatchConfiguration {
     private PreloadDefinitionRepository preloadDefinitionRepository;
 
     @Bean
-    public ItemReader<DataIn> reader(DataSource dataSource) {
+    public ItemReader<DataIn> importReader(DataSource dataSource) {
         JdbcCursorItemReader reader = new JdbcCursorItemReader();
         reader.setDataSource(dataSource);
         reader.setRowMapper(new CustomRowMapper());
         reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
+        return reader;
+    }
+    @Bean
+    public FlatFileItemReader < DataIn > reader() {
+        FlatFileItemReader < DataIn > reader = new FlatFileItemReader < DataIn > ();
+        reader.setResource(new ClassPathResource("C:\\Users\\Administrador\\IdeaProjects\\Load\\web\\out\\production\\classes"));
+        reader.setLineMapper(new DefaultLineMapper < DataIn > () {
+            {
+                setLineTokenizer(new DelimitedLineTokenizer() {
+                    {
+                        setNames(new String[] {
+                                "id",
+                                "title",
+                                "description"
+                        });
+                    }
+                });
+                setFieldSetMapper(new BeanWrapperFieldSetMapper < DataIn > () {
+                    {
+                        setTargetType(DataIn.class);
+                    }
+                });
+            }
+        });
         return reader;
     }
     @Bean
@@ -90,6 +115,14 @@ public class JobBatchConfiguration {
 
     /*
     ************************ leer de la bd como un reader
+    @Bean
+    public ItemReader<DataIn> reader(DataSource dataSource) {
+        JdbcCursorItemReader reader = new JdbcCursorItemReader();
+        reader.setDataSource(dataSource);
+        reader.setRowMapper(new CustomRowMapper());
+        reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
+        return reader;
+    }
     @Bean
     public FlatFileItemReader<TestReaderDTO> preloadDefinitionReader() {
         FlatFileItemReader < TestReaderDTO > reader = new FlatFileItemReader < TestReaderDTO > ();
@@ -338,12 +371,12 @@ public class JobBatchConfiguration {
 
     @Qualifier("preloadDefinitionStep")
     @Bean
-    public Step preloadDefinitionStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> reader,
+    public Step preloadDefinitionStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> importReader,
                                       JdbcBatchItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
 
         return stepBuilderFactory.get("preloadDefinitionStep")
                 .<DataIn, DataOut> chunk(100)
-                .reader(reader)
+                .reader(importReader)
                 .processor(processor)
                 .writer(writer)
                 .build();
@@ -351,7 +384,7 @@ public class JobBatchConfiguration {
 
     @Qualifier("preloadFileStep")
     @Bean
-    public Step preloadFileStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> reader,
+    public Step preloadFileStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
                       ItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
 
         return stepBuilderFactory.get("preloadFileStep")
@@ -364,7 +397,7 @@ public class JobBatchConfiguration {
 
     @Qualifier("preloadRowTypeStep")
     @Bean
-    public Step preloadRowTypeStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> reader,
+    public Step preloadRowTypeStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
                       ItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
 
         return stepBuilderFactory.get("preloadRowTypeStep")
@@ -377,7 +410,7 @@ public class JobBatchConfiguration {
 
     @Qualifier("preloadFieldDefStep")
     @Bean
-    public Step preloadFieldDefStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> reader,
+    public Step preloadFieldDefStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
                       ItemWriter<DataOut> writer, ItemProcessor<DataIn, DataOut> processor) {
 
         return stepBuilderFactory.get("preloadFieldDefStep")

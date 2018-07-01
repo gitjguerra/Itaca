@@ -3,18 +3,21 @@ package com.csi.itaca.load.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.load.api.LoadManagementServiceProxy;
 import com.csi.itaca.load.service.*;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,6 +30,9 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -40,20 +46,17 @@ import java.util.stream.Collectors;
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
     private final String fileUploadDirectory = "C:\\temp";
-    private final File fileUpload = new File("C:\\temp\\prueba_load.csv");
+    private final File fileUpload = new File("C:\\temp\\itaca_preload.csv");
     private final Path rootLocation = Paths.get(fileUploadDirectory);
 
     final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(LoadManagementRestController.class);
     List<String> files = new ArrayList<String>();
 
-    //@Autowired
-    //private JobCompletionNotificationListener jobCompletionNotificationListener;
+    @Autowired
+    private JobLauncher jobLauncher;
 
     @Autowired
-    JobLauncher jobLauncher;
-
-    @Autowired
-    Job job;
+    private Job importUserJob;
 
     @Autowired
     private LoadManagementService loadManagementService;
@@ -62,32 +65,38 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     public DataSource dataSource;
 
     @Override
-    @RequestMapping(value = LOAD_FILE, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
-        String message = "";
+    @RequestMapping(value="/import/file", method=RequestMethod.POST)
+    public ResponseEntity create(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+
+        //Save multipartFile file in a temporary physical folder
+        String path = new ClassPathResource("/").getURL().getPath();//it's assumed you have a folder called temp in the resources folder
+        File fileToImport = new File(path + multipartFile.getOriginalFilename());
+        OutputStream outputStream = new FileOutputStream(fileToImport);
+        IOUtils.copy(multipartFile.getInputStream(), outputStream);
+        outputStream.flush();
+        outputStream.close();
+
+        //Launch the Batch Job
         try {
-
-            //Multiple files
-            //Iterator i = files.iterator();
-            //while (i.hasNext()) {
-            //MultipartFile fileToLoad = (MultipartFile) i.next();
-            loadManagementService.store(file, rootLocation);
-            files.add(file.getOriginalFilename());
-
-            jobLauncher.run(job, new JobParameters());
-
-            //JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
-            //jobLauncher.run(job, jobParameters);
-            //logger.info("Batch job has been invoked");
-
-            //}
-
-            message = "You successfully uploaded " + file.getOriginalFilename() + "!";
-            return ResponseEntity.status(HttpStatus.OK).body(message);
-        } catch (Exception e) {
-            message = "FAIL to upload " + file.getOriginalFilename() + "!";
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+            JobExecution jobExecution = jobLauncher.run(importUserJob, new JobParametersBuilder()
+                    .addString("fullPathFileName", fileToImport.getAbsolutePath())
+                    .toJobParameters());
+        } catch (JobExecutionAlreadyRunningException e) {
+            e.printStackTrace();
+        } catch (JobRestartException e) {
+            e.printStackTrace();
+        } catch (JobInstanceAlreadyCompleteException e) {
+            e.printStackTrace();
+        } catch (JobParametersInvalidException e) {
+            e.printStackTrace();
         }
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> handleFileUpload(MultipartFile file) {
+        return null;
     }
 
     @Override
