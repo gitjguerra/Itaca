@@ -1,15 +1,9 @@
 package com.csi.itaca.load.job;
 
-
 import com.csi.itaca.load.domain.DataIn;
 import com.csi.itaca.load.domain.DataOut;
-import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
-import com.csi.itaca.load.model.dao.PreloadFileEntity;
-import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
-import com.csi.itaca.load.model.dto.TestReaderDTO;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFileRepository;
-import com.csi.itaca.load.service.CustomRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -20,39 +14,30 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.file.FlatFileFooterCallback;
-import org.springframework.batch.item.file.FlatFileHeaderCallback;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
-import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(JobBatchConfiguration.class);
-    public static final int CHUNK_SIZE = 100;
 
     @Autowired
     private PreloadFileRepository preloadFileRepository;
@@ -61,25 +46,33 @@ public class JobBatchConfiguration {
     private PreloadDefinitionRepository preloadDefinitionRepository;
 
     @Bean
-    public ItemReader<DataIn> importReader(DataSource dataSource) {
-        JdbcCursorItemReader reader = new JdbcCursorItemReader();
-        reader.setDataSource(dataSource);
-        reader.setRowMapper(new CustomRowMapper());
-        reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
-        return reader;
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
+
     @Bean
     public FlatFileItemReader < DataIn > reader() {
+        // Reader file
         FlatFileItemReader < DataIn > reader = new FlatFileItemReader < DataIn > ();
-        reader.setResource(new ClassPathResource("C:\\Users\\Administrador\\IdeaProjects\\Load\\web\\out\\production\\classes"));
+
+        final String fileUploadDirectory = "C:\\temp";
+        final File fileUpload = new File("C:\\temp\\itaca_preload.csv");
+        final Path rootLocation = Paths.get(fileUploadDirectory);
+
+        try {
+            reader.setResource(new UrlResource(fileUpload.toURI()));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         reader.setLineMapper(new DefaultLineMapper < DataIn > () {
             {
                 setLineTokenizer(new DelimitedLineTokenizer() {
                     {
                         setNames(new String[] {
-                                "id",
-                                "title",
-                                "description"
+                                "Tipo Reg",
+                                "Fec Envio",
+                                "Convenio",
+                                "Filler"
                         });
                     }
                 });
@@ -106,109 +99,13 @@ public class JobBatchConfiguration {
     }
     @Bean
     public JdbcBatchItemWriter<DataOut> writer(DataSource dataSource){
+        // Writer JDBC
         JdbcBatchItemWriter<DataOut> writer = new JdbcBatchItemWriter<DataOut>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<DataOut>());
         writer.setSql("INSERT INTO ANIMES(id, title, description) VALUES (:Id, :name, :description)");
         writer.setDataSource(dataSource);
         return writer;
     }
-
-    /*
-    ************************ leer de la bd como un reader
-    @Bean
-    public ItemReader<DataIn> reader(DataSource dataSource) {
-        JdbcCursorItemReader reader = new JdbcCursorItemReader();
-        reader.setDataSource(dataSource);
-        reader.setRowMapper(new CustomRowMapper());
-        reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
-        return reader;
-    }
-    @Bean
-    public FlatFileItemReader<TestReaderDTO> preloadDefinitionReader() {
-        FlatFileItemReader < TestReaderDTO > reader = new FlatFileItemReader < TestReaderDTO > ();
-        reader.setResource(new ClassPathResource("C:\\temp\\output.csv"));
-        reader.setLineMapper(new DefaultLineMapper< TestReaderDTO >() {
-            {
-                setLineTokenizer(new DelimitedLineTokenizer() {
-                    {
-                        setNames(new String[] {
-                                "preloadDefinitionId",
-                                "name",
-                                "description"
-                        });
-                    }
-                });
-                setFieldSetMapper(new BeanWrapperFieldSetMapper< TestReaderDTO >() {
-                    {
-                        setTargetType(TestReaderDTO.class);
-                    }
-                });
-            }
-        });
-        return reader;
-    }
-    @Bean
-    public ItemReader<DataIn> preloadDefinitionReader(DataSource dataSource) {
-        JdbcCursorItemReader reader = new JdbcCursorItemReader();
-        reader.setDataSource(dataSource);
-        reader.setRowMapper(new CustomRowMapper());
-        reader.setSql("SELECT name, description FROM LD_PRELOAD_FIELD_DEFINITION");
-        return reader;
-    }
-    @Bean
-    public ItemProcessor<DataIn, DataOut> processorDTO() {
-        return new ItemProcessor<DataIn, DataOut>() {
-            @Override
-            public DataOut process(DataIn dataIn) throws Exception {
-                DataOut dataOut = new DataOut();
-                dataOut.setPRELOAD_FIELD_DEFINITION_ID("1");
-                dataOut.setNAME("CAMBIO1");
-                dataOut.setDESCRIPTION("CAMBIO2");
-                return dataOut;
-            }
-        };
-    }
-    @Bean
-    public ItemWriter<DataOut> writer2() {
-
-        FlatFileItemWriter<DataOut> writer = new FlatFileItemWriter<>();
-
-        FileSystemResource fileSystemResource = new FileSystemResource(new File("C:\\temp"));
-        writer.setResource(new ClassPathResource("output.txt"));
-        //writer.setResource(fileSystemResource);
-
-        DelimitedLineAggregator<DataOut> delLineAgg = new DelimitedLineAggregator<DataOut>();
-        delLineAgg.setDelimiter(",");
-
-        BeanWrapperFieldExtractor<DataOut> fieldExtractor = new BeanWrapperFieldExtractor<>();
-        fieldExtractor.setNames(new String[] {"text1-cambio1","text2-cambio1"});
-        delLineAgg.setFieldExtractor(fieldExtractor);
-        writer.setLineAggregator(delLineAgg);
-
-        writer.setHeaderCallback(new FlatFileHeaderCallback() {
-            @Override
-            public void writeHeader(Writer writer) throws IOException {
-                writer.write("HEADER");
-            }
-        });
-        writer.setFooterCallback(new FlatFileFooterCallback() {
-            @Override
-            public void writeFooter(Writer writer) throws IOException {
-                writer.write("FOOTER");
-            }
-        });
-        return writer;
-    }
-    @Bean
-    public JdbcBatchItemWriter<TestReaderDTO> writer(DataSource dataSource){
-        JdbcBatchItemWriter<TestReaderDTO> writer = new JdbcBatchItemWriter<TestReaderDTO>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<TestReaderDTO>());
-        writer.setSql("INSERT INTO ANIMES(id, title, description) VALUES (:Id, :name, :description)");
-        writer.setDataSource(dataSource);
-
-        return writer;
-    }
-    */
 
     @Bean
     public Job sqlExecuteJob(JobBuilderFactory jobs, @Qualifier("preloadDefinitionStep") Step step_preload_def, @Qualifier("preloadFileStep") Step step_preload_file, @Qualifier("preloadRowTypeStep") Step step_preload_row_type, @Qualifier("preloadFieldDefStep") Step step_preload_field_def, JobExecutionListener listener) {
@@ -366,7 +263,6 @@ public class JobBatchConfiguration {
 
         return job;
 
-
     }
 
     @Qualifier("preloadDefinitionStep")
@@ -382,6 +278,8 @@ public class JobBatchConfiguration {
                 .build();
     }
 
+    /* ****************** Others STEPS - Habilitar al culminar paso 1  - *************************
+    // PASO 2
     @Qualifier("preloadFileStep")
     @Bean
     public Step preloadFileStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
@@ -394,7 +292,7 @@ public class JobBatchConfiguration {
                 .writer(writer)
                 .build();
     }
-
+    // PASO 3
     @Qualifier("preloadRowTypeStep")
     @Bean
     public Step preloadRowTypeStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
@@ -407,7 +305,7 @@ public class JobBatchConfiguration {
                 .writer(writer)
                 .build();
     }
-
+    // PASO 4
     @Qualifier("preloadFieldDefStep")
     @Bean
     public Step preloadFieldDefStep(StepBuilderFactory stepBuilderFactory, FlatFileItemReader<DataIn> reader,
@@ -421,10 +319,6 @@ public class JobBatchConfiguration {
                 .build();
     }
 
-    @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
+    /* ****************** Others STEPS ************************* */
 
 }

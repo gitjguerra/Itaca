@@ -64,9 +64,10 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @Autowired
     public DataSource dataSource;
 
+    // **************************************** Test Upload version 1 BEGIN *************************************
     @Override
-    @RequestMapping(value="/import/file", method=RequestMethod.POST)
-    public ResponseEntity create(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+    @RequestMapping(value=LOAD_FILE, method=RequestMethod.POST)
+    public ResponseEntity preloadData1(@RequestParam("file") MultipartFile multipartFile) throws IOException {
 
         //Save multipartFile file in a temporary physical folder
         String path = new ClassPathResource("/").getURL().getPath();//it's assumed you have a folder called temp in the resources folder
@@ -93,11 +94,32 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
         return new ResponseEntity(HttpStatus.OK);
     }
+    // **************************************** Test Upload version 1 END *************************************
 
+    // **************************************** Test Upload version 2 BEGIN *************************************
     @Override
-    public ResponseEntity<String> handleFileUpload(MultipartFile file) {
-        return null;
+    @RequestMapping(value = LOAD_DATA_PRELOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity preloadData2() throws Exception {
+        boolean success = true;
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        try {
+
+            //success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, fileUpload);
+            Job job = loadManagementService.fileToDatabaseJob();
+
+
+            JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            jobLauncher.run(job, jobParameters);
+
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity(HttpStatus.OK);
     }
+    // **************************************** Test Upload version 2 END *************************************
 
     @Override
     @RequestMapping(value = LOAD_GET_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -119,29 +141,6 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .body(file);
-    }
-
-    @Override
-    @RequestMapping(value = LOAD_DATA_PRELOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity preloadData() throws Exception {
-        boolean success = true;
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        try {
-
-            //success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, fileUpload);
-            Job job = loadManagementService.fileToDatabaseJob();
-
-
-            JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-                    .toJobParameters();
-            jobLauncher.run(job, jobParameters);
-
-        } catch (Exception e) {
-            logger.info(e.getMessage());
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Override
