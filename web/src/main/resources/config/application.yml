@@ -52,6 +52,7 @@ configurator:
 
 batch:
    fileUploadDirectory: "C:\temp"
+   jobEnabled: false
 
 tableName: PROJECTS, DIR_COUNTRY, PER_BANK
 uiDisplayNameKey:

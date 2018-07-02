@@ -1,49 +1,47 @@
 package com.csi.itaca.load.job;
 
-import com.csi.itaca.load.domain.DataIn;
-import com.csi.itaca.load.domain.DataOut;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
 
-    @Bean
-    public Job sqlExecuteJob(JobBuilderFactory jobs, @Qualifier("preloadDefinitionStep") Step step_preload_def, JobExecutionListener listener) {
+    @Autowired
+    public JobBuilderFactory jobBuilderFactory;
 
-        Job job = jobs.get("job1")
-                .listener(listener)
-                .flow(step_preload_def)
+    @Autowired
+    public StepBuilderFactory stepBuilderFactory;
+
+    @Autowired
+    public CustomerDao customerDao;
+
+    @Bean
+    public Job job() {
+        return jobBuilderFactory.get("job")
+                .incrementer(new RunIdIncrementer())
+                .listener(new JobCompletionNotificationListener(customerDao))
+                .flow(step1())
                 .end()
                 .build();
-
-        return job;
-
     }
 
+    // TODO: Change de file hardcode
     @Bean
-    @Qualifier("preloadDefinitionStep")
-    public Step preloadDefinitionStep(StepBuilderFactory stepBuilderFactory, ItemReader<DataIn> readFile,
-                                      ItemWriter<DataOut> writeJDBC, ItemProcessor<DataIn, DataOut> processor) {
-
-        return stepBuilderFactory.get("preloadDefinitionStep")
-                .<DataIn, DataOut> chunk(100)
-                .reader(readFile)
-                .processor(processor)
-                .writer(writeJDBC)
+    public Step step1() {
+        return stepBuilderFactory.get("step1")
+                .<Customer, Customer>chunk(2)
+                .reader(PreloadReader.reader(new ClassPathResource("customer-data.csv").getFilename()))
+                .processor(new PreloadProcessor())
+                .writer(new PreloadWriter(customerDao))
                 .build();
     }
-
 }

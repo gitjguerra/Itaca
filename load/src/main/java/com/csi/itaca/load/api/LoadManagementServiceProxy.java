@@ -2,7 +2,6 @@ package com.csi.itaca.load.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
@@ -35,7 +34,7 @@ public interface LoadManagementServiceProxy {
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity<String> preloadData1(MultipartFile multipartFile) throws IOException;
+    ResponseEntity<String> preloadData(MultipartFile multipartFile) throws IOException;
 
     /**
      * Gets a file upload.

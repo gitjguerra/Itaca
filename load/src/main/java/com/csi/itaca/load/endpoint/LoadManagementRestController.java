@@ -4,20 +4,13 @@ import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.load.api.LoadManagementServiceProxy;
 import com.csi.itaca.load.service.*;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +28,6 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,17 +36,15 @@ import java.util.stream.Collectors;
 @RestController
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
-    private final String fileUploadDirectory = "C:\\temp";
-    private final File fileUpload = new File(fileUploadDirectory + "/itaca_preload.csv");
-
+    // TODO:  Change for yml lookup in the properties file application.yml
     /*
-    fileUploadDirectory in yml
-
     @Value("${batch.fileUploadDirectory}")
     private String fileUploadDirectory;
     */
-
+    private final String fileUploadDirectory = "C:\\temp";
+    private final File fileUpload = new File(fileUploadDirectory + "/customer-data.csv");
     private final Path rootLocation = Paths.get(fileUploadDirectory);
+
 
     final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(LoadManagementRestController.class);
     List<String> files = new ArrayList<String>();
@@ -71,10 +60,9 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
     @Override
     @RequestMapping(value=LOAD_FILE, method=RequestMethod.POST)
-    public ResponseEntity preloadData1(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity preloadData(@RequestParam("file") MultipartFile multipartFile) throws IOException {
 
-        //Save multipartFile file in a temporary physical folder
-        //String path = new ClassPathResource("/").getURL().getPath();//it's assumed you have a folder called temp in the resources folder
+        // TODO:  Change for yml lookup in the properties file application.yml
         File fileToImport = new File(rootLocation + File.separator + multipartFile.getOriginalFilename());
         OutputStream outputStream = new FileOutputStream(fileToImport);
         IOUtils.copy(multipartFile.getInputStream(), outputStream);
@@ -83,14 +71,9 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
         //Launch the Batch Job
         try {
-            //JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
-            //        .addString("fullPathFileName", fileToImport.getAbsolutePath())
-            //        .toJobParameters());
-
-            JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-                    .toJobParameters();
-            jobLauncher.run(sqlExecuteJob, jobParameters);
-
+            JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
+                    .addString("fullPathFileName", fileToImport.getAbsolutePath())
+                    .addLong("time",System.currentTimeMillis()).toJobParameters());
         } catch (JobExecutionAlreadyRunningException e) {
             e.printStackTrace();
         } catch (JobRestartException e) {

@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+// TODO:   Change for row mapper Itaca
 public class PreloadRowMapper implements RowMapper<DataIn> {
 
     private static final String COLUMN_TEXT1 = "Name";
