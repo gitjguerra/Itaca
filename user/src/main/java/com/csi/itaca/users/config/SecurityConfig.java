@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -45,18 +46,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        String[] resources = new String[]{
+                "/oauth/token", "/oauth/authorize**", "/public", "/api-docs/**", "/load/**"
+        };
+
         http
                 .headers().frameOptions().disable()
                 .and().authorizeRequests()
-                .antMatchers("/oauth/token", "/oauth/authorize**", "/public").permitAll()
+                .antMatchers(resources).permitAll()
                 .antMatchers("/user").access("hasRole('ADMIN')")
-                .antMatchers("/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
+                .exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler())
+                .and()
+                .formLogin() // if exist form  login
                 .permitAll()
                 .and()
-                .logout()
+                .logout()    // if exist form or process logout
                 .permitAll();
 
         // *** Cookies for token ***

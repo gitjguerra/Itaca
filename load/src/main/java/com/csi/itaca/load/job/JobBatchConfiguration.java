@@ -117,7 +117,7 @@ public class JobBatchConfiguration {
         // Writer JDBC
         JdbcBatchItemWriter<DataOut> writer = new JdbcBatchItemWriter<DataOut>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<DataOut>());
-        writer.setSql("INSERT INTO ANIMES(id, title, description) VALUES (:Id, :name, :description)");
+        writer.setSql("INSERT INTO LD_PRELOAD_FIELD_DEFINITION(id, title, description) VALUES (:Id, :name, :description)");
         writer.setDataSource(dataSource);
         return writer;
     }

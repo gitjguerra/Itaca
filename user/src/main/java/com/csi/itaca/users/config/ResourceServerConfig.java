@@ -29,10 +29,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         *           the resource /user is private only for admin role
         *           any resources in the itaca are in secure zone and need use the token
         */
+        String[] resources = new String[]{
+                "/oauth/token", "/oauth/authorize**", "/public", "/api-docs/**", "/load/**"
+        };
+
         http
                 .headers().frameOptions().disable()
                 .and().authorizeRequests()
-                .antMatchers("/oauth/token", "/oauth/authorize**", "/public").permitAll()
+                .antMatchers(resources).permitAll()
                 .antMatchers("/user").access("hasRole('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
