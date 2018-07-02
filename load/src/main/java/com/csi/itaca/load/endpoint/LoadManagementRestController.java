@@ -46,7 +46,15 @@ import java.util.stream.Collectors;
 public class LoadManagementRestController extends ItacaBaseRestController implements LoadManagementServiceProxy {
 
     private final String fileUploadDirectory = "C:\\temp";
-    private final File fileUpload = new File("C:\\temp\\itaca_preload.csv");
+    private final File fileUpload = new File(fileUploadDirectory + "/itaca_preload.csv");
+
+    /*
+    fileUploadDirectory in yml
+
+    @Value("${batch.fileUploadDirectory}")
+    private String fileUploadDirectory;
+    */
+
     private final Path rootLocation = Paths.get(fileUploadDirectory);
 
     final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(LoadManagementRestController.class);
@@ -70,8 +78,8 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     public ResponseEntity preloadData1(@RequestParam("file") MultipartFile multipartFile) throws IOException {
 
         //Save multipartFile file in a temporary physical folder
-        String path = new ClassPathResource("/").getURL().getPath();//it's assumed you have a folder called temp in the resources folder
-        File fileToImport = new File(path + multipartFile.getOriginalFilename());
+        //String path = new ClassPathResource("/").getURL().getPath();//it's assumed you have a folder called temp in the resources folder
+        File fileToImport = new File(rootLocation + multipartFile.getOriginalFilename());
         OutputStream outputStream = new FileOutputStream(fileToImport);
         IOUtils.copy(multipartFile.getInputStream(), outputStream);
         outputStream.flush();
@@ -104,9 +112,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         Logger logger = LoggerFactory.getLogger(this.getClass());
         try {
 
-            //success = loadManagementService.fileToDatabaseJob(jobCompletionNotificationListener, rootLocation, fileUpload);
             Job job = loadManagementService.fileToDatabaseJob();
-
 
             JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
                     .toJobParameters();
@@ -136,7 +142,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @RequestMapping(value = LOAD_GET_FILE_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-        File origin_file = new File(fileUpload.toString());
+        File origin_file = new File(filename.toString());
         Resource file = loadManagementService.loadFile(origin_file);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")

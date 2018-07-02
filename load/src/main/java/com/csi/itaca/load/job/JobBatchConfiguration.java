@@ -4,7 +4,6 @@ import com.csi.itaca.load.domain.DataIn;
 import com.csi.itaca.load.domain.DataOut;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFileRepository;
-import com.csi.itaca.load.service.CustomRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -66,6 +65,10 @@ public class JobBatchConfiguration {
     public FlatFileItemReader < DataIn > importReader() {
         // Reader file
         FlatFileItemReader < DataIn > reader = new FlatFileItemReader < DataIn > ();
+
+    /*
+    fileUploadDirectory in request  via  @Value("#{jobParameters['fileName']}")
+    */
 
         final String fileUploadDirectory = "C:\\temp";
         final File fileUpload = new File("C:\\temp\\itaca_preload.csv");

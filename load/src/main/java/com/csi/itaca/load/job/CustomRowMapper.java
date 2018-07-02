@@ -1,4 +1,4 @@
-package com.csi.itaca.load.service;
+package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.domain.DataIn;
 import org.springframework.jdbc.core.RowMapper;

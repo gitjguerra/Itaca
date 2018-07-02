@@ -1,6 +1,5 @@
-package com.csi.itaca.load.service;
+package com.csi.itaca.load.job;
 
-import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
