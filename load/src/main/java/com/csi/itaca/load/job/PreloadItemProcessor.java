@@ -2,9 +2,13 @@ package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.domain.DataIn;
 import com.csi.itaca.load.domain.DataOut;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
-public class CustomItemProcessor implements ItemProcessor<DataIn,DataOut> {
+@Component("processor")
+@StepScope
+public class PreloadItemProcessor implements ItemProcessor<DataIn,DataOut> {
 
     @Override
     public DataOut process(DataIn item) throws Exception {

@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CustomRowMapper implements RowMapper<DataIn> {
+public class PreloadRowMapper implements RowMapper<DataIn> {
 
     private static final String COLUMN_TEXT1 = "Name";
     private static final String COLUMN_TEXT2 = "Description";

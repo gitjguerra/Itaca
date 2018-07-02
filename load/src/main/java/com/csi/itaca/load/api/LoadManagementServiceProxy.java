@@ -38,13 +38,6 @@ public interface LoadManagementServiceProxy {
     ResponseEntity<String> preloadData1(MultipartFile multipartFile) throws IOException;
 
     /**
-     * upload process.
-     *
-     * @return a response body containing the requested load json object.
-     */
-    ResponseEntity preloadData2() throws Exception;
-
-    /**
      * Gets a file upload.
      *
      * @return a response body containing the requested load json object.

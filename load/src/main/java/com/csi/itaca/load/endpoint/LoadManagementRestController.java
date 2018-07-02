@@ -64,22 +64,18 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     private JobLauncher jobLauncher;
 
     @Autowired
-    private Job importUserJob;
+    private Job sqlExecuteJob;
 
     @Autowired
     private LoadManagementService loadManagementService;
 
-    @Autowired
-    public DataSource dataSource;
-
-    // **************************************** Test Upload version 1 BEGIN *************************************
     @Override
     @RequestMapping(value=LOAD_FILE, method=RequestMethod.POST)
     public ResponseEntity preloadData1(@RequestParam("file") MultipartFile multipartFile) throws IOException {
 
         //Save multipartFile file in a temporary physical folder
         //String path = new ClassPathResource("/").getURL().getPath();//it's assumed you have a folder called temp in the resources folder
-        File fileToImport = new File(rootLocation + multipartFile.getOriginalFilename());
+        File fileToImport = new File(rootLocation + File.separator + multipartFile.getOriginalFilename());
         OutputStream outputStream = new FileOutputStream(fileToImport);
         IOUtils.copy(multipartFile.getInputStream(), outputStream);
         outputStream.flush();
@@ -87,9 +83,14 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
         //Launch the Batch Job
         try {
-            JobExecution jobExecution = jobLauncher.run(importUserJob, new JobParametersBuilder()
-                    .addString("fullPathFileName", fileToImport.getAbsolutePath())
-                    .toJobParameters());
+            //JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
+            //        .addString("fullPathFileName", fileToImport.getAbsolutePath())
+            //        .toJobParameters());
+
+            JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            jobLauncher.run(sqlExecuteJob, jobParameters);
+
         } catch (JobExecutionAlreadyRunningException e) {
             e.printStackTrace();
         } catch (JobRestartException e) {
@@ -102,30 +103,6 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
         return new ResponseEntity(HttpStatus.OK);
     }
-    // **************************************** Test Upload version 1 END *************************************
-
-    // **************************************** Test Upload version 2 BEGIN *************************************
-    @Override
-    @RequestMapping(value = LOAD_DATA_PRELOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity preloadData2() throws Exception {
-        boolean success = true;
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        try {
-
-            Job job = loadManagementService.fileToDatabaseJob();
-
-            JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-                    .toJobParameters();
-            jobLauncher.run(job, jobParameters);
-
-        } catch (Exception e) {
-            logger.info(e.getMessage());
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
-    }
-    // **************************************** Test Upload version 2 END *************************************
 
     @Override
     @RequestMapping(value = LOAD_GET_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
