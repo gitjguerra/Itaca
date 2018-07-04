@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 // TODO: Only for test delete for production
 @Repository
-public class CustomerDaoImpl extends JdbcDaoSupport implements CustomerDao {
+public class TEST_CustomerDaoImpl extends JdbcDaoSupport implements TEST_CustomerDao {
 
     @Autowired
     DataSource dataSource;
@@ -27,11 +27,11 @@ public class CustomerDaoImpl extends JdbcDaoSupport implements CustomerDao {
     }
 
     @Override
-    public void insert(List<? extends Customer> Customers) {
+    public void insert(List<? extends TEST_Customer> Customers) {
         String sql = "INSERT INTO customer " + "(id, first_name, last_name) VALUES (?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                Customer customer = Customers.get(i);
+                TEST_Customer customer = Customers.get(i);
                 ps.setLong(1, customer.getId());
                 ps.setString(2, customer.getFirstName());
                 ps.setString(3, customer.getLastName());
@@ -45,13 +45,13 @@ public class CustomerDaoImpl extends JdbcDaoSupport implements CustomerDao {
     }
 
     @Override
-    public List<Customer> loadAllCustomers() {
+    public List<TEST_Customer> loadAllCustomers() {
         String sql = "SELECT * FROM customer";
         List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
 
-        List<Customer> result = new ArrayList<Customer>();
+        List<TEST_Customer> result = new ArrayList<TEST_Customer>();
         for (Map<String, Object> row : rows) {
-            Customer customer = new Customer();
+            TEST_Customer customer = new TEST_Customer();
             Long valor = Long.parseLong(row.get("id").toString());
             customer.setId(valor);
             customer.setFirstName((String) row.get("first_name"));

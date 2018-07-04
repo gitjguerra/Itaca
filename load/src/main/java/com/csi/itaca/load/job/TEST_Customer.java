@@ -1,15 +1,15 @@
 package com.csi.itaca.load.job;
 
 // TODO: Only for test delete for production
-public class Customer {
+public class TEST_Customer {
     private long id;
     private String firstName;
     private String lastName;
 
-    public Customer() {
+    public TEST_Customer() {
     }
 
-    public Customer(long id, String firstName, String lastName) {
+    public TEST_Customer(long id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

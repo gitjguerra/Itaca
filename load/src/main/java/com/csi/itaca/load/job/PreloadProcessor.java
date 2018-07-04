@@ -2,25 +2,34 @@ package com.csi.itaca.load.job;
 
 import java.util.Random;
 
+import com.csi.itaca.load.model.dto.PreloadData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
 // TODO: Change for Itaca processor
-public class PreloadProcessor implements ItemProcessor<Customer, Customer> {
+public class PreloadProcessor implements ItemProcessor<PreloadData, PreloadData> {
 
     private static final Logger log = LoggerFactory.getLogger(PreloadProcessor.class);
 
     @Override
-    public Customer process(Customer customer) throws Exception {
+    public PreloadData process(PreloadData preloadData) throws Exception {
         Random r = new Random();
 
-        final String firstName = customer.getFirstName().toUpperCase();
-        final String lastName = customer.getLastName().toUpperCase();
+        final String preloadId = preloadData.getLoadFileId().toString();
+        final String loadId = preloadData.getLoadFileId().toString();
 
-        final Customer fixedCustomer = new Customer(r.nextLong(), firstName, lastName);
+        Long loadFileId = 0L;
+        String loadedSuccessfully = "";
+        Long rowType = 0L;
+        Long lineNumber = 0L;
+        String dataCol1 = "";
+        String dataCol2 = "";
+        String dataCol3 = "";
 
-        log.info("Converting (" + customer + ") into (" + fixedCustomer + ")");
+        final PreloadData fixedCustomer = new PreloadData(r.nextLong(), loadFileId, loadedSuccessfully, rowType, lineNumber, dataCol1, dataCol2, dataCol3);
+
+        log.info("Converting (" + preloadData + ") into (" + fixedCustomer + ")");
 
         return fixedCustomer;
     }

@@ -4,7 +4,7 @@ package com.csi.itaca.load.model.dao;
  * Created by Robert on 19/06/2018.
  */
 
-import com.csi.itaca.load.model.PreloadData;
+import com.csi.itaca.load.model.PreloadDataOld;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "LD_PRELOAD_DATA")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class PreloadDataEntity implements PreloadData {
+public class PreloadDataEntity implements PreloadDataOld {
 
     public static final String PRELOAD_DATA_ID = "preloadDataId";
     public static final String LOAD_FILE_ID = "loadFileId";
