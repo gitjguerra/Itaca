@@ -14,9 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import com.csi.itaca.users.model.dto.MessageDTO;
@@ -26,6 +30,8 @@ import com.csi.itaca.users.model.dto.MessageDTO;
  * RESTful interface for the user management service.
  */
 @RestController
+//@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/user")
 public class UserManagementRestController extends ItacaBaseRestController implements UserManagementServiceProxy {
 
@@ -40,12 +46,8 @@ public class UserManagementRestController extends ItacaBaseRestController implem
     @Autowired
     private ChangePasswordValidator changePasswordValidator;
 
-    @RequestMapping("/hello/{player}")
-    public MessageDTO message(@PathVariable String player) {//REST Endpoint.
-
-        MessageDTO msg = new MessageDTO(player, "Hello " + player);
-        return msg;
-    }
+    @Resource(name = "tokenServices")
+    ConsumerTokenServices tokenServices;
 
     /**
      * getAllUsers will provide all users in chucks of (not implemented yet)
@@ -204,4 +206,9 @@ public class UserManagementRestController extends ItacaBaseRestController implem
         return new ResponseEntity(counts, HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeById/{tokenId}")
+    @ResponseBody
+    public void revokeToken(HttpServletRequest request, @PathVariable String tokenId) {
+        tokenServices.revokeToken(tokenId);
+    }
 }
