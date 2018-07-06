@@ -42,7 +42,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     private String fileUploadDirectory;
     */
     private final String fileUploadDirectory = "C:\\temp";
-    private final File fileUpload = new File(fileUploadDirectory + "/customer-data.csv");
+    private final File fileUpload = new File(fileUploadDirectory + "/itaca_preload.txt");
     private final Path rootLocation = Paths.get(fileUploadDirectory);
 
 
