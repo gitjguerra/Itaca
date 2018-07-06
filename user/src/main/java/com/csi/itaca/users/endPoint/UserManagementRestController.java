@@ -23,6 +23,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import com.csi.itaca.users.model.dto.MessageDTO;
+
 
 /**
  * RESTful interface for the user management service.

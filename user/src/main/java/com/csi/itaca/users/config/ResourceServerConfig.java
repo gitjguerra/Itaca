@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableResourceServer
@@ -33,10 +34,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         *           the resource /user is private only for admin role
         *           any resources in the itaca are in secure zone and need use the token
         */
+        String[] resources = new String[]{
+                "/oauth/token", "/oauth/authorize**", "/public", "/api-docs/**", "/load/**"
+        };
+
         http
                 .headers().frameOptions().disable()
                 .and().authorizeRequests()
-                .antMatchers("/oauth/token", "/oauth/authorize**", "/public").permitAll()
+                .antMatchers(resources).permitAll()
                 .antMatchers("/user").access("hasRole('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
@@ -44,16 +49,19 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .formLogin() // if exist form  login
                 .permitAll()
-                .and()
-                .logout()    // if exist form or process logout
-                .permitAll()
                 .and().csrf().and().httpBasic().disable()
-                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class);
+                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
+                .logout();    // if exist form or process logout
 
         if(!csrfEnabled)
         {
             http.csrf().disable();
         }
+
+
+        // *** Cookies for token ***
+        //http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        //http.sessionManagement().sessionFixation().newSession();
 
     }
 

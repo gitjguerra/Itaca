@@ -3,7 +3,6 @@ package com.csi.itaca.dataview.service;
 import com.csi.itaca.dataview.model.GenericRecord;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

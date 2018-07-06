@@ -1,4 +1,8 @@
 spring:
+  batch:
+      job:
+        # Disable job autostart
+        enabled: false
   application:
     name: PRODUCCION-SERVER
   profiles:
@@ -52,7 +56,10 @@ configurator:
   mode: classpath
   autoreload: false
 
-tableName: PER_BANK, DIR_COUNTRY,USR_USER
+batch:
+  fileUploadDirectory: "C:\temp"
+
+tableName: PROJECTS, DIR_COUNTRY, PER_BANK
 uiDisplayNameKey:
 uiDescriptionkey:
 foreignTables:
