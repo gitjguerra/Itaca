@@ -36,7 +36,7 @@ public class JobBatchConfiguration {
                 .build();
     }
 
-    // TODO: Change de file hardcode
+    // TODO: Change de file hardcode to @Value("#{jobParameters[fullPathFileName]}")
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("preload-data-step")

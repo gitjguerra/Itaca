@@ -3,6 +3,7 @@ package com.csi.itaca.load.job;
 import com.csi.itaca.load.model.dto.PreloadData;
 import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
 import org.apache.log4j.Logger;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -14,6 +15,7 @@ import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-// TODO: Change for Itaca file
+@StepScope
 public class PreloadReader {
 
     @Autowired
@@ -34,15 +36,13 @@ public class PreloadReader {
 
     // Get a list of row types associated to this load:
     private final String SELECT_ALL_ROWSTYPES_SQL_FULL =
-            "select ld_preload_row_type.* from ld_load_process, " +
-                    "ld_preload_file, ld_preload_row_type " +
-                    "WHERE ld_load_process.PRELOAD_DEFINITION_ID = ? " +
-                    "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
-                    "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id ";
+            "select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
+            "WHERE ld_load_process.PRELOAD_DEFINITION_ID = ? " +
+            "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
+            "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id ";
 
     private final String SELECT_ALL_FIELDDEFINITION_SQL_FULL =
             "select * from ld_preload_field_definition where preload_row_type_id = ?";
-
 
     public static FlatFileItemReader<PreloadData> reader(@Value("#{jobParameters[fullPathFileName]}") String pathToFile) {
 
@@ -50,7 +50,12 @@ public class PreloadReader {
 
         // 1. load_process_id
         //1.1. A record created in the ld_load_process table where load_process_id is associated.
-            // LATER
+        /*
+        INSERT INTO ITACA.LD_LOAD_PROCESS
+                (LOAD_PROCESS_ID, USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID, USERNAME_LOAD_CANCEL)
+        VALUES(0, 0, '', 0, '');
+        */
+
 
         // 2. load_file_id
         //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
@@ -59,8 +64,7 @@ public class PreloadReader {
 
         // 1.1. Get a list of row types associated to this load:
             /*
-            select ld_preload_row_type.* from ld_load_process,
-                    ld_preload_file, ld_preload_row_type
+            select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type
             WHERE ld_load_process.PRELOAD_DEFINITION_ID = 1
             AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id
             AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id
@@ -116,14 +120,15 @@ public class PreloadReader {
     }
 
     private static LineMapper<PreloadData> preloadLineMapper() {
-        DefaultLineMapper<PreloadData> mapper = new DefaultLineMapper<PreloadData>();
-        mapper.setLineTokenizer(productLineTokenizer());
+        DefaultLineMapper<PreloadData> mapper = new DefaultLineMapper<>();
+        mapper.setLineTokenizer(preloadLineTokenizer());
         mapper.setFieldSetMapper(preloadFieldSetMapper());
         return mapper;
     }
 
-    public static LineTokenizer productLineTokenizer() {
+    public static LineTokenizer preloadLineTokenizer() {
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
+        // TODO: colocar longitudes dinamicas
         tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 5), new Range(6, 10) });
         tokenizer.setNames(new String[] { "id", "name", "description" });
         return tokenizer;
@@ -132,6 +137,7 @@ public class PreloadReader {
     public static FieldSetMapper<PreloadData> preloadFieldSetMapper() {
         return new PreloadFieldSetMapper();
     }
+
     // find row types
     /*
     private List<PreloadRowTypeDTO> rowTypesFields() {
