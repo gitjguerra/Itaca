@@ -19,6 +19,10 @@ public class PreloadData {
 
     private String dataCol3;
 
+    private String dataCol4;
+
+    private String dataCol5;
+
     public void setPreloadDataId(Long preloadDataId) {
         this.preloadDataId = preloadDataId;
     }
@@ -79,10 +83,26 @@ public class PreloadData {
         this.dataCol3 = dataCol3;
     }
 
+    public String getDataCol4() {
+        return dataCol4;
+    }
+
+    public void setDataCol4(String dataCol4) {
+        this.dataCol4 = dataCol4;
+    }
+
+    public String getDataCol5() {
+        return dataCol5;
+    }
+
+    public void setDataCol5(String dataCol5) {
+        this.dataCol5 = dataCol5;
+    }
+
     public PreloadData() {
     }
 
-    public PreloadData(Long preloadDataId, Long loadFileId, String loadedSuccessfully, Long rowType, Long lineNumber, String dataCol1, String dataCol2, String dataCol3) {
+    public PreloadData(Long preloadDataId, Long loadFileId, String loadedSuccessfully, Long rowType, Long lineNumber, String dataCol1, String dataCol2, String dataCol3, String dataCol4, String dataCol5) {
         this.preloadDataId = preloadDataId;
         this.loadFileId = loadFileId;
         this.loadedSuccessfully = loadedSuccessfully;
@@ -91,6 +111,8 @@ public class PreloadData {
         this.dataCol1 = dataCol1;
         this.dataCol2 = dataCol2;
         this.dataCol3 = dataCol3;
+        this.dataCol4 = dataCol4;
+        this.dataCol5 = dataCol5;
     }
 
     @Override
@@ -104,6 +126,8 @@ public class PreloadData {
                 .append("dataCol1", this.dataCol1)
                 .append("dataCol2", this.dataCol2)
                 .append("dataCol3", this.dataCol3)
+                .append("dataCol4", this.dataCol4)
+                .append("dataCol5", this.dataCol5)
                 .toString();
     }
 
