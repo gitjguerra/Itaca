@@ -72,4 +72,9 @@ public interface User extends BaseModel {
 	 */
 	boolean isBlockedUser();
 
+	/**
+	 * Indicates the user role for JWT auth.
+	 * @return role name (ADMIN, USER).
+	 */
+	String getRoleDesc();
 }

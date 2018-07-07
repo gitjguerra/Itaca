@@ -1,4 +1,8 @@
 spring:
+  batch:
+      job:
+        # Disable job autostart
+        enabled: false
   application:
     name: PRODUCCION-SERVER
   profiles:
@@ -46,13 +50,14 @@ security:
       filter-order: 3
       resource_id: itaca-application
 
+security.enable-csrf: false
+
 configurator:
   mode: classpath
   autoreload: false
 
 batch:
-   fileUploadDirectory: "C:\temp"
-   jobEnabled: false
+  fileUploadDirectory: "C:\temp"
 
 tableName: PROJECTS, DIR_COUNTRY, PER_BANK
 uiDisplayNameKey:
