@@ -12,19 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
 
     @Autowired
-    public JobBuilderFactory jobBuilderFactory;
+    private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    public PreloadDataDao preloadDataDao;
+    private PreloadDataDao preloadDataDao;
 
     @Bean
     public Job job() {
@@ -36,12 +39,15 @@ public class JobBatchConfiguration {
                 .build();
     }
 
-    // TODO: Change de file hardcode to @Value("#{jobParameters[fullPathFileName]}")
+    // TODO: Change de file hardcode to
+        // @Value("#{jobParameters[fullPathFileName]}")
+        // @Value("#{jobParameters[id_load_process]}")
+        // @Value("#{jobParameters[id_load_file]}")
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("preload-data-step")
                 .<PreloadData, PreloadData>chunk(2)
-                .reader(PreloadReader.reader(new ClassPathResource("itaca_preload.txt").getFilename()))
+                .reader(PreloadReader.reader(new ClassPathResource("itaca_preload.txt").getFilename(),"1", "1"))
                 .processor(new PreloadProcessor())
                 .writer(new PreloadWriter(preloadDataDao))
                 .build();

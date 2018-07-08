@@ -11,6 +11,7 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
         PreloadData data = new PreloadData();
 
         data.setPreloadDataId(fieldSet.readLong("id"));
+        /*
         data.setLoadFileId(fieldSet.readLong("name"));
         data.setRowType(fieldSet.readLong("description"));
         data.setLoadedSuccessfully(fieldSet.readString("description"));
@@ -20,6 +21,7 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
         data.setDataCol3(fieldSet.readString("description"));
         data.setDataCol4(fieldSet.readString("description"));
         data.setDataCol5(fieldSet.readString("description"));
+        */
         return data;
     }
 }
