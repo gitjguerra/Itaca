@@ -1,6 +1,7 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -18,11 +19,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
 
-@StepScope
 public class PreloadReader {
+
+    @Autowired
+    public static DataSource dataSource;
 
     private final static Logger logger = Logger.getLogger(PreloadReader.class);
 
@@ -41,34 +46,40 @@ public class PreloadReader {
         //  <editor-fold defaultstate="collapsed" desc="*** 3) Process file ***">
             //  2.4. For each row in the file (loop):
 
-            FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
+        FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
             reader.setResource(new ClassPathResource(pathToFile));
 
-            // **** Construct the line with dynamic fields
-            // select field definition with row type
-                /*
-                select * from ld_preload_field_definition where preload_row_type_id = 'ROW_TYPE';
-                    donde 1 es el "ROW_TYPE" Head
-                    donde 2 es el "ROW_TYPE" Body
-                    donde 3 es el "ROW_TYPE" Footer
-                */
+            // Get filed definition
+        /*
+            List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
+                    "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
+                    "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
+                    "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
 
-            // Later construct the line for LD_PRELOAD_DATA
-            // C20170726000
-            // - Header:   insert (PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, CREATED_TIMESTAMP, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3)
-            //strFields = "'Tipo Reg', 'load_file_id', 'Fec Envio', 'Convenio', 'Filer'";
-            // ******* TEMPORAL PARA LAS PRUEBAS INICIALES DE LECTURA *********
-            String strFields = "PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, CREATED_TIMESTAMP, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5";
+            Long idRowType = 0L;
+            Long length = 0L;
+            for(PreloadRowTypeDTO rowType : rowTypes)
+            {
+                logger.info(rowType.getName());
+                logger.info(rowType.getPreloadRowTypeId());
+                idRowType = rowType.getPreloadRowTypeId().longValue();
 
-            // D2017072500100100000100315001851405              A20170725 UF000000000,28            1002            69194141  S70EJE   170934784            000C09 EJE001                 KAREN CONDOREP00000000              NO                                                                                                                                                                                                                                                               060162
-            // - Body:   insert (PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, CREATED_TIMESTAMP, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7, DATA_COL8, DATA_COL9, DATA_COL10, DATA_COL11)
-            //String strFields = "'Tipo Reg', 'Fec Envio', 'Cod. Conv.', 'Tipo Trans.', 'Cod Ramo', 'Cod Linea', 'Cod Producto', 'Num Propuesta', 'Num. Poliza', 'Cod Plan', 'Fec Venta'";
+                List<PreloadFieldDefinitionDTO> fieldDefinitions = jdbcTemplate.query("SELECT PRELOAD_FIELD_DEFINITION_ID, PRELOAD_ROW_TYPE_ID, COLUMN_NO, LENGTH, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY " +
+                "FROM ITACA.LD_PRELOAD_FIELD_DEFINITION " +
+                "WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO.class));
+                for(PreloadFieldDefinitionDTO fieldDefinition : fieldDefinitions)
+                {
+                    logger.info(fieldDefinition.getName());
+                    logger.info(fieldDefinition.getLength());
 
-            // T2017072600000236000000137,42
-            // - Footer:
-            // String strFields = "";    NOW is Empty in database
-            // String strFields = "";    NOW is Empty in database
+                    HashMap<String,Long> fields = new HashMap<>();
+                    fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
 
+                }
+
+            }
+            reader.setLineMapper(preloadLineMapper(fields));
+            */
             reader.setLineMapper(preloadLineMapper());
 
                 //          a) Insert new row in to ld_preload_data table with row loaded from the file.
@@ -124,8 +135,9 @@ public class PreloadReader {
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
         // TODO: colocar longitudes dinamicas
         //tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12), new Range(13, 160) });
-        tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12), new Range(13, 123) });
-        tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio", "Filler" });
+        //tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio", "Filler" });
+        tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12) });
+        tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio" });
         return tokenizer;
     }
 

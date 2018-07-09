@@ -21,6 +21,8 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
 
     private Long columnNo;
 
+    private Long length;
+
     private String name;
 
     private String description;
@@ -44,12 +46,13 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
     public PreloadFieldDefinitionDTO() {
     }
 
-    public PreloadFieldDefinitionDTO(Long preloadFieldDefinitionId,Long preloadRowTypeId,Long columnNo,String name,
+    public PreloadFieldDefinitionDTO(Long preloadFieldDefinitionId,Long preloadRowTypeId,Long columnNo, Long length,String name,
                                      String description,Long preloadFieldTypeId,String regex,String required,Long relType
             ,Long relFieldDefinitionId,String relDbTableName,String relDbFieldName,Long errorSeverity) {
         this.preloadFieldDefinitionId = preloadFieldDefinitionId;
         this.preloadRowTypeId = preloadRowTypeId;
         this.columnNo = columnNo;
+        this.length = length;
         this.name = name;
         this.description = description;
         this.preloadFieldTypeId = preloadFieldTypeId;
@@ -68,6 +71,7 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
                 .append("preloadFieldDefinitionId", this.preloadFieldDefinitionId)
                 .append("preloadRowTypeId", this.preloadRowTypeId)
                 .append("columnNo", this.columnNo)
+                .append("length", this.length)
                 .append("name", this.name)
                 .append("description", this.description)
                 .append("preloadFieldTypeId", this.preloadFieldTypeId)
