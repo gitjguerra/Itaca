@@ -123,10 +123,9 @@ public class PreloadReader {
     public static LineTokenizer preloadLineTokenizer() {
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
         // TODO: colocar longitudes dinamicas
-        //tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10-12), new Range(13-160) });
-        tokenizer.setColumns(new Range[] { new Range(1, 1) });
-        tokenizer.setNames(new String[] { "id" });
-        //tokenizer.setNames(new String[] { "id", "name", "description" });
+        //tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12), new Range(13, 160) });
+        tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12), new Range(13, 123) });
+        tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio", "Filler" });
         return tokenizer;
     }
 

@@ -189,6 +189,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                         .addString("fullPathFileName", file.getAbsolutePath())
                         .addLong("id_load_process", idLoadProcess)
                         .addLong("id_load_file", idLoadFile)
+                    // TODO: Pass like and object
                         .addString("rows", String.valueOf(rows))
                         .addLong("time", System.currentTimeMillis()).toJobParameters());  // Se agrega para ejecutar multiples hilos
 
