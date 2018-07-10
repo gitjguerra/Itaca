@@ -127,7 +127,7 @@ public class PreloadReader {
 
     public static LineTokenizer preloadLineTokenizer(LinkedHashMap<String,Long> fields) {
 
-        // DATA EJEMPLO
+        // TODO: Delete data example
         fields.put("Tipo_Reg", (long) 1);
         fields.put("Fec_Envio", (long) 8);
         fields.put("Convenio", (long) 3);
@@ -142,17 +142,8 @@ public class PreloadReader {
 
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
 
-        // TODO: colocar longitudes dinamicas
-        //tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12) });
-        //tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio" });
-
-
         //    CREATE A DINAMIC FIELDS RANGE
-
         for(String name: fields.keySet()){
-
-            System.out.println(name + " tiene una longitud de " + fields.get(name));
-
             min = max + 1;
             intLengthInit = fields.get(name).intValue();
             max = intLengthInit + max;
@@ -163,7 +154,6 @@ public class PreloadReader {
         }
         tokenizer.setColumns(strRanges);
         tokenizer.setNames(strNames);
-
 
         return tokenizer;
     }
