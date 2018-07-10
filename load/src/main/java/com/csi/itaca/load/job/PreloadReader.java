@@ -1,8 +1,6 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.dto.PreloadData;
-import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
-import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -12,34 +10,22 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 
+@StepScope
 public class PreloadReader {
 
-    @Autowired
-    public static DataSource dataSource;
+    //@Autowired
+    //static
+    //DataSource dataSource;
+
+    // Database connection
+    //static JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
     private final static Logger logger = Logger.getLogger(PreloadReader.class);
-
-    // Preparation file: Get a list of row types associated to this load:
-    private static final String SELECT_ALL_ROWSTYPES_SQL_FULL =
-            "select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
-            "WHERE ld_load_process.LOAD_PROCESS_ID = ? " +
-            "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
-            "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id ";
-
-    private static final String SELECT_ALL_FIELDDEFINITION_SQL_FULL =
-            "select * from ld_preload_field_definition where preload_row_type_id = ?";
 
     public static FlatFileItemReader<PreloadData> reader(@Value("#{jobParameters[fullPathFileName]}") String pathToFile, @Value("#{jobParameters[id_load_process]}") String id_load_process, @Value("#{jobParameters[id_load_file]}") String id_load_file) {
 
@@ -47,15 +33,17 @@ public class PreloadReader {
             //  2.4. For each row in the file (loop):
 
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
+
             reader.setResource(new ClassPathResource(pathToFile));
 
             // Get filed definition
-        /*
+            /*
             List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
                     "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
                     "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
                     "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
 
+            HashMap<String,Long> fields = new HashMap<>();
             Long idRowType = 0L;
             Long length = 0L;
             for(PreloadRowTypeDTO rowType : rowTypes)
@@ -72,25 +60,27 @@ public class PreloadReader {
                     logger.info(fieldDefinition.getName());
                     logger.info(fieldDefinition.getLength());
 
-                    HashMap<String,Long> fields = new HashMap<>();
                     fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
 
                 }
 
             }
-            reader.setLineMapper(preloadLineMapper(fields));
             */
 
-            // TODO: delete when activate last commentaries
-            HashMap<String,Long> fields = new HashMap<>();
-
-            reader.setLineMapper(preloadLineMapper(fields));
-
+                        // ************** OK **************
                 //          a) Insert new row in to ld_preload_data table with row loaded from the file.
                 //          b) Determine row type. (find [found row type id])
                 //              i. For each ld_preload_field_row_type found in preparation check identifier_column_no and identifier_value. When there is a match row type is found.
                 //          c) Find all field definitions based on found row type found above:
                 //              i. select * from ld_preload_field_definition where preload_row_type_id = [found row type id]
+
+                // TODO: delete when activate last commentaries
+                LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
+
+                reader.setLineMapper(preloadLineMapper(fields));
+
+                            // ************** FALTA DE AQUI PARA ABAJO **************
+
                 //              ii. Validate field content: For each ld_preload_field_definition perform validation based on preload_field_type_id, regex & required.
                 //              iii. Validate relation (file to database): For each rel_type = 2 or 3 look up
                 //                  rel_db_table_name and rel_db_field_name. For example: Select * from
@@ -128,42 +118,52 @@ public class PreloadReader {
 
     }
 
-    private static LineMapper<PreloadData> preloadLineMapper(HashMap<String,Long> fields) {
+    private static LineMapper<PreloadData> preloadLineMapper(LinkedHashMap<String,Long> fields) {
         DefaultLineMapper<PreloadData> mapper = new DefaultLineMapper<>();
         mapper.setLineTokenizer(preloadLineTokenizer(fields));
         mapper.setFieldSetMapper(preloadFieldSetMapper());
         return mapper;
     }
 
-    public static LineTokenizer preloadLineTokenizer(HashMap<String,Long> fields) {
+    public static LineTokenizer preloadLineTokenizer(LinkedHashMap<String,Long> fields) {
+
+        // DATA EJEMPLO
+        fields.put("Tipo_Reg", (long) 1);
+        fields.put("Fec_Envio", (long) 8);
+        fields.put("Convenio", (long) 3);
+
+        int cont = 0;
+        int intLengthInit = 0;
+        int intLengthFinal = 0;
+        int min = 0;
+        int max = 0;
+        String[] strNames =  new String[3];
+        Range[] strRanges = new Range[3];
+
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
 
         // TODO: colocar longitudes dinamicas
-        tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12) });
-        tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio" });
+        //tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12) });
+        //tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio" });
 
-        /*
-            CREATE A DINAMIC FIELDS RANGE
 
-        cont = 0;
-        intLengthInit = 0;
-        intLengthFinal = 0;
-        String[] strNames = "";
-        Range[] strRanges = null;
+        //    CREATE A DINAMIC FIELDS RANGE
+
         for(String name: fields.keySet()){
 
             System.out.println(name + " tiene una longitud de " + fields.get(name));
 
-            intLengthInit = Integer.parseInt(fields.get(name));
-            intLengthFinal = intLengthInit + intLengthFinal;
+            min = max + 1;
+            intLengthInit = fields.get(name).intValue();
+            max = intLengthInit + max;
 
-            ranges[cont] = {new Range(intLengthInit + 1, intLengthInit + intLengthFinal)};
+            strRanges[cont] = new Range(min, max);
             strNames[cont] = name;
+            cont++;
         }
-        tokenizer.setColumns(ranges);
+        tokenizer.setColumns(strRanges);
         tokenizer.setNames(strNames);
-        intLengthFinal = intLengthInit;
-        */
+
 
         return tokenizer;
     }
