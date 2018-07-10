@@ -80,7 +80,11 @@ public class PreloadReader {
             }
             reader.setLineMapper(preloadLineMapper(fields));
             */
-            reader.setLineMapper(preloadLineMapper());
+
+            // TODO: delete when activate last commentaries
+            HashMap<String,Long> fields = new HashMap<>();
+
+            reader.setLineMapper(preloadLineMapper(fields));
 
                 //          a) Insert new row in to ld_preload_data table with row loaded from the file.
                 //          b) Determine row type. (find [found row type id])
@@ -124,20 +128,43 @@ public class PreloadReader {
 
     }
 
-    private static LineMapper<PreloadData> preloadLineMapper() {
+    private static LineMapper<PreloadData> preloadLineMapper(HashMap<String,Long> fields) {
         DefaultLineMapper<PreloadData> mapper = new DefaultLineMapper<>();
-        mapper.setLineTokenizer(preloadLineTokenizer());
+        mapper.setLineTokenizer(preloadLineTokenizer(fields));
         mapper.setFieldSetMapper(preloadFieldSetMapper());
         return mapper;
     }
 
-    public static LineTokenizer preloadLineTokenizer() {
+    public static LineTokenizer preloadLineTokenizer(HashMap<String,Long> fields) {
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
+
         // TODO: colocar longitudes dinamicas
-        //tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12), new Range(13, 160) });
-        //tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio", "Filler" });
         tokenizer.setColumns(new Range[] { new Range(1, 1), new Range(2, 9), new Range(10, 12) });
         tokenizer.setNames(new String[] { "Tipo_Reg", "Fec_Envio", "Convenio" });
+
+        /*
+            CREATE A DINAMIC FIELDS RANGE
+
+        cont = 0;
+        intLengthInit = 0;
+        intLengthFinal = 0;
+        String[] strNames = "";
+        Range[] strRanges = null;
+        for(String name: fields.keySet()){
+
+            System.out.println(name + " tiene una longitud de " + fields.get(name));
+
+            intLengthInit = Integer.parseInt(fields.get(name));
+            intLengthFinal = intLengthInit + intLengthFinal;
+
+            ranges[cont] = {new Range(intLengthInit + 1, intLengthInit + intLengthFinal)};
+            strNames[cont] = name;
+        }
+        tokenizer.setColumns(ranges);
+        tokenizer.setNames(strNames);
+        intLengthFinal = intLengthInit;
+        */
+
         return tokenizer;
     }
 

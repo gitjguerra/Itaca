@@ -34,21 +34,54 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
                 case 5:
                     data.setDataCol5(fieldSet.readString(i));
                     break;
+                case 6:
+                    data.setDataCol6(fieldSet.readString(i));
+                    break;
+                case 7:
+                    data.setDataCol7(fieldSet.readString(i));
+                    break;
+                case 8:
+                    data.setDataCol8(fieldSet.readString(i));
+                    break;
+                case 9:
+                    data.setDataCol9(fieldSet.readString(i));
+                    break;
+                case 10:
+                    data.setDataCol10(fieldSet.readString(i));
+                    break;
+                case 11:
+                    data.setDataCol11(fieldSet.readString(i));
+                    break;
+                case 12:
+                    data.setDataCol12(fieldSet.readString(i));
+                    break;
+                case 13:
+                    data.setDataCol13(fieldSet.readString(i));
+                    break;
+                case 14:
+                    data.setDataCol14(fieldSet.readString(i));
+                    break;
+                case 15:
+                    data.setDataCol15(fieldSet.readString(i));
+                    break;
+                case 16:
+                    data.setDataCol16(fieldSet.readString(i));
+                    break;
+                case 17:
+                    data.setDataCol17(fieldSet.readString(i));
+                    break;
+                case 18:
+                    data.setDataCol18(fieldSet.readString(i));
+                    break;
+                case 19:
+                    data.setDataCol9(fieldSet.readString(i));
+                    break;
+                case 20:
+                    data.setDataCol20(fieldSet.readString(i));
+                    break;
             }
             logger.info("Campo " + i + ": " + fieldSet.readString(i));
         }
-        /*
-        data.setPreloadDataId(fieldSet.readLong("id"));
-        data.setLoadFileId(fieldSet.readLong("name"));
-        data.setLoadedSuccessfully(fieldSet.readString("description"));
-        data.setLineNumber(fieldSet.readLong("description"));
-        data.setDataCol1(fieldSet.readString("description"));
-        data.setDataCol2(fieldSet.readString("description"));
-        data.setDataCol3(fieldSet.readString("description"));
-        data.setDataCol4(fieldSet.readString("description"));
-        data.setDataCol5(fieldSet.readString("description"));
-        data.setDataCol4(fieldSet.readString("Filler"));
-        */
         return data;
     }
 }
