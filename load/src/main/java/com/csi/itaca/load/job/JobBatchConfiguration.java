@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -59,8 +58,7 @@ public class JobBatchConfiguration {
                    StepBuilderFactory stepBuilderFactory,
                    ItemReader<PreloadData> itemReader,
                    ItemProcessor<PreloadData, PreloadData> itemProcessor,
-                   ItemWriter<PreloadData> PreloadItemWriter
-                   ) throws MalformedURLException {
+                   ItemWriter<PreloadData> PreloadItemWriter) throws MalformedURLException {
 
         Step step = stepBuilderFactory.get("preload-data-step")
                     .<PreloadData, PreloadData>chunk(2)
@@ -132,7 +130,6 @@ public class JobBatchConfiguration {
         Range[] strRanges = new Range[fields.size()];
         FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
 
-        //    CREATE A DINAMIC FIELDS RANGE
         for(String name: fields.keySet()){
             min = max + 1;
             intLengthInit = fields.get(name).intValue();

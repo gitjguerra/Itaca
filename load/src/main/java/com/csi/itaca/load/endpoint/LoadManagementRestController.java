@@ -7,8 +7,6 @@ import com.csi.itaca.load.service.*;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -41,6 +39,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
     List<String> files = new ArrayList<>();
 
+    // Upload directory - Set with resource in the applioation.yml  example:     fileUploadDirectory: "/temp"
     @Value("${spring.batch.job.fileUploadDirectory}")
     private String fileUploadDirectory;
 
@@ -50,12 +49,12 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @Autowired
     private LoadManagementService loadManagementService;
 
-    // Call Job
+    // Call Job with the upload file
     @Override
     @RequestMapping(value=LOAD_FILE, method=RequestMethod.POST)
     public ResponseEntity preloadData(@RequestParam("file") MultipartFile multipartFile) throws IOException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 
-        // Upload de file
+        // Upload file
         Path rootLocation = Paths.get(fileUploadDirectory);
         File fileToImport = new File(rootLocation + File.separator + multipartFile.getOriginalFilename());
         OutputStream outputStream = new FileOutputStream(fileToImport);
