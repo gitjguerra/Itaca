@@ -4,8 +4,6 @@ import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dto.PreloadData;
 import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
-import com.csi.itaca.load.service.LoadManagementServiceImpl;
-import com.csi.itaca.load.utils.PreloadJdbcUtils;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -51,6 +49,7 @@ public class JobBatchConfiguration {
     @Autowired
     private PreloadDataDao preloadDataDao;
 
+    // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
 
     @Bean
@@ -85,14 +84,6 @@ public class JobBatchConfiguration {
 
         reader.setResource(new ClassPathResource(pathToFile));
 
-        // Call the data definition for file to load on service(In this method the datasource is null and the app fail)
-        //LoadManagementServiceImpl jdbcUtils = new LoadManagementServiceImpl();
-        //LinkedHashMap<String,Long> fields =  jdbcUtils.getFieldDefinition(id_load_process);
-
-        // Call the data definition for file to load on class(In this method the datasource is null and the app fail)
-        //PreloadJdbcUtils jdbcUtils = new PreloadJdbcUtils();
-        //LinkedHashMap<String,Long> fields = jdbcUtils.getFieldDefinition("2");
-
         // Database connection direct
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
@@ -112,9 +103,9 @@ public class JobBatchConfiguration {
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
             }
+            reader.setLineMapper(preloadLineMapper(fields));
+            fields.clear();
         }
-
-        reader.setLineMapper(preloadLineMapper(fields));
 
         return reader;
     }
@@ -127,14 +118,6 @@ public class JobBatchConfiguration {
     }
 
     public LineTokenizer preloadLineTokenizer(LinkedHashMap<String,Long> fields) {
-
-        // TODO: Delete only for test
-        /*
-        fields.put("Typ_Reg", 1L);
-        fields.put("Fec_Envio", 8L);
-        fields.put("Convenio", 3L);
-         */
-
 
         int cont = 0;
         int intLengthInit = 0;
