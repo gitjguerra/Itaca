@@ -28,6 +28,18 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
 
     @Override
     public void insert(List<? extends PreloadData> preloadData) {
+
+        // TODO: DELETE HARDCODE
+        int ii = 1;
+        PreloadData preload1 = preloadData.get(ii++);
+        String a = String.valueOf(preload1.getLoadFileId());
+        String b = String.valueOf(preload1.getLoadedSuccessfully());
+        String c = String.valueOf(preload1.getLineNumber());
+        String d = String.valueOf(preload1.getRowType());
+        String e = String.valueOf(preload1.getDataCol1());
+        String f = String.valueOf(preload1.getDataCol2());
+        String g = String.valueOf(preload1.getDataCol3());
+
         String sql = "INSERT INTO LD_PRELOAD_DATA " + "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
