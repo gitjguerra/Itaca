@@ -1,8 +1,10 @@
 spring:
   batch:
-      job:
+    job:
         # Disable job autostart
         enabled: false
+        fileUploadDirectory: "/temp"
+
   application:
     name: PRODUCCION-SERVER
   profiles:
@@ -55,9 +57,6 @@ security.enable-csrf: false
 configurator:
   mode: classpath
   autoreload: false
-
-batch:
-  fileUploadDirectory: "C:\temp"
 
 tableName: PROJECTS, DIR_COUNTRY, PER_BANK
 uiDisplayNameKey:

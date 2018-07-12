@@ -5,9 +5,11 @@ import java.util.List;
 import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dto.PreloadData;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.stereotype.Component;
 
 
 // TODO: Change for data objects ITACA
+@Component
 public class PreloadWriter implements ItemWriter<PreloadData> {
 
     private final PreloadDataDao preloadDataDao;

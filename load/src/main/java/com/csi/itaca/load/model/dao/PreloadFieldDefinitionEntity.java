@@ -21,6 +21,7 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
     public static final String PRELOAD_FIELD_DEFINITION_ID = "preloadFieldDefinitionId";
     public static final String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
     public static final String COLUMN_NO = "columnNo";
+    public static final String LENGTH = "length";
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
     public static final String PRELOAD_FIELD_TYPE_ID = "preloadFieldTypeId";
@@ -43,6 +44,9 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
 
     @Column(name="COLUMN_NO")
     private Long columnNo;
+
+    @Column(name="LENGTH")
+    private Long length;
 
     @Column(name="NAME")
     private String name;
@@ -73,5 +77,4 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
 
     @Column(name="ERROR_SEVERITY")
     private Long errorSeverity;
-
 }

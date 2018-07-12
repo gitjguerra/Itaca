@@ -1,5 +1,9 @@
 package com.csi.itaca.load.api;
 
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +38,7 @@ public interface LoadManagementServiceProxy {
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity<String> preloadData(MultipartFile multipartFile) throws IOException;
+    ResponseEntity<String> preloadData(MultipartFile multipartFile) throws IOException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
 
     /**
      * Gets a file upload.

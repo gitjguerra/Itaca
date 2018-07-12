@@ -11,6 +11,8 @@ public interface PreloadFieldDefinition {
 
     Long getColumnNo();
 
+    Long getLength();
+
     String getName();
 
     String getDescription();
