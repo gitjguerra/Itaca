@@ -27,12 +27,13 @@ import lombok.ToString;
 public class UserEntity implements User {
 
 	// Fields used by the service implementations.
-	public static final String ID 			= "id";
+	public static final String ID 				= "id";
 	public static final String USERNAME 		= "username";
 	public static final String PASSWORD 		= "password";
 	public static final String USER_LANGUAGE 	= "language_id";
 	public static final String DESCRIPTION 		= "description";
-	public static final String BLOCKED 		= "blockedUser";
+	public static final String BLOCKED 			= "blockedUser";
+	public static final String ROLE_DESC 		= "roleDesc";
 
 	@Id
 	@Column(name = "user_id")
@@ -76,5 +77,8 @@ public class UserEntity implements User {
 
 	@Column(name = "blocked_date")
 	private LocalDate blockedDate;
+
+	@Column(name = "role_desc")
+	private String roleDesc;
 
 }

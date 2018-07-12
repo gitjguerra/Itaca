@@ -50,6 +50,8 @@ security:
       filter-order: 3
       resource_id: itaca-application
 
+security.enable-csrf: false
+
 configurator:
   mode: classpath
   autoreload: false

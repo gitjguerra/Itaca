@@ -44,4 +44,7 @@ public class UserDTO extends BaseModelImpl implements User {
     private LocalDate blockedDate;
     
     private boolean activeUser;
+
+    private String roleDesc;
+
 }

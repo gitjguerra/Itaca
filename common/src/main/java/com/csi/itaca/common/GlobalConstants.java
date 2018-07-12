@@ -9,7 +9,5 @@ public class GlobalConstants {
     public static final String UPDATE_PROCESS               = "UPDATE PROCESS";
     public static final String DELETE_PROCESS               = "DELETE PROCESS";
     public static final String EMPTY_PROCESS                = "";
-    // TODO: Eliminar al obtener el usuario actual
-    public static final String DEFAULT_USER                 = "JGUERRA";
 
 }

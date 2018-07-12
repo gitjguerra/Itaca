@@ -30,12 +30,12 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
