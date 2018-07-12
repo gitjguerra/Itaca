@@ -144,7 +144,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         //  </editor-fold>
 
             JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
-                        .addString("fullPathFileName", file.getAbsolutePath())
+                        //.addString("fullPathFileName", file.getAbsolutePath())
+                        .addString("fullPathFileName", file.getName())
                         .addString("id_load_process", idLoadProcess.toString())
                         .addString("id_load_file", idLoadFile.toString())
                         .addLong("time", System.currentTimeMillis()).toJobParameters());  // Se agrega para ejecutar multiples hilos

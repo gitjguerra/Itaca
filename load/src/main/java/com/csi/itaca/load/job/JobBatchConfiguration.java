@@ -26,10 +26,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.net.MalformedURLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -58,7 +60,7 @@ public class JobBatchConfiguration {
                    ItemReader<PreloadData> itemReader,
                    ItemProcessor<PreloadData, PreloadData> itemProcessor,
                    ItemWriter<PreloadData> PreloadItemWriter
-                   ){
+                   ) throws MalformedURLException {
 
         Step step = stepBuilderFactory.get("preload-data-step")
                     .<PreloadData, PreloadData>chunk(2)
@@ -79,7 +81,7 @@ public class JobBatchConfiguration {
                                                       @Value("#{jobParameters['id_load_process']}")
                                                               String id_load_process,
                                                       @Value("#{jobParameters['id_load_file']}")
-                                                                  String id_load_file) {
+                                                                  String id_load_file) throws MalformedURLException {
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
 
         reader.setResource(new ClassPathResource(pathToFile));
@@ -105,6 +107,7 @@ public class JobBatchConfiguration {
             }
             reader.setLineMapper(preloadLineMapper(fields));
             fields.clear();
+            break;
         }
 
         return reader;
