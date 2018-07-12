@@ -5,8 +5,10 @@ import com.csi.itaca.load.model.dto.PreloadData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
 // TODO: Change for Itaca processor and put the fields
+@Component
 public class PreloadProcessor implements ItemProcessor<PreloadData, PreloadData> {
 
     private static final Logger log = LoggerFactory.getLogger(PreloadProcessor.class);

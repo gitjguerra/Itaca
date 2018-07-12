@@ -53,8 +53,9 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     // Call Job
     @Override
     @RequestMapping(value=LOAD_FILE, method=RequestMethod.POST)
-    public ResponseEntity preloadData(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity preloadData(@RequestParam("file") MultipartFile multipartFile) throws IOException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 
+        // Upload de file
         Path rootLocation = Paths.get(fileUploadDirectory);
         File fileToImport = new File(rootLocation + File.separator + multipartFile.getOriginalFilename());
         OutputStream outputStream = new FileOutputStream(fileToImport);
@@ -63,9 +64,9 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         outputStream.close();
 
         // Execute Job
-        HttpStatus status = loadManagementService.fileToDatabaseJob(listener, rootLocation, (File) fileToImport);
+        BatchStatus status = loadManagementService.fileToDatabaseJob(listener, rootLocation, (File) fileToImport);
 
-        return new ResponseEntity(status);
+        return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
     }
 
     // Get upload files
