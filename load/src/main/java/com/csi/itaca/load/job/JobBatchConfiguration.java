@@ -18,6 +18,7 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
+import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
@@ -31,8 +32,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableBatchProcessing
@@ -61,16 +64,16 @@ public class JobBatchConfiguration {
                    ItemWriter<PreloadData> PreloadItemWriter) throws MalformedURLException {
 
         Step step = stepBuilderFactory.get("preload-data-step")
-                    .<PreloadData, PreloadData>chunk(2)
-                    .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
-                    .processor(new PreloadProcessor())
-                    .writer(new PreloadWriter(preloadDataDao))
-                    .build();
+                .<PreloadData, PreloadData>chunk(2)
+                .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
+                .processor(new PreloadProcessor())
+                .writer(new PreloadWriter(preloadDataDao))
+                .build();
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
                 .start(step)
                 .build();
-        }
+    }
 
     @Bean
     @StepScope
@@ -79,44 +82,25 @@ public class JobBatchConfiguration {
                                                       @Value("#{jobParameters['id_load_process']}")
                                                               String id_load_process,
                                                       @Value("#{jobParameters['id_load_file']}")
-                                                                  String id_load_file) throws MalformedURLException {
+                                                              String id_load_file) throws MalformedURLException {
+
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
 
         reader.setResource(new ClassPathResource(pathToFile));
-
-        // Database connection direct
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
-                "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
-                "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
-                "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
-        LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
-        Long idRowType = 0L;
-        Long length = 0L;
-        for(PreloadRowTypeDTO rowType : rowTypes)
-        {
-            idRowType = rowType.getPreloadRowTypeId().longValue();
-            List<PreloadFieldDefinitionDTO> fieldDefinitions = jdbcTemplate.query("SELECT PRELOAD_FIELD_DEFINITION_ID, PRELOAD_ROW_TYPE_ID, COLUMN_NO, LENGTH, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY " +
-                    "FROM ITACA.LD_PRELOAD_FIELD_DEFINITION " +
-                    "WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO.class));
-            for(PreloadFieldDefinitionDTO fieldDefinition : fieldDefinitions)
-            {
-                fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
-            }
-            reader.setLineMapper(preloadLineMapper(fields));
-            fields.clear();
-            break;
-        }
+        reader.setLineMapper(preloadLineMapper(id_load_process));
 
         return reader;
     }
 
+    /*
+    // LineMapper all lines equals
     private LineMapper<PreloadData> preloadLineMapper(LinkedHashMap<String,Long> fields) {
         DefaultLineMapper<PreloadData> mapper = new DefaultLineMapper<>();
         mapper.setLineTokenizer(preloadLineTokenizer(fields));
         mapper.setFieldSetMapper(preloadFieldSetMapper());
         return mapper;
     }
+    */
 
     public LineTokenizer preloadLineTokenizer(LinkedHashMap<String,Long> fields) {
 
@@ -149,4 +133,43 @@ public class JobBatchConfiguration {
         return new PreloadFieldSetMapper();
     }
 
+    public PatternMatchingCompositeLineMapper preloadLineMapper(String id_load_process) {
+        PatternMatchingCompositeLineMapper lineMapper =
+                new PatternMatchingCompositeLineMapper();
+
+        LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
+        Long idRowType = 0L;
+
+        Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
+
+        // Database connection direct
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
+                "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
+                "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
+                "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
+        for(PreloadRowTypeDTO rowType : rowTypes)
+        {
+            idRowType = rowType.getPreloadRowTypeId().longValue();
+            List<PreloadFieldDefinitionDTO> fieldDefinitions = jdbcTemplate.query("SELECT PRELOAD_FIELD_DEFINITION_ID, PRELOAD_ROW_TYPE_ID, COLUMN_NO, LENGTH, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY " +
+                    "FROM ITACA.LD_PRELOAD_FIELD_DEFINITION " +
+                    "WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO.class));
+            for(PreloadFieldDefinitionDTO fieldDefinition : fieldDefinitions)
+            {
+                fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
+            }
+            tokenizers.put(rowType.getIdentifierValue()+"*", preloadLineTokenizer(fields));
+            fields.clear();
+        }
+        //tokenizers.put("D*", preloadLineTokenizer(fields));
+        //tokenizers.put("T*", preloadLineTokenizer(fields));
+        lineMapper.setTokenizers(tokenizers);
+
+        Map<String, FieldSetMapper> mappers = new HashMap<>(2);
+        mappers.put("C*", preloadFieldSetMapper());
+        mappers.put("D*", preloadFieldSetMapper());
+        lineMapper.setFieldSetMappers(mappers);
+
+        return lineMapper;
+    }
 }

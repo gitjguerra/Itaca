@@ -74,41 +74,41 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
         //Launch the Batch Job
 
-            // ********************************* INITIAL PROCESS (PRELOAD) *********************************
-            // Who init the process ?
-            // How init the process ?
-            // When init the process ?
-                // ID_PRELOAD_DEFINITION PROCESS
-                // ID_PRELOAD_FILE PROCESS
-                // ID_PRELOAD_ROW_TYPE PROCESS
-                // ID_PRELOAD_FILE_TYPE PROCESS
-                // ID_PRELOAD_FIELD_DEFINITION PROCESS
-            // ********************************* INITIAL PROCESS *********************************
+        // ********************************* INITIAL PROCESS (PRELOAD) *********************************
+        // Who init the process ?
+        // How init the process ?
+        // When init the process ?
+        // ID_PRELOAD_DEFINITION PROCESS
+        // ID_PRELOAD_FILE PROCESS
+        // ID_PRELOAD_ROW_TYPE PROCESS
+        // ID_PRELOAD_FILE_TYPE PROCESS
+        // ID_PRELOAD_FIELD_DEFINITION PROCESS
+        // ********************************* INITIAL PROCESS *********************************
 
         // TODO: Ask to architect for validate the process
         //  <editor-fold defaultstate="collapsed" desc="*** 1) Prerequisite(s) ***">
-                // 1. load_process_id
-                //1.1. A record created in the ld_load_process table where load_process_id is associated.
-                query = "INSERT INTO LD_LOAD_PROCESS (LOAD_PROCESS_ID, USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?, ?)";
-                jdbcTemplate.update(new PreparedStatementCreator() {
-                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                        PreparedStatement statement = connection.prepareStatement(query);
-                        // TODO:  Delete hardcode add the secuence
-                        statement.setLong(1, 2);
-                        statement.setLong(2, userId);
-                        statement.setDate(3, preload_star_time);
-                        // TODO:  Delete hardcode
-                        statement.setLong(4, 1);
-                        return statement;
-                    }
-                });
-                // Id insert on LD_LOAD_PROCESS
+        // 1. load_process_id
+        //1.1. A record created in the ld_load_process table where load_process_id is associated.
+        query = "INSERT INTO LD_LOAD_PROCESS (LOAD_PROCESS_ID, USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?, ?)";
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(query);
+                // TODO:  Delete hardcode add the secuence
+                statement.setLong(1, 2);
+                statement.setLong(2, userId);
+                statement.setDate(3, preload_star_time);
                 // TODO:  Delete hardcode
-                where = " PRELOAD_DEFINITION_ID=" + 1 + " AND LOAD_PROCESS_ID=" + 2;
-                final Long idLoadProcess = findInsertId("LD_LOAD_PROCESS", "LOAD_PROCESS_ID", where);
+                statement.setLong(4, 1);
+                return statement;
+            }
+        });
+        // Id insert on LD_LOAD_PROCESS
+        // TODO:  Delete hardcode
+        where = " PRELOAD_DEFINITION_ID=" + 1 + " AND LOAD_PROCESS_ID=" + 2;
+        final Long idLoadProcess = findInsertId("LD_LOAD_PROCESS", "LOAD_PROCESS_ID", where);
 
-                // TODO: Ask the architect -   Who is a valid checksun  ???
-                // Checksum
+        // TODO: Ask the architect -   Who is a valid checksun  ???
+        // Checksum
                 /*
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 InputStream is = Files.newInputStream(Paths.get(file.getPath()));
@@ -116,38 +116,38 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                 byte[] digest = md.digest();
                 */
 
-            // 2. load_file_id
-                //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
-                query = "INSERT INTO LD_LOAD_FILE (LOAD_FILE_ID, LOAD_PROCESS_ID, FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                jdbcTemplate.update(new PreparedStatementCreator() {
-                    public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                        PreparedStatement statement = connection.prepareStatement(query);
-                        // TODO: delete hardcode add the secuence
-                        statement.setLong(1, 1);
-                        // TODO: delete hardcode
-                        statement.setLong(2, 2);
-                        statement.setString(3, file.getName());
-                        statement.setLong(4, file.length());
-                        // TODO: delete hardcode
-                        statement.setString(5, "Checksum");
-                        statement.setDate(6, preload_star_time);
-                        // TODO: delete hardcode
-                        statement.setDate(7, null);
-                        statement.setString(8, statusCode);
-                        statement.setString(9, statusMessage);
-                        return statement;
-                    }
-                });
-                // id insert on LD_LOAD_FILE
-                where = " filename='" + file.getName() + "' AND LOAD_PROCESS_ID=" + idLoadProcess;
-                final Long idLoadFile = findInsertId("LD_LOAD_FILE", "LOAD_FILE_ID", where);
+        // 2. load_file_id
+        //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
+        query = "INSERT INTO LD_LOAD_FILE (LOAD_FILE_ID, LOAD_PROCESS_ID, FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(query);
+                // TODO: delete hardcode add the secuence
+                statement.setLong(1, 1);
+                // TODO: delete hardcode
+                statement.setLong(2, 2);
+                statement.setString(3, file.getName());
+                statement.setLong(4, file.length());
+                // TODO: delete hardcode
+                statement.setString(5, "Checksum");
+                statement.setDate(6, preload_star_time);
+                // TODO: delete hardcode
+                statement.setDate(7, null);
+                statement.setString(8, statusCode);
+                statement.setString(9, statusMessage);
+                return statement;
+            }
+        });
+        // id insert on LD_LOAD_FILE
+        where = " filename='" + file.getName() + "' AND LOAD_PROCESS_ID=" + idLoadProcess;
+        final Long idLoadFile = findInsertId("LD_LOAD_FILE", "LOAD_FILE_ID", where);
         //  </editor-fold>
 
-            JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
-                        .addString("fullPathFileName", file.getName())
-                        .addString("id_load_process", idLoadProcess.toString())
-                        .addString("id_load_file", idLoadFile.toString())
-                        .addLong("time", System.currentTimeMillis()).toJobParameters());  // Se agrega para ejecutar multiples hilos
+        JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
+                .addString("fullPathFileName", file.getName())
+                .addString("id_load_process", idLoadProcess.toString())
+                .addString("id_load_file", idLoadFile.toString())
+                .addLong("time", System.currentTimeMillis()).toJobParameters());  // Se agrega para ejecutar multiples hilos
 
         // If all Ok return value
         return jobExecution.getStatus();

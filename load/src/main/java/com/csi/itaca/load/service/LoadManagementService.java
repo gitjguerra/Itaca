@@ -28,12 +28,4 @@ public interface LoadManagementService {
     // TODO: Implementar metodo en rest controller para crear directorio de carga de archivos
     void init(Path rootLocation);
 
-    // Steps of batch process
-    /*
-    Step csvFileToDatabaseStep();
-    Step txtFileToDatabaseStep();
-    Step excelFileToDatabaseStep();
-    Step xmlFileToDatabaseStep();
-    */
-
 }
