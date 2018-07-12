@@ -39,7 +39,10 @@ public class JobBatchConfiguration {
     public Step step1() {
         return stepBuilderFactory.get("step1")
                 .<Customer, Customer>chunk(2)
-                .reader(PreloadReader.reader(new ClassPathResource("customer-data.csv").getFilename()))
+                // File with separator
+                //.reader(PreloadReader.reader(new ClassPathResource("customer-data.csv").getFilename()))
+                // File with fixed length
+                .reader(PreloadReader.reader(new ClassPathResource("customer-data-fixed-length.csv").getFilename()))
                 .processor(new PreloadProcessor())
                 .writer(new PreloadWriter(customerDao))
                 .build();
