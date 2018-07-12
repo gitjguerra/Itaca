@@ -92,16 +92,6 @@ public class JobBatchConfiguration {
         return reader;
     }
 
-    /*
-    // LineMapper all lines equals
-    private LineMapper<PreloadData> preloadLineMapper(LinkedHashMap<String,Long> fields) {
-        DefaultLineMapper<PreloadData> mapper = new DefaultLineMapper<>();
-        mapper.setLineTokenizer(preloadLineTokenizer(fields));
-        mapper.setFieldSetMapper(preloadFieldSetMapper());
-        return mapper;
-    }
-    */
-
     public LineTokenizer preloadLineTokenizer(LinkedHashMap<String,Long> fields) {
 
         int cont = 0;
@@ -138,7 +128,9 @@ public class JobBatchConfiguration {
                 new PatternMatchingCompositeLineMapper();
 
         LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
+        LinkedHashMap<String,Integer> characterMapper = new LinkedHashMap<>();
         Long idRowType = 0L;
+        int cont = 0;
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
@@ -159,15 +151,16 @@ public class JobBatchConfiguration {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
             }
             tokenizers.put(rowType.getIdentifierValue()+"*", preloadLineTokenizer(fields));
+            characterMapper.put(rowType.getIdentifierValue(), cont++);
             fields.clear();
         }
-        //tokenizers.put("D*", preloadLineTokenizer(fields));
-        //tokenizers.put("T*", preloadLineTokenizer(fields));
         lineMapper.setTokenizers(tokenizers);
 
         Map<String, FieldSetMapper> mappers = new HashMap<>(2);
-        mappers.put("C*", preloadFieldSetMapper());
-        mappers.put("D*", preloadFieldSetMapper());
+
+        for (Map.Entry<String, Integer> entry : characterMapper.entrySet()) {
+            mappers.put(entry.getKey()+"*", preloadFieldSetMapper());
+        }
         lineMapper.setFieldSetMappers(mappers);
 
         return lineMapper;
