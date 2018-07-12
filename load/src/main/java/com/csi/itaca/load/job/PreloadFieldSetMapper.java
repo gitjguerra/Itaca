@@ -13,11 +13,21 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
     @Override
     public PreloadData mapFieldSet(FieldSet fieldSet) throws BindException {
 
+        int cont = 1;
+        // Put the principal data
         PreloadData data = new PreloadData();
+
+        // TODO: DELETE HARDCODE
+        //data.setPreloadDataId(Long.valueOf(id_load_process));
+        data.setPreloadDataId(Long.valueOf(1));
+        data.setLoadFileId(Long.valueOf(1));
+        data.setLoadedSuccessfully("200");
 
         int nroRegistros = fieldSet.getFieldCount();
 
         for(int i = 0; i < nroRegistros; i++) {
+            data.setLineNumber(Long.valueOf(cont++));
+            data.setRowType(fieldSet.readLong(1));
             switch(i){
                 case 1:
                     data.setDataCol1(fieldSet.readString(i));
@@ -80,7 +90,7 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
                     data.setDataCol20(fieldSet.readString(i));
                     break;
             }
-            logger.info("Campo " + i + ": " + fieldSet.readString(i));
+            logger.info("Campo " + (i+1) + ": " + fieldSet.readString(i));
         }
         return data;
     }

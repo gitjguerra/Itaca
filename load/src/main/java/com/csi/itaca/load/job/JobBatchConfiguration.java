@@ -1,6 +1,7 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
+import com.csi.itaca.load.model.dao.PreloadDataDaoImpl;
 import com.csi.itaca.load.model.dto.PreloadData;
 import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.sql.DataSource;
 import java.net.MalformedURLException;
@@ -40,6 +42,9 @@ import java.util.Map;
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
+
+    @Autowired
+    private JobCompletionNotificationListener jobCompletionNotificationListener;
 
     @Autowired
     DataSource dataSource;
@@ -68,6 +73,9 @@ public class JobBatchConfiguration {
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
                 .processor(new PreloadProcessor())
                 .writer(new PreloadWriter(preloadDataDao))
+                .listener(jobCompletionNotificationListener)
+                .faultTolerant()
+                .skip(DataIntegrityViolationException.class)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
@@ -87,7 +95,7 @@ public class JobBatchConfiguration {
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
 
         reader.setResource(new ClassPathResource(pathToFile));
-        reader.setLineMapper(preloadLineMapper(id_load_process));
+        reader.setLineMapper(preloadLineMapper(id_load_process, id_load_file));
 
         return reader;
     }
@@ -123,14 +131,14 @@ public class JobBatchConfiguration {
         return new PreloadFieldSetMapper();
     }
 
-    public PatternMatchingCompositeLineMapper preloadLineMapper(String id_load_process) {
+    public PatternMatchingCompositeLineMapper preloadLineMapper(String id_load_process, String id_load_file) {
         PatternMatchingCompositeLineMapper lineMapper =
                 new PatternMatchingCompositeLineMapper();
 
         LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
         LinkedHashMap<String,Integer> characterMapper = new LinkedHashMap<>();
         Long idRowType = 0L;
-        int cont = 0;
+        int cont = 1;
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
@@ -150,10 +158,12 @@ public class JobBatchConfiguration {
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
             }
+
             tokenizers.put(rowType.getIdentifierValue()+"*", preloadLineTokenizer(fields));
             characterMapper.put(rowType.getIdentifierValue(), cont++);
             fields.clear();
         }
+
         lineMapper.setTokenizers(tokenizers);
 
         Map<String, FieldSetMapper> mappers = new HashMap<>(2);
