@@ -40,17 +40,24 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
         String f = String.valueOf(preload1.getDataCol2());
         String g = String.valueOf(preload1.getDataCol3());
 
-        String sql = "INSERT INTO LD_PRELOAD_DATA " + "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ITACA.LD_PRELOAD_DATA \n" +
+                "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7) \n" +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 PreloadData preload = preloadData.get(i);
-                ps.setLong(1, preload.getLoadFileId());
-                ps.setString(2, preload.getLoadedSuccessfully());
-                ps.setLong(3, preload.getLineNumber());
+                ps.setLong(1, preload.getPreloadDataId());
+                ps.setLong(2, preload.getLoadFileId());
+                ps.setString(3, preload.getLoadedSuccessfully());
                 ps.setLong(4, preload.getRowType());
-                ps.setString(5, preload.getDataCol1());
-                ps.setString(6, preload.getDataCol2());
-                ps.setString(7, preload.getDataCol3());
+                ps.setLong(5, preload.getLineNumber());
+                ps.setString(6, preload.getDataCol1());
+                ps.setString(7, preload.getDataCol2());
+                ps.setString(8, preload.getDataCol3());
+                ps.setString(9, preload.getDataCol4());
+                ps.setString(10, preload.getDataCol5());
+                ps.setString(11, preload.getDataCol6());
+                ps.setString(12, preload.getDataCol7());
             }
 
             public int getBatchSize() {
