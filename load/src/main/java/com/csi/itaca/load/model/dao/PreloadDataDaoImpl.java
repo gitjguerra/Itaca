@@ -29,7 +29,7 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
     @Override
     public void insert(List<? extends PreloadData> preloadData) {
 
-        String sql = "INSERT INTO ITACA.LD_PRELOAD_DATA \n" +
+        String sql = "INSERT INTO LD_PRELOAD_DATA \n" +
                 "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7) \n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
