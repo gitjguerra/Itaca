@@ -1,7 +1,6 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
-import com.csi.itaca.load.model.dao.PreloadDataDaoImpl;
 import com.csi.itaca.load.model.dto.PreloadData;
 import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
@@ -16,8 +15,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.LineMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
@@ -68,18 +65,19 @@ public class JobBatchConfiguration {
                    ItemProcessor<PreloadData, PreloadData> itemProcessor,
                    ItemWriter<PreloadData> PreloadItemWriter) throws MalformedURLException {
 
-        Step step = stepBuilderFactory.get("preload-data-step")
+        Step step_preload = stepBuilderFactory.get("preload-data-step")
                 .<PreloadData, PreloadData>chunk(2)
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
                 .processor(new PreloadProcessor())
                 .writer(new PreloadWriter(preloadDataDao))
                 .listener(jobCompletionNotificationListener)
-                .faultTolerant()
+                .faultTolerant()  // Revisar ???  y agregar en LD_ERROR
                 .skip(DataIntegrityViolationException.class)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
-                .start(step)
+                .start(step_preload)          // Preload
+                //.next(step_load)            // LOAD
                 .build();
     }
 
@@ -91,6 +89,9 @@ public class JobBatchConfiguration {
                                                               String id_load_process,
                                                       @Value("#{jobParameters['id_load_file']}")
                                                               String id_load_file) throws MalformedURLException {
+
+        PreloadData preloadData = new PreloadData();
+        preloadData.setRowType((long) 7);
 
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
 

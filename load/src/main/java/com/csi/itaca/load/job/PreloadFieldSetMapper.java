@@ -6,6 +6,8 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
+import java.util.Random;
+
 public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
 
     private final static Logger logger = Logger.getLogger(PreloadFieldSetMapper.class);
@@ -14,84 +16,87 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
     public PreloadData mapFieldSet(FieldSet fieldSet) throws BindException {
 
         int cont = 1;
+        int nroRegistros = fieldSet.getFieldCount();
+        String[] names = fieldSet.getNames();
+        String[] values = fieldSet.getValues();
+
         // Put the principal data
         PreloadData data = new PreloadData();
 
         // TODO: DELETE HARDCODE
-        //data.setPreloadDataId(Long.valueOf(id_load_process));
-        data.setPreloadDataId(Long.valueOf(1));
+        Random ramdom = new Random();
+        data.setPreloadDataId(ramdom.nextLong());
         data.setLoadFileId(Long.valueOf(1));
-        data.setLoadedSuccessfully("200");
-
-        int nroRegistros = fieldSet.getFieldCount();
+        data.setLoadedSuccessfully("1");
+        data.setLineNumber(Long.valueOf(cont++));
+        data.setRowType(Long.valueOf(1));
 
         for(int i = 0; i < nroRegistros; i++) {
-            data.setLineNumber(Long.valueOf(cont++));
-            data.setRowType(fieldSet.readLong(1));
             switch(i){
+                case 0:
+                    data.setDataCol1(values[i]);
+                    break;
                 case 1:
-                    data.setDataCol1(fieldSet.readString(i));
+                    data.setDataCol2(values[i]);
                     break;
                 case 2:
-                    data.setDataCol2(fieldSet.readString(i));
+                    data.setDataCol3(values[i]);
                     break;
                 case 3:
-                    data.setDataCol3(fieldSet.readString(i));
+                    data.setDataCol4(values[i]);
                     break;
                 case 4:
-                    data.setDataCol4(fieldSet.readString(i));
+                    data.setDataCol5(values[i]);
                     break;
                 case 5:
-                    data.setDataCol5(fieldSet.readString(i));
+                    data.setDataCol6(values[i]);
                     break;
                 case 6:
-                    data.setDataCol6(fieldSet.readString(i));
+                    data.setDataCol7(values[i]);
                     break;
                 case 7:
-                    data.setDataCol7(fieldSet.readString(i));
+                    data.setDataCol8(values[i]);
                     break;
                 case 8:
-                    data.setDataCol8(fieldSet.readString(i));
+                    data.setDataCol9(values[i]);
                     break;
                 case 9:
-                    data.setDataCol9(fieldSet.readString(i));
+                    data.setDataCol10(values[i]);
                     break;
                 case 10:
-                    data.setDataCol10(fieldSet.readString(i));
+                    data.setDataCol11(values[i]);
                     break;
                 case 11:
-                    data.setDataCol11(fieldSet.readString(i));
+                    data.setDataCol12(values[i]);
                     break;
                 case 12:
-                    data.setDataCol12(fieldSet.readString(i));
+                    data.setDataCol13(values[i]);
                     break;
                 case 13:
-                    data.setDataCol13(fieldSet.readString(i));
+                    data.setDataCol14(values[i]);
                     break;
                 case 14:
-                    data.setDataCol14(fieldSet.readString(i));
+                    data.setDataCol15(values[i]);
                     break;
                 case 15:
-                    data.setDataCol15(fieldSet.readString(i));
+                    data.setDataCol16(values[i]);
                     break;
                 case 16:
-                    data.setDataCol16(fieldSet.readString(i));
+                    data.setDataCol17(values[i]);
                     break;
                 case 17:
-                    data.setDataCol17(fieldSet.readString(i));
+                    data.setDataCol18(values[i]);
                     break;
                 case 18:
-                    data.setDataCol18(fieldSet.readString(i));
+                    data.setDataCol19(values[i]);
                     break;
                 case 19:
-                    data.setDataCol9(fieldSet.readString(i));
-                    break;
-                case 20:
-                    data.setDataCol20(fieldSet.readString(i));
+                    data.setDataCol20(values[i]);
                     break;
             }
             logger.info("Campo " + (i+1) + ": " + fieldSet.readString(i));
         }
+
         return data;
     }
 }

@@ -1,11 +1,22 @@
 package com.csi.itaca.load.job;
 
+import java.util.List;
 import java.util.Random;
+
+import com.csi.itaca.load.model.PreloadRowType;
 import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
+import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
 
 // TODO: Change for Itaca processor and put the fields
 @Component
@@ -15,17 +26,13 @@ public class PreloadProcessor implements ItemProcessor<PreloadData, PreloadData>
 
     @Override
     public PreloadData process(PreloadData preloadData) throws Exception {
-        Random r = new Random();
 
-        // Add the values of data
+        Long preloadId = preloadData.getPreloadDataId();
+        Long loadFileId = preloadData.getLoadFileId();
+        String loadedSuccessfully = preloadData.getLoadedSuccessfully();
 
-        String preloadId = preloadData.getLoadFileId().toString();
-        String loadId = preloadData.getLoadFileId().toString();
-
-        Long loadFileId = 1L;
-        String loadedSuccessfully = "1";
-        Long rowType = 1L;
-        Long lineNumber = 1L;
+        Long rowType = preloadData.getRowType();
+        Long lineNumber = preloadData.getLineNumber();
         String dataCol1 = preloadData.getDataCol1();
         String dataCol2 = preloadData.getDataCol2();
         String dataCol3 = preloadData.getDataCol3();
@@ -47,7 +54,7 @@ public class PreloadProcessor implements ItemProcessor<PreloadData, PreloadData>
         String dataCol19 = preloadData.getDataCol19();
         String dataCol20 = preloadData.getDataCol20();
 
-        final PreloadData fixedCustomer = new PreloadData(r.nextLong(), loadFileId, loadedSuccessfully, rowType, lineNumber,
+        final PreloadData fixedCustomer = new PreloadData(preloadId, loadFileId, loadedSuccessfully, rowType, lineNumber,
                 dataCol1, dataCol2, dataCol3, dataCol4, dataCol5, dataCol6, dataCol7, dataCol8, dataCol9, dataCol10,
                 dataCol11, dataCol12, dataCol13, dataCol14, dataCol15, dataCol16, dataCol17, dataCol18, dataCol19, dataCol20);
 

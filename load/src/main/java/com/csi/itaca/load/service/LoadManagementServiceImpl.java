@@ -56,24 +56,23 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         // Database connection
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+        // where expression for find id tables
+        String where = "";
         // Active user, if you not logon into the app please use a anonymousUser, add on the DB 'anonymousUser'
         String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = findUserId(user);
-        // where expression for find id tables
-        String where = "";
         // DateTime to execute job
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date();
         //  2.1. Set ld_load_file.preload_start_time to the current time.
         java.sql.Date preload_star_time = new java.sql.Date(date.getTime());
-        //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.
+        //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.   (The status code is a Http status o JobExecution status ???)
         String statusCode = HttpStatus.OK.toString();
         String statusMessage = HttpStatus.OK.name();
         //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
         String fileExtension = getFileExtension(file);
 
         //Launch the Batch Job
-
         // ********************************* INITIAL PROCESS (PRELOAD) *********************************
         // Who init the process ?
         // How init the process ?
