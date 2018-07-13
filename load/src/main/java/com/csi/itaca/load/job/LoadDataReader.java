@@ -15,6 +15,7 @@ import java.sql.SQLException;
 @JobScope
 public class LoadDataReader extends JdbcCursorItemReader<PreloadData> {
 
+    // Colocar acá query de la tabla a leer
     @Autowired
     public LoadDataReader(DataSource dataSource) {
         this.setSql("select * from employees " +
@@ -24,6 +25,7 @@ public class LoadDataReader extends JdbcCursorItemReader<PreloadData> {
         this.setDataSource(dataSource);
     }
 
+    // Mapear los datos a insertar en la otra tabla
     private static class LoadRowMapper implements RowMapper<PreloadData> {
         @Override
         public PreloadData mapRow(ResultSet resultSet, int i) throws SQLException {
