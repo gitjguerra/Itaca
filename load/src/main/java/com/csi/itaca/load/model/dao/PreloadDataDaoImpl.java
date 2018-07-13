@@ -29,17 +29,6 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
     @Override
     public void insert(List<? extends PreloadData> preloadData) {
 
-        // TODO: DELETE HARDCODE
-        int ii = 1;
-        PreloadData preload1 = preloadData.get(ii++);
-        String a = String.valueOf(preload1.getLoadFileId());
-        String b = String.valueOf(preload1.getLoadedSuccessfully());
-        String c = String.valueOf(preload1.getLineNumber());
-        String d = String.valueOf(preload1.getRowType());
-        String e = String.valueOf(preload1.getDataCol1());
-        String f = String.valueOf(preload1.getDataCol2());
-        String g = String.valueOf(preload1.getDataCol3());
-
         String sql = "INSERT INTO ITACA.LD_PRELOAD_DATA \n" +
                 "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7) \n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
