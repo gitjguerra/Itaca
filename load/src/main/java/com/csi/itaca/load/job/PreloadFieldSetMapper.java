@@ -28,10 +28,11 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
         data.setPreloadDataId(ramdom.nextLong());
         data.setLoadFileId(Long.valueOf(1));
         data.setLoadedSuccessfully("1");
-        data.setLineNumber(Long.valueOf(cont++));
         data.setRowType(Long.valueOf(1));
 
         for(int i = 0; i < nroRegistros; i++) {
+            // TODO: Put true line
+            data.setLineNumber(Long.valueOf(i));
             switch(i){
                 case 0:
                     data.setDataCol1(values[i]);

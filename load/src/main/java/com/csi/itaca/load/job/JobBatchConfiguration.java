@@ -3,9 +3,7 @@ package com.csi.itaca.load.job;
 import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dao.LoadRowOperationEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
-import com.csi.itaca.load.model.dto.PreloadData;
-import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
-import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
+import com.csi.itaca.load.model.dto.*;
 import com.csi.itaca.load.repository.LoadRowOperationRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
 import org.springframework.batch.core.Job;
@@ -84,7 +82,7 @@ public class JobBatchConfiguration {
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
                 .start(step_preload)          // Preload
-                //.next(step_load)            // LOAD
+                //.next(step_load)            // Load
                 .build();
     }
 
@@ -149,22 +147,21 @@ public class JobBatchConfiguration {
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
-        // TODO: Cambiar los JdbcTemplate por repository's
+        // TODO: Cambiar los JdbcTemplate por repository's  y eliminar el sufijo _OLD
         //PreloadRowTypeEntity preloadRowTypeEntity = preloadRowTypeRepository.findOne(Long.valueOf(id_load_process));
 
         // Database connection direct
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
+        List<PreloadRowTypeDTO_OLD> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
                 "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
                 "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
-                "AND ld_preload_file.preload_file_id. = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
-        for(PreloadRowTypeDTO rowType : rowTypes)
+                "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO_OLD.class));
+        for(PreloadRowTypeDTO_OLD rowType : rowTypes)
         {
             idRowType = rowType.getPreloadRowTypeId().longValue();
-            List<PreloadFieldDefinitionDTO> fieldDefinitions = jdbcTemplate.query("SELECT PRELOAD_FIELD_DEFINITION_ID, PRELOAD_ROW_TYPE_ID, COLUMN_NO, LENGTH, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY " +
-                    "FROM LD_PRELOAD_FIELD_DEFINITION " +
-                    "WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO.class));
-            for(PreloadFieldDefinitionDTO fieldDefinition : fieldDefinitions)
+            List<PreloadFieldDefinitionDTO_OLD> fieldDefinitions = jdbcTemplate.query("SELECT LENGTH, NAME FROM " +
+                    "LD_PRELOAD_FIELD_DEFINITION WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO_OLD.class));
+            for(PreloadFieldDefinitionDTO_OLD fieldDefinition : fieldDefinitions)
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
             }

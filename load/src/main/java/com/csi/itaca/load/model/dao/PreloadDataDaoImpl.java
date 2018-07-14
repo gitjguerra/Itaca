@@ -35,14 +35,10 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
+                // TODO: Revisar la carga del objeto  debe cambiar con la parte de repository's
                 PreloadData preload = preloadData.get(i);
-
-                // TODO: Revisar la carga del objeto
-                PreloadFileDTO fileDTO = new PreloadFileDTO();
-                fileDTO.setPreloadFileId(preload.getLoadFileId());
-
                 ps.setLong(1, preload.getPreloadDataId());
-                ps.setObject(2, fileDTO);
+                ps.setLong(2, preload.getLoadFileId());
                 ps.setString(3, preload.getLoadedSuccessfully());
                 ps.setLong(4, preload.getRowType());
                 ps.setLong(5, preload.getLineNumber());
