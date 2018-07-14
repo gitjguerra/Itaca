@@ -17,17 +17,17 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
 
     private Long preloadFieldDefinitionId;
 
-    private Long preloadRowTypeId;
+    private PreloadRowTypeDTO preloadRowTypeId;
 
     private Long columnNo;
 
-    private Long length;
+    private Long Length;
 
     private String name;
 
     private String description;
 
-    private Long preloadFieldTypeId;
+    private PreloadFieldTypeDTO preloadFieldTypeId;
 
     private String regex;
 
@@ -46,13 +46,13 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
     public PreloadFieldDefinitionDTO() {
     }
 
-    public PreloadFieldDefinitionDTO(Long preloadFieldDefinitionId,Long preloadRowTypeId,Long columnNo, Long length,String name,
-                                     String description,Long preloadFieldTypeId,String regex,String required,Long relType
+    public PreloadFieldDefinitionDTO(Long preloadFieldDefinitionId,PreloadRowTypeDTO preloadRowTypeId,Long columnNo, Long Length, String name,
+                                     String description,PreloadFieldTypeDTO preloadFieldTypeId,String regex,String required,Long relType
             ,Long relFieldDefinitionId,String relDbTableName,String relDbFieldName,Long errorSeverity) {
         this.preloadFieldDefinitionId = preloadFieldDefinitionId;
         this.preloadRowTypeId = preloadRowTypeId;
         this.columnNo = columnNo;
-        this.length = length;
+        this.Length = Length;
         this.name = name;
         this.description = description;
         this.preloadFieldTypeId = preloadFieldTypeId;
@@ -71,7 +71,7 @@ public class PreloadFieldDefinitionDTO implements PreloadFieldDefinition {
                 .append("preloadFieldDefinitionId", this.preloadFieldDefinitionId)
                 .append("preloadRowTypeId", this.preloadRowTypeId)
                 .append("columnNo", this.columnNo)
-                .append("length", this.length)
+                .append("Length", this.Length)
                 .append("name", this.name)
                 .append("description", this.description)
                 .append("preloadFieldTypeId", this.preloadFieldTypeId)

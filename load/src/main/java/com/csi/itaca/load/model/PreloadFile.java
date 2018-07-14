@@ -7,12 +7,19 @@ public interface PreloadFile {
 
     Long getPreloadFileId();
 
-    Long getPreloadDefinitionId();
+    PreloadDefinition getPreloadDefinitionId();
 
     String getName();
 
     String getDescription();
 
     String getFilenameFormatRegex();
+
+    String getFileType();
+
+    String getFieldSeparator();
+
+    String getFileLoadOrder();
+
 
 }

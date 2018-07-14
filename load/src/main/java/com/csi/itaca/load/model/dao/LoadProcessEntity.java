@@ -24,14 +24,13 @@ public class LoadProcessEntity implements LoadProcess {
     public static final String USER_ID = "userId";
     public static final String CREATED_TIMESTAMP = "createdTimestamp";
     public static final String PRELOAD_DEFINITION_ID = "preloadDefinitionId";
+    public static final String USERNAME_LOAD_CANCEL ="UserNameLoadCancel";
 
 
     @Id
     @Column(name="LOAD_PROCESS_ID")
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_LOAD_PROCESS")
-    @SequenceGenerator(name = "SEQ_LD_LOAD_PROCESS", sequenceName = "SEQ_LD_LOAD_PROCESS", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LOAD_PROCESS_ID")
+    @SequenceGenerator(name = "SEQ_LOAD_PROCESS_ID", sequenceName = "SEQ_LOAD_PROCESS_ID", allocationSize = 1)
     private Long loadProcessId;
 
     @Column(name="USER_ID")
@@ -42,4 +41,9 @@ public class LoadProcessEntity implements LoadProcess {
 
     @Column(name="PRELOAD_DEFINITION_ID")
     private Long preloadDefinitionId;
+
+    @Column(name="USERNAME_LOAD_CANCEL")
+    private String UsernameLoadCancel;
+
+
 }

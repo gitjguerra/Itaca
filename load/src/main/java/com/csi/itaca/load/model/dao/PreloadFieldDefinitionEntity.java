@@ -21,7 +21,7 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
     public static final String PRELOAD_FIELD_DEFINITION_ID = "preloadFieldDefinitionId";
     public static final String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
     public static final String COLUMN_NO = "columnNo";
-    public static final String LENGTH = "length";
+    public static final String LENGTH = "Length";
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
     public static final String PRELOAD_FIELD_TYPE_ID = "preloadFieldTypeId";
@@ -39,14 +39,15 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
     @SequenceGenerator(name = "LD_PRELOAD_FIELD_DEF_SEQ", sequenceName = "LD_PRELOAD_FIELD_DEF_SEQ", allocationSize = 1)
     private Long preloadFieldDefinitionId;
 
-    @Column(name="PRELOAD_ROW_TYPE_ID")
-    private Long preloadRowTypeId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="PRELOAD_ROW_TYPE_ID")
+    private PreloadRowTypeEntity preloadRowTypeId;
 
     @Column(name="COLUMN_NO")
     private Long columnNo;
 
     @Column(name="LENGTH")
-    private Long length;
+    private Long Length;
 
     @Column(name="NAME")
     private String name;
@@ -54,8 +55,9 @@ public class PreloadFieldDefinitionEntity implements PreloadFieldDefinition {
     @Column(name="DESCRIPTION")
     private String description;
 
-    @Column(name="PRELOAD_FIELD_TYPE_ID")
-    private Long preloadFieldTypeId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="PRELOAD_FIELD_TYPE_ID")
+    private PreloadFieldTypeEntity preloadFieldTypeId;
 
     @Column(name="REGEX")
     private String regex;

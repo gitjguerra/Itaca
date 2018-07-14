@@ -15,15 +15,15 @@ public class LoadAuditLogDTO implements LoadAuditLog {
 
    private Long LoadAuditLogId;
 
-   private Long LoadProcessId;
+   private LoadProcessDTO LoadProcessId;
 
-   private String LoadRowOperationId;
+   private LoadRowOperationDTO LoadRowOperationId;
 
-   private String LoadOperationTypeId;
+   private LoadOperationTypeDTO LoadOperationTypeId;
 
-   private String AtomicOpCode;
+   private LoadAtomicOperationDTO AtomicOpCode;
 
-   private String PreloadDataId;
+   private PreloadDataDTO PreloadDataId;
 
    private String UserId;
 

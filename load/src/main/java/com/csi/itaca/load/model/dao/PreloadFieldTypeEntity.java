@@ -27,10 +27,8 @@ public class PreloadFieldTypeEntity implements PreloadFieldType {
 
     @Id
     @Column(name="PRELOAD_FIELD_TYPE_ID")
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_PRELOAD_FIELD_TYPE")
-    @SequenceGenerator(name = "SEQ_LD_PRELOAD_FIELD_TYPE", sequenceName = "SEQ_LD_PRELOAD_FIELD_TYPE", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_PRELOAD_FIELD_TYPE_ID")
+    @SequenceGenerator(name = "SEQ_PRELOAD_FIELD_TYPE_ID", sequenceName = "SEQ_PRELOAD_FIELD_TYPE_ID", allocationSize = 1)
     private Long preloadFieldTypeId;
 
     @Column(name="NAME")

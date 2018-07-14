@@ -1,6 +1,7 @@
 package com.csi.itaca.load.model.dto;
 
 import com.csi.itaca.load.model.LoadFile;
+import com.csi.itaca.load.model.PreloadData;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ public class LoadFileDTO implements LoadFile {
 
     private Long loadFileId;
 
-    private Long loadProcessId;
+    private LoadProcessDTO loadProcessId;
 
     private String fileName;
 

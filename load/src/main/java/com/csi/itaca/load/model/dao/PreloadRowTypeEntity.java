@@ -16,11 +16,11 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "LD_PRELOAD_ROW_TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "LD_PRELOAD_ROW_TYPE")
 public class PreloadRowTypeEntity implements PreloadRowType {
 
-    public static final String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
+    public static final String PRELOAD_ROW_TYPE_ID = "PreloadRowTypeId";
     public static final String PRELOAD_FILE_ID = "preloadFileId";
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
@@ -31,10 +31,11 @@ public class PreloadRowTypeEntity implements PreloadRowType {
     @Column(name="PRELOAD_ROW_TYPE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "LD_PRELOAD_ROW_TYPE_SEQ")
     @SequenceGenerator(name = "LD_PRELOAD_ROW_TYPE_SEQ", sequenceName = "LD_PRELOAD_ROW_TYPE_SEQ", allocationSize = 1)
-    private Long preloadRowTypeId;
+    private Long PreloadRowTypeId;
 
-    @Column(name="PRELOAD_FILE_ID")
-    private Long preloadFileId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="PRELOAD_FILE_ID")
+    private PreloadFileEntity preloadFileId;
 
     @Column(name="NAME")
     private String name;

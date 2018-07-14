@@ -7,7 +7,7 @@ public interface PreloadRowType {
 
     Long getPreloadRowTypeId();
 
-    Long getPreloadFileId();
+    PreloadFile getPreloadFileId();
 
     String getName();
 

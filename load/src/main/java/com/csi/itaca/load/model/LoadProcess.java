@@ -15,4 +15,5 @@ public interface LoadProcess {
 
     Long getPreloadDefinitionId();
 
+    String getUsernameLoadCancel();
 }

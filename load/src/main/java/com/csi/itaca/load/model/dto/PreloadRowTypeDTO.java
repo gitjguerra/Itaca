@@ -17,9 +17,9 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class PreloadRowTypeDTO implements PreloadRowType {
 
-    private Long preloadRowTypeId;
+    private Long PreloadRowTypeId;
 
-    private Long preloadFileId;
+    private PreloadFileDTO preloadFileId;
 
     private String name;
 

@@ -8,15 +8,15 @@ public interface LoadAuditLog {
 
      Long getLoadAuditLogId();
 
-     Long getLoadProcessId();
+     LoadProcess getLoadProcessId();
 
-     String getLoadRowOperationId();
+     LoadRowOperation getLoadRowOperationId();
 
-     String getLoadOperationTypeId();
+     LoadOperationType getLoadOperationTypeId();
 
-     String getAtomicOpCode();
+     LoadAtomicOperation getAtomicOpCode();
 
-     String getPreloadDataId();
+     PreloadData getPreloadDataId();
 
      String getUserId();
 

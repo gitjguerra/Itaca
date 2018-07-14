@@ -4,6 +4,15 @@ import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import com.csi.itaca.load.model.LoadFile;
+import com.csi.itaca.load.model.dao.LoadFileEntity;
+import com.csi.itaca.load.model.dao.LoadProcessEntity;
+import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
+import com.csi.itaca.load.model.dto.LoadFileDTO;
+import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.model.filter.LoadFileOrderPaginFilter;
+import com.csi.itaca.load.model.filter.PreloadDataOrderPaginFilter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +29,10 @@ public interface LoadManagementServiceProxy {
 
     // Parameters...
     String ID_PARAM = "id";
+    String PROCESS_ID = "loadProcessId";
+    String LOAD_FILE_ID = "loadFileId";
+    String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
+    String LOAD_ROW_OPERATION_ID = "LoadRowOperationId";
 
     String ENTITY_LOAD = "/load";
     String LOAD_CREATE = ENTITY_LOAD + "/Create";
@@ -32,6 +45,12 @@ public interface LoadManagementServiceProxy {
     String LOAD_GET_FILE = ENTITY_LOAD + "/getallfiles";
     String LOAD_GET_FILE_ID = ENTITY_LOAD + "/files/{filename:.+}";
 
+    // String LOAD_ALL_FILE = ENTITY_LOAD + "/allfiles";
+    // String LOAD_LIST_FILE = ENTITY_LOAD + "/files";
+    // String LOAD_PRELOAD_DATA = ENTITY_LOAD + "/data";
+    String LOAD_PRELOAD_DATAFILE = ENTITY_LOAD + "/dataFile";
+
+    String LOAD_ROW_OPERATION = ENTITY_LOAD + "/loadRow";
 
     /**
      * Upload process.
@@ -74,5 +93,17 @@ public interface LoadManagementServiceProxy {
      * @return a response body containing the requested load json object.
      */
     ResponseEntity<List<String>> cancelLoad(Model model);
+
+
+    //ResponseEntity<List<LoadFileDTO>> loadFile(LoadProcessEntity loadProcessId, Long loadFileId);
+
+    //ResponseEntity<List<LoadFileDTO>> loadFile(Long loadProcessId, LoadFileOrderPaginFilter filter);
+
+    //ResponseEntity<List<PreloadDataDTO>> getData(LoadFileEntity loadFileId, PreloadDataOrderPaginFilter filter);
+
+    //ResponseEntity<List<LoadRowOperationDTO>> getRowOperation(Long PreloadRowTypeId);
+
+    ResponseEntity<List<PreloadDataDTO>> getDataFile(Long loadProcessId, LoadFileEntity loadFileId);
+
 
 }

@@ -24,6 +24,9 @@ public class PreloadFileEntity implements PreloadFile{
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
     public static final String FILENAME_FORMAT_REGEX = "filenameFormatRegex";
+    public static final String FILE_TYPE = "FileType";
+    public static final String FILE_SEPARATOR = "FieldSeparator";
+    public static final String FILE_LOAD_ORDER = "FileLoadOrder";
 
 
     @Id
@@ -32,8 +35,9 @@ public class PreloadFileEntity implements PreloadFile{
     @SequenceGenerator(name = "LD_PRELOAD_FILE_SEQ", sequenceName = "LD_PRELOAD_FILE_SEQ", allocationSize = 1)
     private Long preloadFileId;
 
-    @Column(name="PRELOAD_DEFINITION_ID")
-    private Long preloadDefinitionId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="PRELOAD_DEFINITION_ID")
+    private PreloadDefinitionEntity preloadDefinitionId;
 
     @Column(name="NAME")
     private String name;
@@ -43,6 +47,15 @@ public class PreloadFileEntity implements PreloadFile{
 
     @Column(name="FILENAME_FORMAT_REGEX")
     private String filenameFormatRegex;
+
+    @Column(name="FILE_TYPE")
+    private String FileType;
+
+    @Column(name="FILE_SEPARATOR")
+    private String FieldSeparator;
+
+    @Column(name="FILE_LOAD_ORDER")
+    private String FileLoadOrder;
 
 
 }

@@ -18,11 +18,17 @@ public class PreloadFileDTO implements PreloadFile {
 
     private Long preloadFileId;
 
-    private Long preloadDefinitionId;
+    private PreloadDefinitionDTO preloadDefinitionId;
 
     private String name;
 
     private String description;
 
     private String filenameFormatRegex;
+
+    private String FileType;
+
+    private String FieldSeparator;
+
+    private String FileLoadOrder;
 }

@@ -27,15 +27,13 @@ public class ErrorFieldEntity implements ErrorField{
 
     @Id
     @Column(name="ERR_FIELDS_ID")
-
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_ERROR_FIELD")
-    @SequenceGenerator(name = "SEQ_LD_ERROR_FIELD", sequenceName = "SEQ_LD_ERROR_FIELD", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_Pre_Def_Id")
+    @SequenceGenerator(name = "SEQ_Pre_Def_Id", sequenceName = "SEQ_Pre_Def_Id", allocationSize = 1)
     private Long errFieldsId;
 
-    @Column(name = "PRELOAD_DATA_ID")
-    private Long preloaDataId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "PRELOAD_DATA_ID")
+    private PreloadDataEntity preloaDataId;
 
     @Column(name = "PRELOAD_FIELD_DEFINITION_ID")
     private String preloadFieldDefinitionId;

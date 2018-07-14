@@ -1,6 +1,18 @@
 package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.job.JobCompletionNotificationListener;
+import com.csi.itaca.load.model.LoadFile;
+import com.csi.itaca.load.model.LoadRowOperation;
+import com.csi.itaca.load.model.PreloadData;
+import com.csi.itaca.load.model.dao.*;
+import com.csi.itaca.load.model.dto.LoadFileDTO;
+import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.repository.*;
+import com.csi.itaca.load.utils.Constants;
+import com.csi.itaca.tools.utils.beaner.Beaner;
+import com.csi.itaca.tools.utils.jpa.JpaUtils;
+import com.csi.itaca.tools.utils.jpa.Pagination;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -31,6 +43,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -42,6 +55,35 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Autowired
     private Job sqlExecuteJob;
 
+    @Autowired
+    private PreloadFileRepository preloadFileRepository;
+
+    @Autowired
+    private PreloadFieldDefinitionRepository fieldDefinitionRepository;
+    
+    @Autowired
+    private LoadFileRepository loadFileRepository;
+
+    @Autowired
+    private PreloadDataRepository preloadDataRepository;
+
+    @Autowired
+    private LoadRowOperationRepository loadRowOperationEntity;
+
+    @Autowired
+    private LoadRowOperationRepository loadRowOperationRepository;
+
+    @Autowired
+    private LoadOperationTypeRepository loadOperationTypeRepository;
+
+    @Autowired
+    private LoadDefinitiveTableRepository loadDefinitiveTableRepository;
+
+    @Autowired
+    public Constants constants;
+
+    @Autowired
+    private Beaner beaner;
     @Autowired
     public DataSource dataSource;
 
@@ -279,6 +321,149 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             Files.createDirectory(rootLocation);
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize storage!");
+        }
+    }
+    // *********** LOAD *************** //
+/*
+
+    @Override
+    public List<PreloadDataDTO> getPreloadData(LoadFileEntity loadFileId, Pagination pagination, Order order) {
+
+        List<? extends PreloadDataEntity> preloadDataEntities = preloadDataRepository.findByLoadFileId(loadFileId);
+
+        if (preloadDataEntities!=null) {
+
+            for (PreloadData l : preloadDataEntities) {
+                logger.info("Resultado en getPreloadData ("+l.getPreloadDataId()+ " --- " +l.getLoadFileId()+")");
+            }
+            return beaner.transform(preloadDataEntities, PreloadDataDTO.class);
+        }
+        else {
+            return null;
+        }
+    }
+*/
+
+
+/*
+    @Override
+    public List<LoadFileDTO> getFile(Long loadProcessId, Pagination pagination, Order order) {
+        Specification<LoadFileEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(LoadFileEntity.LOAD_PROCESS_ID), loadProcessId);
+            if (order != null && order.getField() != null) {
+                if(order.isAscending()){
+                    query.orderBy(cb.asc(root.get(JpaUtils.getField(LoadFileEntity.class, order))));
+                } else {
+                    query.orderBy(cb.desc(root.get(JpaUtils.getField(LoadFileEntity.class, order))));
+                }
+            }
+
+            return p;
+        };
+
+        List<? extends LoadFileEntity> loadFileEntities = null;
+        if (pagination != null) {
+            PageRequest pr = new PageRequest(pagination.getPageNo() - 1, pagination.getItemsPerPage());
+            loadFileEntities = loadFileRepository.findAll(spec, pr).getContent();
+        }
+        else {
+            loadFileEntities = loadFileRepository.findAll(spec);
+        }
+
+        for (LoadFile l : loadFileEntities) {
+            logger.info("Resultado solo con loadProcessId ("+l.getFileName()+ " " +l.getLoadFileId()+")");
+
+        }
+
+        return beaner.transform(loadFileEntities, LoadFileDTO.class);
+    }
+*/
+
+    @Override
+    public List<LoadFileDTO> getFile(LoadProcessEntity loadProcessId, Long loadFileId) {
+
+        List<? extends LoadFileEntity> loadFileEntities = loadFileRepository.findByloadProcessIdAndLoadFileId(loadProcessId, loadFileId);
+
+        if (loadFileEntities!=null) {
+
+            for (LoadFile l : loadFileEntities) {
+                logger.info("Resultado con los dos paramteros ("+l.getFileName()+ " -- " +l.getLoadFileId()+")");
+            }
+            return beaner.transform(loadFileEntities, LoadFileDTO.class);
+        }
+        else {
+            return null;
+        }
+    }
+
+
+    @Override
+    public List<PreloadDataDTO> preloadedRowList(Long loadProcessId, LoadFileEntity loadFileId) {
+
+      java.util.Date fecha = new Date();
+      LoadFileEntity LoadFileEntityToSave = null;
+      LoadFileEntity LoadFileSavedEntity = null;
+      LoadRowOperationEntity loadRowOperationEntity = null;
+      LoadOperationTypeEntity loadOperationTypeEntity = null;
+      LoadDefinitiveTableEntity loadDefinitiveTableEntity = null;
+
+      List<? extends PreloadDataEntity> preloadDataEntities = preloadDataRepository.findByLoadFileId_LoadProcessId_LoadProcessIdAndLoadFileIdOrderByLineNumber(loadProcessId, loadFileId);
+
+        if (preloadDataEntities!=null) {
+
+            for (PreloadData l : preloadDataEntities) {
+
+                //Get a list of all data rows associated with file (-----> preloadedRowList )
+
+                logger.info("Resultado de preloadedRowList ("+l.getLoadFileId()+ " -- " +l.getPreloadDataId()+")");
+                LoadFileEntityToSave = loadFileRepository.findOne(l.getLoadFileId().getLoadFileId());
+
+                //Set ld_load_file.load_start_time to the current time
+                LoadFileEntityToSave.setPreloadStartTime(fecha);
+
+                //Set ld_load_file.status_code to 300 indicating load in progress.
+                LoadFileEntityToSave.setStatusCode(300L);
+
+                LoadFileSavedEntity = loadFileRepository.save(LoadFileEntityToSave);
+                logger.info("Resultado de LoadFileSavedEntity ("+ LoadFileSavedEntity.getLoadFileId() +")");
+
+                //Get all operations associated to the current row type (--------> operationsList )
+
+                loadRowOperationEntity = loadRowOperationRepository.findOne(l.getPreloadRowTypeId().getPreloadRowTypeId());
+                //loadRowOperationEntity = (LoadRowOperationEntity) loadRowOperationRepository.findByPreloadRowTypeIdOrderByOperationOrder(l.getPreloadRowTypeId().getPreloadRowTypeId());
+                logger.info("Resultado de operationsList -- loadRowOperationEntity getLoadRowOperationId ("+ loadRowOperationEntity.getLoadRowOperationId() +")");
+                logger.info("Resultado de operationsList -- getLoadOperationTypeId en LoadOperationTypeId ("+ loadRowOperationEntity.getLoadOperationTypeId() +")");
+                logger.info("Resultado de operationsList -- getPreloadRowTypeId ("+ loadRowOperationEntity.getPreloadRowTypeId() +")");
+                logger.info("Resultado de operationsList -- getLoadDefinitiveTableId ("+ loadRowOperationEntity.getLoadDefinitiveTableId() +")");
+                logger.info("Resultado de operationsList -- getKeyColumnNo ("+ loadRowOperationEntity.getKeyColumnNo() +")");
+                logger.info("Resultado de operationsList -- getOperationOrder ("+ loadRowOperationEntity.getOperationOrder() +")");
+
+                //Get operation type (there should only be one) (--------> operationType )
+
+                loadOperationTypeEntity = loadOperationTypeRepository.findOne(loadRowOperationEntity.getLoadOperationTypeId());
+                logger.info("Resultado de operationType -- loadOperationTypeEntity getName ("+ loadOperationTypeEntity.getName() +")");
+
+                //Get target definitive table (there should only be one)
+                loadDefinitiveTableEntity = loadDefinitiveTableRepository.findOne(loadRowOperationEntity.getLoadDefinitiveTableId());
+                logger.info("Resultado de target definitive table -- loadDefinitiveTableEntity ("+ loadDefinitiveTableEntity.getTableName() +")");
+
+
+                //Run Operation....
+
+                //Set ld_load_file.load_end_time to the current time
+                LoadFileEntityToSave.setLoadEndTime(fecha);
+
+                //Set ld_load_file.status_code to 302 indicating load in progress.
+                LoadFileEntityToSave.setStatusCode(302L);
+
+                LoadFileSavedEntity = loadFileRepository.save(LoadFileEntityToSave);
+                logger.info("Resultado de LoadFileSavedEntity End ("+ LoadFileSavedEntity.getLoadFileId() +")");
+
+            }
+            return beaner.transform(preloadDataEntities, PreloadDataDTO.class);
+        }
+        else {
+            return null;
         }
     }
 }

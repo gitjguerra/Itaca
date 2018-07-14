@@ -3,6 +3,15 @@ package com.csi.itaca.load.endpoint;
 import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.load.api.LoadManagementServiceProxy;
 import com.csi.itaca.load.job.JobCompletionNotificationListener;
+import com.csi.itaca.load.model.LoadFile;
+import com.csi.itaca.load.model.dao.LoadFileEntity;
+import com.csi.itaca.load.model.dao.LoadProcessEntity;
+import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
+import com.csi.itaca.load.model.dto.LoadFileDTO;
+import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.model.filter.LoadFileOrderPaginFilter;
+import com.csi.itaca.load.model.filter.PreloadDataOrderPaginFilter;
 import com.csi.itaca.load.service.*;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.batch.core.*;
@@ -107,4 +116,73 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         return null;
     }
 
+    /*
+    @Override
+    @RequestMapping(value = LOAD_LIST_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<LoadFileDTO>> loadFile(@RequestParam(LoadManagementServiceProxy.PROCESS_ID) LoadProcessEntity loadProcessId, @RequestParam(LoadManagementServiceProxy.LOAD_FILE_ID) Long loadFileId) {
+
+        List<LoadFileDTO> loadFileDTOS = null;
+
+        loadFileDTOS = loadManagementService.getFile(loadProcessId, loadFileId);
+
+        return new ResponseEntity<>(loadFileDTOS, HttpStatus.OK);
+
+    }
+*/
+
+
+ /*
+    @Override
+    @RequestMapping(value = LOAD_PRELOAD_DATA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<PreloadDataDTO>> getData(@RequestParam(LoadManagementServiceProxy.LOAD_FILE_ID) LoadFileEntity loadFileId, PreloadDataOrderPaginFilter filter) {
+
+        List<PreloadDataDTO> preloadDataDTOS = null;
+        if (filter != null) {
+            preloadDataDTOS = loadManagementService.getPreloadData(loadFileId, filter.getPagination(),filter.getOrder());
+        } else {
+            preloadDataDTOS = loadManagementService.getPreloadData(loadFileId, filter.getPagination(),filter.getOrder());
+        }
+        return new ResponseEntity<>(preloadDataDTOS, HttpStatus.OK);
+    }
+*/
+
+/*
+    @Override
+    @RequestMapping(value = LOAD_ALL_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<LoadFileDTO>> loadFile(@RequestParam(LoadManagementServiceProxy.PROCESS_ID) Long loadProcessId, LoadFileOrderPaginFilter filter) {
+
+        List<LoadFileDTO> loadFileDTOS = null;
+        if (filter != null) {
+            loadFileDTOS = loadManagementService.getFile(loadProcessId, filter.getPagination(),filter.getOrder());
+        } else {
+            loadFileDTOS = loadManagementService.getFile(loadProcessId, filter.getPagination(),filter.getOrder());
+        }
+        return new ResponseEntity<>(loadFileDTOS, HttpStatus.OK);
+    }
+    */
+
+    //Este metodo es el primer paso
+    @Override
+    @RequestMapping(value = LOAD_PRELOAD_DATAFILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<PreloadDataDTO>> getDataFile(@RequestParam(LoadManagementServiceProxy.PROCESS_ID) Long loadProcessId, @RequestParam(LoadManagementServiceProxy.LOAD_FILE_ID) LoadFileEntity loadFileId) {
+
+        List<PreloadDataDTO> preloadDataDTOS = null;
+
+        preloadDataDTOS = loadManagementService.preloadedRowList(loadProcessId, loadFileId);
+
+        return new ResponseEntity<>(preloadDataDTOS, HttpStatus.OK);
+
+    }
+
 }
+
+
+
+
+
+
+

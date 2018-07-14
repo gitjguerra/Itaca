@@ -5,6 +5,7 @@ package com.csi.itaca.load.model.dao;
  */
 
 import com.csi.itaca.load.model.LoadFile;
+import com.csi.itaca.load.model.PreloadData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,15 +35,13 @@ public class LoadFileEntity implements LoadFile{
     public static final String USER_LOAD_CANCEL = "userLoadCancel";
 
     @Id
-    @Column(name="LOAD_FILE_ID")
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_LOAD_FILE")
-    @SequenceGenerator(name = "SEQ_LD_LOAD_FILE", sequenceName = "SEQ_LD_LOAD_FILE", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LOAD_FILE")
+    @SequenceGenerator(name = "SEQ_LOAD_FILE", sequenceName = "SEQ_LOAD_FILE", allocationSize = 1)
     private Long loadFileId;
 
-    @Column(name = "LOAD_PROCESS_ID")
-    private Long loadProcessId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="LOAD_PROCESS_ID")
+    private LoadProcessEntity loadProcessId;
 
     @Column(name = "FILENAME")
     private String fileName;

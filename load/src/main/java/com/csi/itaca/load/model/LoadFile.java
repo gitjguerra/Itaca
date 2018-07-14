@@ -9,7 +9,7 @@ public interface LoadFile {
 
     Long getLoadFileId();
 
-    Long getLoadProcessId();
+    LoadProcess getLoadProcessId();
 
     String getFileName();
 

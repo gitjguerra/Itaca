@@ -7,7 +7,7 @@ public interface PreloadFieldDefinition {
 
     Long getPreloadFieldDefinitionId();
 
-    Long getPreloadRowTypeId();
+    PreloadRowType getPreloadRowTypeId();
 
     Long getColumnNo();
 
@@ -17,7 +17,7 @@ public interface PreloadFieldDefinition {
 
     String getDescription();
 
-    Long getPreloadFieldTypeId();
+    PreloadFieldType getPreloadFieldTypeId();
 
     String getRegex();
 

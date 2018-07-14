@@ -26,6 +26,7 @@ public class LoadProcessDTO implements LoadProcess {
 
     private Long preloadDefinitionId;
 
+    private String UsernameLoadCancel;
 
 
 }

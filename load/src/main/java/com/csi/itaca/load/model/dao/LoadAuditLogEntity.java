@@ -32,29 +32,29 @@ public class LoadAuditLogEntity implements LoadAuditLog{
 
     @Id
     @Column(name="LOAD_AUDIT_LOG_ID")
-
-    /* //NOTA: EN LOS SCRIPTS NO VEO LAS SECUENCIAS
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_LD_ERROR_FIELD")
-    @SequenceGenerator(name = "SEQ_LD_ERROR_FIELD", sequenceName = "SEQ_LD_ERROR_FIELD", allocationSize = 1)
-    */
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ld_load_audit_log_seq")
+    @SequenceGenerator(name = "ld_load_audit_log_seq", sequenceName = "ld_load_audit_log_seq", allocationSize = 1)
     private Long LoadAuditLogId;
 
-    @Column(name = "LOAD_PROCESS_ID")
-    private Long LoadProcessId;
+    @JoinColumn(name = "LOAD_PROCESS_ID")
+    @OneToOne(fetch=FetchType.LAZY)
+    private LoadProcessEntity LoadProcessId;
 
-    @Column(name = "LOAD_ROW_OPERATION_ID")
-    private String LoadRowOperationId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "LOAD_ROW_OPERATION_ID")
+    private LoadRowOperationEntity LoadRowOperationId;
 
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "LOAD_OPERATION_TYPE_ID")
+    private LoadOperationTypeEntity LoadOperationTypeId;
 
-    @Column(name = "LOAD_OPERATION_TYPE_ID")
-    private String LoadOperationTypeId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "ATOMIC_OP_CODE")
+    private LoadAtomicOperationEntity AtomicOpCode;
 
-
-    @Column(name = "ATOMIC_OP_CODE")
-    private String AtomicOpCode;
-
-    @Column(name = "PRELOAD_DATA_ID")
-    private String PreloadDataId;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "PRELOAD_DATA_ID")
+    private PreloadDataEntity PreloadDataId;
 
     @Column(name = "USER_ID")
     private String UserId;

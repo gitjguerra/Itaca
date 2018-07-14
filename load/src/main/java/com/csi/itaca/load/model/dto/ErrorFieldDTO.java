@@ -17,7 +17,7 @@ public class ErrorFieldDTO implements ErrorField {
 
    private Long errFieldsId;
 
-   private Long preloaDataId;
+   private PreloadDataDTO preloaDataId;
 
    private String preloadFieldDefinitionId;
 
