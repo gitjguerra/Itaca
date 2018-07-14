@@ -109,8 +109,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         //  2.1. Set ld_load_file.preload_start_time to the current time.
         java.sql.Date preload_star_time = new java.sql.Date(date.getTime());
         //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.   (The status code is a Http status o JobExecution status ???)
-        String statusCode = HttpStatus.OK.toString();
-        String statusMessage = HttpStatus.OK.name();
+        String statusCode = Constants.getPreloadingInProgress();
+        String statusMessage = "Preloading in process ...";
         //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
         String fileExtension = getFileExtension(file);
 
@@ -126,7 +126,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         // ID_PRELOAD_FIELD_DEFINITION PROCESS
         // ********************************* INITIAL PROCESS *********************************
 
-        // TODO: Ask to architect for validate the process
+        // TODO: CREATE A TRIGGERS FOR SECUENCE
         //  <editor-fold defaultstate="collapsed" desc="*** 1) Prerequisite(s) ***">
         // 1. load_process_id
         //1.1. A record created in the ld_load_process table where load_process_id is associated.
@@ -134,28 +134,19 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement statement = connection.prepareStatement(query);
-                // TODO:  Delete hardcode add the secuence
+                // TODO:  Delete hardcode add the secuence into the table for use a nextval
                 statement.setLong(1, 2);
                 statement.setLong(2, userId);
                 statement.setDate(3, preload_star_time);
-                // TODO:  Delete hardcode
+                // TODO:  Delete hardcode - PreloadId is put via UI ???
                 statement.setLong(4, 1);
                 return statement;
             }
         });
         // Id insert on LD_LOAD_PROCESS
-        // TODO:  Delete hardcode
+        // TODO:  Delete hardcode and put the values
         where = " PRELOAD_DEFINITION_ID=" + 1 + " AND LOAD_PROCESS_ID=" + 2;
         final Long idLoadProcess = findInsertId("LD_LOAD_PROCESS", "LOAD_PROCESS_ID", where);
-
-        // TODO: Ask the architect -   Who is a valid checksun  ???
-        // Checksum
-                /*
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                InputStream is = Files.newInputStream(Paths.get(file.getPath()));
-                DigestInputStream dis = new DigestInputStream(is, (Digest) md);
-                byte[] digest = md.digest();
-                */
 
         // 2. load_file_id
         //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
@@ -165,14 +156,11 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                 PreparedStatement statement = connection.prepareStatement(query);
                 // TODO: delete hardcode add the secuence
                 statement.setLong(1, 1);
-                // TODO: delete hardcode
-                statement.setLong(2, 2);
+                statement.setLong(2, idLoadProcess);
                 statement.setString(3, file.getName());
                 statement.setLong(4, file.length());
-                // TODO: delete hardcode
-                statement.setString(5, "Checksum");
+                statement.setString(5, "");
                 statement.setDate(6, preload_star_time);
-                // TODO: delete hardcode
                 statement.setDate(7, null);
                 statement.setString(8, statusCode);
                 statement.setString(9, statusMessage);

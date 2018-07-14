@@ -15,9 +15,7 @@ public interface PreloadDataRepository extends PagingAndSortingRepository<Preloa
 
     List<PreloadDataEntity> findByLoadFileId(LoadFileEntity loadFileId);
 
-   List<PreloadDataEntity> findByLoadFileId_LoadProcessId_LoadProcessIdAndLoadFileIdOrderByLineNumber(Long loadProcessId, LoadFileEntity loadFileId);
-
-
+    List<PreloadDataEntity> findByLoadFileId_LoadProcessId_LoadProcessIdAndLoadFileIdOrderByLineNumber(Long loadProcessId, LoadFileEntity loadFileId);
 
     List<PreloadDataEntity> findByLoadFileId_FileSize (Long LoadFileId);
 

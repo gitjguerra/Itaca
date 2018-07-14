@@ -1,9 +1,13 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
+import com.csi.itaca.load.model.dao.LoadRowOperationEntity;
+import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.PreloadData;
 import com.csi.itaca.load.model.dto.PreloadFieldDefinitionDTO;
 import com.csi.itaca.load.model.dto.PreloadRowTypeDTO;
+import com.csi.itaca.load.repository.LoadRowOperationRepository;
+import com.csi.itaca.load.repository.PreloadRowTypeRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -39,6 +43,9 @@ import java.util.Map;
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
+
+    @Autowired
+    private PreloadRowTypeRepository preloadRowTypeRepository;
 
     @Autowired
     private JobCompletionNotificationListener jobCompletionNotificationListener;
@@ -105,7 +112,6 @@ public class JobBatchConfiguration {
 
         int cont = 0;
         int intLengthInit = 0;
-        int intLengthFinal = 0;
         int min = 0;
         int max = 0;
 
@@ -143,17 +149,20 @@ public class JobBatchConfiguration {
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
+        // TODO: Cambiar los JdbcTemplate por repository's
+        //PreloadRowTypeEntity preloadRowTypeEntity = preloadRowTypeRepository.findOne(Long.valueOf(id_load_process));
+
         // Database connection direct
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<PreloadRowTypeDTO> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
                 "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
                 "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
-                "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
+                "AND ld_preload_file.preload_file_id. = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO.class));
         for(PreloadRowTypeDTO rowType : rowTypes)
         {
             idRowType = rowType.getPreloadRowTypeId().longValue();
             List<PreloadFieldDefinitionDTO> fieldDefinitions = jdbcTemplate.query("SELECT PRELOAD_FIELD_DEFINITION_ID, PRELOAD_ROW_TYPE_ID, COLUMN_NO, LENGTH, NAME, DESCRIPTION, PRELOAD_FIELD_TYPE_ID, REGEX, REQUIRED, REL_TYPE, REL_FIELD_DEFINITION_ID, REL_DB_TABLE_NAME, REL_DB_FIELD_NAME, ERROR_SEVERITY " +
-                    "FROM ITACA.LD_PRELOAD_FIELD_DEFINITION " +
+                    "FROM LD_PRELOAD_FIELD_DEFINITION " +
                     "WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO.class));
             for(PreloadFieldDefinitionDTO fieldDefinition : fieldDefinitions)
             {

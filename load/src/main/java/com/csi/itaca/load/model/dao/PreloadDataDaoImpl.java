@@ -2,6 +2,7 @@ package com.csi.itaca.load.model.dao;
 
 import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadFileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -35,8 +36,13 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 PreloadData preload = preloadData.get(i);
+
+                // TODO: Revisar la carga del objeto
+                PreloadFileDTO fileDTO = new PreloadFileDTO();
+                fileDTO.setPreloadFileId(preload.getLoadFileId());
+
                 ps.setLong(1, preload.getPreloadDataId());
-                ps.setLong(2, preload.getLoadFileId());
+                ps.setObject(2, fileDTO);
                 ps.setString(3, preload.getLoadedSuccessfully());
                 ps.setLong(4, preload.getRowType());
                 ps.setLong(5, preload.getLineNumber());
