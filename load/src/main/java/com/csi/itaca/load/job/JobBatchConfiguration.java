@@ -1,12 +1,10 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
-import com.csi.itaca.load.model.dao.LoadRowOperationEntity;
 import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
-import com.csi.itaca.load.repository.LoadRowOperationRepository;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
 import org.springframework.batch.core.Job;
@@ -36,11 +34,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -89,7 +82,7 @@ public class JobBatchConfiguration {
         Step step_preload = stepBuilderFactory.get("preload-data-step")
                 .<PreloadData, PreloadData>chunk(2)
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
-                .processor(new PreloadProcessor())
+                .processor(processor())
                 .writer(new PreloadWriter(preloadDataDao))
                 .listener(jobCompletionNotificationListener)
                 .faultTolerant()  // Revisar ???  y agregar en LD_ERROR
@@ -100,6 +93,46 @@ public class JobBatchConfiguration {
                 .start(step_preload)          // Preload
                 //.next(step_load)            // Load
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    public ItemProcessor<PreloadData, PreloadData> processor() {
+        return new ItemProcessor<PreloadData, PreloadData>() {
+            @Override
+            public PreloadData process(PreloadData preloadData) throws Exception {
+                Long preloadId = preloadData.getPreloadDataId();
+                Long loadFileId = preloadData.getLoadFileId();
+                String loadedSuccessfully = preloadData.getLoadedSuccessfully();
+                Long rowType = preloadData.getRowType();
+                Long lineNumber = preloadData.getLineNumber();
+                String dataCol1 = preloadData.getDataCol1();
+                String dataCol2 = preloadData.getDataCol2();
+                String dataCol3 = preloadData.getDataCol3();
+                String dataCol4 = preloadData.getDataCol4();
+                String dataCol5 = preloadData.getDataCol5();
+                String dataCol6 = preloadData.getDataCol6();
+                String dataCol7 = preloadData.getDataCol7();
+                String dataCol8 = preloadData.getDataCol8();
+                String dataCol9 = preloadData.getDataCol9();
+                String dataCol10 = preloadData.getDataCol10();
+                String dataCol11 = preloadData.getDataCol11();
+                String dataCol12 = preloadData.getDataCol12();
+                String dataCol13 = preloadData.getDataCol13();
+                String dataCol14 = preloadData.getDataCol14();
+                String dataCol15 = preloadData.getDataCol15();
+                String dataCol16 = preloadData.getDataCol16();
+                String dataCol17 = preloadData.getDataCol17();
+                String dataCol18 = preloadData.getDataCol18();
+                String dataCol19 = preloadData.getDataCol19();
+                String dataCol20 = preloadData.getDataCol20();
+
+                final PreloadData fixedCustomer = new PreloadData(preloadId, loadFileId, loadedSuccessfully, rowType, lineNumber,
+                        dataCol1, dataCol2, dataCol3, dataCol4, dataCol5, dataCol6, dataCol7, dataCol8, dataCol9, dataCol10,
+                        dataCol11, dataCol12, dataCol13, dataCol14, dataCol15, dataCol16, dataCol17, dataCol18, dataCol19, dataCol20);
+                return fixedCustomer;
+            }
+        };
     }
 
     @Bean
