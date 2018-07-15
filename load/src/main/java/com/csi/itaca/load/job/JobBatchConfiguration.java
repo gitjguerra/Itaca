@@ -74,6 +74,7 @@ public class JobBatchConfiguration {
     private static final String WILL_BE_INJECTED = null;
     private Long idRowType = 0L;
     private int cont = 0;
+    private String loadedSuccessfully = "1";
 
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
@@ -108,7 +109,7 @@ public class JobBatchConfiguration {
                 Long preloadId = preloadData.getPreloadDataId();
                 // TODO: Load file id
                 Long loadFileId = preloadData.getLoadFileId();
-                String loadedSuccessfully = Constants.getLoadSuccessful();
+                //loadedSuccessfully = loadedSuccessfully;
                 // TODO: find Id Row Type
                 //Long idRowType = preloadRowTypeRepository.findPreloadRowTypeEntity();
                 Long rowType = idRowType;
