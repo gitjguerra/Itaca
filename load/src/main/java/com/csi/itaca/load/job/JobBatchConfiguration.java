@@ -7,6 +7,7 @@ import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
+import com.csi.itaca.load.utils.Constants;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -71,6 +72,8 @@ public class JobBatchConfiguration {
 
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
+    private Long idRowType = 0L;
+    private int cont = 0;
 
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
@@ -101,11 +104,17 @@ public class JobBatchConfiguration {
         return new ItemProcessor<PreloadData, PreloadData>() {
             @Override
             public PreloadData process(PreloadData preloadData) throws Exception {
+                // TODO: Load preload process id
                 Long preloadId = preloadData.getPreloadDataId();
+                // TODO: Load file id
                 Long loadFileId = preloadData.getLoadFileId();
-                String loadedSuccessfully = preloadData.getLoadedSuccessfully();
-                Long rowType = preloadData.getRowType();
-                Long lineNumber = preloadData.getLineNumber();
+                String loadedSuccessfully = Constants.getLoadSuccessful();
+                // TODO: find Id Row Type
+                //Long idRowType = preloadRowTypeRepository.findPreloadRowTypeEntity();
+                Long rowType = idRowType;
+                // TODO: Line Number
+                Long lineNumber = Long.valueOf(cont);
+
                 String dataCol1 = preloadData.getDataCol1();
                 String dataCol2 = preloadData.getDataCol2();
                 String dataCol3 = preloadData.getDataCol3();
@@ -188,7 +197,6 @@ public class JobBatchConfiguration {
 
         LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
         LinkedHashMap<String,Integer> characterMapper = new LinkedHashMap<>();
-        Long idRowType = 0L;
         int cont = 1;
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
