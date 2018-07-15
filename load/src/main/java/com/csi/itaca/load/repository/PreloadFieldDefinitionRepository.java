@@ -12,6 +12,6 @@ import java.util.List;
  * Created by Robert on 19/06/2018.
  */
 public interface PreloadFieldDefinitionRepository extends PagingAndSortingRepository<PreloadFieldDefinitionEntity, Long>, JpaSpecificationExecutor<PreloadFieldDefinitionEntity> {
-    @Query("SELECT c FROM PreloadFieldDefinitionEntity c")
+    @Query("SELECT p FROM PreloadFieldDefinitionEntity p")
     List<PreloadFieldDefinitionEntity>  findFieldDefinitionEntityList();
 }

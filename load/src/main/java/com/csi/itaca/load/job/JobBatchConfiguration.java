@@ -56,7 +56,10 @@ public class JobBatchConfiguration {
     private EntityManager entityManager;
 
     @Autowired
-    private PreloadFieldDefinitionRepository fieldDefinitionRepository;
+    private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
+
+    @Autowired
+    private PreloadRowTypeRepository preloadRowTypeRepository;
 
     @Autowired
     private JobCompletionNotificationListener jobCompletionNotificationListener;
@@ -160,18 +163,20 @@ public class JobBatchConfiguration {
         // TODO: Cambiar los JdbcTemplate por repository's  y eliminar el sufijo _OLD
 
         // Database connection direct
-
+        /*
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<PreloadRowTypeDTO_OLD> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
                 "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
                 "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
                 "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO_OLD.class));
-
-        for(PreloadRowTypeDTO_OLD rowType : rowTypes)
+        */
+        // TODO:  Put the id_load_process in the repository query
+        List<PreloadRowTypeEntity>  rowTypes = preloadRowTypeRepository.findPreloadRowTypeEntityList();
+        for(PreloadRowTypeEntity rowType : rowTypes)
         {
-            // TODO:  put the idRowType in the query
+            // TODO:  put the idRowType in the repository query
             idRowType = rowType.getPreloadRowTypeId().longValue();
-            List<PreloadFieldDefinitionEntity>  fieldDefinitions = fieldDefinitionRepository.findFieldDefinitionEntityList();
+            List<PreloadFieldDefinitionEntity>  fieldDefinitions = preloadFieldDefinitionRepository.findFieldDefinitionEntityList();
             for(PreloadFieldDefinitionEntity fieldDefinition : fieldDefinitions)
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
