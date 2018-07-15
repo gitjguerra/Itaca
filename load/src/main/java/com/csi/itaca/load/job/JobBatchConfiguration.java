@@ -2,9 +2,12 @@ package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dao.LoadRowOperationEntity;
+import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
+import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
 import com.csi.itaca.load.repository.LoadRowOperationRepository;
+import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -31,6 +34,13 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -42,8 +52,11 @@ import java.util.Map;
 @EnableBatchProcessing
 public class JobBatchConfiguration {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
-    private PreloadRowTypeRepository preloadRowTypeRepository;
+    private PreloadFieldDefinitionRepository fieldDefinitionRepository;
 
     @Autowired
     private JobCompletionNotificationListener jobCompletionNotificationListener;
@@ -95,9 +108,6 @@ public class JobBatchConfiguration {
                                                       @Value("#{jobParameters['id_load_file']}")
                                                               String id_load_file) throws MalformedURLException {
 
-        PreloadData preloadData = new PreloadData();
-        preloadData.setRowType((long) 7);
-
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
 
         reader.setResource(new ClassPathResource(pathToFile));
@@ -148,23 +158,33 @@ public class JobBatchConfiguration {
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
         // TODO: Cambiar los JdbcTemplate por repository's  y eliminar el sufijo _OLD
-        //PreloadRowTypeEntity preloadRowTypeEntity = preloadRowTypeRepository.findOne(Long.valueOf(id_load_process));
 
         // Database connection direct
+
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<PreloadRowTypeDTO_OLD> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
                 "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
                 "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
                 "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO_OLD.class));
+
         for(PreloadRowTypeDTO_OLD rowType : rowTypes)
         {
+            // TODO:  put the idRowType in the query
             idRowType = rowType.getPreloadRowTypeId().longValue();
+            List<PreloadFieldDefinitionEntity>  fieldDefinitions = fieldDefinitionRepository.findFieldDefinitionEntityList();
+            for(PreloadFieldDefinitionEntity fieldDefinition : fieldDefinitions)
+            {
+                fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
+            }
+            // TODO: DELETE - old code for management objects with jdbcTemplate
+            /*
             List<PreloadFieldDefinitionDTO_OLD> fieldDefinitions = jdbcTemplate.query("SELECT LENGTH, NAME FROM " +
                     "LD_PRELOAD_FIELD_DEFINITION WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO_OLD.class));
             for(PreloadFieldDefinitionDTO_OLD fieldDefinition : fieldDefinitions)
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
             }
+            */
 
             tokenizers.put(rowType.getIdentifierValue()+"*", preloadLineTokenizer(fields));
             characterMapper.put(rowType.getIdentifierValue(), cont++);
