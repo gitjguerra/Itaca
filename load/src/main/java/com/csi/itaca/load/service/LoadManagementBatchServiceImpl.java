@@ -64,12 +64,12 @@ public class LoadManagementBatchServiceImpl extends JdbcDaoSupport implements Lo
 
         List<PreloadDataDTO> result = new ArrayList<PreloadDataDTO>();
         for (Map<String, Object> row : rows) {
-            PreloadDataDTO preloadData = new PreloadDataDTO();
-            Long valor = Long.parseLong(row.get("id").toString());
-            preloadData.setPreloadDataId(valor);
+            //PreloadDataDTO preloadData = new PreloadDataDTO();
+            //Long valor = Long.parseLong(row.get("id").toString());
+            //preloadData.setPreloadDataId(valor);
             //preloadData.setLoadFileId((String) row.get("first_name"));
             //preloadData.setLastName((String) row.get("last_name"));
-            result.add(preloadData);
+            //result.add(preloadData);
         }
 
         return result;

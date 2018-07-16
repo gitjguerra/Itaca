@@ -1,16 +1,12 @@
 package com.csi.itaca.load.service;
 
-import com.csi.itaca.load.job.JobCompletionNotificationListener;
 import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
-import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.repository.*;
 import com.csi.itaca.load.utils.Constants;
 import com.csi.itaca.tools.utils.beaner.Beaner;
-import com.csi.itaca.tools.utils.jpa.JpaUtils;
-import com.csi.itaca.tools.utils.jpa.Pagination;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -21,11 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
@@ -42,10 +35,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("unchecked")
 @Service

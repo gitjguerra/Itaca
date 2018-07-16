@@ -58,6 +58,9 @@ public class JobBatchConfiguration {
     @Autowired
     private LoadManagementBatchService batchService;
 
+    @Value("${spring.batch.job.skipLimit}")
+    private String skipLimit;
+
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
     private Long preloadRowTypeId = 0L;
@@ -74,10 +77,12 @@ public class JobBatchConfiguration {
         Step step_preload = stepBuilderFactory.get("preload-data-step")
                 .<PreloadDataDTO, PreloadDataDTO>chunk(2)
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
+                .listener(customReaderListener())
                 .processor(processor())
                 .writer(new PreloadWriter(batchService))
-                //.faultTolerant()  // Revisar ???  y agregar en LD_ERROR
-                //.skip(DataIntegrityViolationException.class)
+                .faultTolerant()  // TODO: falta agregar en ld_error_field
+                .skipLimit(Integer.parseInt(skipLimit))
+                .skip(org.springframework.batch.item.file.FlatFileParseException.class)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
@@ -85,6 +90,11 @@ public class JobBatchConfiguration {
                 //.next(step_load)            // Load
                 .listener(listener)
                 .build();
+    }
+
+    @Bean
+    public CustomReaderListener customReaderListener() {
+        return new CustomReaderListener();
     }
 
     @Bean
