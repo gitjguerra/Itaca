@@ -1,6 +1,5 @@
-package com.csi.itaca.load.model.dao;
+package com.csi.itaca.load.service;
 
-import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao {
+public class LoadManagementBatchServiceImpl extends JdbcDaoSupport implements LoadManagementBatchService {
 
     @Autowired
     DataSource dataSource;
@@ -40,7 +38,7 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
                 ps.setLong(1, preload.getPreloadDataId());
                 ps.setLong(2, preload.getLoadFileId().getLoadFileId().longValue());
                 ps.setString(3, preload.getLoadedSuccessfully());
-                ps.setDate(4, (Date) preload.getCreatedTimeStamp());
+                ps.setDate(4, (java.sql.Date) preload.getCreatedTimeStamp());
                 ps.setLong(5, preload.getPreloadRowTypeId().getPreloadRowTypeId().longValue());
                 ps.setLong(6, preload.getLineNumber());
                 ps.setString(7, preload.getDataCol1());

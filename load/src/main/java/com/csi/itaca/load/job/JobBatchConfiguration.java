@@ -1,11 +1,11 @@
 package com.csi.itaca.load.job;
 
-import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
+import com.csi.itaca.load.service.LoadManagementBatchService;
 import com.csi.itaca.load.service.LoadManagementServiceImpl;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -38,9 +38,6 @@ import java.util.*;
 public class JobBatchConfiguration {
 
     @Autowired
-    DataSource dataSource;
-
-    @Autowired
     private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
 
     @Autowired
@@ -59,7 +56,7 @@ public class JobBatchConfiguration {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    private PreloadDataDao preloadDataDao;
+    private LoadManagementBatchService batchService;
 
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
@@ -78,7 +75,7 @@ public class JobBatchConfiguration {
                 .<PreloadDataDTO, PreloadDataDTO>chunk(2)
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
                 .processor(processor())
-                .writer(new PreloadWriter(preloadDataDao))
+                .writer(new PreloadWriter(batchService))
                 //.faultTolerant()  // Revisar ???  y agregar en LD_ERROR
                 //.skip(DataIntegrityViolationException.class)
                 .build();

@@ -1,6 +1,5 @@
 package com.csi.itaca.load.service;
 
-import com.csi.itaca.load.job.JobCompletionNotificationListener;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -11,13 +10,7 @@ import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dao.LoadProcessEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
-import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
-import com.csi.itaca.tools.utils.jpa.Order;
-import com.csi.itaca.tools.utils.jpa.Pagination;
-
-
-
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;

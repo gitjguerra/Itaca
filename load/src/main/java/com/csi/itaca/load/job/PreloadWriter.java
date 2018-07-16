@@ -2,8 +2,8 @@ package com.csi.itaca.load.job;
 
 import java.util.List;
 
-import com.csi.itaca.load.model.PreloadDataDao;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.service.LoadManagementBatchService;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class PreloadWriter implements ItemWriter<PreloadDataDTO> {
 
-    private final PreloadDataDao preloadDataDao;
+    private final LoadManagementBatchService loadManagementBatchService;
 
-    public PreloadWriter(PreloadDataDao preloadDataDao) {
-        this.preloadDataDao = preloadDataDao;
+    public PreloadWriter(LoadManagementBatchService preloadDataDao) {
+        this.loadManagementBatchService = preloadDataDao;
     }
 
     @Override
     public void write(List<? extends PreloadDataDTO> items) throws Exception {
         // a) Insert new row in to ld_preload_data table with row loaded from the file.
-        preloadDataDao.insert(items);
+        loadManagementBatchService.insert(items);
         // b) Determine row type. (find [found row type id])
         // i. For each ld_preload_field_row_type found in preparation check identifier_column_no and identifier_value.
         // When there is a match row type is found.
