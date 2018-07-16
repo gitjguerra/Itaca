@@ -1,6 +1,7 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
+import com.csi.itaca.load.model.PreloadRowType;
 import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
@@ -75,10 +76,7 @@ public class JobBatchConfiguration {
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
     private Long idRowType = 0L;
-    private int cont = 0;
-    private String loadedSuccessfully = "1";
     private String fileLoadId = "";
-    private String id_field_definition = "";
     private int line_number = 0;
 
     @Bean
@@ -110,18 +108,15 @@ public class JobBatchConfiguration {
         return new ItemProcessor<PreloadData, PreloadData>() {
             @Override
             public PreloadData process(PreloadData preloadData) throws Exception {
-                // TODO: Load preload process id
                 Long preloadId = preloadData.getPreloadDataId();
-                // TODO: Load file id
                 Long loadFileId = Long.valueOf(fileLoadId);
-                //loadedSuccessfully = loadedSuccessfully;
+                String loadedSuccessfully = preloadData.getLoadedSuccessfully();
+                line_number = line_number + 1;
+                Long lineNumber = Long.valueOf(line_number);
                 // TODO: find Id Row Type
                 //Long idRowType = preloadRowTypeRepository.findPreloadRowTypeEntity();
                 Long rowType = idRowType;
-                // TODO: Line Number
-                line_number = line_number + 1;
-                Long lineNumber = Long.valueOf(line_number);
-                
+
                 String dataCol1 = preloadData.getDataCol1();
                 String dataCol2 = preloadData.getDataCol2();
                 String dataCol3 = preloadData.getDataCol3();
@@ -224,7 +219,7 @@ public class JobBatchConfiguration {
         {
             // TODO:  put the idRowType in the repository query
             idRowType = rowType.getPreloadRowTypeId().longValue();
-            List<PreloadFieldDefinitionEntity>  fieldDefinitions = preloadFieldDefinitionRepository.findFieldDefinitionEntityList();
+            List<PreloadFieldDefinitionEntity>  fieldDefinitions = preloadFieldDefinitionRepository.findByPreloadRowTypeId(idRowType);
             for(PreloadFieldDefinitionEntity fieldDefinition : fieldDefinitions)
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );

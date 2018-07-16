@@ -15,7 +15,6 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
     @Override
     public PreloadData mapFieldSet(FieldSet fieldSet) throws BindException {
 
-        int cont = 1;
         int nroRegistros = fieldSet.getFieldCount();
         String[] names = fieldSet.getNames();
         String[] values = fieldSet.getValues();
@@ -26,13 +25,9 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
         // TODO: DELETE HARDCODE
         Random ramdom = new Random();
         data.setPreloadDataId(ramdom.nextLong());
-        data.setLoadFileId(Long.valueOf(1));
-        data.setLoadedSuccessfully("1");
-        data.setRowType(Long.valueOf(1));
+        data.setLoadedSuccessfully("");
 
         for(int i = 0; i < nroRegistros; i++) {
-            // TODO: Put true line
-            data.setLineNumber(Long.valueOf(i));
             switch(i){
                 case 0:
                     data.setDataCol1(values[i]);
