@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.csi.itaca.load.model.PreloadDataDao;
-import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -36,8 +36,8 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
             log.info("============ JOB FINISHED ============ Verifying the results....\n");
 
             // TODO:  test for job process successful - Delete for production
-            List<PreloadData> preloadDataDaos = preloadDataDao.loadAllPreloadDatas();
-            for (PreloadData preloadData : preloadDataDaos) {
+            List<PreloadDataDTO> preloadDataDaos = preloadDataDao.loadAllPreloadDatas();
+            for (PreloadDataDTO preloadData : preloadDataDaos) {
                 log.info("Found <" + preloadData + "> in the database.");
             }
         }

@@ -1,6 +1,6 @@
 package com.csi.itaca.load.job;
 
-import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
@@ -8,19 +8,20 @@ import org.springframework.validation.BindException;
 
 import java.util.Random;
 
-public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
+public class PreloadFieldSetMapper implements FieldSetMapper<PreloadDataDTO> {
 
     private final static Logger logger = Logger.getLogger(PreloadFieldSetMapper.class);
 
     @Override
-    public PreloadData mapFieldSet(FieldSet fieldSet) throws BindException {
+    public PreloadDataDTO mapFieldSet(FieldSet fieldSet) throws BindException {
 
         int nroRegistros = fieldSet.getFieldCount();
-        String[] names = fieldSet.getNames();
-        String[] values = fieldSet.getValues();
 
         // Put the principal data
-        PreloadData data = new PreloadData();
+        PreloadDataDTO data = new PreloadDataDTO();
+
+        String[] names = fieldSet.getNames();
+        String[] values = fieldSet.getValues();
 
         // TODO: DELETE HARDCODE random
         Random ramdom = new Random();
@@ -91,7 +92,6 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
             }
             logger.info("Campo " + (i+1) + ": " + fieldSet.readString(i));
         }
-
         return data;
     }
 }

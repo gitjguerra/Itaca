@@ -1,6 +1,6 @@
 package com.csi.itaca.load.job;
 
-import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 @Component
 @JobScope
-public class LoadDataReader extends JdbcCursorItemReader<PreloadData> {
+public class LoadDataReader extends JdbcCursorItemReader<PreloadDataDTO> {
 
     // Colocar acá query de la tabla a leer
     @Autowired
@@ -26,10 +26,10 @@ public class LoadDataReader extends JdbcCursorItemReader<PreloadData> {
     }
 
     // Mapear los datos a insertar en la otra tabla
-    private static class LoadRowMapper implements RowMapper<PreloadData> {
+    private static class LoadRowMapper implements RowMapper<PreloadDataDTO> {
         @Override
-        public PreloadData mapRow(ResultSet resultSet, int i) throws SQLException {
-            PreloadData preloadData = new PreloadData();
+        public PreloadDataDTO mapRow(ResultSet resultSet, int i) throws SQLException {
+            PreloadDataDTO preloadData = new PreloadDataDTO();
             /*
             employee.setEmpNo(resultSet.getInt("emp_no"));
             employee.setBirthDate(resultSet.getDate("birth_date"));

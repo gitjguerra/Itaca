@@ -3,14 +3,14 @@ package com.csi.itaca.load.job;
 import java.util.List;
 
 import com.csi.itaca.load.model.PreloadDataDao;
-import com.csi.itaca.load.model.dto.PreloadData;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 
 // TODO: Change for data objects ITACA
 @Component
-public class PreloadWriter implements ItemWriter<PreloadData> {
+public class PreloadWriter implements ItemWriter<PreloadDataDTO> {
 
     private final PreloadDataDao preloadDataDao;
 
@@ -19,7 +19,7 @@ public class PreloadWriter implements ItemWriter<PreloadData> {
     }
 
     @Override
-    public void write(List<? extends PreloadData> items) throws Exception {
+    public void write(List<? extends PreloadDataDTO> items) throws Exception {
         // a) Insert new row in to ld_preload_data table with row loaded from the file.
         preloadDataDao.insert(items);
         // b) Determine row type. (find [found row type id])

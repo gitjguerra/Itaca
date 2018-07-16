@@ -28,7 +28,7 @@ public class PreloadDataDTO implements PreloadData {
 
     private Date createdTimeStamp;
 
-    private PreloadRowTypeDTO PreloadRowTypeId;
+    private PreloadRowTypeDTO preloadRowTypeId;
 
     private Long lineNumber;
 
@@ -236,4 +236,64 @@ public class PreloadDataDTO implements PreloadData {
     private String dataCol199;
     private String dataCol200;
 
+    public PreloadDataDTO(Long preloadDataId, LoadFileDTO loadFileId, String loadedSuccessfully, Date createdTimeStamp, PreloadRowTypeDTO preloadRowTypeId, Long lineNumber, String dataCol1, String dataCol2, String dataCol3, String dataCol4, String dataCol5, String dataCol6, String dataCol7, String dataCol8, String dataCol9, String dataCol10, String dataCol11, String dataCol12, String dataCol13, String dataCol14, String dataCol15, String dataCol16, String dataCol17, String dataCol18, String dataCol19, String dataCol20) {
+        this.preloadDataId = preloadDataId;
+        this.loadFileId = loadFileId;
+        this.loadedSuccessfully = loadedSuccessfully;
+        this.createdTimeStamp = createdTimeStamp;
+        this.preloadRowTypeId = preloadRowTypeId;
+        this.lineNumber = lineNumber;
+        this.dataCol1 = dataCol1;
+        this.dataCol2 = dataCol2;
+        this.dataCol3 = dataCol3;
+        this.dataCol4 = dataCol4;
+        this.dataCol5 = dataCol5;
+        this.dataCol6 = dataCol6;
+        this.dataCol7 = dataCol7;
+        this.dataCol8 = dataCol8;
+        this.dataCol9 = dataCol9;
+        this.dataCol10 = dataCol10;
+        this.dataCol11 = dataCol11;
+        this.dataCol12 = dataCol12;
+        this.dataCol13 = dataCol13;
+        this.dataCol14 = dataCol14;
+        this.dataCol15 = dataCol15;
+        this.dataCol16 = dataCol16;
+        this.dataCol17 = dataCol17;
+        this.dataCol18 = dataCol18;
+        this.dataCol19 = dataCol19;
+        this.dataCol20 = dataCol20;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("preloadDataId", this.preloadDataId)
+                .append("loadFileId", this.loadFileId = loadFileId)
+                .append("loadedSuccessfully", this.loadedSuccessfully)
+                .append("createdTimeStamp", this.createdTimeStamp)
+                .append("PreloadRowTypeId", this.preloadRowTypeId)
+                .append("lineNumber", this.lineNumber)
+                .append("dataCol1", this.dataCol1)
+                .append("dataCol2", this.dataCol2)
+                .append("dataCol3", this.dataCol3)
+                .append("dataCol4", this.dataCol4)
+                .append("dataCol5", this.dataCol5)
+                .append("dataCol6", this.dataCol6)
+                .append("dataCol7", this.dataCol7)
+                .append("dataCol8", this.dataCol8)
+                .append("dataCol9", this.dataCol9)
+                .append("dataCol10", this.dataCol10)
+                .append("dataCol11", this.dataCol11)
+                .append("dataCol12", this.dataCol12)
+                .append("dataCol13", this.dataCol13)
+                .append("dataCol14", this.dataCol14)
+                .append("dataCol15", this.dataCol15)
+                .append("dataCol16", this.dataCol16)
+                .append("dataCol17", this.dataCol17)
+                .append("dataCol18", this.dataCol18)
+                .append("dataCol19", this.dataCol19)
+                .append("dataCol20", this.dataCol20)
+                .toString();
+    }
 }

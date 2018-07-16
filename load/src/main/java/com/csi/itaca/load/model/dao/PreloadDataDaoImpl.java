@@ -1,8 +1,7 @@
 package com.csi.itaca.load.model.dao;
 
 import com.csi.itaca.load.model.PreloadDataDao;
-import com.csi.itaca.load.model.dto.PreloadData;
-import com.csi.itaca.load.model.dto.PreloadFileDTO;
+import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -29,7 +28,7 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
     }
 
     @Override
-    public void insert(List<? extends PreloadData> preloadData) {
+    public void insert(List<? extends PreloadDataDTO> preloadData) {
 
         String sql = "INSERT INTO LD_PRELOAD_DATA \n" +
                 "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, CREATED_TIMESTAMP, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7) \n" +
@@ -37,12 +36,12 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 // TODO: Revisar la carga del objeto  debe cambiar con la parte de repository's
-                PreloadData preload = preloadData.get(i);
+                PreloadDataDTO preload = preloadData.get(i);
                 ps.setLong(1, preload.getPreloadDataId());
-                ps.setLong(2, preload.getLoadFileId());
+                ps.setLong(2, preload.getLoadFileId().getLoadFileId().longValue());
                 ps.setString(3, preload.getLoadedSuccessfully());
                 ps.setDate(4, (Date) preload.getCreatedTimeStamp());
-                ps.setLong(5, preload.getRowType());
+                ps.setLong(5, preload.getPreloadRowTypeId().getPreloadRowTypeId().longValue());
                 ps.setLong(6, preload.getLineNumber());
                 ps.setString(7, preload.getDataCol1());
                 ps.setString(8, preload.getDataCol2());
@@ -61,13 +60,13 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
     }
 
     @Override
-    public List<PreloadData> loadAllPreloadDatas() {
+    public List<PreloadDataDTO> loadAllPreloadDatas() {
         String sql = "SELECT * FROM LD_PRELOAD_DATA";
         List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
 
-        List<PreloadData> result = new ArrayList<PreloadData>();
+        List<PreloadDataDTO> result = new ArrayList<PreloadDataDTO>();
         for (Map<String, Object> row : rows) {
-            PreloadData preloadData = new PreloadData();
+            PreloadDataDTO preloadData = new PreloadDataDTO();
             Long valor = Long.parseLong(row.get("id").toString());
             preloadData.setPreloadDataId(valor);
             //preloadData.setLoadFileId((String) row.get("first_name"));

@@ -30,11 +30,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import javax.sql.DataSource;
 import java.util.*;
 
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
+
+    @Autowired
+    DataSource dataSource;
 
     @Autowired
     private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
@@ -66,12 +70,12 @@ public class JobBatchConfiguration {
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
                    StepBuilderFactory stepBuilderFactory,
-                   ItemReader<PreloadData> itemReader,
-                   ItemProcessor<PreloadData, PreloadData> itemProcessor,
-                   ItemWriter<PreloadData> PreloadItemWriter) throws Exception {
+                   ItemReader<PreloadDataDTO> itemReader,
+                   ItemProcessor<PreloadDataDTO, PreloadDataDTO> itemProcessor,
+                   ItemWriter<PreloadDataDTO> PreloadItemWriter) throws Exception {
 
         Step step_preload = stepBuilderFactory.get("preload-data-step")
-                .<PreloadData, PreloadData>chunk(2)
+                .<PreloadDataDTO, PreloadDataDTO>chunk(2)
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
                 .processor(processor())
                 .writer(new PreloadWriter(preloadDataDao))
@@ -88,17 +92,24 @@ public class JobBatchConfiguration {
 
     @Bean
     @StepScope
-    public ItemProcessor<PreloadData, PreloadData> processor() {
-        return new ItemProcessor<PreloadData, PreloadData>() {
+    public ItemProcessor<PreloadDataDTO, PreloadDataDTO> processor() {
+        return new ItemProcessor<PreloadDataDTO, PreloadDataDTO>() {
             @Override
-            public PreloadData process(PreloadData preloadData) throws Exception {
+            public PreloadDataDTO process(PreloadDataDTO preloadData) throws Exception {
                 Long preloadId = preloadData.getPreloadDataId();
+
                 Long loadFileId = Long.valueOf(fileLoadId);
+                LoadFileDTO loadFileDTO = new LoadFileDTO();
+                loadFileDTO.setLoadFileId(loadFileId);
+
                 String loadedSuccessfully = "1";
                 line_number = line_number + 1;
                 Long lineNumber = Long.valueOf(line_number);
+
                 PreloadRowTypeEntity typeObject = preloadRowTypeRepository.findByIdentifierValue(preloadData.getDataCol1());
                 Long rowTypeId = typeObject.getPreloadRowTypeId();
+                PreloadRowTypeDTO preloadRowTypeDTO = new PreloadRowTypeDTO();
+                preloadRowTypeDTO.setPreloadRowTypeId(rowTypeId);
 
                 java.util.Date date = new java.util.Date();
                 long t = date.getTime();
@@ -126,7 +137,7 @@ public class JobBatchConfiguration {
                 String dataCol19 = preloadData.getDataCol19();
                 String dataCol20 = preloadData.getDataCol20();
 
-                final PreloadData fixedCustomer = new PreloadData(preloadId, loadFileId, loadedSuccessfully, sqlDate, rowTypeId, lineNumber,
+                final PreloadDataDTO fixedCustomer = new PreloadDataDTO(preloadId, loadFileDTO, loadedSuccessfully, sqlDate, preloadRowTypeDTO, lineNumber,
                         dataCol1, dataCol2, dataCol3, dataCol4, dataCol5, dataCol6, dataCol7, dataCol8, dataCol9, dataCol10,
                         dataCol11, dataCol12, dataCol13, dataCol14, dataCol15, dataCol16, dataCol17, dataCol18, dataCol19, dataCol20);
                 return fixedCustomer;
@@ -136,14 +147,14 @@ public class JobBatchConfiguration {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<PreloadData> itemReader(@Value("#{jobParameters['fullPathFileName']}")
+    public FlatFileItemReader<PreloadDataDTO> itemReader(@Value("#{jobParameters['fullPathFileName']}")
                                                               String pathToFile,
                                                       @Value("#{jobParameters['id_load_process']}")
                                                               String id_load_process,
                                                       @Value("#{jobParameters['id_load_file']}")
                                                               String id_load_file) throws Exception {
 
-        FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
+        FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<>();
         reader.setResource(new ClassPathResource(pathToFile));
         reader.setLineMapper(preloadLineMapper(id_load_process, id_load_file));
         fileLoadId = id_load_file;
@@ -176,7 +187,7 @@ public class JobBatchConfiguration {
         return tokenizer;
     }
 
-    public FieldSetMapper<PreloadData> preloadFieldSetMapper() {
+    public FieldSetMapper<PreloadDataDTO> preloadFieldSetMapper() {
         return new PreloadFieldSetMapper();
     }
 
