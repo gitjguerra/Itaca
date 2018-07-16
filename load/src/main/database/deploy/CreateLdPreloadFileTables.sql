@@ -6,7 +6,7 @@ CREATE TABLE LD_PRELOAD_FILE
   DESCRIPTION            VARCHAR2(255),
   FILENAME_FORMAT_REGEX  VARCHAR2(100),
   file_type              VARCHAR2(10),
-  field_separator        VARCHAR2(10),
+  file_separator        VARCHAR2(10),
   file_load_order        NUMBER
 )
 TABLESPACE LOAD LOGGING;
@@ -26,7 +26,7 @@ COMMENT ON COLUMN LD_PRELOAD_FILE.FILENAME_FORMAT_REGEX IS 'Regular expression f
 
 COMMENT ON COLUMN LD_PRELOAD_FILE.file_type IS 'CVS, Excel or TXT.';
 
-COMMENT ON COLUMN LD_PRELOAD_FILE.field_separator IS 'The separator for the fields in the file.';
+COMMENT ON COLUMN LD_PRELOAD_FILE.file_separator IS 'The separator for the fields in the file.';
 
 COMMENT ON COLUMN LD_PRELOAD_FILE.file_load_order IS 'Order in which the files will the preloaded / loaded.';
 

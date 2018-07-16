@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Date;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -23,6 +25,8 @@ public class PreloadDataDTO implements PreloadData {
     private LoadFileDTO loadFileId;
 
     private String loadedSuccessfully;
+
+    private Date createdTimeStamp;
 
     private PreloadRowTypeDTO PreloadRowTypeId;
 

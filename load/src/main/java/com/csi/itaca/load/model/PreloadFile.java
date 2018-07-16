@@ -17,7 +17,7 @@ public interface PreloadFile {
 
     String getFileType();
 
-    String getFieldSeparator();
+    String getFileSeparator();
 
     String getFileLoadOrder();
 

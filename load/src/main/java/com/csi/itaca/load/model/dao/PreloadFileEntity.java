@@ -25,7 +25,7 @@ public class PreloadFileEntity implements PreloadFile{
     public static final String DESCRIPTION = "description";
     public static final String FILENAME_FORMAT_REGEX = "filenameFormatRegex";
     public static final String FILE_TYPE = "FileType";
-    public static final String FILE_SEPARATOR = "FieldSeparator";
+    public static final String FILE_SEPARATOR = "FileSeparator";
     public static final String FILE_LOAD_ORDER = "FileLoadOrder";
 
 
@@ -52,7 +52,7 @@ public class PreloadFileEntity implements PreloadFile{
     private String FileType;
 
     @Column(name="FILE_SEPARATOR")
-    private String FieldSeparator;
+    private String FileSeparator;
 
     @Column(name="FILE_LOAD_ORDER")
     private String FileLoadOrder;

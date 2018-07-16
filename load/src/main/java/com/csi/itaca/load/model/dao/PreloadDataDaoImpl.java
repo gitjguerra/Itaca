@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,8 +32,8 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
     public void insert(List<? extends PreloadData> preloadData) {
 
         String sql = "INSERT INTO LD_PRELOAD_DATA \n" +
-                "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7) \n" +
-                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(PRELOAD_DATA_ID, LOAD_FILE_ID, LOADED_SUCCESSFULLY, CREATED_TIMESTAMP, ROW_TYPE, LINE_NUMBER, DATA_COL1, DATA_COL2, DATA_COL3, DATA_COL4, DATA_COL5, DATA_COL6, DATA_COL7) \n" +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 // TODO: Revisar la carga del objeto  debe cambiar con la parte de repository's
@@ -40,15 +41,16 @@ public class PreloadDataDaoImpl extends JdbcDaoSupport implements PreloadDataDao
                 ps.setLong(1, preload.getPreloadDataId());
                 ps.setLong(2, preload.getLoadFileId());
                 ps.setString(3, preload.getLoadedSuccessfully());
-                ps.setLong(4, preload.getRowType());
-                ps.setLong(5, preload.getLineNumber());
-                ps.setString(6, preload.getDataCol1());
-                ps.setString(7, preload.getDataCol2());
-                ps.setString(8, preload.getDataCol3());
-                ps.setString(9, preload.getDataCol4());
-                ps.setString(10, preload.getDataCol5());
-                ps.setString(11, preload.getDataCol6());
-                ps.setString(12, preload.getDataCol7());
+                ps.setDate(4, (Date) preload.getCreatedTimeStamp());
+                ps.setLong(5, preload.getRowType());
+                ps.setLong(6, preload.getLineNumber());
+                ps.setString(7, preload.getDataCol1());
+                ps.setString(8, preload.getDataCol2());
+                ps.setString(9, preload.getDataCol3());
+                ps.setString(10, preload.getDataCol4());
+                ps.setString(11, preload.getDataCol5());
+                ps.setString(12, preload.getDataCol6());
+                ps.setString(13, preload.getDataCol7());
             }
 
             public int getBatchSize() {

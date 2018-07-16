@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -23,6 +24,7 @@ public class PreloadDataEntity implements PreloadData {
     public static final String PRELOAD_DATA_ID = "preloadDataId";
     public static final String LOAD_FILE_ID = "loadFileId";
     public static final String LOADED_SUCCESSFULLY = "loadedSuccessfully";
+    public static final String CREATED_TIMESTAMP = "createTimeStamp";
     public static final String PRELOAD_ROW_TYPE_ID = "PreloadRowTypeId";
     public static final String LINE_NUMBER = "lineNumber";
     public static final String DATA_COL1 = "dataCol1";
@@ -238,6 +240,9 @@ public class PreloadDataEntity implements PreloadData {
 
     @Column(name="LOADED_SUCCESSFULLY")
     private String loadedSuccessfully;
+
+    @Column(name="CREATED_TIMESTAMP")
+    private Date createdTimeStamp;
 
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="PRELOAD_ROW_TYPE_ID")

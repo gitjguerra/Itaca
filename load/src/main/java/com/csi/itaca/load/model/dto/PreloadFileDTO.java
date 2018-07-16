@@ -28,7 +28,7 @@ public class PreloadFileDTO implements PreloadFile {
 
     private String FileType;
 
-    private String FieldSeparator;
+    private String FileSeparator;
 
     private String FileLoadOrder;
 }

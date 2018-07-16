@@ -1,5 +1,7 @@
 package com.csi.itaca.load.model;
 
+import java.util.Date;
+
 /**
  * Created by Robert on 19/06/2018.
  */
@@ -10,6 +12,8 @@ public interface PreloadData {
     LoadFile getLoadFileId();
 
     String getLoadedSuccessfully();
+
+    Date getCreatedTimeStamp();
 
     PreloadRowType getPreloadRowTypeId();
 

@@ -1,14 +1,11 @@
 package com.csi.itaca.load.job;
 
 import com.csi.itaca.load.model.PreloadDataDao;
-import com.csi.itaca.load.model.PreloadRowType;
-import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
-import com.csi.itaca.load.utils.Constants;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -34,23 +31,13 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import java.io.FileReader;
-import java.io.LineNumberReader;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
@@ -61,8 +48,8 @@ public class JobBatchConfiguration {
     @Autowired
     private JobCompletionNotificationListener jobCompletionNotificationListener;
 
-    @Autowired
-    DataSource dataSource;
+    //@Autowired
+    //DataSource dataSource;
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -75,7 +62,7 @@ public class JobBatchConfiguration {
 
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
-    private Long idRowType = 0L;
+    private Long preloadRowTypeId = 0L;
     private String fileLoadId = "";
     private int line_number = 0;
 
@@ -110,12 +97,16 @@ public class JobBatchConfiguration {
             public PreloadData process(PreloadData preloadData) throws Exception {
                 Long preloadId = preloadData.getPreloadDataId();
                 Long loadFileId = Long.valueOf(fileLoadId);
-                String loadedSuccessfully = preloadData.getLoadedSuccessfully();
+                String loadedSuccessfully = "1";
                 line_number = line_number + 1;
                 Long lineNumber = Long.valueOf(line_number);
-                // TODO: find Id Row Type
-                //Long idRowType = preloadRowTypeRepository.findPreloadRowTypeEntity();
-                Long rowType = idRowType;
+                PreloadRowTypeEntity typeObject = preloadRowTypeRepository.findByIdentifierValue(preloadData.getDataCol1());
+                Long rowTypeId = typeObject.getPreloadRowTypeId();
+
+                java.util.Date date = new java.util.Date();
+                long t = date.getTime();
+                java.sql.Date sqlDate = new java.sql.Date(t);
+                java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
 
                 String dataCol1 = preloadData.getDataCol1();
                 String dataCol2 = preloadData.getDataCol2();
@@ -138,7 +129,7 @@ public class JobBatchConfiguration {
                 String dataCol19 = preloadData.getDataCol19();
                 String dataCol20 = preloadData.getDataCol20();
 
-                final PreloadData fixedCustomer = new PreloadData(preloadId, loadFileId, loadedSuccessfully, rowType, lineNumber,
+                final PreloadData fixedCustomer = new PreloadData(preloadId, loadFileId, loadedSuccessfully, sqlDate, rowTypeId, lineNumber,
                         dataCol1, dataCol2, dataCol3, dataCol4, dataCol5, dataCol6, dataCol7, dataCol8, dataCol9, dataCol10,
                         dataCol11, dataCol12, dataCol13, dataCol14, dataCol15, dataCol16, dataCol17, dataCol18, dataCol19, dataCol20);
                 return fixedCustomer;
@@ -156,7 +147,6 @@ public class JobBatchConfiguration {
                                                               String id_load_file) throws Exception {
 
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
-
         reader.setResource(new ClassPathResource(pathToFile));
         reader.setLineMapper(preloadLineMapper(id_load_process, id_load_file));
         fileLoadId = id_load_file;
@@ -217,23 +207,14 @@ public class JobBatchConfiguration {
         List<PreloadRowTypeEntity>  rowTypes = preloadRowTypeRepository.findPreloadRowTypeEntityList();
         for(PreloadRowTypeEntity rowType : rowTypes)
         {
-            // TODO:  put the idRowType in the repository query
-            idRowType = rowType.getPreloadRowTypeId().longValue();
-            List<PreloadFieldDefinitionEntity>  fieldDefinitions = preloadFieldDefinitionRepository.findByPreloadRowTypeId(idRowType);
+            preloadRowTypeId = rowType.getPreloadRowTypeId().longValue();
+            PreloadRowTypeEntity rowTypeEntity = new PreloadRowTypeEntity();
+            rowTypeEntity.setPreloadRowTypeId(preloadRowTypeId);
+            List<PreloadFieldDefinitionEntity>  fieldDefinitions = preloadFieldDefinitionRepository.findByPreloadRowTypeId(rowTypeEntity);
             for(PreloadFieldDefinitionEntity fieldDefinition : fieldDefinitions)
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
             }
-            // TODO: DELETE - old code for management objects with jdbcTemplate
-            /*
-            List<PreloadFieldDefinitionDTO_OLD> fieldDefinitions = jdbcTemplate.query("SELECT LENGTH, NAME FROM " +
-                    "LD_PRELOAD_FIELD_DEFINITION WHERE PRELOAD_ROW_TYPE_ID = " + idRowType, new BeanPropertyRowMapper(PreloadFieldDefinitionDTO_OLD.class));
-            for(PreloadFieldDefinitionDTO_OLD fieldDefinition : fieldDefinitions)
-            {
-                fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
-            }
-            */
-
             tokenizers.put(rowType.getIdentifierValue()+"*", preloadLineTokenizer(fields));
             characterMapper.put(rowType.getIdentifierValue(), cont++);
             fields.clear();

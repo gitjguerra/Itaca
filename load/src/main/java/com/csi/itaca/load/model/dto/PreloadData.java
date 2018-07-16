@@ -2,12 +2,16 @@ package com.csi.itaca.load.model.dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Date;
+
 public class PreloadData {
     private Long preloadDataId;
 
     private Long loadFileId;
 
     private String loadedSuccessfully;
+
+    private Date createdTimeStamp;
 
     private Long rowType;
 
@@ -67,6 +71,14 @@ public class PreloadData {
 
     public String getLoadedSuccessfully() {
         return loadedSuccessfully;
+    }
+
+    public Date getCreatedTimeStamp() {
+        return createdTimeStamp;
+    }
+
+    public void setCreatedTimeStamp(Date createdTimeStamp) {
+        this.createdTimeStamp = createdTimeStamp;
     }
 
     public void setLoadedSuccessfully(String loadedSuccessfully) {
@@ -256,10 +268,11 @@ public class PreloadData {
     public PreloadData() {
     }
 
-    public PreloadData(Long preloadDataId, Long loadFileId, String loadedSuccessfully, Long rowType, Long lineNumber, String dataCol1, String dataCol2, String dataCol3, String dataCol4, String dataCol5, String dataCol6, String dataCol7, String dataCol8, String dataCol9, String dataCol10, String dataCol11, String dataCol12, String dataCol13, String dataCol14, String dataCol15, String dataCol16, String dataCol17, String dataCol18, String dataCol19, String dataCol20) {
+    public PreloadData(Long preloadDataId, Long loadFileId, String loadedSuccessfully, Date createdTimeStamp, Long rowType, Long lineNumber, String dataCol1, String dataCol2, String dataCol3, String dataCol4, String dataCol5, String dataCol6, String dataCol7, String dataCol8, String dataCol9, String dataCol10, String dataCol11, String dataCol12, String dataCol13, String dataCol14, String dataCol15, String dataCol16, String dataCol17, String dataCol18, String dataCol19, String dataCol20) {
         this.preloadDataId = preloadDataId;
         this.loadFileId = loadFileId;
         this.loadedSuccessfully = loadedSuccessfully;
+        this.createdTimeStamp = createdTimeStamp;
         this.rowType = rowType;
         this.lineNumber = lineNumber;
         this.dataCol1 = dataCol1;
@@ -290,6 +303,7 @@ public class PreloadData {
                 .append("preloadDataId", this.preloadDataId)
                 .append("loadFileId", this.loadFileId = loadFileId)
                 .append("loadedSuccessfully", this.loadedSuccessfully)
+                .append("createdTimeStamp", this.createdTimeStamp)
                 .append("rowType", this.rowType)
                 .append("lineNumber", this.lineNumber)
                 .append("dataCol1", this.dataCol1)

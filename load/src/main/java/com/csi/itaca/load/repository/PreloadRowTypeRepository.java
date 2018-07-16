@@ -13,4 +13,6 @@ import java.util.List;
 public interface PreloadRowTypeRepository  extends PagingAndSortingRepository<PreloadRowTypeEntity, Long>, JpaSpecificationExecutor<PreloadRowTypeEntity> {
     @Query("SELECT p FROM PreloadRowTypeEntity p")
     List<PreloadRowTypeEntity> findPreloadRowTypeEntityList();
+
+    PreloadRowTypeEntity findByIdentifierValue(String identifierValue);
 }
