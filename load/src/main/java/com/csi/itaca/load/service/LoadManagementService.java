@@ -1,5 +1,6 @@
 package com.csi.itaca.load.service;
 
+import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -46,4 +47,9 @@ public interface LoadManagementService {
     // Find preload process
     List<PreloadRowTypeEntity> rowTypesServices(Long loadProcessId);
 
+    /**
+     * Preload definition list
+     * @return list of preload definition list
+     */
+    List<PreloadDefinitionDTO> getPreloadDefinitionList();
 }
