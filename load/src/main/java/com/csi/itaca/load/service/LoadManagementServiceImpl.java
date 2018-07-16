@@ -1,9 +1,7 @@
 package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.job.JobCompletionNotificationListener;
-import com.csi.itaca.load.model.LoadFile;
-import com.csi.itaca.load.model.LoadRowOperation;
-import com.csi.itaca.load.model.PreloadData;
+import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
@@ -56,6 +54,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     private Job sqlExecuteJob;
 
     @Autowired
+    LoadProcessRepository loadProcessRepository;
+
+    @Autowired
     private PreloadFileRepository preloadFileRepository;
 
     @Autowired
@@ -66,6 +67,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
     private PreloadDataRepository preloadDataRepository;
+
+    @Autowired
+    PreloadRowTypeRepository preloadRowTypeRepository;
 
     @Autowired
     private LoadRowOperationRepository loadRowOperationEntity;
@@ -453,5 +457,26 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         else {
             return null;
         }
+    }
+
+    @Override
+    public List<PreloadRowTypeEntity> rowTypesServices(Long loadProcessId){
+        LoadProcessEntity processEntity = new LoadProcessEntity();
+        processEntity.setLoadProcessId(loadProcessId);
+        PreloadFileEntity fileEntity = new PreloadFileEntity();
+        PreloadDefinitionEntity definitionEntity = new PreloadDefinitionEntity();
+        PreloadRowTypeEntity rowTypeEntity = new PreloadRowTypeEntity();
+
+        List<LoadProcessEntity> loadProcessEntities = loadProcessRepository.findByLoadProcessId(processEntity.getLoadProcessId());
+        for(LoadProcess load : loadProcessEntities){
+            definitionEntity.setPreloadDefinitionId(load.getPreloadDefinitionId());
+            List<PreloadFileEntity> preloadFileEntities = preloadFileRepository.findByPreloadDefinitionId(definitionEntity);
+            for(PreloadFile preload : preloadFileEntities){
+                fileEntity.setPreloadFileId(preload.getPreloadFileId());
+                List<PreloadRowTypeEntity> preloadRowTypeEntities = preloadRowTypeRepository.findByPreloadFileId(fileEntity);
+                return preloadRowTypeEntities;
+            }
+        }
+        return null;
     }
 }

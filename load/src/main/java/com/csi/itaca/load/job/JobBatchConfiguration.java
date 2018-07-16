@@ -6,6 +6,7 @@ import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
+import com.csi.itaca.load.service.LoadManagementServiceImpl;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -27,12 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.sql.DataSource;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Configuration
@@ -48,8 +45,8 @@ public class JobBatchConfiguration {
     @Autowired
     private JobCompletionNotificationListener jobCompletionNotificationListener;
 
-    //@Autowired
-    //DataSource dataSource;
+    @Autowired
+    private LoadManagementServiceImpl managementService;
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -193,18 +190,7 @@ public class JobBatchConfiguration {
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
-        // TODO: Cambiar los JdbcTemplate por repository's  y eliminar el sufijo _OLD
-
-        // Database connection direct
-        /*
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        List<PreloadRowTypeDTO_OLD> rowTypes = jdbcTemplate.query("select ld_preload_row_type.* from ld_load_process, ld_preload_file, ld_preload_row_type " +
-                "WHERE ld_load_process.LOAD_PROCESS_ID = " + id_load_process + " " +
-                "AND ld_load_process.preload_definition_id = ld_preload_file.preload_definition_id " +
-                "AND ld_preload_file.preload_file_id = ld_preload_row_type.preload_file_id", new BeanPropertyRowMapper(PreloadRowTypeDTO_OLD.class));
-        */
-        // TODO:  Put the id_load_process in the repository query
-        List<PreloadRowTypeEntity>  rowTypes = preloadRowTypeRepository.findPreloadRowTypeEntityList();
+        List<PreloadRowTypeEntity>  rowTypes = managementService.rowTypesServices(Long.valueOf(id_load_process));
         for(PreloadRowTypeEntity rowType : rowTypes)
         {
             preloadRowTypeId = rowType.getPreloadRowTypeId().longValue();

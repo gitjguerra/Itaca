@@ -22,10 +22,9 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadData> {
         // Put the principal data
         PreloadData data = new PreloadData();
 
-        // TODO: DELETE HARDCODE
+        // TODO: DELETE HARDCODE random
         Random ramdom = new Random();
         data.setPreloadDataId(ramdom.nextLong());
-        data.setLoadedSuccessfully("");
 
         for(int i = 0; i < nroRegistros; i++) {
             switch(i){

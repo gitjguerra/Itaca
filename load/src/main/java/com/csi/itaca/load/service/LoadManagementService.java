@@ -49,4 +49,8 @@ public interface LoadManagementService {
   //  List<PreloadDataDTO> getPreloadData(LoadFileEntity loadFileId, Pagination pagination, Order order);
 
     List<PreloadDataDTO> preloadedRowList(Long loadProcessId, LoadFileEntity loadFileId);
+
+    // Find preload process
+    List<PreloadRowTypeEntity> rowTypesServices(Long loadProcessId);
+
 }
