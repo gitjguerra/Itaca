@@ -43,7 +43,7 @@ public class JobBatchConfiguration {
     private PreloadRowTypeRepository preloadRowTypeRepository;
 
     @Autowired
-    private JobCompletionNotificationListener jobCompletionNotificationListener;
+    private JobCompletionNotificationListener listener;
 
     @Autowired
     private LoadManagementServiceImpl managementService;
@@ -75,14 +75,14 @@ public class JobBatchConfiguration {
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
                 .processor(processor())
                 .writer(new PreloadWriter(preloadDataDao))
-                .listener(jobCompletionNotificationListener)
-                .faultTolerant()  // Revisar ???  y agregar en LD_ERROR
-                .skip(DataIntegrityViolationException.class)
+                //.faultTolerant()  // Revisar ???  y agregar en LD_ERROR
+                //.skip(DataIntegrityViolationException.class)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
                 .start(step_preload)          // Preload
                 //.next(step_load)            // Load
+                .listener(listener)
                 .build();
     }
 

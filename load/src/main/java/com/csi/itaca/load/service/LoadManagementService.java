@@ -35,7 +35,7 @@ public interface LoadManagementService {
     Resource loadFile(File file);
 
     // Job of batch process
-    BatchStatus fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
+    BatchStatus fileToDatabaseJob(Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
 
     // TODO: Implementar metodo en rest controller para eliminar archivos subidos
     void deleteAll(Path rootLocation);

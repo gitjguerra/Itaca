@@ -97,7 +97,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     // Job execute
     @Override
-    public BatchStatus fileToDatabaseJob(JobCompletionNotificationListener listener, Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+    public BatchStatus fileToDatabaseJob(Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 
         // Database connection
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);

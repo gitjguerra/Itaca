@@ -53,9 +53,6 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     private String fileUploadDirectory;
 
     @Autowired
-    private JobCompletionNotificationListener listener;
-
-    @Autowired
     private LoadManagementService loadManagementService;
 
     // Call Job with the upload file
@@ -72,7 +69,7 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         outputStream.close();
 
         // Execute Job
-        BatchStatus status = loadManagementService.fileToDatabaseJob(listener, rootLocation, (File) fileToImport);
+        BatchStatus status = loadManagementService.fileToDatabaseJob(rootLocation, (File) fileToImport);
 
         return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
     }
