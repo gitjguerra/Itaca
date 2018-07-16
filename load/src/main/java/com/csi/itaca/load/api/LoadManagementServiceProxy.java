@@ -1,5 +1,6 @@
 package com.csi.itaca.load.api;
 
+import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -51,6 +52,7 @@ public interface LoadManagementServiceProxy {
     String LOAD_PRELOAD_DATAFILE = ENTITY_LOAD + "/dataFile";
 
     String LOAD_ROW_OPERATION = ENTITY_LOAD + "/loadRow";
+    String LOAD_GET_PRELOAD_TYPE_LIST = ENTITY_LOAD + "/loadTypeList";
 
     /**
      * Upload process.
@@ -105,5 +107,5 @@ public interface LoadManagementServiceProxy {
 
     ResponseEntity<List<PreloadDataDTO>> getDataFile(Long loadProcessId, LoadFileEntity loadFileId);
 
-
+    ResponseEntity<List<PreloadDefinitionDTO>> getPreloadDefinitionList();
 }

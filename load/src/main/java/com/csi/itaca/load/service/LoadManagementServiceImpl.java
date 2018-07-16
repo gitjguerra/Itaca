@@ -4,6 +4,7 @@ import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import com.csi.itaca.load.repository.*;
 import com.csi.itaca.load.utils.Constants;
 import com.csi.itaca.tools.utils.beaner.Beaner;
@@ -59,6 +60,9 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     
     @Autowired
     private LoadFileRepository loadFileRepository;
+
+    @Autowired
+    private PreloadDefinitionRepository preloadDefinitionRepository;
 
     @Autowired
     private PreloadDataRepository preloadDataRepository;
@@ -475,4 +479,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         return null;
     }
 
+    @Override
+    public List<PreloadDefinitionDTO> getPreloadDefinitionList() {
+        return  beaner.transform((List<PreloadDefinitionEntity>) preloadDefinitionRepository.findAll(), PreloadDefinitionDTO.class);
+    }
 }

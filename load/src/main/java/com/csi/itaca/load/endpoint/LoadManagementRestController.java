@@ -10,6 +10,7 @@ import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.LoadRowOperationDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
+import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import com.csi.itaca.load.model.filter.LoadFileOrderPaginFilter;
 import com.csi.itaca.load.model.filter.PreloadDataOrderPaginFilter;
 import com.csi.itaca.load.service.*;
@@ -175,6 +176,12 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
     }
 
+    /** Preload definition list. */
+    @Override
+    @RequestMapping(value = LOAD_GET_PRELOAD_TYPE_LIST, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PreloadDefinitionDTO>> getPreloadDefinitionList() {
+        return new ResponseEntity(loadManagementService.getPreloadDefinitionList(), HttpStatus.OK);
+    }
 }
 
 
