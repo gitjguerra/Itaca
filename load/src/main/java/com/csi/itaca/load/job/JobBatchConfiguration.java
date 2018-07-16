@@ -36,6 +36,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import java.io.FileReader;
+import java.io.LineNumberReader;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -75,13 +77,16 @@ public class JobBatchConfiguration {
     private Long idRowType = 0L;
     private int cont = 0;
     private String loadedSuccessfully = "1";
+    private String fileLoadId = "";
+    private String id_field_definition = "";
+    private int line_number = 0;
 
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
                    StepBuilderFactory stepBuilderFactory,
                    ItemReader<PreloadData> itemReader,
                    ItemProcessor<PreloadData, PreloadData> itemProcessor,
-                   ItemWriter<PreloadData> PreloadItemWriter) throws MalformedURLException {
+                   ItemWriter<PreloadData> PreloadItemWriter) throws Exception {
 
         Step step_preload = stepBuilderFactory.get("preload-data-step")
                 .<PreloadData, PreloadData>chunk(2)
@@ -108,14 +113,15 @@ public class JobBatchConfiguration {
                 // TODO: Load preload process id
                 Long preloadId = preloadData.getPreloadDataId();
                 // TODO: Load file id
-                Long loadFileId = preloadData.getLoadFileId();
+                Long loadFileId = Long.valueOf(fileLoadId);
                 //loadedSuccessfully = loadedSuccessfully;
                 // TODO: find Id Row Type
                 //Long idRowType = preloadRowTypeRepository.findPreloadRowTypeEntity();
                 Long rowType = idRowType;
                 // TODO: Line Number
-                Long lineNumber = Long.valueOf(cont);
-
+                line_number = line_number + 1;
+                Long lineNumber = Long.valueOf(line_number);
+                
                 String dataCol1 = preloadData.getDataCol1();
                 String dataCol2 = preloadData.getDataCol2();
                 String dataCol3 = preloadData.getDataCol3();
@@ -152,13 +158,13 @@ public class JobBatchConfiguration {
                                                       @Value("#{jobParameters['id_load_process']}")
                                                               String id_load_process,
                                                       @Value("#{jobParameters['id_load_file']}")
-                                                              String id_load_file) throws MalformedURLException {
+                                                              String id_load_file) throws Exception {
 
         FlatFileItemReader<PreloadData> reader = new FlatFileItemReader<>();
 
         reader.setResource(new ClassPathResource(pathToFile));
         reader.setLineMapper(preloadLineMapper(id_load_process, id_load_file));
-
+        fileLoadId = id_load_file;
         return reader;
     }
 
