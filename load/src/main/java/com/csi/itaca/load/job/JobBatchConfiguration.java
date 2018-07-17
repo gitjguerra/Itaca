@@ -1,9 +1,11 @@
 package com.csi.itaca.load.job;
 
+import com.csi.itaca.load.model.dao.LoadProcessEntity;
 import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
+import com.csi.itaca.load.repository.LoadProcessRepository;
 import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
@@ -11,15 +13,13 @@ import com.csi.itaca.load.service.LoadManagementBatchService;
 import com.csi.itaca.load.service.LoadManagementServiceImpl;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
@@ -38,9 +38,6 @@ import java.util.*;
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
-
-    @Autowired
-    PreloadDefinitionRepository preloadDefinitionRepository;
 
     @Autowired
     private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
@@ -63,6 +60,12 @@ public class JobBatchConfiguration {
     @Autowired
     private LoadManagementBatchService batchService;
 
+    @Autowired
+    LoadProcessRepository loadProcessRepository;
+
+    @Autowired
+    PreloadDefinitionRepository preloadDefinitionRepository;
+
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
     private Long preloadRowTypeId = 0L;
@@ -82,8 +85,8 @@ public class JobBatchConfiguration {
                 .listener(customReaderListener())
                 .processor(processor())
                 .writer(new PreloadWriter(batchService))
-                .faultTolerant()  // TODO: falta agregar en ld_error_field
-                .skipLimit(getSkipLimit())
+                .faultTolerant()  
+                .skipLimit(100)
                 .skip(org.springframework.batch.item.file.FlatFileParseException.class)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
@@ -94,13 +97,17 @@ public class JobBatchConfiguration {
                 .build();
     }
 
-    public Integer getSkipLimit(){
-
-        // TODO: Create a query for find a limit
-        //PreloadDefinitionEntity preloadDef = preloadDefinitionRepository.findByPreloadDefinitionEntity(1L);
-        //Integer limit = preloadDef.getMaxPreloadHighErrors().intValue();
-        Integer limit = 10;
-        return limit;
+    /*
+        Method for find a skipLimit on the DB
+     */
+    @StepScope
+    public Integer getSkipLimit(Integer skip){
+        List<LoadProcessEntity> processEntities = loadProcessRepository.findByLoadProcessId(skip.longValue());
+        if(processEntities.size()>0){
+            PreloadDefinitionEntity entity = preloadDefinitionRepository.findOne(processEntities.get(0).getPreloadDefinitionId());
+            skip = Math.toIntExact(entity.getMaxPreloadHighErrors());
+        }
+        return skip;
     }
 
     @Bean
