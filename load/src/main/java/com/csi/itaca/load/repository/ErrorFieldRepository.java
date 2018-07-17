@@ -11,4 +11,5 @@ import java.util.List;
  */
 public interface ErrorFieldRepository extends PagingAndSortingRepository<ErrorFieldEntity, Long>, JpaSpecificationExecutor<ErrorFieldEntity>  {
     List<ErrorFieldEntity> findAll();
+    ErrorFieldEntity saveAndFlush(ErrorFieldEntity entity);
 }

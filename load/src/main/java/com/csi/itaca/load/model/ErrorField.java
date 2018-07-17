@@ -8,7 +8,7 @@ public interface ErrorField {
 
     Long getErrFieldsId();
 
-    PreloadData getPreloaDataId();
+    Long getPreloaDataId();
 
     String getPreloadFieldDefinitionId();
 

@@ -2,6 +2,7 @@ package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
+import com.csi.itaca.load.model.dto.GlobalDTO;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
@@ -10,6 +11,7 @@ import com.csi.itaca.load.utils.Constants;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.*;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -87,6 +89,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
     private Beaner beaner;
+
     @Autowired
     public DataSource dataSource;
 
@@ -107,13 +110,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = findUserId(user);
         // DateTime to execute job
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date();
         //  2.1. Set ld_load_file.preload_start_time to the current time.
         java.sql.Date preload_star_time = new java.sql.Date(date.getTime());
         //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.   (The status code is a Http status o JobExecution status ???)
         String statusCode = Constants.getPreloadingInProgress();
-        String statusMessage = "Preloading in process ...";
+        String statusMessage = Constants.getPreloadingInProgressDesc();
         //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
         String fileExtension = getFileExtension(file);
 
@@ -174,6 +176,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         where = " filename='" + file.getName() + "' AND LOAD_PROCESS_ID=" + idLoadProcess;
         final Long idLoadFile = findInsertId("LD_LOAD_FILE", "LOAD_FILE_ID", where);
         //  </editor-fold>
+
+        // Skip limit for Job
 
         JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
                 .addString("fullPathFileName", file.getName())
@@ -483,4 +487,17 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     public List<PreloadDefinitionDTO> getPreloadDefinitionList() {
         return  beaner.transform((List<PreloadDefinitionEntity>) preloadDefinitionRepository.findAll(), PreloadDefinitionDTO.class);
     }
+
+    /*
+    Method for find a skipLimit on the DB
+    */
+    public Integer getSkipLimit(Long processId){
+        List<LoadProcessEntity> processEntities = loadProcessRepository.findByLoadProcessId(processId);
+        if(processEntities.size()>0){
+            PreloadDefinitionEntity entity = preloadDefinitionRepository.findOne(processEntities.get(0).getPreloadDefinitionId());
+            processId = entity.getMaxPreloadHighErrors();
+        }
+        return Math.toIntExact(processId);
+    }
+
 }

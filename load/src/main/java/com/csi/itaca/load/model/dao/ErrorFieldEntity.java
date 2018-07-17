@@ -31,9 +31,8 @@ public class ErrorFieldEntity implements ErrorField{
     @SequenceGenerator(name = "SEQ_Pre_Def_Id", sequenceName = "SEQ_Pre_Def_Id", allocationSize = 1)
     private Long errFieldsId;
 
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "PRELOAD_DATA_ID")
-    private PreloadDataEntity preloaDataId;
+    @Column(name = "PRELOAD_DATA_ID")
+    private Long preloaDataId;
 
     @Column(name = "PRELOAD_FIELD_DEFINITION_ID")
     private String preloadFieldDefinitionId;

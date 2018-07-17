@@ -66,6 +66,12 @@ public class JobBatchConfiguration {
     @Autowired
     PreloadDefinitionRepository preloadDefinitionRepository;
 
+    @Autowired
+    private StepExecutionListenerImpl stepExecutionListener;
+
+    @Autowired
+    GlobalDTO globalDTO;
+
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
     private Long preloadRowTypeId = 0L;
@@ -85,9 +91,10 @@ public class JobBatchConfiguration {
                 .listener(customReaderListener())
                 .processor(processor())
                 .writer(new PreloadWriter(batchService))
-                .faultTolerant()  
-                .skipLimit(100)
+                .faultTolerant()
+                .skipLimit(10)
                 .skip(org.springframework.batch.item.file.FlatFileParseException.class)
+                .listener(this.stepExecutionListener)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
                 .incrementer(new RunIdIncrementer())
@@ -95,19 +102,6 @@ public class JobBatchConfiguration {
                 //.next(step_load)            // Load
                 .listener(listener)
                 .build();
-    }
-
-    /*
-        Method for find a skipLimit on the DB
-     */
-    @StepScope
-    public Integer getSkipLimit(Integer skip){
-        List<LoadProcessEntity> processEntities = loadProcessRepository.findByLoadProcessId(skip.longValue());
-        if(processEntities.size()>0){
-            PreloadDefinitionEntity entity = preloadDefinitionRepository.findOne(processEntities.get(0).getPreloadDefinitionId());
-            skip = Math.toIntExact(entity.getMaxPreloadHighErrors());
-        }
-        return skip;
     }
 
     @Bean
@@ -180,6 +174,13 @@ public class JobBatchConfiguration {
                                                               String id_load_file) throws Exception {
 
         FlatFileItemReader<PreloadDataDTO> reader = new FlatFileItemReader<>();
+
+        // Set global values for process
+        globalDTO.setLoadFileId(Long.valueOf(id_load_file));
+        globalDTO.setLoadProcessId(Long.valueOf(id_load_process));
+        // TODO: Skiplimit need is dynamic
+        globalDTO.setSkipLimit(managementService.getSkipLimit(Long.valueOf(id_load_process)));
+
         reader.setResource(new ClassPathResource(pathToFile));
         reader.setLineMapper(preloadLineMapper(id_load_process, id_load_file));
         fileLoadId = id_load_file;
@@ -223,7 +224,6 @@ public class JobBatchConfiguration {
         LinkedHashMap<String,Long> fields = new LinkedHashMap<>();
         LinkedHashMap<String,Integer> characterMapper = new LinkedHashMap<>();
         int cont = 1;
-
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
 
         List<PreloadRowTypeEntity>  rowTypes = managementService.rowTypesServices(Long.valueOf(id_load_process));
@@ -236,6 +236,7 @@ public class JobBatchConfiguration {
             for(PreloadFieldDefinitionEntity fieldDefinition : fieldDefinitions)
             {
                 fields.put( fieldDefinition.getName(), fieldDefinition.getLength() );
+                globalDTO.setPreloadFieldDefinitionId(fieldDefinition.getPreloadFieldDefinitionId());
             }
             tokenizers.put(rowType.getIdentifierValue()+"*", preloadLineTokenizer(fields));
             characterMapper.put(rowType.getIdentifierValue(), cont++);

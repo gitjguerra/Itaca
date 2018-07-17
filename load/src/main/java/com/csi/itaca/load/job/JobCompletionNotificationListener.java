@@ -3,8 +3,11 @@ package com.csi.itaca.load.job;
 import java.util.Date;
 import java.util.List;
 
+import com.csi.itaca.load.model.dao.LoadFileEntity;
+import com.csi.itaca.load.model.dao.LoadProcessEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.service.LoadManagementBatchService;
+import com.csi.itaca.load.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -40,12 +43,6 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
             stopTime = new Date();
             log.info("Job stops at :"+ stopTime +" \n");
             log.info("============ JOB FINISHED ============ Verifying the results....\n");
-
-            // TODO:  test for job process successful - Delete for production
-            List<PreloadDataDTO> preloadDataDaos = loadManagementBatchService.loadAllPreloadDatas();
-            for (PreloadDataDTO preloadData : preloadDataDaos) {
-                log.info("Found <" + preloadData + "> in the database.");
-            }
         }
     }
 }

@@ -14,14 +14,12 @@ import lombok.Setter;
 
 public class ErrorFieldDTO implements ErrorField {
 
-
    private Long errFieldsId;
 
-   private PreloadDataDTO preloaDataId;
+   private Long preloaDataId;
 
    private String preloadFieldDefinitionId;
 
    private String validationErrMsg;
-
 
 }
