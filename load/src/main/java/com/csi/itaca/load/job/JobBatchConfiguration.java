@@ -63,9 +63,6 @@ public class JobBatchConfiguration {
     @Autowired
     private LoadManagementBatchService batchService;
 
-    @Value("${spring.batch.job.skipLimit}")
-    private String skipLimit;
-
     // Is necessary for take the parameters
     private static final String WILL_BE_INJECTED = null;
     private Long preloadRowTypeId = 0L;
