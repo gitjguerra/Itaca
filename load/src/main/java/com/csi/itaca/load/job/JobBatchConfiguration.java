@@ -1,8 +1,10 @@
 package com.csi.itaca.load.job;
 
+import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
+import com.csi.itaca.load.repository.PreloadDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
 import com.csi.itaca.load.service.LoadManagementBatchService;
@@ -36,6 +38,9 @@ import java.util.*;
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
+
+    @Autowired
+    PreloadDefinitionRepository preloadDefinitionRepository;
 
     @Autowired
     private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
@@ -81,7 +86,7 @@ public class JobBatchConfiguration {
                 .processor(processor())
                 .writer(new PreloadWriter(batchService))
                 .faultTolerant()  // TODO: falta agregar en ld_error_field
-                .skipLimit(Integer.parseInt(skipLimit))
+                .skipLimit(getSkipLimit())
                 .skip(org.springframework.batch.item.file.FlatFileParseException.class)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
@@ -90,6 +95,15 @@ public class JobBatchConfiguration {
                 //.next(step_load)            // Load
                 .listener(listener)
                 .build();
+    }
+
+    public Integer getSkipLimit(){
+
+        // TODO: Create a query for find a limit
+        //PreloadDefinitionEntity preloadDef = preloadDefinitionRepository.findByPreloadDefinitionEntity(1L);
+        //Integer limit = preloadDef.getMaxPreloadHighErrors().intValue();
+        Integer limit = 10;
+        return limit;
     }
 
     @Bean

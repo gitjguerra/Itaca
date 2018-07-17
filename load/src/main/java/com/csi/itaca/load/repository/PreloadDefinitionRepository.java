@@ -8,4 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Created by Robert on 19/06/2018.
  */
 public interface PreloadDefinitionRepository extends PagingAndSortingRepository<PreloadDefinitionEntity, Long>, JpaSpecificationExecutor<PreloadDefinitionEntity> {
+
+    // Create query for find a limit errors
+    //PreloadDefinitionEntity findByPreloadDefinitionEntity(Long preloadDefinitionId);
 }

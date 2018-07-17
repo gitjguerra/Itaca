@@ -4,7 +4,6 @@ spring:
         # Disable job autostart
         enabled: false
         fileUploadDirectory: "/temp"
-        skipLimit: 100
 
   application:
     name: PRODUCCION-SERVER
