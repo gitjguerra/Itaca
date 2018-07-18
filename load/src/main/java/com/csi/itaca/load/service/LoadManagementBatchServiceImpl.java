@@ -33,7 +33,6 @@ public class LoadManagementBatchServiceImpl extends JdbcDaoSupport implements Lo
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                // TODO: Revisar la carga del objeto  debe cambiar con la parte de repository's
                 PreloadDataDTO preload = preloadData.get(i);
                 ps.setLong(1, preload.getPreloadDataId());
                 ps.setLong(2, preload.getLoadFileId().getLoadFileId().longValue());

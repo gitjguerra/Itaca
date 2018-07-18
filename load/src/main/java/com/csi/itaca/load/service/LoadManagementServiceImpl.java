@@ -129,7 +129,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         // ID_PRELOAD_FIELD_DEFINITION PROCESS
         // ********************************* INITIAL PROCESS *********************************
 
-        // TODO: CREATE A TRIGGERS FOR SECUENCE AND PASS THE PRELOAD_DEFINITION_ID
+        // TODO: HOW PASS THE PRELOAD_DEFINITION_ID
 
         Long preloadDefinitionId = 1L;
         //  <editor-fold defaultstate="collapsed" desc="*** 1) Prerequisite(s) ***">
@@ -140,7 +140,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement statement = connection.prepareStatement(query);
-                // TODO:  Delete hardcode add the secuence into the table for use a nextval
                 statement.setLong(1, loadProcessId);
                 statement.setLong(2, userId);
                 statement.setDate(3, preload_star_time);
