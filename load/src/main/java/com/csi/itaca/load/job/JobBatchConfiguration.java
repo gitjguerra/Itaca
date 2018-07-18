@@ -28,12 +28,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
+import java.io.File;
 import java.util.*;
 
 @Configuration
 @EnableBatchProcessing
 public class JobBatchConfiguration {
+
+    // Upload directory - Set with resource in the applioation.yml  example:     fileUploadDirectory: "/temp"
+    @Value("${spring.batch.job.fileUploadDirectory}")
+    private String fileUploadDirectory;
 
     @Autowired
     private PreloadFieldDefinitionRepository preloadFieldDefinitionRepository;
@@ -177,7 +183,7 @@ public class JobBatchConfiguration {
         // TODO: Skiplimit need is dynamic
         globalDTO.setSkipLimit(managementService.getSkipLimit(Long.valueOf(id_load_process)));
 
-        reader.setResource(new ClassPathResource(pathToFile));
+        reader.setResource(new FileSystemResource(fileUploadDirectory + File.separator +  pathToFile));
         reader.setLineMapper(preloadLineMapper(id_load_process, id_load_file));
         fileLoadId = id_load_file;
         return reader;
