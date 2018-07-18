@@ -4,28 +4,17 @@ import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
-import org.springframework.validation.BindException;
-
-import java.util.Random;
 
 public class PreloadFieldSetMapper implements FieldSetMapper<PreloadDataDTO> {
 
     private final static Logger logger = Logger.getLogger(PreloadFieldSetMapper.class);
 
     @Override
-    public PreloadDataDTO mapFieldSet(FieldSet fieldSet) throws BindException {
+    public PreloadDataDTO mapFieldSet(FieldSet fieldSet) {
 
         int nroRegistros = fieldSet.getFieldCount();
-
-        // Put the principal data
         PreloadDataDTO data = new PreloadDataDTO();
-
-        String[] names = fieldSet.getNames();
         String[] values = fieldSet.getValues();
-
-        // TODO: DELETE HARDCODE random
-        Random ramdom = new Random();
-        data.setPreloadDataId(ramdom.nextLong());
 
         for(int i = 0; i < nroRegistros; i++) {
             switch(i){

@@ -7,25 +7,28 @@ import com.csi.itaca.load.model.dto.GlobalDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.repository.ErrorFieldRepository;
 import com.csi.itaca.load.repository.LoadFileRepository;
+import com.csi.itaca.load.service.LoadManagementServiceImpl;
 import com.csi.itaca.load.utils.Constants;
 import org.springframework.batch.core.ItemReadListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class CustomReaderListener implements ItemReadListener<PreloadDataDTO> {
 
     @Autowired
-    ErrorFieldRepository errorFieldRepository;
+    private LoadManagementServiceImpl managementService;
 
     @Autowired
-    LoadFileRepository loadFileRepository;
+    private ErrorFieldRepository errorFieldRepository;
 
     @Autowired
-    GlobalDTO globalDTO;
+    private LoadFileRepository loadFileRepository;
+
+    @Autowired
+    private GlobalDTO globalDTO;
 
     private Long preloadDataId;
     private Long preloadFieldDefinitionId;
@@ -37,19 +40,22 @@ public class CustomReaderListener implements ItemReadListener<PreloadDataDTO> {
     @Override
     public void afterRead(PreloadDataDTO item) {
         preloadDataId = item.getPreloadDataId();
-        preloadFieldDefinitionId = Long.valueOf(globalDTO.getPreloadFieldDefinitionId());
+        preloadFieldDefinitionId = globalDTO.getPreloadFieldDefinitionId();
     }
 
     @Override
     public void onReadError(Exception ex) {
 
-        Random random = new Random();
+        Long errorFieldId = managementService.findNextVal("SEQ_ERROR_FIELD_Id.NEXTVAL");
         ErrorFieldEntity errorFieldEntity = new ErrorFieldEntity();
-        errorFieldEntity.setErrFieldsId(random.nextLong());
-        errorFieldEntity.setPreloaDataId(preloadDataId);
+        errorFieldEntity.setErrFieldsId(errorFieldId);
+
+        // ** Not exist preloadDataId because is an error **
+        //errorFieldEntity.setPreloaDataId(preloadDataId);
+
         errorFieldEntity.setPreloadFieldDefinitionId(preloadFieldDefinitionId.toString());
-        errorFieldEntity.setValidationErrMsg(ex.getMessage().substring(0,200));
-        errorFieldEntity = errorFieldRepository.saveAndFlush(errorFieldEntity);
+        errorFieldEntity.setValidationErrMsg(ex.getMessage().substring(0, Integer.parseInt(Constants.getMaxLengthMssgError())));
+        errorFieldRepository.saveAndFlush(errorFieldEntity);
 
         // On error update LD_LOAD_FILE
         LoadProcessEntity loadProcessEntity = new LoadProcessEntity();

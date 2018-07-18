@@ -58,6 +58,8 @@ public class Constants {
     private static final String ERROR_SEVERITY_MEDIUM = "2";
     private static final String ERROR_SEVERITY_HIGH = "3";
 
+    private static final String MAX_LENGTH_MSSG_ERROR = "200";
+
     public static String getLoadCompletedWithErrors() {
         return LOAD_COMPLETED_WITH_ERRORS;
     }
@@ -192,5 +194,9 @@ public class Constants {
 
     public static String getErrorSeverityHigh() {
         return ERROR_SEVERITY_HIGH;
+    }
+
+    public static String getMaxLengthMssgError() {
+        return MAX_LENGTH_MSSG_ERROR;
     }
 }

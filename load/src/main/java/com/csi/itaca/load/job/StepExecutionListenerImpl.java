@@ -4,15 +4,12 @@ import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dao.LoadProcessEntity;
 import com.csi.itaca.load.model.dto.GlobalDTO;
 import com.csi.itaca.load.repository.LoadFileRepository;
-import com.csi.itaca.load.utils.Constants;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 

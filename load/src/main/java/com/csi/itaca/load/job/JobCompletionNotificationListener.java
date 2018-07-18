@@ -1,13 +1,7 @@
 package com.csi.itaca.load.job;
 
 import java.util.Date;
-import java.util.List;
-
-import com.csi.itaca.load.model.dao.LoadFileEntity;
-import com.csi.itaca.load.model.dao.LoadProcessEntity;
-import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.service.LoadManagementBatchService;
-import com.csi.itaca.load.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;

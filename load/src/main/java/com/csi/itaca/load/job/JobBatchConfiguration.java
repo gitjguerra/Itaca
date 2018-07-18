@@ -1,7 +1,5 @@
 package com.csi.itaca.load.job;
 
-import com.csi.itaca.load.model.dao.LoadProcessEntity;
-import com.csi.itaca.load.model.dao.PreloadDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadFieldDefinitionEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.*;
@@ -30,9 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 @Configuration
@@ -93,7 +89,8 @@ public class JobBatchConfiguration {
                 .writer(new PreloadWriter(batchService))
                 .faultTolerant()
                 .skipLimit(10)
-                .skip(org.springframework.batch.item.file.FlatFileParseException.class)
+                .skip(FlatFileParseException.class)  // Type error
+                .skip(NullPointerException.class)    // Type error
                 .listener(this.stepExecutionListener)
                 .build();
         return jobBuilderFactory.get("preload-data-step")
@@ -115,8 +112,8 @@ public class JobBatchConfiguration {
         return new ItemProcessor<PreloadDataDTO, PreloadDataDTO>() {
             @Override
             public PreloadDataDTO process(PreloadDataDTO preloadData) throws Exception {
-                Long preloadId = preloadData.getPreloadDataId();
 
+                Long preloadId = managementService.findNextVal("SEQ_PRELOAD_DATA_ID.NEXTVAL");
                 Long loadFileId = Long.valueOf(fileLoadId);
                 LoadFileDTO loadFileDTO = new LoadFileDTO();
                 loadFileDTO.setLoadFileId(loadFileId);
@@ -133,7 +130,6 @@ public class JobBatchConfiguration {
                 java.util.Date date = new java.util.Date();
                 long t = date.getTime();
                 java.sql.Date sqlDate = new java.sql.Date(t);
-                java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
 
                 String dataCol1 = preloadData.getDataCol1();
                 String dataCol2 = preloadData.getDataCol2();

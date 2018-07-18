@@ -7,8 +7,6 @@ import com.csi.itaca.load.service.LoadManagementBatchService;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
-
-// TODO: Change for data objects ITACA
 @Component
 public class PreloadWriter implements ItemWriter<PreloadDataDTO> {
 
@@ -19,7 +17,7 @@ public class PreloadWriter implements ItemWriter<PreloadDataDTO> {
     }
 
     @Override
-    public void write(List<? extends PreloadDataDTO> items) throws Exception {
+    public void write(List<? extends PreloadDataDTO> items){
         // a) Insert new row in to ld_preload_data table with row loaded from the file.
         loadManagementBatchService.insert(items);
         // b) Determine row type. (find [found row type id])

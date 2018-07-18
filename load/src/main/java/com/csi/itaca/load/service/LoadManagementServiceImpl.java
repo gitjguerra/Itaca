@@ -2,7 +2,6 @@ package com.csi.itaca.load.service;
 
 import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
-import com.csi.itaca.load.model.dto.GlobalDTO;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
@@ -11,7 +10,6 @@ import com.csi.itaca.load.utils.Constants;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -59,7 +57,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     @Autowired
     private PreloadFieldDefinitionRepository fieldDefinitionRepository;
-    
+
     @Autowired
     private LoadFileRepository loadFileRepository;
 
@@ -131,58 +129,55 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         // ID_PRELOAD_FIELD_DEFINITION PROCESS
         // ********************************* INITIAL PROCESS *********************************
 
-        // TODO: CREATE A TRIGGERS FOR SECUENCE
+        // TODO: CREATE A TRIGGERS FOR SECUENCE AND PASS THE PRELOAD_DEFINITION_ID
+
+        Long preloadDefinitionId = 1L;
         //  <editor-fold defaultstate="collapsed" desc="*** 1) Prerequisite(s) ***">
         // 1. load_process_id
         //1.1. A record created in the ld_load_process table where load_process_id is associated.
+        Long loadProcessId = findNextVal("SEQ_LOAD_PROCESS_ID.NEXTVAL");
         query = "INSERT INTO LD_LOAD_PROCESS (LOAD_PROCESS_ID, USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?, ?)";
         jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement statement = connection.prepareStatement(query);
                 // TODO:  Delete hardcode add the secuence into the table for use a nextval
-                statement.setLong(1, 2);
+                statement.setLong(1, loadProcessId);
                 statement.setLong(2, userId);
                 statement.setDate(3, preload_star_time);
-                // TODO:  Delete hardcode - PreloadId is put via UI ???
-                statement.setLong(4, 1);
+                statement.setLong(4, preloadDefinitionId);
                 return statement;
             }
         });
-        // Id insert on LD_LOAD_PROCESS
-        // TODO:  Delete hardcode and put the values
-        where = " PRELOAD_DEFINITION_ID=" + 1 + " AND LOAD_PROCESS_ID=" + 2;
-        final Long idLoadProcess = findInsertId("LD_LOAD_PROCESS", "LOAD_PROCESS_ID", where);
 
         // 2. load_file_id
         //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
-        query = "INSERT INTO LD_LOAD_FILE (LOAD_FILE_ID, LOAD_PROCESS_ID, FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, LOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Long loadFileId = findNextVal("SEQ_LOAD_FILE_ID.NEXTVAL");
+        query = "INSERT INTO LD_LOAD_FILE (LOAD_FILE_ID, LOAD_PROCESS_ID, FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement statement = connection.prepareStatement(query);
-                // TODO: delete hardcode add the secuence
-                statement.setLong(1, 1);
-                statement.setLong(2, idLoadProcess);
+                statement.setLong(1, loadFileId);
+                statement.setLong(2, loadProcessId);
                 statement.setString(3, file.getName());
                 statement.setLong(4, file.length());
                 statement.setString(5, "");
                 statement.setDate(6, preload_star_time);
-                statement.setDate(7, null);
-                statement.setString(8, statusCode);
-                statement.setString(9, statusMessage);
+                statement.setString(7, statusCode);
+                statement.setString(8, statusMessage);
                 return statement;
             }
         });
         // id insert on LD_LOAD_FILE
-        where = " filename='" + file.getName() + "' AND LOAD_PROCESS_ID=" + idLoadProcess;
-        final Long idLoadFile = findInsertId("LD_LOAD_FILE", "LOAD_FILE_ID", where);
+        //where = " filename='" + file.getName() + "' AND LOAD_PROCESS_ID=" + idLoadProcess;
+        //final Long idLoadFile = findInsertId("LD_LOAD_FILE", "LOAD_FILE_ID", where);
         //  </editor-fold>
 
         // Skip limit for Job
 
         JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
                 .addString("fullPathFileName", file.getName())
-                .addString("id_load_process", idLoadProcess.toString())
-                .addString("id_load_file", idLoadFile.toString())
+                .addString("id_load_process", loadProcessId.toString())
+                .addString("id_load_file", loadFileId.toString())
                 .addLong("time", System.currentTimeMillis()).toJobParameters());  // Se agrega para ejecutar multiples hilos
 
         // If all Ok return value
@@ -224,11 +219,11 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         }
     }
 
-    public Long findInsertId(String tableName, String fieldIdName, String whereValue){
+    public Long findUserId(String user){
         Long id = 0L;
         try {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            String sql = "SELECT " + fieldIdName + " FROM " + tableName + " WHERE " + whereValue;
+            String sql = "SELECT USER_ID FROM USR_USER WHERE USERNAME = '" + user + "'";
             id = jdbcTemplate.queryForObject(sql, Long.class);
         }
         catch (EmptyResultDataAccessException e) {
@@ -240,11 +235,11 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         return id;
     }
 
-    public Long findUserId(String user){
+    public Long findNextVal(String secuenceName){
         Long id = 0L;
         try {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            String sql = "SELECT USER_ID FROM USR_USER WHERE USERNAME = '" + user + "'";
+            String sql = "SELECT " + secuenceName + " FROM DUAL";
             id = jdbcTemplate.queryForObject(sql, Long.class);
         }
         catch (EmptyResultDataAccessException e) {
@@ -395,14 +390,14 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     @Override
     public List<PreloadDataDTO> preloadedRowList(Long loadProcessId, LoadFileEntity loadFileId) {
 
-      java.util.Date fecha = new Date();
-      LoadFileEntity LoadFileEntityToSave = null;
-      LoadFileEntity LoadFileSavedEntity = null;
-      LoadRowOperationEntity loadRowOperationEntity = null;
-      LoadOperationTypeEntity loadOperationTypeEntity = null;
-      LoadDefinitiveTableEntity loadDefinitiveTableEntity = null;
+        java.util.Date fecha = new Date();
+        LoadFileEntity LoadFileEntityToSave = null;
+        LoadFileEntity LoadFileSavedEntity = null;
+        LoadRowOperationEntity loadRowOperationEntity = null;
+        LoadOperationTypeEntity loadOperationTypeEntity = null;
+        LoadDefinitiveTableEntity loadDefinitiveTableEntity = null;
 
-      List<? extends PreloadDataEntity> preloadDataEntities = preloadDataRepository.findByLoadFileId_LoadProcessId_LoadProcessIdAndLoadFileIdOrderByLineNumber(loadProcessId, loadFileId);
+        List<? extends PreloadDataEntity> preloadDataEntities = preloadDataRepository.findByLoadFileId_LoadProcessId_LoadProcessIdAndLoadFileIdOrderByLineNumber(loadProcessId, loadFileId);
 
         if (preloadDataEntities!=null) {
 
