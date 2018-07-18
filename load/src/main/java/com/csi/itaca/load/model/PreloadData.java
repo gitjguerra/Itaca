@@ -20,11 +20,8 @@ public interface PreloadData {
     Long getLineNumber();
 
     String getDataCol1();
-
     String getDataCol2();
-
     String getDataCol3();
-
     String getDataCol4 ();
     String getDataCol5 ();
     String getDataCol6 ();

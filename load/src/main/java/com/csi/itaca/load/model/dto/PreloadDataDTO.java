@@ -236,7 +236,12 @@ public class PreloadDataDTO implements PreloadData {
     private String dataCol199;
     private String dataCol200;
 
-    public PreloadDataDTO(Long preloadDataId, LoadFileDTO loadFileId, String loadedSuccessfully, Date createdTimeStamp, PreloadRowTypeDTO preloadRowTypeId, Long lineNumber, String dataCol1, String dataCol2, String dataCol3, String dataCol4, String dataCol5, String dataCol6, String dataCol7, String dataCol8, String dataCol9, String dataCol10, String dataCol11, String dataCol12, String dataCol13, String dataCol14, String dataCol15, String dataCol16, String dataCol17, String dataCol18, String dataCol19, String dataCol20) {
+    public PreloadDataDTO(Long preloadDataId, LoadFileDTO loadFileId, String loadedSuccessfully, Date createdTimeStamp, PreloadRowTypeDTO preloadRowTypeId, Long lineNumber,
+                          String dataCol1, String dataCol2, String dataCol3, String dataCol4, String dataCol5, String dataCol6, String dataCol7, String dataCol8, String dataCol9, String dataCol10,
+                          String dataCol11, String dataCol12, String dataCol13, String dataCol14, String dataCol15, String dataCol16, String dataCol17, String dataCol18, String dataCol19, String dataCol20,
+                          String dataCol21, String dataCol22, String dataCol23, String dataCol24, String dataCol25, String dataCol26, String dataCol27, String dataCol28, String dataCol29, String dataCol30,
+                          String dataCol31, String dataCol32, String dataCol33, String dataCol34, String dataCol35, String dataCol36, String dataCol37, String dataCol38, String dataCol39, String dataCol40,
+                          String dataCol41, String dataCol42, String dataCol43, String dataCol44, String dataCol45, String dataCol46, String dataCol47, String dataCol48, String dataCol49, String dataCol50) {
         this.preloadDataId = preloadDataId;
         this.loadFileId = loadFileId;
         this.loadedSuccessfully = loadedSuccessfully;
@@ -263,6 +268,36 @@ public class PreloadDataDTO implements PreloadData {
         this.dataCol18 = dataCol18;
         this.dataCol19 = dataCol19;
         this.dataCol20 = dataCol20;
+        this.dataCol21 = dataCol21;
+        this.dataCol22 = dataCol22;
+        this.dataCol23 = dataCol23;
+        this.dataCol24 = dataCol24;
+        this.dataCol25 = dataCol25;
+        this.dataCol26 = dataCol26;
+        this.dataCol27 = dataCol27;
+        this.dataCol28 = dataCol28;
+        this.dataCol29 = dataCol29;
+        this.dataCol30 = dataCol30;
+        this.dataCol31 = dataCol31;
+        this.dataCol32 = dataCol32;
+        this.dataCol33 = dataCol33;
+        this.dataCol34 = dataCol34;
+        this.dataCol35 = dataCol35;
+        this.dataCol36 = dataCol36;
+        this.dataCol37 = dataCol37;
+        this.dataCol38 = dataCol38;
+        this.dataCol39 = dataCol39;
+        this.dataCol40 = dataCol40;
+        this.dataCol41 = dataCol41;
+        this.dataCol42 = dataCol42;
+        this.dataCol43 = dataCol43;
+        this.dataCol44 = dataCol44;
+        this.dataCol45 = dataCol45;
+        this.dataCol46 = dataCol46;
+        this.dataCol47 = dataCol47;
+        this.dataCol48 = dataCol48;
+        this.dataCol49 = dataCol49;
+        this.dataCol50 = dataCol50;
     }
 
     @Override
@@ -294,6 +329,36 @@ public class PreloadDataDTO implements PreloadData {
                 .append("dataCol18", this.dataCol18)
                 .append("dataCol19", this.dataCol19)
                 .append("dataCol20", this.dataCol20)
+                .append("dataCol21", this.dataCol21)
+                .append("dataCol22", this.dataCol22)
+                .append("dataCol23", this.dataCol23)
+                .append("dataCol24", this.dataCol24)
+                .append("dataCol25", this.dataCol25)
+                .append("dataCol26", this.dataCol26)
+                .append("dataCol27", this.dataCol27)
+                .append("dataCol28", this.dataCol28)
+                .append("dataCol29", this.dataCol29)
+                .append("dataCol30", this.dataCol30)
+                .append("dataCol31", this.dataCol31)
+                .append("dataCol32", this.dataCol32)
+                .append("dataCol33", this.dataCol33)
+                .append("dataCol34", this.dataCol34)
+                .append("dataCol35", this.dataCol35)
+                .append("dataCol36", this.dataCol36)
+                .append("dataCol37", this.dataCol37)
+                .append("dataCol38", this.dataCol38)
+                .append("dataCol39", this.dataCol39)
+                .append("dataCol40", this.dataCol40)
+                .append("dataCol41", this.dataCol41)
+                .append("dataCol42", this.dataCol42)
+                .append("dataCol43", this.dataCol43)
+                .append("dataCol44", this.dataCol44)
+                .append("dataCol45", this.dataCol45)
+                .append("dataCol46", this.dataCol46)
+                .append("dataCol47", this.dataCol47)
+                .append("dataCol48", this.dataCol48)
+                .append("dataCol49", this.dataCol49)
+                .append("dataCol50", this.dataCol50)
                 .toString();
     }
 }

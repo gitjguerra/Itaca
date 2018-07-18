@@ -78,6 +78,96 @@ public class PreloadFieldSetMapper implements FieldSetMapper<PreloadDataDTO> {
                 case 19:
                     data.setDataCol20(values[i]);
                     break;
+                case 20:
+                    data.setDataCol21(values[i]);
+                    break;
+                case 21:
+                    data.setDataCol22(values[i]);
+                    break;
+                case 22:
+                    data.setDataCol23(values[i]);
+                    break;
+                case 23:
+                    data.setDataCol24(values[i]);
+                    break;
+                case 24:
+                    data.setDataCol25(values[i]);
+                    break;
+                case 25:
+                    data.setDataCol26(values[i]);
+                    break;
+                case 26:
+                    data.setDataCol27(values[i]);
+                    break;
+                case 27:
+                    data.setDataCol28(values[i]);
+                    break;
+                case 28:
+                    data.setDataCol29(values[i]);
+                    break;
+                case 29:
+                    data.setDataCol30(values[i]);
+                    break;
+                case 30:
+                    data.setDataCol31(values[i]);
+                    break;
+                case 31:
+                    data.setDataCol32(values[i]);
+                    break;
+                case 32:
+                    data.setDataCol33(values[i]);
+                    break;
+                case 33:
+                    data.setDataCol34(values[i]);
+                    break;
+                case 34:
+                    data.setDataCol35(values[i]);
+                    break;
+                case 35:
+                    data.setDataCol36(values[i]);
+                    break;
+                case 36:
+                    data.setDataCol37(values[i]);
+                    break;
+                case 37:
+                    data.setDataCol38(values[i]);
+                    break;
+                case 38:
+                    data.setDataCol39(values[i]);
+                    break;
+                case 39:
+                    data.setDataCol40(values[i]);
+                    break;
+                case 40:
+                    data.setDataCol41(values[i]);
+                    break;
+                case 41:
+                    data.setDataCol42(values[i]);
+                    break;
+                case 42:
+                    data.setDataCol43(values[i]);
+                    break;
+                case 43:
+                    data.setDataCol44(values[i]);
+                    break;
+                case 44:
+                    data.setDataCol45(values[i]);
+                    break;
+                case 45:
+                    data.setDataCol46(values[i]);
+                    break;
+                case 46:
+                    data.setDataCol47(values[i]);
+                    break;
+                case 47:
+                    data.setDataCol48(values[i]);
+                    break;
+                case 48:
+                    data.setDataCol49(values[i]);
+                    break;
+                case 49:
+                    data.setDataCol50(values[i]);
+                    break;
             }
             logger.info("Campo " + (i+1) + ": " + fieldSet.readString(i));
         }

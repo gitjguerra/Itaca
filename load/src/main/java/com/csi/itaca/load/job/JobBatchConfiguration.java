@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
@@ -94,7 +93,7 @@ public class JobBatchConfiguration {
                 .processor(processor())
                 .writer(new PreloadWriter(batchService))
                 .faultTolerant()
-                .skipLimit(10)
+                .skipLimit(1000)
                 .skip(FlatFileParseException.class)  // Type error
                 .skip(NullPointerException.class)    // Type error
                 .listener(this.stepExecutionListener)
@@ -120,6 +119,7 @@ public class JobBatchConfiguration {
             public PreloadDataDTO process(PreloadDataDTO preloadData) throws Exception {
 
                 Long preloadId = managementService.findNextVal("SEQ_PRELOAD_DATA_ID.NEXTVAL");
+                preloadData.setPreloadDataId(preloadId);
                 Long loadFileId = Long.valueOf(fileLoadId);
                 LoadFileDTO loadFileDTO = new LoadFileDTO();
                 loadFileDTO.setLoadFileId(loadFileId);
@@ -157,10 +157,43 @@ public class JobBatchConfiguration {
                 String dataCol18 = preloadData.getDataCol18();
                 String dataCol19 = preloadData.getDataCol19();
                 String dataCol20 = preloadData.getDataCol20();
+                String dataCol21 = preloadData.getDataCol21();
+                String dataCol22 = preloadData.getDataCol22();
+                String dataCol23 = preloadData.getDataCol23();
+                String dataCol24 = preloadData.getDataCol24();
+                String dataCol25 = preloadData.getDataCol25();
+                String dataCol26 = preloadData.getDataCol26();
+                String dataCol27 = preloadData.getDataCol27();
+                String dataCol28 = preloadData.getDataCol28();
+                String dataCol29 = preloadData.getDataCol29();
+                String dataCol30 = preloadData.getDataCol30();
+                String dataCol31 = preloadData.getDataCol31();
+                String dataCol32 = preloadData.getDataCol32();
+                String dataCol33 = preloadData.getDataCol33();
+                String dataCol34 = preloadData.getDataCol34();
+                String dataCol35 = preloadData.getDataCol35();
+                String dataCol36 = preloadData.getDataCol36();
+                String dataCol37 = preloadData.getDataCol37();
+                String dataCol38 = preloadData.getDataCol38();
+                String dataCol39 = preloadData.getDataCol39();
+                String dataCol40 = preloadData.getDataCol40();
+                String dataCol41 = preloadData.getDataCol41();
+                String dataCol42 = preloadData.getDataCol42();
+                String dataCol43 = preloadData.getDataCol43();
+                String dataCol44 = preloadData.getDataCol44();
+                String dataCol45 = preloadData.getDataCol45();
+                String dataCol46 = preloadData.getDataCol46();
+                String dataCol47 = preloadData.getDataCol47();
+                String dataCol48 = preloadData.getDataCol48();
+                String dataCol49 = preloadData.getDataCol49();
+                String dataCol50 = preloadData.getDataCol50();
 
                 final PreloadDataDTO fixedCustomer = new PreloadDataDTO(preloadId, loadFileDTO, loadedSuccessfully, sqlDate, preloadRowTypeDTO, lineNumber,
                         dataCol1, dataCol2, dataCol3, dataCol4, dataCol5, dataCol6, dataCol7, dataCol8, dataCol9, dataCol10,
-                        dataCol11, dataCol12, dataCol13, dataCol14, dataCol15, dataCol16, dataCol17, dataCol18, dataCol19, dataCol20);
+                        dataCol11, dataCol12, dataCol13, dataCol14, dataCol15, dataCol16, dataCol17, dataCol18, dataCol19, dataCol20,
+                        dataCol21, dataCol22, dataCol23, dataCol24, dataCol25, dataCol26, dataCol27, dataCol28, dataCol29, dataCol30,
+                        dataCol31, dataCol32, dataCol33, dataCol34, dataCol35, dataCol36, dataCol37, dataCol38, dataCol39, dataCol40,
+                        dataCol41, dataCol42, dataCol43, dataCol44, dataCol45, dataCol46, dataCol47, dataCol48, dataCol49, dataCol50);
                 return fixedCustomer;
             }
         };
