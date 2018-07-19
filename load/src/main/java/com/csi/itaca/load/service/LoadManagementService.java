@@ -14,6 +14,8 @@ import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -22,34 +24,47 @@ import java.util.List;
 
 public interface LoadManagementService {
 
-    // Upload and download files
-    void store(MultipartFile file, Path rootLocation);
+    // *********************** Metodos PRELOAD ***********************
+    // Upload file
+    HttpStatus upload(MultipartFile file);
 
-    // Get upload file
-    Resource loadFile(File file);
+    // Create Job
+    LoadFileDTO create(Path rootLocation, File file, Long preloadDefinitionId, Errors errTracking) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
+
+    // Execute Job
+    BatchStatus executeJob(String file, String loadProcessId, String loadFileId);
+
+    // Cancel Job
+    BatchStatus stopJob();
 
     // Job of batch process
     BatchStatus fileToDatabaseJob(Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
+    // *********************** Metodos PRELOAD ***********************
 
-    // TODO: Implementar metodo en rest controller para eliminar archivos subidos
-    void deleteAll(Path rootLocation);
-    // TODO: Implementar metodo en rest controller para crear directorio de carga de archivos
-    void init(Path rootLocation);
-
-    //Metodos LOAD
-
+    // *********************** Metodos LOAD ***********************
     List<LoadFileDTO> getFile(LoadProcessEntity loadProcessId, Long loadFileId);
   //  List<LoadFileDTO> getFile(Long loadProcessId, Pagination pagination, Order order);
   //  List<PreloadDataDTO> getPreloadData(LoadFileEntity loadFileId, Pagination pagination, Order order);
-
     List<PreloadDataDTO> preloadedRowList(Long loadProcessId, LoadFileEntity loadFileId);
-
     // Find preload process
     List<PreloadRowTypeEntity> rowTypesServices(Long loadProcessId);
-
     /**
      * Preload definition list
      * @return list of preload definition list
      */
     List<PreloadDefinitionDTO> getPreloadDefinitionList();
+    // *********************** Metodos LOAD ***********************
+
+
+    // ***************** For future actions ********************
+    // TODO: Implementar metodo en rest controller para eliminar archivos subidos
+    void deleteAll(Path rootLocation);
+    // TODO: Implementar metodo en rest controller para crear directorio de carga de archivos
+    void init(Path rootLocation);
+    // Upload and download files
+    void store(MultipartFile file, Path rootLocation);
+    // Get upload file
+    Resource loadFile(File file);
+    // ***************** For future actions ********************
+
 }

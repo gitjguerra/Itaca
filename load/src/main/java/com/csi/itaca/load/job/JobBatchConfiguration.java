@@ -9,6 +9,7 @@ import com.csi.itaca.load.repository.PreloadFieldDefinitionRepository;
 import com.csi.itaca.load.repository.PreloadRowTypeRepository;
 import com.csi.itaca.load.service.LoadManagementBatchService;
 import com.csi.itaca.load.service.LoadManagementServiceImpl;
+import com.csi.itaca.load.utils.Constants;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.util.*;
 
@@ -86,7 +88,7 @@ public class JobBatchConfiguration {
                    ItemProcessor<PreloadDataDTO, PreloadDataDTO> itemProcessor,
                    ItemWriter<PreloadDataDTO> PreloadItemWriter) throws Exception {
 
-        Step step_preload = stepBuilderFactory.get("preload-data-step")
+        Step step_preload = stepBuilderFactory.get(Constants.getStepName())
                 .<PreloadDataDTO, PreloadDataDTO>chunk(2)
                 .reader(itemReader(WILL_BE_INJECTED, WILL_BE_INJECTED, WILL_BE_INJECTED))
                 .listener(customReaderListener())
@@ -98,7 +100,7 @@ public class JobBatchConfiguration {
                 .skip(NullPointerException.class)    // Type error
                 .listener(this.stepExecutionListener)
                 .build();
-        return jobBuilderFactory.get("preload-data-step")
+        return jobBuilderFactory.get(Constants.getJobName())
                 .incrementer(new RunIdIncrementer())
                 .start(step_preload)          // Preload
                 //.next(step_load)            // Load
@@ -289,4 +291,5 @@ public class JobBatchConfiguration {
 
         return lineMapper;
     }
+
 }

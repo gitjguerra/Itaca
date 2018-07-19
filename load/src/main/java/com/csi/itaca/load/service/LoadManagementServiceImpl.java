@@ -1,5 +1,6 @@
 package com.csi.itaca.load.service;
 
+import com.csi.itaca.common.GlobalErrorConstants;
 import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
@@ -9,33 +10,35 @@ import com.csi.itaca.load.repository.*;
 import com.csi.itaca.load.utils.Constants;
 import com.csi.itaca.tools.utils.beaner.Beaner;
 import org.apache.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -53,13 +56,13 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     LoadProcessRepository loadProcessRepository;
 
     @Autowired
+    private LoadFileRepository loadFileRepository;
+
+    @Autowired
     private PreloadFileRepository preloadFileRepository;
 
     @Autowired
     private PreloadFieldDefinitionRepository fieldDefinitionRepository;
-
-    @Autowired
-    private LoadFileRepository loadFileRepository;
 
     @Autowired
     private PreloadDefinitionRepository preloadDefinitionRepository;
@@ -95,10 +98,134 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     private String query = "";
     private final static Logger logger = Logger.getLogger(LoadManagementServiceImpl.class);
 
+    // Upload directory - Set with resource in the applioation.yml  example:     fileUploadDirectory: "/temp"
+    @Value("${spring.batch.job.fileUploadDirectory}")
+    private String fileUploadDirectory;
+
+    // Upload file
+    @Override
+    public HttpStatus upload(MultipartFile file) {
+        try {
+            Path rootLocation = Paths.get(fileUploadDirectory);
+            File fileToImport = new File(rootLocation + File.separator + file.getOriginalFilename());
+            OutputStream outputStream = null;
+            outputStream = new FileOutputStream(fileToImport);
+            IOUtils.copy(file.getInputStream(), outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return HttpStatus.NOT_FOUND;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return HttpStatus.NOT_FOUND;
+        }
+        return HttpStatus.OK;
+    }
+
+    // Create Job
+    @Override
+    public LoadFileDTO create(Path rootLocation, File file, Long preloadDefinitionId, Errors errTracking) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        // Database connection
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        // where expression for find id tables
+        String where = "";
+        // Active user, if you not logon into the app please use a anonymousUser, add on the DB 'anonymousUser'
+        String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = findUserId(user);
+        // DateTime to execute job
+        Date date = new Date();
+        //  2.1. Set ld_load_file.preload_start_time to the current time.
+        java.sql.Date preload_star_time = new java.sql.Date(date.getTime());
+        //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.   (The status code is a Http status o JobExecution status ???)
+        String statusCode = Constants.getPreloadingInProgress();
+        String statusMessage = Constants.getPreloadingInProgressDesc();
+        //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
+        String fileExtension = getFileExtension(file);
+        //Long preloadDefinitionId = 1L;
+
+        // 1. load_process_id
+        //1.1. A record created in the ld_load_process table where load_process_id is associated.
+        Long loadProcessId = findNextVal("SEQ_LOAD_PROCESS_ID.NEXTVAL");
+        query = "INSERT INTO LD_LOAD_PROCESS (LOAD_PROCESS_ID, USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?, ?)";
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setLong(1, loadProcessId);
+                statement.setLong(2, userId);
+                statement.setDate(3, preload_star_time);
+                statement.setLong(4, preloadDefinitionId);
+                return statement;
+            }
+        });
+
+        // 2. load_file_id
+        //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
+        Long loadFileId = findNextVal("SEQ_LOAD_FILE_ID.NEXTVAL");
+        query = "INSERT INTO LD_LOAD_FILE (LOAD_FILE_ID, LOAD_PROCESS_ID, FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setLong(1, loadFileId);
+                statement.setLong(2, loadProcessId);
+                statement.setString(3, file.getName());
+                statement.setLong(4, file.length());
+                statement.setString(5, "");
+                statement.setDate(6, preload_star_time);
+                statement.setString(7, statusCode);
+                statement.setString(8, statusMessage);
+                return statement;
+            }
+        });
+
+        LoadFileEntity loadFileEntity = loadFileRepository.findOne(loadFileId);
+        if (loadFileEntity == null && errTracking != null) {
+            errTracking.reject(GlobalErrorConstants.DB_ITEM_NOT_FOUND);
+        }else{
+            // Create Job with JobExplorer
+        }
+        return beaner.transform(loadFileEntity, LoadFileDTO.class);
+    }
+
+    // Execute Job
+    @Override
+    public BatchStatus executeJob(String file, String loadProcessId, String loadFileId) {
+
+        // TODO:  Skip limit for Job
+        // Skip limit for Job
+        // Take and create dynamic ?????????
+
+        JobExecution jobExecution = null;
+        try {
+            jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
+                    .addString("fullPathFileName", file)
+                    .addString("id_load_process", loadProcessId)
+                    .addString("id_load_file", loadFileId)
+                    .addLong("time", System.currentTimeMillis()).toJobParameters());
+        } catch (JobExecutionAlreadyRunningException e) {
+            e.printStackTrace();
+        } catch (JobRestartException e) {
+            e.printStackTrace();
+        } catch (JobInstanceAlreadyCompleteException e) {
+            e.printStackTrace();
+        } catch (JobParametersInvalidException e) {
+            e.printStackTrace();
+        }
+        return jobExecution.getStatus();
+    }
+
+    // Cancel Job
+    @Override
+    public BatchStatus stopJob() {
+        return null;
+    }
+
+
     // Job execute
     @Override
     public BatchStatus fileToDatabaseJob(Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 
+        /*
         // Database connection
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -172,7 +299,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         //  </editor-fold>
 
         // Skip limit for Job
-
         JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
                 .addString("fullPathFileName", file.getName())
                 .addString("id_load_process", loadProcessId.toString())
@@ -181,6 +307,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
         // If all Ok return value
         return jobExecution.getStatus();
+        */
+        return null;
     }
 
     private static String getFileExtension(File file) {

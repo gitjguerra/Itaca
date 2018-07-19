@@ -53,6 +53,8 @@ public class Constants {
     private static final String LOAD__USER_CANCELLED_DESC = "Load user cancelled";
 
     private static final String EMPTY = "";
+    private static final String JOB_NAME = "preload-job";
+    private static final String STEP_NAME = "preload-data-step";
 
     private static final String ERROR_SEVERITY_LOW = "1";
     private static final String ERROR_SEVERITY_MEDIUM = "2";
@@ -198,5 +200,13 @@ public class Constants {
 
     public static String getMaxLengthMssgError() {
         return MAX_LENGTH_MSSG_ERROR;
+    }
+
+    public static String getJobName() {
+        return JOB_NAME;
+    }
+
+    public static String getStepName() {
+        return STEP_NAME;
     }
 }
