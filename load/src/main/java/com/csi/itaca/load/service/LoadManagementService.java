@@ -35,10 +35,7 @@ public interface LoadManagementService {
     BatchStatus executeJob(String file, String loadProcessId, String loadFileId);
 
     // Cancel Job
-    BatchStatus stopJob();
-
-    // Job of batch process
-    BatchStatus fileToDatabaseJob(Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
+    BatchStatus stopJob(String jobName);
     // *********************** Metodos PRELOAD ***********************
 
     // *********************** Metodos LOAD ***********************

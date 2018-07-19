@@ -18,6 +18,8 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -41,6 +43,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -142,7 +145,6 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         String statusMessage = Constants.getPreloadingInProgressDesc();
         //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
         String fileExtension = getFileExtension(file);
-        //Long preloadDefinitionId = 1L;
 
         // 1. load_process_id
         //1.1. A record created in the ld_load_process table where load_process_id is associated.
@@ -182,7 +184,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         if (loadFileEntity == null && errTracking != null) {
             errTracking.reject(GlobalErrorConstants.DB_ITEM_NOT_FOUND);
         }else{
-            // Create Job with JobExplorer
+            // Create Job with JobExplorer  ?????
         }
         return beaner.transform(loadFileEntity, LoadFileDTO.class);
     }
@@ -216,97 +218,25 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     // Cancel Job
     @Override
-    public BatchStatus stopJob() {
-        return null;
-    }
-
-
-    // Job execute
-    @Override
-    public BatchStatus fileToDatabaseJob(Path rootLocation, File file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-
+    public BatchStatus stopJob(String jobName) {
         /*
-        // Database connection
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JobExplorer jobExplorer = (JobExplorer) context.getBean("JobExplorer");
 
-        // where expression for find id tables
-        String where = "";
-        // Active user, if you not logon into the app please use a anonymousUser, add on the DB 'anonymousUser'
-        String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId = findUserId(user);
-        // DateTime to execute job
-        Date date = new Date();
-        //  2.1. Set ld_load_file.preload_start_time to the current time.
-        java.sql.Date preload_star_time = new java.sql.Date(date.getTime());
-        //  2.2. Set ld_load_file.status_code to 200 indicating preload in progress.   (The status code is a Http status o JobExecution status ???)
-        String statusCode = Constants.getPreloadingInProgress();
-        String statusMessage = Constants.getPreloadingInProgressDesc();
-        //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
-        String fileExtension = getFileExtension(file);
+        List<JobInstance> jobInstances= jobExplorer.getJobInstances(Constants.getJobName(),0,1);
 
-        //Launch the Batch Job
-        // ********************************* INITIAL PROCESS (PRELOAD) *********************************
-        // Who init the process ?
-        // How init the process ?
-        // When init the process ?
-        // ID_PRELOAD_DEFINITION PROCESS
-        // ID_PRELOAD_FILE PROCESS
-        // ID_PRELOAD_ROW_TYPE PROCESS
-        // ID_PRELOAD_FILE_TYPE PROCESS
-        // ID_PRELOAD_FIELD_DEFINITION PROCESS
-        // ********************************* INITIAL PROCESS *********************************
-
-        // TODO: HOW PASS THE PRELOAD_DEFINITION_ID
-
-        Long preloadDefinitionId = 1L;
-        //  <editor-fold defaultstate="collapsed" desc="*** 1) Prerequisite(s) ***">
-        // 1. load_process_id
-        //1.1. A record created in the ld_load_process table where load_process_id is associated.
-        Long loadProcessId = findNextVal("SEQ_LOAD_PROCESS_ID.NEXTVAL");
-        query = "INSERT INTO LD_LOAD_PROCESS (LOAD_PROCESS_ID, USER_ID, CREATED_TIMESTAMP, PRELOAD_DEFINITION_ID) VALUES(?, ?, ?, ?)";
-        jdbcTemplate.update(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setLong(1, loadProcessId);
-                statement.setLong(2, userId);
-                statement.setDate(3, preload_star_time);
-                statement.setLong(4, preloadDefinitionId);
-                return statement;
+        for (JobInstance jobInstance : jobInstances) {
+            List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
+            for (JobExecution jobExecution : jobExecutions) {
+                if (jobExecution.getExitStatus().equals(ExitStatus.EXECUTING) && (jobExecution.getJobInstance().getJobName().equals(jobName))) {
+                    //You found a completed job, possible candidate for a restart
+                    //You may check if the job is restarted comparing jobParameters
+                    //JobParameters jobParameters = jobInstance.getParameters();
+                    //Check your running job if it has the same jobParameters
+                    jobExecution.stop();
+                    return jobExecution.getStatus();
+                }
             }
-        });
-
-        // 2. load_file_id
-        //2.1. A record created in the ld_load_file table with same load_file_id and the same above load_process_id.
-        Long loadFileId = findNextVal("SEQ_LOAD_FILE_ID.NEXTVAL");
-        query = "INSERT INTO LD_LOAD_FILE (LOAD_FILE_ID, LOAD_PROCESS_ID, FILENAME, FILE_SIZE, CHECKSUM, PRELOAD_START_TIME, STATUS_CODE, STATUS_MESSAGE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setLong(1, loadFileId);
-                statement.setLong(2, loadProcessId);
-                statement.setString(3, file.getName());
-                statement.setLong(4, file.length());
-                statement.setString(5, "");
-                statement.setDate(6, preload_star_time);
-                statement.setString(7, statusCode);
-                statement.setString(8, statusMessage);
-                return statement;
-            }
-        });
-        // id insert on LD_LOAD_FILE
-        //where = " filename='" + file.getName() + "' AND LOAD_PROCESS_ID=" + idLoadProcess;
-        //final Long idLoadFile = findInsertId("LD_LOAD_FILE", "LOAD_FILE_ID", where);
-        //  </editor-fold>
-
-        // Skip limit for Job
-        JobExecution jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
-                .addString("fullPathFileName", file.getName())
-                .addString("id_load_process", loadProcessId.toString())
-                .addString("id_load_file", loadFileId.toString())
-                .addLong("time", System.currentTimeMillis()).toJobParameters());  // Se agrega para ejecutar multiples hilos
-
-        // If all Ok return value
-        return jobExecution.getStatus();
+        }
         */
         return null;
     }

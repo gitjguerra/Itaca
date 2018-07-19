@@ -2,12 +2,6 @@ package com.csi.itaca.load.api;
 
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobExecutionNotRunningException;
-import org.springframework.batch.core.launch.NoSuchJobExecutionException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -31,6 +24,7 @@ public interface LoadManagementServiceProxy {
     String PRELOAD_DEF_ID = "preloadDefinitionId";
     String PRELOAD_PROCESS_ID = "loadProcessId";
     String PRELOAD_FILE_ID = "loadFileId";
+    String PRELOAD_JOB_NAME = "jobName";
     String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
     String LOAD_ROW_OPERATION_ID = "LoadRowOperationId";
 
@@ -39,7 +33,6 @@ public interface LoadManagementServiceProxy {
     String LOAD_CREATE = ENTITY_LOAD + "/create";
     String LOAD_START_CONTINUE_LOAD = ENTITY_LOAD + "/startOrContinueLoad";
     String LOAD_CANCEL_LOAD = ENTITY_LOAD + "/cancelLoad";
-    String LOAD_DATA_PRELOAD = ENTITY_LOAD + "/launchjob";
     String LOAD_GET_FILE = ENTITY_LOAD + "/getallfiles";
     String LOAD_GET_FILE_ID = ENTITY_LOAD + "/files/{filename:.+}";
 
@@ -67,7 +60,7 @@ public interface LoadManagementServiceProxy {
     ResponseEntity<LoadFileDTO> Create(String filename, Long preloadDefinitionId);
 
     /**
-     * Gets a file upload.
+     * Execute Job
      *
      * @return a response body containing the requested load json object.
      */
@@ -78,15 +71,8 @@ public interface LoadManagementServiceProxy {
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity<List<String>> cancelLoad(Model model);
-    ResponseEntity stopExecution(Long executionId)throws NoSuchJobExecutionException,JobExecutionNotRunningException;
+    ResponseEntity cancelLoad(String jobName);
 
-    /**
-     * ************************************************************************************** DELETE
-     *
-     * @return a response body containing the requested load json object.
-     */
-    ResponseEntity<String> preloadData(MultipartFile multipartFile) throws IOException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
 
 
     //********************** Load actions ****************************

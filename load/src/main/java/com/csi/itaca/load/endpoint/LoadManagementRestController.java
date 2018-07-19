@@ -7,12 +7,8 @@ import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import com.csi.itaca.load.service.*;
-import com.csi.itaca.load.utils.Constants;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobExecutionNotRunningException;
-import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -46,18 +42,9 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @Autowired
     private LoadManagementService loadManagementService;
 
-    @Autowired
-    JobExplorer jobExplorer;
-
     // Upload directory - Set with resource in the applioation.yml  example:     fileUploadDirectory: "/temp"
     @Value("${spring.batch.job.fileUploadDirectory}")
     private String fileUploadDirectory;
-
-    // ********************************************* DELETE **********************************
-    @Override
-    public ResponseEntity<String> preloadData(MultipartFile multipartFile) throws IOException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        return null;
-    }
 
     @Override
     @RequestMapping(value = LOAD_FILE, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,30 +92,10 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
-    public ResponseEntity<List<String>> cancelLoad(Model model) {
-        return null;
-    }
-    @Override
     @RequestMapping(value = LOAD_CANCEL_LOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity stopExecution(@RequestParam(LoadManagementServiceProxy.EXECUTION_ID_PARAM) Long executionId)throws NoSuchJobExecutionException,
-            JobExecutionNotRunningException {
-
-        List<JobInstance> jobInstances= jobExplorer.getJobInstances(Constants.getJobName(),0,1);
-
-        for (JobInstance jobInstance : jobInstances) {
-            List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
-            for (JobExecution jobExecution : jobExecutions) {
-                if (jobExecution.getExitStatus().equals(ExitStatus.EXECUTING)) {
-                    //You found a completed job, possible candidate for a restart
-                    //You may check if the job is restarted comparing jobParameters
-                    //JobParameters jobParameters = jobInstance.getParameters();
-                    //Check your running job if it has the same jobParameters
-                    jobExecution.stop();
-                    System.out.println("****************************** STOP");
-                }
-            }
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity cancelLoad(@RequestParam(LoadManagementServiceProxy.PRELOAD_JOB_NAME) String jobName) {
+        BatchStatus status = loadManagementService.stopJob(jobName);
+        return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
     }
 
 
