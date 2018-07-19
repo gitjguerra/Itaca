@@ -12,14 +12,13 @@ import com.csi.itaca.tools.utils.beaner.Beaner;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.batch.core.*;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -43,11 +42,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @SuppressWarnings("unchecked")
 @Service
 public class LoadManagementServiceImpl implements LoadManagementService {
+
+    @Autowired
+    private JobExplorer jobExplorer;
 
     @Autowired
     private JobLauncher jobLauncher;
@@ -219,25 +220,23 @@ public class LoadManagementServiceImpl implements LoadManagementService {
     // Cancel Job
     @Override
     public BatchStatus stopJob(String jobName) {
-        /*
-        JobExplorer jobExplorer = (JobExplorer) context.getBean("JobExplorer");
-
-        List<JobInstance> jobInstances= jobExplorer.getJobInstances(Constants.getJobName(),0,1);
-
+        List<JobInstance> jobInstances = jobExplorer.getJobInstances(Constants.getJobName(),0,1);
         for (JobInstance jobInstance : jobInstances) {
             List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
             for (JobExecution jobExecution : jobExecutions) {
-                if (jobExecution.getExitStatus().equals(ExitStatus.EXECUTING) && (jobExecution.getJobInstance().getJobName().equals(jobName))) {
+                if (jobExecution.getExitStatus().equals(ExitStatus.EXECUTING) && (jobExecution.getJobInstance().getJobName().equals(jobName)) ) {
                     //You found a completed job, possible candidate for a restart
                     //You may check if the job is restarted comparing jobParameters
                     //JobParameters jobParameters = jobInstance.getParameters();
                     //Check your running job if it has the same jobParameters
                     jobExecution.stop();
-                    return jobExecution.getStatus();
+                    return BatchStatus.COMPLETED;
+                }else{
+                    logger.info("Batch job not in execution now !!!");
+                    return BatchStatus.FAILED;
                 }
             }
         }
-        */
         return null;
     }
 

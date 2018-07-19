@@ -98,7 +98,6 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
         return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
     }
 
-
     /*
     @Override
     @RequestMapping(value = LOAD_LIST_FILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
