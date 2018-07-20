@@ -219,12 +219,12 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
     // Cancel Job
     @Override
-    public BatchStatus stopJob(String jobName) {
+    public BatchStatus stopJob(Long idJob) {
         List<JobInstance> jobInstances = jobExplorer.getJobInstances(Constants.getJobName(),0,1);
         for (JobInstance jobInstance : jobInstances) {
             List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
             for (JobExecution jobExecution : jobExecutions) {
-                if (jobExecution.getExitStatus().equals(ExitStatus.EXECUTING) && (jobExecution.getJobInstance().getJobName().equals(jobName)) ) {
+                if ((jobExecution.getExitStatus().equals(ExitStatus.EXECUTING)) && (jobExecution.getJobInstance().getId() == idJob)) {
                     //You found a completed job, possible candidate for a restart
                     //You may check if the job is restarted comparing jobParameters
                     //JobParameters jobParameters = jobInstance.getParameters();

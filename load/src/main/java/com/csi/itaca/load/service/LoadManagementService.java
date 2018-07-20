@@ -35,7 +35,7 @@ public interface LoadManagementService {
     BatchStatus executeJob(String file, String loadProcessId, String loadFileId);
 
     // Cancel Job
-    BatchStatus stopJob(String jobName);
+    BatchStatus stopJob(Long idJob);
     // *********************** Metodos PRELOAD ***********************
 
     // *********************** Metodos LOAD ***********************

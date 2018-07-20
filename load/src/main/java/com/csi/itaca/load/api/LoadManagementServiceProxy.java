@@ -25,6 +25,7 @@ public interface LoadManagementServiceProxy {
     String PRELOAD_PROCESS_ID = "loadProcessId";
     String PRELOAD_FILE_ID = "loadFileId";
     String PRELOAD_JOB_NAME = "jobName";
+    String PRELOAD_JOB_ID = "jobId";
     String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
     String LOAD_ROW_OPERATION_ID = "LoadRowOperationId";
 
@@ -71,7 +72,7 @@ public interface LoadManagementServiceProxy {
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity cancelLoad(String jobName);
+    ResponseEntity cancelLoad(Long jobName);
 
 
 

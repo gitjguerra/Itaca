@@ -93,8 +93,8 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
     @Override
     @RequestMapping(value = LOAD_CANCEL_LOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity cancelLoad(@RequestParam(LoadManagementServiceProxy.PRELOAD_JOB_NAME) String jobName) {
-        BatchStatus status = loadManagementService.stopJob(jobName);
+    public ResponseEntity cancelLoad(@RequestParam(LoadManagementServiceProxy.PRELOAD_JOB_ID) Long jobId) {
+        BatchStatus status = loadManagementService.stopJob(jobId);
         return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
     }
 
