@@ -19,6 +19,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public interface LoadManagementService {
     HttpStatus upload(MultipartFile file);
 
     // Create Job
-    LoadFileDTO create(Path rootLocation, File file, Long preloadDefinitionId, Errors errTracking) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
+    LoadFileDTO create(MultipartFile file, Long preloadDefinitionId, Errors errTracking) throws IOException;
 
     // Execute Job
     BatchStatus executeJob(String file, String loadProcessId, String loadFileId);

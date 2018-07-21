@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -58,7 +59,7 @@ public interface LoadManagementServiceProxy {
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity<LoadFileDTO> Create(String filename, Long preloadDefinitionId);
+    ResponseEntity<LoadFileDTO> Create(MultipartFile multipartFile, Long preloadDefinitionId) throws IOException;
 
     /**
      * Execute Job

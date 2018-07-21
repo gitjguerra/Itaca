@@ -54,29 +54,19 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     }
 
     @Override
-    @RequestMapping(value = LOAD_CREATE, method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoadFileDTO> Create(@RequestParam(LoadManagementServiceProxy.FILE_UPLOAD) String filename,
-                                              @RequestParam(LoadManagementServiceProxy.PRELOAD_DEF_ID) Long preloadDefinitionId) {
+    @RequestMapping(value=LOAD_CREATE, method=RequestMethod.POST)
+    public ResponseEntity<LoadFileDTO> Create(@RequestParam(LoadManagementServiceProxy.FILE_UPLOAD) MultipartFile multipartFile,
+                                              @RequestParam(LoadManagementServiceProxy.PRELOAD_DEF_ID) Long preloadDefinitionId) throws IOException {
 
         BindingResult errTracking = createErrorTracker();
         LoadFileDTO loadFileDTO = new LoadFileDTO();
 
-        try {
-            Path rootLocation = Paths.get(fileUploadDirectory);
-            File fileToImport = new File(rootLocation + File.separator + filename);
+        Path rootLocation = Paths.get(fileUploadDirectory);
+        File fileToImport = new File(rootLocation + File.separator + multipartFile.getOriginalFilename());
 
-            // Create Job
-            loadFileDTO = loadManagementService.create(rootLocation, fileToImport, preloadDefinitionId, errTracking);
+        // Create Job
+        loadFileDTO = loadManagementService.create(multipartFile, preloadDefinitionId, errTracking);
 
-        } catch (JobParametersInvalidException e) {
-            e.printStackTrace();
-        } catch (JobExecutionAlreadyRunningException e) {
-            e.printStackTrace();
-        } catch (JobRestartException e) {
-            e.printStackTrace();
-        } catch (JobInstanceAlreadyCompleteException e) {
-            e.printStackTrace();
-        }
         return buildResponseEntity(loadFileDTO, errTracking);
     }
 

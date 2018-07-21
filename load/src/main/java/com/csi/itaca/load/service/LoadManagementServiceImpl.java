@@ -119,17 +119,15 @@ public class LoadManagementServiceImpl implements LoadManagementService {
             outputStream.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return HttpStatus.NOT_FOUND;
         } catch (IOException e) {
             e.printStackTrace();
-            return HttpStatus.NOT_FOUND;
         }
         return HttpStatus.OK;
     }
 
     // Create Job
     @Override
-    public LoadFileDTO create(Path rootLocation, File file, Long preloadDefinitionId, Errors errTracking) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+    public LoadFileDTO create(MultipartFile file, Long preloadDefinitionId, Errors errTracking) throws IOException {
         // Database connection
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         // where expression for find id tables
@@ -145,7 +143,16 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         String statusCode = Constants.getPreloadingInProgress();
         String statusMessage = Constants.getPreloadingInProgressDesc();
         //  2.3. Determine file format type from file extension and choose appropriate file parser (CSV, Excel, TXT).
-        String fileExtension = getFileExtension(file);
+        //String fileExtension = getFileExtension(file);
+
+        // Upload batch file
+        Path rootLocation = Paths.get(fileUploadDirectory);
+        File fileToImport = new File(rootLocation + File.separator + file.getOriginalFilename());
+        OutputStream outputStream = null;
+        outputStream = new FileOutputStream(fileToImport);
+        IOUtils.copy(file.getInputStream(), outputStream);
+        outputStream.flush();
+        outputStream.close();
 
         // 1. load_process_id
         //1.1. A record created in the ld_load_process table where load_process_id is associated.
@@ -171,8 +178,8 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setLong(1, loadFileId);
                 statement.setLong(2, loadProcessId);
-                statement.setString(3, file.getName());
-                statement.setLong(4, file.length());
+                statement.setString(3, fileToImport.getName());
+                statement.setLong(4, fileToImport.length());
                 statement.setString(5, "");
                 statement.setDate(6, preload_star_time);
                 statement.setString(7, statusCode);
