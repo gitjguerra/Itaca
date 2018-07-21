@@ -1,25 +1,19 @@
 package com.csi.itaca.load.service;
 
+import com.csi.itaca.load.model.dto.LoadProcessDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
-
 import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dao.LoadProcessEntity;
 import com.csi.itaca.load.model.dao.PreloadRowTypeEntity;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -34,10 +28,16 @@ public interface LoadManagementService {
     LoadFileDTO create(MultipartFile file, Long preloadDefinitionId, Errors errTracking) throws IOException;
 
     // Execute Job
-    BatchStatus executeJob(String file, String loadProcessId, String loadFileId);
+    BatchStatus executeJob(Long loadProcessId, Errors errTracking);
 
     // Cancel Job
     BatchStatus stopJob(Long idJob);
+
+    // Get load Process
+    LoadFileDTO getLoadProcess(Long loadProcessId, Errors errTracking);
+
+    // Get load Process by user
+    List<? extends LoadProcessDTO> getLoadProcessByUser(Long userId, Errors errTracking);
     // *********************** Metodos PRELOAD ***********************
 
     // *********************** Metodos LOAD ***********************

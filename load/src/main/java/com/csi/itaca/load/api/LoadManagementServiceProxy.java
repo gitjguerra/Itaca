@@ -1,6 +1,7 @@
 package com.csi.itaca.load.api;
 
 import com.csi.itaca.load.model.dto.LoadFileDTO;
+import com.csi.itaca.load.model.dto.LoadProcessDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
@@ -23,18 +24,20 @@ public interface LoadManagementServiceProxy {
     String FILE_UPLOAD = "file";
     String EXECUTION_ID_PARAM = "executionId";
     String PRELOAD_DEF_ID = "preloadDefinitionId";
-    String PRELOAD_PROCESS_ID = "loadProcessId";
-    String PRELOAD_FILE_ID = "loadFileId";
-    String PRELOAD_JOB_NAME = "jobName";
-    String PRELOAD_JOB_ID = "jobId";
+    String LOAD_PROCESS_ID = "loadProcessId";
+    String LOAD_FILE_ID = "loadFileId";
+    String LOAD_PROCESS_USER_ID = "userId";
     String PRELOAD_ROW_TYPE_ID = "preloadRowTypeId";
     String LOAD_ROW_OPERATION_ID = "LoadRowOperationId";
+    String JOB_ID = "jobId";
 
     String ENTITY_LOAD = "/load";
     String LOAD_FILE = ENTITY_LOAD + "/upload";
     String LOAD_CREATE = ENTITY_LOAD + "/create";
     String LOAD_START_CONTINUE_LOAD = ENTITY_LOAD + "/startOrContinueLoad";
     String LOAD_CANCEL_LOAD = ENTITY_LOAD + "/cancelLoad";
+    String GET_LOAD = ENTITY_LOAD + "/getLoad";
+    String GET_LOAD_BY_USERID = ENTITY_LOAD + "/getLoads";
     String LOAD_GET_FILE = ENTITY_LOAD + "/getallfiles";
     String LOAD_GET_FILE_ID = ENTITY_LOAD + "/files/{filename:.+}";
 
@@ -66,15 +69,28 @@ public interface LoadManagementServiceProxy {
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity startOrContinueLoad(String file, String loadProcessId, String loadFileId);
+    ResponseEntity startOrContinueLoad(Long loadProcessId);
 
     /**
      * Cancel Job.
      *
      * @return a response body containing the requested load json object.
      */
-    ResponseEntity cancelLoad(Long jobName);
+    ResponseEntity cancelLoad(Long loadProcessId);
 
+    /**
+     * Get Job process
+     *
+     * @return a response body containing the requested load json object.
+     */
+    ResponseEntity getLoadProcess(Long loadProcessId);
+
+    /**
+     * Get Job process by user id
+     *
+     * @return a response body containing the requested load json object.
+     */
+    ResponseEntity<List<? extends LoadProcessDTO>> getLoadProcessByUser(Long userId);
 
 
     //********************** Load actions ****************************

@@ -4,8 +4,10 @@ import com.csi.itaca.common.GlobalErrorConstants;
 import com.csi.itaca.load.model.*;
 import com.csi.itaca.load.model.dao.*;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
+import com.csi.itaca.load.model.dto.LoadProcessDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
+import com.csi.itaca.load.model.filter.LoadFileDTOFilter;
 import com.csi.itaca.load.repository.*;
 import com.csi.itaca.load.utils.Constants;
 import com.csi.itaca.tools.utils.beaner.Beaner;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -31,6 +34,9 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -191,15 +197,14 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         LoadFileEntity loadFileEntity = loadFileRepository.findOne(loadFileId);
         if (loadFileEntity == null && errTracking != null) {
             errTracking.reject(GlobalErrorConstants.DB_ITEM_NOT_FOUND);
-        }else{
-            // Create Job with JobExplorer  ?????
         }
+        logger.info("Job created !!!");
         return beaner.transform(loadFileEntity, LoadFileDTO.class);
     }
 
     // Execute Job
     @Override
-    public BatchStatus executeJob(String file, String loadProcessId, String loadFileId) {
+    public BatchStatus executeJob(Long loadProcessId, Errors errTracking) {
 
         // TODO:  Skip limit for Job
         // Skip limit for Job
@@ -207,10 +212,25 @@ public class LoadManagementServiceImpl implements LoadManagementService {
 
         JobExecution jobExecution = null;
         try {
+
+            LoadProcessEntity loadProcessEntity = new LoadProcessEntity();
+            loadProcessEntity.setLoadProcessId(loadProcessId);
+            LoadFileEntity fileEntity = new LoadFileEntity();
+            Specification<LoadFileEntity> spec = (root, query, cb) -> {
+                Predicate p = cb.equal(root.get(LoadFileEntity.LOAD_PROCESS_ID), loadProcessEntity);
+                return p;
+            };
+            fileEntity = loadFileRepository.findOne(spec);
+            if(fileEntity == null){
+                errTracking.reject(HttpStatus.NOT_FOUND.toString(),Constants.getLoadProcessIdNotFound());
+                logger.info("loadProcessId = " + loadProcessId + " not found into the database !!!");
+                return BatchStatus.FAILED;
+            }
+
             jobExecution = jobLauncher.run(sqlExecuteJob, new JobParametersBuilder()
-                    .addString("fullPathFileName", file)
-                    .addString("id_load_process", loadProcessId)
-                    .addString("id_load_file", loadFileId)
+                    .addString("fullPathFileName", fileEntity.getFileName())
+                    .addString("id_load_process", fileEntity.getLoadProcessId().getLoadProcessId().toString())
+                    .addString("id_load_file", fileEntity.getLoadFileId().toString())
                     .addLong("time", System.currentTimeMillis()).toJobParameters());
         } catch (JobExecutionAlreadyRunningException e) {
             e.printStackTrace();
@@ -221,6 +241,7 @@ public class LoadManagementServiceImpl implements LoadManagementService {
         } catch (JobParametersInvalidException e) {
             e.printStackTrace();
         }
+        logger.info("Job executed !!!");
         return jobExecution.getStatus();
     }
 
@@ -237,14 +258,46 @@ public class LoadManagementServiceImpl implements LoadManagementService {
                     //JobParameters jobParameters = jobInstance.getParameters();
                     //Check your running job if it has the same jobParameters
                     jobExecution.stop();
-                    return BatchStatus.COMPLETED;
-                }else{
-                    logger.info("Batch job not in execution now !!!");
-                    return BatchStatus.FAILED;
+                    logger.info("Job Batch Stopped !!!");
+                    return BatchStatus.STOPPED;
                 }
             }
         }
-        return null;
+        logger.info("LoadProcessId not found or Job not in execution !!!");
+        return BatchStatus.FAILED;
+    }
+
+    // TODO: put files information asociated to load process
+    @Override
+    public LoadFileDTO getLoadProcess(Long loadProcessId, Errors errTracking){
+        LoadProcessEntity loadProcessEntity = new LoadProcessEntity();
+        loadProcessEntity.setLoadProcessId(loadProcessId);
+        LoadFileEntity fileEntity = new LoadFileEntity();
+        Specification<LoadFileEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(LoadFileEntity.LOAD_PROCESS_ID), loadProcessEntity);
+            return p;
+        };
+        fileEntity = loadFileRepository.findOne(spec);
+        if(fileEntity == null){
+            errTracking.reject(HttpStatus.NOT_FOUND.toString(),Constants.getLoadProcessIdNotFound());
+            logger.info("loadProcessId = " + loadProcessId + " not found into the database !!!");
+        }
+        return beaner.transform(fileEntity, LoadFileDTO.class);
+    }
+
+    // TODO: falta agregar los datos de load process
+    @Override
+    public List<? extends LoadProcessDTO> getLoadProcessByUser(Long userId, Errors errTracking){
+        Specification<LoadProcessEntity> spec = (root, query, cb) -> {
+            Predicate p = cb.equal(root.get(LoadProcessEntity.USER_ID), userId);
+            return p;
+        };
+        List<LoadProcessEntity> loadProcessEntity = loadProcessRepository.findAll(spec);
+        if(loadProcessEntity == null){
+            errTracking.reject(HttpStatus.NOT_FOUND.toString(),Constants.getLoadProcessUserIdNotFound());
+            logger.info("UserId = " + userId + " not found into the database !!!");
+        }
+        return beaner.transform(loadProcessEntity, LoadProcessDTO.class);
     }
 
     private static String getFileExtension(File file) {

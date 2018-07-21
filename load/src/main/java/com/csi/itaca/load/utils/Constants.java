@@ -62,6 +62,18 @@ public class Constants {
 
     private static final String MAX_LENGTH_MSSG_ERROR = "200";
 
+    public static final String LOAD_PROCESS_ID_NOT_FOUND = "Please insert the id process ...";
+
+    public static final String LOAD_PROCESS_USER_ID_NOT_FOUND = "The user not have a Job Batch process ...";
+
+    public static String getLoadProcessUserIdNotFound() {
+        return LOAD_PROCESS_USER_ID_NOT_FOUND;
+    }
+
+    public static String getLoadProcessIdNotFound() {
+        return LOAD_PROCESS_ID_NOT_FOUND;
+    }
+
     public static String getLoadCompletedWithErrors() {
         return LOAD_COMPLETED_WITH_ERRORS;
     }

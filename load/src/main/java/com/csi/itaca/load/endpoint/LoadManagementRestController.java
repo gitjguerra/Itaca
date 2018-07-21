@@ -4,14 +4,12 @@ import com.csi.itaca.common.endpoint.ItacaBaseRestController;
 import com.csi.itaca.load.api.LoadManagementServiceProxy;
 import com.csi.itaca.load.model.dao.LoadFileEntity;
 import com.csi.itaca.load.model.dto.LoadFileDTO;
+import com.csi.itaca.load.model.dto.LoadProcessDTO;
 import com.csi.itaca.load.model.dto.PreloadDataDTO;
 import com.csi.itaca.load.model.dto.PreloadDefinitionDTO;
 import com.csi.itaca.load.service.*;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -72,20 +70,34 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
 
     @Override
     @RequestMapping(value = LOAD_START_CONTINUE_LOAD, method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity startOrContinueLoad(@RequestParam(LoadManagementServiceProxy.FILE_UPLOAD) String filename,
-                                              @RequestParam(LoadManagementServiceProxy.PRELOAD_PROCESS_ID) String loadProcessId,
-                                              @RequestParam(LoadManagementServiceProxy.PRELOAD_FILE_ID) String loadFileId) {
+    public ResponseEntity startOrContinueLoad(@RequestParam(LoadManagementServiceProxy.LOAD_PROCESS_ID) Long loadProcessId) {
+        BindingResult errTracking = createErrorTracker();
+        BatchStatus status = loadManagementService.executeJob(loadProcessId, errTracking);
+        return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
+    }
 
-        BatchStatus status = loadManagementService.executeJob(filename, loadProcessId, loadFileId);
-
+    // TODO: change jobId for loadProcessId ???
+    @Override
+    @RequestMapping(value = LOAD_CANCEL_LOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity cancelLoad(@RequestParam(LoadManagementServiceProxy.JOB_ID) Long jobId) {
+        BatchStatus status = loadManagementService.stopJob(jobId);
         return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
     }
 
     @Override
-    @RequestMapping(value = LOAD_CANCEL_LOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity cancelLoad(@RequestParam(LoadManagementServiceProxy.PRELOAD_JOB_ID) Long jobId) {
-        BatchStatus status = loadManagementService.stopJob(jobId);
-        return new ResponseEntity(status.getBatchStatus(), HttpStatus.OK);
+    @RequestMapping(value = GET_LOAD, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getLoadProcess(@RequestParam(LoadManagementServiceProxy.LOAD_PROCESS_ID) Long loadProcessId) {
+        BindingResult errTracking = createErrorTracker();
+        LoadFileDTO loadFileDTO = loadManagementService.getLoadProcess(loadProcessId, errTracking);
+        return buildResponseEntity(loadFileDTO, errTracking);
+    }
+
+    @Override
+    @RequestMapping(value = GET_LOAD_BY_USERID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<? extends LoadProcessDTO>> getLoadProcessByUser(@RequestParam(LoadManagementServiceProxy.LOAD_PROCESS_USER_ID) Long userId) {
+        BindingResult errTracking = createErrorTracker();
+        List<? extends LoadProcessDTO> list = loadManagementService.getLoadProcessByUser(userId, errTracking);
+        return buildResponseEntity(list, errTracking);
     }
 
     /*
@@ -140,8 +152,8 @@ public class LoadManagementRestController extends ItacaBaseRestController implem
     @Override
     @RequestMapping(value = LOAD_PRELOAD_DATAFILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<PreloadDataDTO>> getDataFile(@RequestParam(LoadManagementServiceProxy.PRELOAD_PROCESS_ID) Long loadProcessId,
-                                                            @RequestParam(LoadManagementServiceProxy.PRELOAD_FILE_ID) LoadFileEntity loadFileId) {
+    public ResponseEntity<List<PreloadDataDTO>> getDataFile(@RequestParam(LoadManagementServiceProxy.LOAD_PROCESS_ID) Long loadProcessId,
+                                                            @RequestParam(LoadManagementServiceProxy.LOAD_FILE_ID) LoadFileEntity loadFileId) {
 
         List<PreloadDataDTO> preloadDataDTOS = null;
 
