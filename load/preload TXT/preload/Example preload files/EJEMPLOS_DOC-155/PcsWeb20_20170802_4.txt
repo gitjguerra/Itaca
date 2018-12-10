@@ -1,0 +1,16 @@
+C20170802242                                                                                                                                     000
+D20170802  0008945141             SALAZAR                MESA                   DAGMAR19710920 C000000000009876860050002300117                                                        RODRIGUEZ 99 DEPTO. 2701000000000000
+D20170802  0011872534            BURDILES             MORALES                  MARCELO19710629 C000000000045 22085000000000000                                                  PASAJE NIKOLA TELSA 352 FDO EL000000000000
+D20170802  0005711256             URIARTE          FUENZALIDA             MARIA ISABEL19511011 C00000000002 999999990000000000                                                                 LAS QUILAS 4067000000000000
+D20170802  0013995692             PACHECO               SILVA          CRISTIAN ALEXIS19810616 C000000000009954971500000900056                                             Arturo Prat 4346, departamento 1601000000000000
+D20170802  0017267101             ZIEGELE              HAPPEY           STEFAN MANFRED19890715 C000000000002850042950000100009                                                  AV PRESIDENTE RIESCO 5157 DPTO000000000000
+D20170802  0008312229                PENA             PREMIER                     ROSA19570505 C000000000007523851940002900165                                                           RENAICO 1813 MILLARAY000000000000
+D20170802  0013828367               VIVES               OLIVA          CAROLINA ANDREA19800119 C000000000009683151190000100009                                                         ALCANTARA 82 DEPTO 1203000000000000
+D20170802  0007125973              CAFENA               GARFE            JORGE EDUARDO19581111 C000000000032 26628000000000000                                                      AVDA LA MARINA 94 DEPTO 74000000000000
+D20170802  0016549066              LIZAMA               LEFNO           NICOLAS ANDRES19861114 C000000000002247490460000100010                                                         CONVENTRY 744 DEPTO 204000000000000
+D20170802  0005711256             URIARTE          FUENZALIDA             MARIA ISABEL19511011 C00000000002 999999990000000000                                                                 LAS QUILAS 4067000000000000
+D20170802  0009961113             NARANJO           ITURRIAGA                 CRISTIAN19751115 C000000000009840527080000100014                                                   MAR TIRRENO 3610 DEPARTAMENTO000000000000
+D20170802  0008499603            ZALDIVAR             PERALTA             JOSE IGNACIO19620320 C00000000002 269733170000000000                                                       JUAN AGUSTIN ALCALDE 2433000000000000
+D20170802  0007125973              CAFENA               GARFE            JORGE EDUARDO19581111 C000000000032 26628000000000000                                                      AVDA LA MARINA 94 DEPTO 74000000000000
+D20170802  0005711256             URIARTE          FUENZALIDA             MARIA ISABEL19511011 C00000000002 999999990000000000                                                                 LAS QUILAS 4067000000000000
+T20170802242   14               
