@@ -47,7 +47,8 @@ import static org.mockito.Matchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Test for the people management rest controller.

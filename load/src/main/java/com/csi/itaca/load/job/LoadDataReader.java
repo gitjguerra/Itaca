@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 @Component
 @JobScope
 public class LoadDataReader extends JdbcCursorItemReader<PreloadDataDTO> {

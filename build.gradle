@@ -158,6 +158,7 @@ subprojects {
     testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version:'2.0.0.RELEASE'
     testCompile group: 'org.powermock', name:'powermock-module-junit4', version:'1.6.6'
     testCompile group: 'org.powermock', name:'powermock-api-mockito', version:'1.6.6'
+    testCompile 'io.rest-assured:rest-assured:3.0.2'
 
     // Required java agent to correctly run the mock MVC tests under under Jenkins.
     testCompile group: 'edu.gmu.swe.phosphor', name: 'Phosphor', version: '0.0.3'
